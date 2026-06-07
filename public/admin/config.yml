@@ -1,7 +1,9 @@
 backend:
   name: github
-  repo: hesamj-jafarzadeh/ahoosh-site
+  repo: Hesamjz/ahoosh-site
   branch: main
+  base_url: https://ahoosh.ai
+  auth_endpoint: /api/auth
 
 # Media stored directly in the repo
 media_folder: "public/images/uploads"
