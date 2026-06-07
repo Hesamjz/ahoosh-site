@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article style="max-width: 720px; margin: 0 auto; padding: var(--space-12) var(--space-4);">
+    <header style="margin-bottom: var(--space-8);">
+      <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: var(--space-2);">
+        {post.data.pubDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </p>
+      <h1 style="font-size: clamp(28px, 5vw, 40px); font-weight: 600; margin-bottom: var(--space-3);">
+        {post.data.title}
+      </h1>
+      {post.data.description && (
+        <p style="font-size: 17px; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
+          {post.data.description}
+        </p>
+      )}
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer style="margin-top: var(--space-12); padding-top: var(--space-4); border-top: 1px solid var(--color-border);">
+      <a href="/writing" style="font-size: 14px; color: var(--color-turquoise-text);">← All writing</a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose :global(h2) {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 500;
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-3);
+    color: var(--color-navy);
+  }
+  .prose :global(h3) {
+    font-family: var(--font-display);
+    font-size: clamp(19px, 2.5vw, 24px);
+    font-weight: 500;
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-2);
+    color: var(--color-navy);
+  }
+  .prose :global(p) {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+  }
+  .prose :global(a) {
+    color: var(--color-turquoise-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose :global(code) {
+    background: var(--color-surface);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875em;
+  }
+  .prose :global(pre) {
+    background: var(--color-near-black);
+    color: var(--color-cream);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin-bottom: var(--space-4);
+  }
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--color-gold);
+    padding-left: var(--space-3);
+    margin: var(--space-4) 0;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+</style>

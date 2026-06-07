@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact" description="Start a conversation with AHoosh Consulting.">
+  <section style="max-width: 700px; margin: 0 auto; padding: var(--space-12) var(--space-4);">
+    <h1 style="font-size: clamp(28px, 5vw, 40px); font-weight: 600; margin-bottom: var(--space-3);">
+      Start a conversation
+    </h1>
+    <p style="font-size: 16px; color: var(--color-text-secondary); margin-bottom: var(--space-8);">
+      Book a free 30-minute call to explore whether AHoosh is the right fit for your project.
+    </p>
+
+    <!-- Calendly embed (Phase 3: Frontend_Developer wires up real Calendly URL) -->
+    <div style="background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-6); margin-bottom: var(--space-8); text-align: center;">
+      <p style="color: var(--color-text-muted); font-size: 14px; margin: 0;">
+        Calendly booking widget — wired in Phase 3
+      </p>
+    </div>
+
+    <!-- Brevo contact form (Phase 3: Frontend_Developer + Cloudflare Pages Function) -->
+    <h2 style="font-size: clamp(20px, 3vw, 26px); font-weight: 500; margin-bottom: var(--space-4);">
+      Or send a message
+    </h2>
+    <p style="color: var(--color-text-secondary); font-size: 14px;">
+      Brevo form via Cloudflare Pages Function — built in Phase 3.
+    </p>
+  </section>
+</BaseLayout>

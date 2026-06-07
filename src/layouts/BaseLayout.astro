@@ -1,0 +1,89 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'AI-Augmented B2B Operations. Digital Transformation. Serbia–Iran–EU bridge.',
+  ogImage = '/og-default.png',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title>{title} | AHoosh Consulting</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={`${title} | AHoosh Consulting`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+
+    <!-- Fonts: Cormorant Garamond + Inter + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Cloudflare Web Analytics (injected at deploy time via CF Pages) -->
+  </head>
+  <body>
+    <!-- Site Header -->
+    <header style="background: var(--color-navy); padding: var(--space-2) var(--space-4); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100;">
+      <a href="/" style="font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--color-cream); text-decoration: none; letter-spacing: -0.01em;">
+        <span style="color: var(--color-gold-light);">A</span>Hoosh
+      </a>
+      <nav style="display: flex; gap: var(--space-4); align-items: center;">
+        <a href="/consulting" style="color: var(--color-cream); font-size: 14px; font-weight: 500; opacity: 0.85; transition: opacity 120ms ease;">Consulting</a>
+        <a href="/writing" style="color: var(--color-cream); font-size: 14px; font-weight: 500; opacity: 0.85; transition: opacity 120ms ease;">Writing</a>
+        <a href="/about" style="color: var(--color-cream); font-size: 14px; font-weight: 500; opacity: 0.85; transition: opacity 120ms ease;">About</a>
+        <a href="/contact" class="btn-accent" style="padding: 8px 18px; font-size: 13px; min-height: 36px;">Work together</a>
+      </nav>
+    </header>
+
+    <!-- Page content -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Site Footer -->
+    <footer style="background: var(--color-near-black); color: var(--color-text-muted); padding: var(--space-8) var(--space-4); margin-top: var(--space-12);">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3);">
+        <div>
+          <span style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--color-cream);">
+            <span style="color: var(--color-gold-light);">A</span>Hoosh
+          </span>
+          <p style="margin: var(--space-1) 0 0; font-size: 13px; color: var(--color-text-muted);">AI-Augmented B2B Operations</p>
+        </div>
+        <nav style="display: flex; gap: var(--space-3);">
+          <a href="/consulting" style="color: var(--color-text-muted); font-size: 13px;">Consulting</a>
+          <a href="/writing" style="color: var(--color-text-muted); font-size: 13px;">Writing</a>
+          <a href="/about" style="color: var(--color-text-muted); font-size: 13px;">About</a>
+          <a href="/contact" style="color: var(--color-text-muted); font-size: 13px;">Contact</a>
+        </nav>
+        <p style="font-size: 12px; color: var(--color-text-muted); margin: 0;">
+          © {new Date().getFullYear()} AHoosh Consulting · Belgrade, Serbia
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ─── AHoosh Brand Tokens ─── */
+:root {
+  /* Brand colors */
+  --color-navy:             #1B2A4A;
+  --color-gold:             #C4841A;
+  --color-gold-light:       #E8B86D;
+  --color-turquoise:        #2AADA3;
+  --color-turquoise-text:   #0E6560;
+
+  /* Neutrals */
+  --color-cream:            #F5F3EF;
+  --color-text-primary:     #2D2926;
+  --color-text-secondary:   #4A4744;
+  --color-text-muted:       #8A8580;
+  --color-border:           #D5D1CB;
+  --color-surface:          #EDEBE6;
+  --color-near-black:       #1C1917;
+
+  /* Semantic */
+  --color-error:            #B03A3A;
+  --color-success:          #3A7A4A;
+  --color-warning:          #9A5B00;
+
+  /* Typography */
+  --font-display:           'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
+  --font-body:              'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:              'JetBrains Mono', 'Courier New', monospace;
+
+  /* Spacing (8px grid) */
+  --space-1:  8px;
+  --space-2:  16px;
+  --space-3:  24px;
+  --space-4:  32px;
+  --space-6:  48px;
+  --space-8:  64px;
+  --space-12: 96px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --transition-fast:   120ms ease;
+  --transition-normal: 200ms ease;
+}
+
+/* ─── Base reset ─── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-text-primary);
+  background-color: var(--color-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--color-navy);
+  line-height: 1.2;
+  margin: 0;
+}
+
+h4, h5, h6 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+a {
+  color: var(--color-turquoise-text);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+a:hover {
+  opacity: 0.75;
+}
+
+p {
+  margin: 0 0 var(--space-2);
+  line-height: 1.65;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+/* ─── Utility classes ─── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: var(--color-navy);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  transition: opacity var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.85;
+  color: var(--color-cream);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--color-navy);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-navy);
+  cursor: pointer;
+  min-height: 44px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background: var(--color-navy);
+  color: var(--color-cream);
+}
+
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: var(--color-gold);
+  color: var(--color-near-black);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  transition: filter var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-accent:hover {
+  filter: brightness(0.92);
+  color: var(--color-near-black);
+}
