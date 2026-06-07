@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+
+  <!-- Article hero -->
+  <section style="
+    background: linear-gradient(160deg, #03142E 0%, #010A18 100%);
+    padding: 48px 24px 40px;
+    border-bottom: 1px solid rgba(215,161,61,0.1);
+  ">
+    <div style="max-width:680px;margin:0 auto;">
+      <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">
+        {(post.data as any).tags?.[0] ?? 'Article'}
+      </div>
+      <h1 style="
+        font-family: var(--font-head);
+        font-weight: 700;
+        font-size: clamp(22px, 5vw, 34px);
+        line-height: 1.25;
+        color: var(--silver);
+        margin-bottom: 16px;
+        letter-spacing: -0.01em;
+      ">{post.data.title}</h1>
+      {post.data.description && (
+        <p style="font-size:15px;color:var(--silver-dim);line-height:1.6;margin-bottom:20px;">
+          {post.data.description}
+        </p>
+      )}
+      <p style="font-size:12px;color:var(--silver-muted);">
+        {post.data.pubDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </p>
+    </div>
+  </section>
+
+  <!-- Article body -->
+  <article style="max-width:680px;margin:0 auto;padding:40px 24px 56px;">
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div style="margin-top:48px;padding-top:24px;border-top:1px solid rgba(215,161,61,0.1);">
+      <a href="/articles" class="link-gold" style="font-size:13px;">← All Articles</a>
+    </div>
+  </article>
+
+</BaseLayout>
+
+<style>
+  .prose :global(h2) {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(18px, 3vw, 24px);
+    color: var(--silver);
+    margin: 40px 0 16px;
+    line-height: 1.3;
+  }
+  .prose :global(h3) {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: var(--silver);
+    margin: 32px 0 12px;
+  }
+  .prose :global(p) {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--silver-dim);
+    margin-bottom: 20px;
+  }
+  .prose :global(a) {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose :global(strong) {
+    color: var(--silver);
+    font-weight: 600;
+  }
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--gold);
+    padding: 4px 0 4px 20px;
+    margin: 24px 0;
+    color: var(--silver-dim);
+    font-style: italic;
+  }
+  .prose :global(code) {
+    background: rgba(215,161,61,0.1);
+    color: var(--gold-light);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.875em;
+  }
+  .prose :global(pre) {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(215,161,61,0.15);
+    padding: 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 24px;
+  }
+  .prose :global(ul), .prose :global(ol) {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+  .prose :global(li) {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--silver-dim);
+    margin-bottom: 6px;
+  }
+</style>

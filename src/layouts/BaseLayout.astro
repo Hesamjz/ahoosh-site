@@ -10,10 +10,11 @@ interface Props {
 const {
   title,
   description = 'AI-Augmented B2B Operations. Digital Transformation. Serbia–Iran–EU bridge.',
-  ogImage = '/og-default.png',
+  ogImage = '/assets/logo-dark.png',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -25,65 +26,191 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="generator" content={Astro.generator} />
 
     <!-- SEO -->
-    <title>{title} | AHoosh Consulting</title>
+    <title>{title} | AHoosh</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
 
     <!-- Open Graph -->
-    <meta property="og:title" content={`${title} | AHoosh Consulting`} />
+    <meta property="og:title" content={`${title} | AHoosh`} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
 
-    <!-- Fonts: Cormorant Garamond + Inter + JetBrains Mono -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-
-    <!-- Cloudflare Web Analytics (injected at deploy time via CF Pages) -->
   </head>
   <body>
-    <!-- Site Header -->
-    <header style="background: var(--color-navy); padding: var(--space-2) var(--space-4); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100;">
-      <a href="/" style="font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--color-cream); text-decoration: none; letter-spacing: -0.01em;">
-        <span style="color: var(--color-gold-light);">A</span>Hoosh
+    <!-- Sticky Nav -->
+    <header id="site-header" style="
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy-dark);
+      border-bottom: 1px solid rgba(215,161,61,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+    ">
+      <!-- Logo -->
+      <a href="/" aria-label="AHoosh home" style="display:flex;align-items:center;">
+        <img
+          src="/assets/logo.png"
+          alt="AHoosh"
+          style="height:36px;width:auto;"
+        />
       </a>
-      <nav style="display: flex; gap: var(--space-4); align-items: center;">
-        <a href="/consulting" style="color: var(--color-cream); font-size: 14px; font-weight: 500; opacity: 0.85; transition: opacity 120ms ease;">Consulting</a>
-        <a href="/writing" style="color: var(--color-cream); font-size: 14px; font-weight: 500; opacity: 0.85; transition: opacity 120ms ease;">Writing</a>
-        <a href="/about" style="color: var(--color-cream); font-size: 14px; font-weight: 500; opacity: 0.85; transition: opacity 120ms ease;">About</a>
-        <a href="/contact" class="btn-accent" style="padding: 8px 18px; font-size: 13px; min-height: 36px;">Work together</a>
+
+      <!-- Desktop nav (lg+) -->
+      <nav id="desktop-nav" style="
+        display: none;
+        gap: 32px;
+        align-items: center;
+      ">
+        <a href="/consulting" style="
+          font-family: var(--font-body);
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--silver-dim);
+          letter-spacing: 0.04em;
+          transition: color 150ms ease;
+        " class="nav-link">Consulting</a>
+        <a href="/articles" style="
+          font-family: var(--font-body);
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--silver-dim);
+          letter-spacing: 0.04em;
+          transition: color 150ms ease;
+        " class="nav-link">Articles</a>
+        <a href="/about" style="
+          font-family: var(--font-body);
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--silver-dim);
+          letter-spacing: 0.04em;
+          transition: color 150ms ease;
+        " class="nav-link">About</a>
+        <a href="/contact" class="btn-primary" style="
+          padding: 10px 20px;
+          font-size: 12px;
+          min-height: 40px;
+          display: inline-flex;
+          align-items: center;
+        ">Book a Call</a>
       </nav>
+
+      <!-- Mobile hamburger -->
+      <button id="nav-toggle" aria-label="Open menu" style="
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 44px;
+        height: 44px;
+        align-items: center;
+      ">
+        <span style="display:block;height:1.5px;width:24px;background:var(--silver);border-radius:2px;"></span>
+        <span style="display:block;height:1.5px;width:24px;background:var(--silver);border-radius:2px;"></span>
+        <span style="display:block;height:1.5px;width:16px;background:var(--silver);border-radius:2px;align-self:flex-end;"></span>
+      </button>
     </header>
+
+    <!-- Mobile menu drawer -->
+    <div id="mobile-menu" style="
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--navy-dark);
+      z-index: 200;
+      padding: 24px;
+      flex-direction: column;
+    ">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;">
+        <img src="/assets/logo.png" alt="AHoosh" style="height:36px;width:auto;" />
+        <button id="menu-close" aria-label="Close menu" style="
+          background:none;border:none;cursor:pointer;
+          color:var(--silver);font-size:28px;line-height:1;
+          width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+        ">×</button>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:4px;">
+        <a href="/consulting" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Consulting</a>
+        <a href="/articles" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Articles</a>
+        <a href="/about" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">About</a>
+        <a href="/contact" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Contact</a>
+      </nav>
+      <div style="margin-top:auto;padding-top:32px;">
+        <a href="/contact" class="btn-primary" style="width:100%;display:block;text-align:center;padding:16px;">Book a Discovery Call</a>
+      </div>
+    </div>
 
     <!-- Page content -->
     <main>
       <slot />
     </main>
 
-    <!-- Site Footer -->
-    <footer style="background: var(--color-near-black); color: var(--color-text-muted); padding: var(--space-8) var(--space-4); margin-top: var(--space-12);">
-      <div style="max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3);">
-        <div>
-          <span style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--color-cream);">
-            <span style="color: var(--color-gold-light);">A</span>Hoosh
-          </span>
-          <p style="margin: var(--space-1) 0 0; font-size: 13px; color: var(--color-text-muted);">AI-Augmented B2B Operations</p>
+    <!-- Footer -->
+    <footer style="
+      background: var(--navy-dark);
+      border-top: 1px solid rgba(215,161,61,0.1);
+      padding: 40px 24px;
+    ">
+      <div style="max-width:680px;margin:0 auto;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px;margin-bottom:32px;">
+          <div>
+            <img src="/assets/logo.png" alt="AHoosh" style="height:32px;width:auto;margin-bottom:8px;" />
+            <p style="font-size:12px;color:var(--silver-muted);margin:0;">AI-Augmented B2B Operations</p>
+          </div>
+          <nav style="display:flex;flex-direction:column;gap:10px;">
+            <a href="/consulting" style="font-size:13px;color:var(--silver-dim);">Consulting</a>
+            <a href="/articles" style="font-size:13px;color:var(--silver-dim);">Articles</a>
+            <a href="/about" style="font-size:13px;color:var(--silver-dim);">About</a>
+            <a href="/contact" style="font-size:13px;color:var(--silver-dim);">Contact</a>
+          </nav>
         </div>
-        <nav style="display: flex; gap: var(--space-3);">
-          <a href="/consulting" style="color: var(--color-text-muted); font-size: 13px;">Consulting</a>
-          <a href="/writing" style="color: var(--color-text-muted); font-size: 13px;">Writing</a>
-          <a href="/about" style="color: var(--color-text-muted); font-size: 13px;">About</a>
-          <a href="/contact" style="color: var(--color-text-muted); font-size: 13px;">Contact</a>
-        </nav>
-        <p style="font-size: 12px; color: var(--color-text-muted); margin: 0;">
-          © {new Date().getFullYear()} AHoosh Consulting · Belgrade, Serbia
-        </p>
+        <div style="border-top:1px solid rgba(215,161,61,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <p style="font-size:11px;color:var(--silver-muted);margin:0;">© {new Date().getFullYear()} AHoosh · Belgrade, Serbia</p>
+          <a href="mailto:hello@ahoosh.ai" style="font-size:11px;color:var(--gold);">hello@ahoosh.ai</a>
+        </div>
       </div>
     </footer>
+
+    <style>
+      /* Desktop nav breakpoint */
+      @media (min-width: 768px) {
+        #desktop-nav { display: flex !important; }
+        #nav-toggle { display: none !important; }
+      }
+    </style>
+
+    <script>
+      const toggle = document.getElementById('nav-toggle');
+      const closeBtn = document.getElementById('menu-close');
+      const menu = document.getElementById('mobile-menu');
+
+      toggle?.addEventListener('click', () => {
+        menu!.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      });
+
+      closeBtn?.addEventListener('click', () => {
+        menu!.style.display = 'none';
+        document.body.style.overflow = '';
+      });
+    </script>
   </body>
 </html>
