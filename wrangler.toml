@@ -1,0 +1,21 @@
+name = "ahoosh-cms-auth"
+main = "cloudflare-worker-auth.js"
+compatibility_date = "2026-06-08"
+preview_urls = false
+
+[vars]
+GITHUB_CLIENT_ID = "Ov23liF68HR1w6a4WI9O"
+
+# GITHUB_CLIENT_SECRET is stored as an encrypted secret:
+# Run once: npx wrangler secret put GITHUB_CLIENT_SECRET
+# (already set in Cloudflare dashboard — do not commit the value here)
+
+[[routes]]
+pattern = "ahoosh.ai/api/auth*"
+zone_name = "ahoosh.ai"
+
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
