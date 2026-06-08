@@ -3,7 +3,7 @@
  * Deploy as a Cloudflare Worker with route: ahoosh.ai/api/auth*
  *
  * Environment variables to set in Cloudflare Worker:
- *   GITHUB_CLIENT_ID     = 0v23liF68HR1w6a4WI90
+ *   GITHUB_CLIENT_ID     = Ov23liF68HR1w6a4WI9O
  *   GITHUB_CLIENT_SECRET = (from MEMORY.md)
  *
  * How it works:
@@ -72,26 +72,37 @@ async function handleCallback(url, env) {
     });
   }
 
-  // Decap CMS expects postMessage with the token
+  // Decap CMS uses a two-step handshake:
+  // 1. Popup sends "authorizing:github" → CMS echoes it back
+  // 2. Popup receives echo → sends token → CMS logs in
   const html = `<!DOCTYPE html>
 <html>
 <head><title>Authenticating...</title></head>
 <body>
 <script>
   (function() {
-    const token = ${JSON.stringify(data.access_token)};
-    const provider = 'github';
-    const message = JSON.stringify({ token, provider });
-    if (window.opener) {
-      window.opener.postMessage(
-        'authorization:' + provider + ':success:' + message,
-        '${ORIGIN}'
-      );
+    var token = ${JSON.stringify(data.access_token)};
+    var provider = 'github';
+    var origin = '${ORIGIN}';
+
+    function receiveMessage(e) {
+      if (e.data === 'authorizing:' + provider) {
+        window.removeEventListener('message', receiveMessage, false);
+        window.opener.postMessage(
+          'authorization:' + provider + ':success:' + JSON.stringify({ token: token, provider: provider }),
+          e.origin
+        );
+        window.close();
+      }
     }
-    window.close();
+
+    if (window.opener) {
+      window.addEventListener('message', receiveMessage, false);
+      window.opener.postMessage('authorizing:' + provider, origin);
+    }
   })();
 <\/script>
-<p>Authenticated. You can close this window.</p>
+<p>Authenticating...</p>
 </body>
 </html>`;
 
