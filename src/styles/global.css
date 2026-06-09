@@ -9,7 +9,7 @@
   --gold-dark:    #9F6F16;
   --silver:       #F0F2F5;
   --silver-dim:   rgba(240,242,245,0.65);
-  --silver-muted: rgba(240,242,245,0.4);
+  --silver-muted: #8E939E;               /* WCAG AA fix: 6.7:1 on navy-dark (was rgba 0.4 → 3.43:1) */
 
   --font-head: 'Montserrat', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;

@@ -25,14 +25,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- Form -->
   <section style="padding:32px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <!--
+      Formspree handles the POST and emails hesamjafarzadeh@gmail.com.
+      SETUP: go to https://formspree.io → New Form → copy the form ID (e.g. xpwzjkqr)
+             and replace YOUR_FORM_ID below. Free plan = 50 submissions/month.
+    -->
     <form
-      name="contact"
       method="POST"
-      data-netlify="true"
-      action="/contact/thanks"
+      action="https://formspree.io/f/YOUR_FORM_ID"
       style="display:flex;flex-direction:column;gap:0;"
     >
-      <input type="hidden" name="form-name" value="contact" />
+      <!-- Redirect back to our own thank-you page after Formspree processes -->
+      <input type="hidden" name="_next" value="/contact/thanks" />
+      <!-- Email subject line in the inbox -->
+      <input type="hidden" name="_subject" value="New contact from ahoosh.ai" />
+      <!-- Honeypot spam filter (Formspree reads this automatically) -->
+      <input type="text" name="_gotcha" style="display:none" />
 
       <div style="margin-bottom:16px;">
         <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:6px;">Your Name</label>
