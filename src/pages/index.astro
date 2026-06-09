@@ -2,17 +2,78 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Home" description="AHoosh.ai — AI-powered operations, marketing, and digital transformation for B2B, B2C, and government clients.">
+<BaseLayout title="Home" description="AHoosh.ai — AI-augmented consulting practice. Branding, strategy, digital marketing, AI operations, and website design for B2B, B2C, and government clients.">
 
-  <!-- Hero — Vortex -->
-  <section style="background:#010A18;padding:64px 24px 48px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.12);">
-    <canvas id="vc" width="480" height="380" style="cursor:grab;display:block;margin:0 auto;touch-action:none;width:min(480px,90vw);aspect-ratio:480/380;"></canvas>
-    <div style="margin-top:8px;pointer-events:none;">
-      <img src="/assets/logo-text.png" alt="AHOOSH — Intelligence That Powers Growth" style="width:340px;max-width:90vw;height:auto;display:block;margin:0 auto;" />
-    </div>
-    <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;align-items:center;">
-      <a href="/contact" class="btn-primary" style="width:100%;max-width:280px;">Book a Discovery Call</a>
-      <a href="/consulting" class="btn-secondary" style="width:100%;max-width:280px;">Explore Our Services</a>
+  <!-- Hero — Founder-led -->
+  <section style="background:#010A18;padding:64px 24px 56px;border-bottom:1px solid rgba(215,161,61,0.12);">
+    <div style="max-width:680px;margin:0 auto;">
+
+      <!-- Vortex + identity row -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:32px;">
+
+        <!-- Vortex canvas -->
+        <canvas id="vc" width="320" height="240" style="cursor:grab;display:block;touch-action:none;width:min(320px,80vw);aspect-ratio:320/240;flex-shrink:0;"></canvas>
+
+        <!-- Founder intro -->
+        <div style="text-align:center;max-width:520px;">
+          <div class="section-eyebrow" style="margin-bottom:10px;">Founded by Hesam Jafarzadeh</div>
+          <h1 style="
+            font-family:var(--font-head);
+            font-weight:700;
+            font-size:clamp(26px,6vw,40px);
+            letter-spacing:-0.02em;
+            line-height:1.15;
+            color:var(--silver);
+            margin-bottom:16px;
+          ">AI Consulting That<br/>Compounds Results</h1>
+          <p style="font-size:15px;line-height:1.7;color:var(--silver-dim);margin-bottom:28px;">
+            I build AI-augmented operations, marketing, and digital infrastructure for B2B companies
+            that want measurable outcomes — not vendor pitches.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+            <a href="/contact" class="btn-primary" style="width:100%;max-width:280px;">Book a Discovery Call</a>
+            <a href="/consulting" class="btn-secondary" style="width:100%;max-width:280px;">See Our Services</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Founder card -->
+      <div style="
+        display:flex;
+        align-items:center;
+        gap:16px;
+        margin-top:48px;
+        padding:20px;
+        background:rgba(255,255,255,0.04);
+        border:1px solid rgba(215,161,61,0.15);
+        border-radius:8px;
+      ">
+        <div style="
+          flex-shrink:0;
+          width:64px;height:64px;border-radius:50%;
+          overflow:hidden;border:2px solid rgba(215,161,61,0.4);
+          background:rgba(215,161,61,0.1);
+        ">
+          <img
+            src="/assets/hesam.png"
+            alt="Hesam Jafarzadeh"
+            style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
+            onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:18px;color:var(--gold);\'>HJ</div>';"
+          />
+        </div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--silver);line-height:1.2;">Hesam Jafarzadeh</div>
+          <div style="font-size:12px;color:var(--gold);font-weight:500;letter-spacing:0.04em;margin-top:3px;">Founder · PhD Candidate · AI Operations Practitioner</div>
+          <div style="font-size:12px;color:var(--silver-muted);margin-top:4px;">Iran · Serbia · EU · Middle East</div>
+        </div>
+        <a href="/about" style="
+          margin-left:auto;flex-shrink:0;
+          font-family:var(--font-head);font-size:11px;font-weight:700;
+          letter-spacing:0.1em;text-transform:uppercase;
+          color:var(--gold);white-space:nowrap;
+        ">About →</a>
+      </div>
+
     </div>
   </section>
 
@@ -24,10 +85,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const CX=W/2,CY=H/2-4;
 
     const NA=5,ND=26,AK=[0,1,2,0,1];
-    const R=118,FOV=340;
+    const R=100,FOV=280;
     const AE=Math.PI*0.88,WR=1.3;
     const WHITE=[247,244,236],GOLD=[216,166,66];
-    const HR=72;
+    const HR=60;
 
     const BASE=[];
     for(let a=0;a<NA;a++){
@@ -93,42 +154,58 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </script>
 
   <!-- Services strip -->
-  <section style="padding: 40px 24px;border-bottom: 1px solid rgba(215,161,61,0.08);max-width: 680px;margin: 0 auto;">
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
     <div class="section-eyebrow">What We Do</div>
-    <h2 class="section-title">What We Build</h2>
-    <div style="background: rgba(255,255,255,0.04);border: 1px solid rgba(215,161,61,0.12);border-radius: 6px;padding: 20px;margin-bottom: 12px;">
-      <div style="font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--silver);margin-bottom:6px;">AI Operations &amp; Automation</div>
-      <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Automate customer service, workflows, and back-office processes. We deploy purpose-built AI tools that reduce cost and run without constant oversight.</div>
-    </div>
-    <div style="background: rgba(255,255,255,0.04);border: 1px solid rgba(215,161,61,0.12);border-radius: 6px;padding: 20px;margin-bottom: 12px;">
-      <div style="font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--silver);margin-bottom:6px;">AI Marketing &amp; Social Media</div>
-      <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">AI-powered content pipelines, social media management, email automation, and campaign analytics — built as a managed service or handed over to your team.</div>
-    </div>
-    <div style="background: rgba(255,255,255,0.04);border: 1px solid rgba(215,161,61,0.12);border-radius: 6px;padding: 20px;">
-      <div style="font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--silver);margin-bottom:6px;">Digital Transformation</div>
-      <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">End-to-end transformation for B2B, B2C, and government clients — from process diagnosis to live systems that your team operates independently.</div>
-    </div>
-  </section>
+    <h2 class="section-title">Six Service Lines</h2>
 
-  <!-- Credibility bar -->
-  <section style="padding: 24px;display: flex;border-bottom: 1px solid rgba(215,161,61,0.08);max-width: 680px;margin: 0 auto;">
-    <div style="flex:1;text-align:center;border-right:1px solid rgba(215,161,61,0.1);padding:0 8px;">
-      <div style="font-family:var(--font-head);font-weight:700;font-size:24px;color:var(--gold);line-height:1;margin-bottom:4px;">73%</div>
-      <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--silver-dim);line-height:1.3;">AI-Resolved</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
+        <div style="font-size:20px;margin-bottom:8px;">⚙️</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">AI Operations</div>
+        <div style="font-size:12px;line-height:1.5;color:var(--silver-dim);">Automate workflows, customer service, and back-office processes.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
+        <div style="font-size:20px;margin-bottom:8px;">📢</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Digital Marketing</div>
+        <div style="font-size:12px;line-height:1.5;color:var(--silver-dim);">AI-powered campaigns, email automation, and analytics.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
+        <div style="font-size:20px;margin-bottom:8px;">🌐</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Website Design &amp; Build</div>
+        <div style="font-size:12px;line-height:1.5;color:var(--silver-dim);">Fast, SEO-ready sites designed to convert and rank.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
+        <div style="font-size:20px;margin-bottom:8px;">🔍</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">SEO &amp; Content</div>
+        <div style="font-size:12px;line-height:1.5;color:var(--silver-dim);">Search visibility and content pipelines that build authority.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
+        <div style="font-size:20px;margin-bottom:8px;">🎨</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Branding &amp; Strategy</div>
+        <div style="font-size:12px;line-height:1.5;color:var(--silver-dim);">Brand architecture, positioning, and market-entry strategy.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
+        <div style="font-size:20px;margin-bottom:8px;">📱</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Social Media</div>
+        <div style="font-size:12px;line-height:1.5;color:var(--silver-dim);">Managed social presence and community on all channels.</div>
+      </div>
+
     </div>
-    <div style="flex:1;text-align:center;border-right:1px solid rgba(215,161,61,0.1);padding:0 8px;">
-      <div style="font-family:var(--font-head);font-weight:700;font-size:24px;color:var(--gold);line-height:1;margin-bottom:4px;">400+</div>
-      <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--silver-dim);line-height:1.3;">B2B Clients</div>
-    </div>
-    <div style="flex:1;text-align:center;padding:0 8px;">
-      <div style="font-family:var(--font-head);font-weight:700;font-size:24px;color:var(--gold);line-height:1;margin-bottom:4px;">B2B·B2C·B2G</div>
-      <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--silver-dim);line-height:1.3;">Sectors Served</div>
+
+    <div style="text-align:center;margin-top:24px;">
+      <a href="/consulting" class="link-gold">Full Service Details</a>
     </div>
   </section>
 
   <!-- Articles teaser -->
-  <section style="padding: 40px 24px;border-bottom: 1px solid rgba(215,161,61,0.08);max-width: 680px;margin: 0 auto;">
-    <div class="section-eyebrow">From the Intelligence</div>
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">Intelligence</div>
     <h2 class="section-title">Recent Articles</h2>
     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:18px;margin-bottom:12px;">
       <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">AI Operations</div>
@@ -144,11 +221,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- CTA band -->
-  <section style="background: linear-gradient(135deg, rgba(215,161,61,0.08) 0%, rgba(3,20,46,0.6) 100%);border-top: 1px solid rgba(215,161,61,0.15);padding: 40px 24px;text-align: center;max-width: 100%;">
+  <section style="background:linear-gradient(135deg,rgba(215,161,61,0.08) 0%,rgba(3,20,46,0.6) 100%);border-top:1px solid rgba(215,161,61,0.15);padding:48px 24px;text-align:center;">
     <div style="max-width:480px;margin:0 auto;">
-      <h2 style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);margin-bottom:8px;line-height:1.3;">Ready to build operations that compound?</h2>
-      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:24px;">A 30-minute discovery call. No pitch deck.</p>
-      <a href="/contact" class="btn-primary" style="display:inline-block;min-width:200px;">Book a Discovery Call</a>
+      <div style="
+        width:56px;height:56px;border-radius:50%;
+        overflow:hidden;border:2px solid rgba(215,161,61,0.4);
+        margin:0 auto 16px;
+        background:rgba(215,161,61,0.1);
+      ">
+        <img
+          src="/assets/hesam.png"
+          alt="Hesam"
+          style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
+          onerror="this.style.display='none';"
+        />
+      </div>
+      <h2 style="font-family:var(--font-head);font-weight:700;font-size:22px;color:var(--silver);margin-bottom:8px;line-height:1.3;">Talk to Hesam directly</h2>
+      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:24px;">30-minute discovery call. No pitch deck. Just a conversation about your operations.</p>
+      <a href="/contact" class="btn-primary" style="display:inline-block;min-width:220px;">Book a Discovery Call</a>
     </div>
   </section>
 
