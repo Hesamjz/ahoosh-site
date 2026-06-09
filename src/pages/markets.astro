@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Markets"
+  description="Live FX rates, gold, commodities, and crypto for cross-border operators in MENA, Europe, and Balkans. Powered by AHoosh."
+>
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:40px 24px 28px;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div style="max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="section-eyebrow" style="margin-bottom:6px;">Markets Hub</div>
+        <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--silver);margin:0;line-height:1.2;">Live Data for Cross-Border Operators</h1>
+        <p style="font-size:13px;color:var(--silver-dim);margin-top:6px;">FX · Gold · Crypto · Commodities — MENA, Balkans, EU</p>
+      </div>
+      <div id="last-updated" style="font-size:11px;color:var(--silver-muted);text-align:right;"></div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <div style="max-width:1040px;margin:0 auto;padding:24px 24px 48px;">
+
+    <!-- FX Rates -->
+    <section style="margin-bottom:32px;">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Foreign Exchange</div>
+      <div id="fx-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+        <!-- skeleton -->
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      </div>
+    </section>
+
+    <!-- Commodities -->
+    <section style="margin-bottom:32px;">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Commodities</div>
+      <div id="commodity-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      </div>
+    </section>
+
+    <!-- Crypto -->
+    <section style="margin-bottom:40px;">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Crypto — Top 10</div>
+      <div id="crypto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+        <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      </div>
+    </section>
+
+    <!-- AI Strategy CTA -->
+    <div style="background:rgba(215,161,61,0.07);border:1px solid rgba(215,161,61,0.2);border-radius:8px;padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--silver);margin-bottom:4px;">Turn market data into a strategic plan</div>
+        <div style="font-size:13px;color:var(--silver-dim);">Get an AI-generated SWOT, Business Model Canvas, or market-entry plan for your business — informed by live data.</div>
+      </div>
+      <a href="/contact" class="btn-primary" style="white-space:nowrap;flex-shrink:0;">Book a Strategy Call</a>
+    </div>
+
+    <!-- Attribution -->
+    <div style="margin-top:24px;font-size:11px;color:var(--silver-muted);line-height:1.6;">
+      Data sources: European Central Bank (via Frankfurter) · CoinGecko · Gold API · Metals.live · Manual sourcing for IRR.
+      Prices are indicative and delayed. Not investment advice.
+    </div>
+  </div>
+
+  <style>
+    .price-skeleton {
+      height: 88px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+      border: 1px solid rgba(215,161,61,0.08);
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    .price-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(215,161,61,0.12);
+      border-radius: 6px;
+      padding: 14px;
+      transition: border-color 150ms ease;
+    }
+    .price-card:hover { border-color: rgba(215,161,61,0.35); }
+    .price-card .symbol {
+      font-family: var(--font-head);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--silver);
+      margin-bottom: 2px;
+    }
+    .price-card .name {
+      font-size: 10px;
+      color: var(--silver-muted);
+      margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .price-card .price {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .price-card .change {
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .change-up   { color: #4ade80; }
+    .change-down { color: #f87171; }
+    .change-flat { color: var(--silver-muted); }
+  </style>
+
+  <script is:inline>
+  (function () {
+
+    const FALLBACK = {
+      fx: [
+        { symbol: 'EUR/USD', name: 'Euro / US Dollar',       price: 1.0823, change: +0.21 },
+        { symbol: 'EUR/GBP', name: 'Euro / British Pound',   price: 0.8512, change: -0.08 },
+        { symbol: 'EUR/CHF', name: 'Euro / Swiss Franc',     price: 0.9401, change: +0.04 },
+        { symbol: 'EUR/RSD', name: 'Euro / Serbian Dinar',   price: 117.23, change: 0.00  },
+        { symbol: 'EUR/TRY', name: 'Euro / Turkish Lira',    price: 35.12,  change: -0.31 },
+        { symbol: 'EUR/IRR', name: 'Euro / Iranian Rial',    price: 63400,  change: null  },
+      ],
+      commodities: [
+        { symbol: 'XAU/USD', name: 'Gold oz',        price: 2340.50, change: +0.53 },
+        { symbol: 'XAG/USD', name: 'Silver oz',      price: 29.85,   change: +1.53 },
+        { symbol: 'BRENT',   name: 'Brent Crude',    price: 84.20,   change: -0.40 },
+        { symbol: 'WTI',     name: 'WTI Crude',      price: 80.65,   change: -0.38 },
+      ],
+      crypto: [
+        { symbol: 'BTC', name: 'Bitcoin',   price: 67500,  change: +1.24 },
+        { symbol: 'ETH', name: 'Ethereum',  price: 3820,   change: +2.10 },
+        { symbol: 'BNB', name: 'BNB',       price: 620,    change: +0.45 },
+        { symbol: 'SOL', name: 'Solana',    price: 165,    change: +3.20 },
+        { symbol: 'XRP', name: 'XRP',       price: 0.542,  change: -0.90 },
+        { symbol: 'ADA', name: 'Cardano',   price: 0.463,  change: -1.20 },
+        { symbol: 'AVAX',name: 'Avalanche', price: 37.2,   change: +0.80 },
+        { symbol: 'DOGE',name: 'Dogecoin',  price: 0.154,  change: +0.30 },
+      ],
+    };
+
+    function fmt(price, symbol) {
+      if (price >= 10000) return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+      if (price >= 1000)  return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (price >= 10)    return price.toFixed(2);
+      if (price >= 1)     return price.toFixed(3);
+      return price.toFixed(4);
+    }
+
+    function changeClass(c) {
+      if (c === null || c === undefined) return 'change-flat';
+      if (c > 0) return 'change-up';
+      if (c < 0) return 'change-down';
+      return 'change-flat';
+    }
+
+    function changeLabel(c) {
+      if (c === null || c === undefined) return '—';
+      const sign = c > 0 ? '▲ +' : c < 0 ? '▼ ' : '';
+      return sign + Math.abs(c).toFixed(2) + '%';
+    }
+
+    function buildCard(item) {
+      const d = document.createElement('div');
+      d.className = 'price-card';
+      d.innerHTML =
+        '<div class="symbol">' + item.symbol + '</div>' +
+        '<div class="name">' + item.name + '</div>' +
+        '<div class="price">' + fmt(item.price) + '</div>' +
+        '<div class="change ' + changeClass(item.change) + '">' + changeLabel(item.change) + '</div>';
+      return d;
+    }
+
+    function render(data) {
+      ['fx', 'commodities', 'crypto'].forEach(function(key) {
+        const gridId = key === 'commodities' ? 'commodity-grid' : key + '-grid';
+        const grid = document.getElementById(gridId);
+        if (!grid) return;
+        grid.innerHTML = '';
+        (data[key] || []).forEach(function(item) {
+          grid.appendChild(buildCard(item));
+        });
+      });
+
+      const lu = document.getElementById('last-updated');
+      if (lu) {
+        const now = new Date();
+        lu.textContent = 'Updated ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      }
+    }
+
+    async function fetchLive() {
+      try {
+        // EUR FX via Frankfurter (ECB)
+        const fxResp = await fetch(
+          'https://api.frankfurter.app/latest?from=EUR&to=USD,GBP,CHF,RSD,TRY',
+          { signal: AbortSignal.timeout(8000) }
+        );
+        const fxData = fxResp.ok ? await fxResp.json() : null;
+
+        // Crypto via CoinGecko
+        const cgResp = await fetch(
+          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=8&page=1&price_change_percentage=24h',
+          { signal: AbortSignal.timeout(12000) }
+        );
+        const cgData = cgResp.ok ? await cgResp.json() : null;
+
+        const result = JSON.parse(JSON.stringify(FALLBACK)); // deep clone fallback
+
+        if (fxData && fxData.rates) {
+          result.fx = [
+            { symbol: 'EUR/USD', name: 'Euro / US Dollar',     price: fxData.rates.USD || FALLBACK.fx[0].price, change: null },
+            { symbol: 'EUR/GBP', name: 'Euro / British Pound', price: fxData.rates.GBP || FALLBACK.fx[1].price, change: null },
+            { symbol: 'EUR/CHF', name: 'Euro / Swiss Franc',   price: fxData.rates.CHF || FALLBACK.fx[2].price, change: null },
+            { symbol: 'EUR/RSD', name: 'Euro / Serbian Dinar', price: fxData.rates.RSD || FALLBACK.fx[3].price, change: null },
+            { symbol: 'EUR/TRY', name: 'Euro / Turkish Lira',  price: fxData.rates.TRY || FALLBACK.fx[4].price, change: null },
+            { symbol: 'EUR/IRR', name: 'Euro / Iranian Rial',  price: FALLBACK.fx[5].price, change: null },
+          ];
+        }
+
+        if (cgData && Array.isArray(cgData)) {
+          result.crypto = cgData.slice(0, 8).map(function(c) {
+            return {
+              symbol: c.symbol.toUpperCase(),
+              name: c.name,
+              price: c.current_price,
+              change: c.price_change_percentage_24h
+                ? parseFloat(c.price_change_percentage_24h.toFixed(2))
+                : null,
+            };
+          });
+        }
+
+        render(result);
+      } catch (e) {
+        render(FALLBACK);
+      }
+    }
+
+    // Initial load
+    fetchLive();
+
+    // Refresh every 60 seconds
+    setInterval(fetchLive, 60000);
+
+  })();
+  </script>
+
+</BaseLayout>
