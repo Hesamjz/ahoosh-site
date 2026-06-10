@@ -9,7 +9,7 @@ interface Props {
 
 const {
   title,
-  description = 'AI-Augmented B2B Operations. Digital Transformation. Serbia–Iran–EU bridge.',
+  description = 'AI, market data, and research for better decisions. AHoosh helps founders, companies, and decision-makers act with better information.',
   ogImage = '/assets/logo-dark.png',
 } = Astro.props;
 
@@ -106,14 +106,6 @@ const currentPath = Astro.url.pathname;
           letter-spacing: 0.04em;
           transition: color 150ms ease;
         " class="nav-link">Markets</a>
-        <a href="/pricing" style="
-          font-family: var(--font-body);
-          font-size: 14px;
-          font-weight: 500;
-          color: var(--silver-dim);
-          letter-spacing: 0.04em;
-          transition: color 150ms ease;
-        " class="nav-link">Pricing</a>
         <a href="/assess" style="
           font-family: var(--font-body);
           font-size: 14px;
@@ -180,7 +172,6 @@ const currentPath = Astro.url.pathname;
         <a href="/articles" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Articles</a>
         <a href="/about" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">About</a>
         <a href="/markets" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Markets</a>
-        <a href="/pricing" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Pricing</a>
         <a href="/assess" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--gold);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Assess ✦</a>
         <a href="/contact" style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">Contact</a>
       </nav>
@@ -204,7 +195,7 @@ const currentPath = Astro.url.pathname;
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px;margin-bottom:32px;">
           <div>
             <img src="/assets/logo.png" alt="AHoosh" style="height:44px;width:auto;margin-bottom:8px;" />
-            <p style="font-size:12px;color:var(--silver-muted);margin:0;">AI-Augmented B2B Operations</p>
+            <p style="font-size:12px;color:var(--silver-muted);margin:0;">AI · Market Data · Research · Consulting</p>
           </div>
           <nav style="display:flex;flex-direction:column;gap:10px;">
             <a href="/consulting" style="font-size:13px;color:var(--silver-dim);">Consulting</a>
@@ -212,7 +203,6 @@ const currentPath = Astro.url.pathname;
             <a href="/about" style="font-size:13px;color:var(--silver-dim);">About</a>
             <a href="/markets" style="font-size:13px;color:var(--silver-dim);">Markets</a>
             <a href="/assess" style="font-size:13px;color:var(--gold);">Assess</a>
-            <a href="/pricing" style="font-size:13px;color:var(--silver-dim);">Pricing</a>
             <a href="/contact" style="font-size:13px;color:var(--silver-dim);">Contact</a>
           </nav>
         </div>

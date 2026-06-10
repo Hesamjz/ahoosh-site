@@ -4,16 +4,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="Markets"
-  description="Live FX rates, gold, commodities, and crypto for cross-border operators in MENA, Europe, and Balkans. Powered by AHoosh."
+  description="AHoosh tracks selected market signals, prices, and public data to support better business and investment decisions. FX, gold, crypto, and commodities."
 >
 
   <!-- Hero -->
   <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:40px 24px 28px;border-bottom:1px solid rgba(215,161,61,0.1);">
     <div style="max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <div>
-        <div class="section-eyebrow" style="margin-bottom:6px;">Markets Hub</div>
-        <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--silver);margin:0;line-height:1.2;">Live Data for Cross-Border Operators</h1>
-        <p style="font-size:13px;color:var(--silver-dim);margin-top:6px;">FX · Gold · Crypto · Commodities — MENA, Balkans, EU</p>
+        <div class="section-eyebrow" style="margin-bottom:6px;">Market Data</div>
+        <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--silver);margin:0;line-height:1.2;">Selected Market Signals &amp; Prices</h1>
+        <p style="font-size:13px;color:var(--silver-dim);margin-top:6px;">FX · Gold · Crypto · Commodities · Informational data, not financial advice</p>
       </div>
       <div id="last-updated" style="font-size:11px;color:var(--silver-muted);text-align:right;"></div>
     </div>
@@ -53,19 +53,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </section>
 
-    <!-- AI Strategy CTA -->
+    <!-- Consulting bridge -->
     <div style="background:rgba(215,161,61,0.07);border:1px solid rgba(215,161,61,0.2);border-radius:8px;padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
       <div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--silver);margin-bottom:4px;">Turn market data into a strategic plan</div>
-        <div style="font-size:13px;color:var(--silver-dim);">Get an AI-generated SWOT, Business Model Canvas, or market-entry plan for your business — informed by live data.</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--silver);margin-bottom:4px;">Need help interpreting this data?</div>
+        <div style="font-size:13px;color:var(--silver-dim);">AHoosh can help you turn market signals into a practical research report, strategy assessment, or decision framework for your specific situation.</div>
       </div>
-      <a href="/contact" class="btn-primary" style="white-space:nowrap;flex-shrink:0;">Book a Strategy Call</a>
+      <a href="/contact" class="btn-primary" style="white-space:nowrap;flex-shrink:0;">Request Consulting</a>
     </div>
 
-    <!-- Attribution -->
-    <div style="margin-top:24px;font-size:11px;color:var(--silver-muted);line-height:1.6;">
-      Data sources: European Central Bank (via Frankfurter) · CoinGecko · Gold API · Metals.live · Manual sourcing for IRR.
-      Prices are indicative and delayed. Not investment advice.
+    <!-- Attribution + disclaimer -->
+    <div style="margin-top:24px;font-size:11px;color:var(--silver-muted);line-height:1.8;">
+      <strong style="color:var(--silver-dim);">Disclaimer:</strong> This data is for informational purposes only and is not financial advice.
+      Data may be delayed or incomplete. Verify all figures independently before making financial or business decisions.
+      AHoosh is not a broker, trading platform, or investment service.<br/>
+      Data sources: European Central Bank (via Frankfurter API) · CoinGecko · Manual sourcing for selected rates.
     </div>
   </div>
 
