@@ -21,10 +21,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
     .fade-in { animation: fadeIn .3s ease both; }
     .card-hover { transition: all .2s; cursor: pointer; }
-    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
+
+    /* ── Dark theme overrides for assess page ── */
+    #root { background: #060F1E; min-height: 60vh; }
+    #root .bg-gray-50  { background: #060F1E !important; }
+    #root .bg-white    { background: rgba(8,22,50,0.95) !important; }
+
+    /* Card borders */
+    #root .border-gray-100 { border-color: rgba(215,161,61,0.15) !important; }
+    #root .border-gray-200 { border-color: rgba(215,161,61,0.18) !important; }
+    #root .border-b        { border-bottom-color: rgba(215,161,61,0.12) !important; }
+
+    /* Text */
+    #root .text-navy   { color: #e8eaf0 !important; }
+    #root .text-gray-600 { color: #8a9bb0 !important; }
+    #root .text-gray-500 { color: #7a8b9e !important; }
+    #root .text-gray-400 { color: #5e6e82 !important; }
+    #root .text-gray-300 { color: #3a4a5c !important; }
+
+    /* Progress bar track */
+    #root .bg-gray-100 { background: rgba(255,255,255,0.08) !important; }
+
+    /* Selected Likert button */
+    #root .bg-amber-50 { background: rgba(215,161,61,0.15) !important; }
+
+    /* Shadows */
+    #root .shadow-sm { box-shadow: 0 2px 12px rgba(0,0,0,0.5) !important; }
+
+    /* Tag badges */
+    #root .bg-violet-100 { background: rgba(124,58,237,0.18) !important; }
+    #root .text-violet-700 { color: #a78bfa !important; }
+    #root .bg-pink-100 { background: rgba(236,72,153,0.18) !important; }
+    #root .text-pink-700 { color: #f472b6 !important; }
+    #root .bg-sky-100 { background: rgba(14,165,233,0.18) !important; }
+    #root .text-sky-700 { color: #38bdf8 !important; }
+    #root .bg-emerald-100 { background: rgba(16,185,129,0.18) !important; }
+    #root .text-emerald-700 { color: #34d399 !important; }
+    #root .bg-gray-100.rounded-full { background: rgba(255,255,255,0.08) !important; color: #8a9bb0 !important; }
+
+    /* Sticky question header */
+    #root .sticky { background: rgba(6,15,30,0.97) !important; backdrop-filter: blur(8px); }
   </style>
 
-  <div id="root" class="bg-gray-50 antialiased"></div>
+  <div id="root" class="antialiased"></div>
 
   <script is:inline>
   (function(){
