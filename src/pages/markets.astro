@@ -81,24 +81,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
     .price-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(215,161,61,0.12);
+      background: rgba(10,30,60,0.85);
+      border: 1px solid rgba(215,161,61,0.22);
       border-radius: 6px;
       padding: 14px;
       transition: border-color 150ms ease;
     }
-    .price-card:hover { border-color: rgba(215,161,61,0.35); }
+    .price-card:hover { border-color: rgba(215,161,61,0.5); }
     .price-card .symbol {
       font-family: var(--font-head);
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.06em;
-      color: var(--silver);
+      color: #e8eaf0;
       margin-bottom: 2px;
     }
     .price-card .name {
       font-size: 10px;
-      color: var(--silver-muted);
+      color: #8a9bb0;
       margin-bottom: 10px;
       white-space: nowrap;
       overflow: hidden;
@@ -108,7 +108,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       font-family: var(--font-head);
       font-weight: 700;
       font-size: 17px;
-      color: var(--gold);
+      color: #D7A13D;
       line-height: 1;
       margin-bottom: 6px;
     }
@@ -116,9 +116,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       font-size: 11px;
       font-weight: 600;
     }
-    .change-up   { color: #4ade80; }
+    .change-up   { color: #34d399; }
     .change-down { color: #f87171; }
-    .change-flat { color: var(--silver-muted); }
+    .change-flat { color: #8a9bb0; }
+
+    @keyframes flashUp   { 0%{background:rgba(52,211,153,0.25)} 100%{background:rgba(10,30,60,0.85)} }
+    @keyframes flashDown { 0%{background:rgba(248,113,113,0.25)} 100%{background:rgba(10,30,60,0.85)} }
+    .flash-up   { animation: flashUp   0.8s ease forwards; }
+    .flash-down { animation: flashDown 0.8s ease forwards; }
   </style>
 
   <script is:inline>
@@ -172,15 +177,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       return sign + Math.abs(c).toFixed(2) + '%';
     }
 
+    // Track previous prices for flash detection
+    const prevPrices = {};
+
     function buildCard(item) {
       const d = document.createElement('div');
       d.className = 'price-card';
+      d.dataset.symbol = item.symbol;
       d.innerHTML =
         '<div class="symbol">' + item.symbol + '</div>' +
         '<div class="name">' + item.name + '</div>' +
         '<div class="price">' + fmt(item.price) + '</div>' +
         '<div class="change ' + changeClass(item.change) + '">' + changeLabel(item.change) + '</div>';
+      prevPrices[item.symbol] = item.price;
       return d;
+    }
+
+    function updateCard(card, item) {
+      const prev = prevPrices[item.symbol];
+      const priceEl  = card.querySelector('.price');
+      const changeEl = card.querySelector('.change');
+      if (priceEl)  priceEl.textContent = fmt(item.price);
+      if (changeEl) {
+        changeEl.textContent  = changeLabel(item.change);
+        changeEl.className    = 'change ' + changeClass(item.change);
+      }
+      // Flash on price movement
+      if (prev !== undefined && item.price !== prev) {
+        card.classList.remove('flash-up','flash-down');
+        void card.offsetWidth; // reflow to restart animation
+        card.classList.add(item.price > prev ? 'flash-up' : 'flash-down');
+      }
+      prevPrices[item.symbol] = item.price;
     }
 
     function render(data) {
@@ -188,10 +216,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const gridId = key === 'commodities' ? 'commodity-grid' : key + '-grid';
         const grid = document.getElementById(gridId);
         if (!grid) return;
-        grid.innerHTML = '';
-        (data[key] || []).forEach(function(item) {
-          grid.appendChild(buildCard(item));
-        });
+        const items = data[key] || [];
+        const existing = grid.querySelectorAll('.price-card');
+        if (existing.length === 0 || existing.length !== items.length) {
+          // First render or count changed — rebuild
+          grid.innerHTML = '';
+          items.forEach(function(item) { grid.appendChild(buildCard(item)); });
+        } else {
+          // In-place update with flash
+          items.forEach(function(item, i) { updateCard(existing[i], item); });
+        }
       });
 
       const lu = document.getElementById('last-updated');
