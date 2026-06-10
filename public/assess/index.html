@@ -654,12 +654,8 @@ function Home({onSelectTest}){
   const tagColors={'Personality':'bg-violet-100 text-violet-700','Emotional Intelligence':'bg-pink-100 text-pink-700','Self & Wellbeing':'bg-sky-100 text-sky-700','Leadership':'bg-emerald-100 text-emerald-700'};
   return h('div',{className:'min-h-screen bg-navy flex flex-col'},
     h('header',{className:'px-6 py-5 flex items-center justify-between'},
-      h('div',{className:'flex items-center gap-2.5'},
-        h('div',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" width="32" height="32"><rect width="32" height="32" rx="6" fill="#03142E"/><path d="M7 16c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5-2 4.5-4.5 4.5S7 18.5 7 16zm9 0c0-2.5 2-4.5 4.5-4.5S25 13.5 25 16s-2 4.5-4.5 4.5S16 18.5 16 16z" stroke="#D7A13D" stroke-width="2.2" stroke-linecap="round"/></svg>'}}),
-        h('div',{className:'flex flex-col leading-none'},
-          h('span',{className:'text-gold font-bold text-base leading-tight'},'AHoosh'),
-          h('span',{className:'text-silver/60 text-xs'},'Assess')
-        )
+      h('a',{href:'/',className:'flex items-center gap-2'},
+        h('img',{src:'/assets/logo.png',alt:'AHoosh',style:'height:40px;width:auto;'})
       ),
       h('span',{className:'text-silver/40 text-xs'},'Free · No sign-up')
     ),
