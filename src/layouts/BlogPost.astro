@@ -1,0 +1,234 @@
+---
+/**
+ * BlogPost.astro — Article layout with structured data injection
+ * Injects:
+ *   1. Article JSON-LD  (always)
+ *   2. FAQPage JSON-LD  (when faqItems prop is provided, or when mdx frontmatter supplies faq[])
+ *
+ * Usage in [slug].astro:
+ *   import BlogPost from '../../layouts/BlogPost.astro';
+ *   <BlogPost post={post}><Content /></BlogPost>
+ */
+
+import BaseLayout from './BaseLayout.astro';
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  post: {
+    id: string;
+    data: {
+      title: string;
+      description?: string;
+      pubDate: Date;
+      updatedDate?: Date;
+      heroImage?: string;
+      tags?: string[];
+      /** Optional FAQ pairs injected via frontmatter or parent page */
+      faq?: FaqItem[];
+    };
+  };
+  /** Override faq from frontmatter — e.g. pass from [slug].astro directly */
+  faqItems?: FaqItem[];
+}
+
+const { post, faqItems: faqOverride } = Astro.props;
+const { data } = post;
+
+// Resolve FAQ items: explicit prop wins, then frontmatter faq[], then nothing
+const faq: FaqItem[] = faqOverride ?? (data as any).faq ?? [];
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://ahoosh.ai';
+
+// Article JSON-LD
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": data.title,
+  "description": data.description ?? '',
+  "datePublished": data.pubDate.toISOString(),
+  "dateModified": (data.updatedDate ?? data.pubDate).toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": "Hesam Jafarzadeh",
+    "url": `${siteUrl}/about`
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AHoosh",
+    "url": siteUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/assets/logo-dark.png`
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalURL.toString()
+  },
+  ...(data.heroImage ? {
+    "image": {
+      "@type": "ImageObject",
+      "url": data.heroImage.startsWith('http') ? data.heroImage : `${siteUrl}${data.heroImage}`
+    }
+  } : {})
+};
+
+// FAQPage JSON-LD (only if faq items present)
+const faqSchema = faq.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faq.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+} : null;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  ogImage={data.heroImage}
+>
+
+  <!-- JSON-LD structured data (body injection — valid per Google guidelines) -->
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  {faqSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  )}
+
+  <!-- Article hero -->
+  <section style="
+    background: linear-gradient(160deg, #03142E 0%, #010A18 100%);
+    padding: 48px 24px 40px;
+    border-bottom: 1px solid rgba(215,161,61,0.1);
+  ">
+    <div style="max-width:680px;margin:0 auto;">
+      <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">
+        {data.tags?.[0] ?? 'Article'}
+      </div>
+      <h1 style="
+        font-family: var(--font-head);
+        font-weight: 700;
+        font-size: clamp(22px, 5vw, 34px);
+        line-height: 1.25;
+        color: var(--silver);
+        margin-bottom: 16px;
+        letter-spacing: -0.01em;
+      ">{data.title}</h1>
+      {data.description && (
+        <p style="font-size:15px;color:var(--silver-dim);line-height:1.6;margin-bottom:20px;">
+          {data.description}
+        </p>
+      )}
+      <p style="font-size:12px;color:var(--silver-muted);">
+        {data.pubDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
+        {data.updatedDate && (
+          <span style="margin-left:12px;color:var(--silver-muted);">
+            (Updated {data.updatedDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })})
+          </span>
+        )}
+      </p>
+    </div>
+  </section>
+
+  <!-- Article body -->
+  <article style="max-width:680px;margin:0 auto;padding:40px 24px 56px;">
+    <div class="prose">
+      <slot />
+    </div>
+
+    <!-- FAQ section (rendered visually if faqItems present) -->
+    {faq.length > 0 && (
+      <div style="margin-top:48px;border-top:1px solid rgba(215,161,61,0.1);padding-top:40px;">
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;">FAQ</div>
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          {faq.map((item) => (
+            <div>
+              <div style="font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--silver);margin-bottom:8px;">{item.question}</div>
+              <div style="font-size:14px;color:var(--silver-dim);line-height:1.7;">{item.answer}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div style="margin-top:48px;padding-top:24px;border-top:1px solid rgba(215,161,61,0.1);">
+      <a href="/articles" class="link-gold" style="font-size:13px;">← All Articles</a>
+    </div>
+  </article>
+
+</BaseLayout>
+
+<style>
+  .prose :global(h2) {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(18px, 3vw, 24px);
+    color: var(--silver);
+    margin: 40px 0 16px;
+    line-height: 1.3;
+  }
+  .prose :global(h3) {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: var(--silver);
+    margin: 32px 0 12px;
+  }
+  .prose :global(p) {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--silver-dim);
+    margin-bottom: 20px;
+  }
+  .prose :global(a) {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose :global(strong) {
+    color: var(--silver);
+    font-weight: 600;
+  }
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--gold);
+    padding: 4px 0 4px 20px;
+    margin: 24px 0;
+    color: var(--silver-dim);
+    font-style: italic;
+  }
+  .prose :global(code) {
+    background: rgba(215,161,61,0.1);
+    color: var(--gold-light);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.875em;
+  }
+  .prose :global(pre) {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(215,161,61,0.15);
+    padding: 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 24px;
+  }
+  .prose :global(ul), .prose :global(ol) {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+  .prose :global(li) {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--silver-dim);
+    margin-bottom: 6px;
+  }
+</style>
