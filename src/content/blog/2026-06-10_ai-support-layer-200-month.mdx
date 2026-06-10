@@ -1,0 +1,91 @@
+---
+title: "Build an AI Customer Support Layer for €200/Month"
+description: "A 400-customer B2B distributor handling 20 support queries per day can automate 65–70% of them for under €200/month. Here's the exact stack and what it takes to get there."
+pubDate: 2026-06-10
+tags: ["AI Operations", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=900&q=80" alt="Customer support and AI automation" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+The benchmark for AI-resolved customer support in B2B distribution in 2026 is 65% — meaning 65 out of every 100 inbound queries are handled by AI without a human touching them (Gleap, 2026). That number is achievable with a tool stack that costs less than €200/month for a mid-size B2B operation.
+
+This post covers what that stack looks like, what it takes to reach the 65% threshold, and why most deployments stay stuck at 10–20%.
+
+---
+
+## What 65% Resolution Actually Requires
+
+The 65% resolution rate is not a product feature you turn on. It's an outcome that depends on three things being in place simultaneously:
+
+**1. Knowledge base coverage.** The AI can only resolve queries that map to information it has. For B2B distributors, the standard query types that AI can handle are: stock availability, order status, delivery time estimate, invoice questions, product specifications, return/exchange procedures, and standard pricing.
+
+If the AI's knowledge base covers these categories thoroughly, resolution rates above 65% are achievable. If the knowledge base is thin — a few FAQs and no connection to live order data — resolution rates stall at 10–20%.
+
+**2. ERP/order system integration.** Stock availability and order status queries cannot be resolved by static knowledge. They require a live data connection to your order management system or ERP. This is the single integration step most deployments skip — and it's why "we have a chatbot" is different from "our chatbot resolves 65% of queries."
+
+**3. Escalation routing.** The 35% of queries the AI can't resolve must go somewhere useful. An escalation path that routes to the right person with context pre-loaded (what the customer asked, what the AI tried, what the relevant order data shows) makes human resolution faster and prevents the same query from bouncing twice.
+
+---
+
+## The Stack
+
+<img src="/charts/cost-per-ticket.png" alt="Human vs AI cost per support ticket comparison" style="width:100%;border-radius:6px;margin:24px 0;" />
+
+For a B2B distributor with 50–500 customers and a query volume of 10–50 per day, the following stack reaches the 65% threshold for under €200/month:
+
+**Tidio** (customer service platform with AI) — €29–€79/month depending on tier. Handles WhatsApp, web chat, email inbox routing, and a built-in AI layer trained on your knowledge base. The AI component uses Claude or GPT-4 as the underlying model depending on tier.
+
+**Zapier or Make** (integration layer) — €9–€29/month. Connects Tidio to your ERP or order management system. Zapier's B2B distributor use case: when a customer asks about order #12345, Zapier pulls the order status from your ERP and passes it to Tidio's AI as context. No code required.
+
+**Your existing ERP** — no additional cost. Most ERP systems (SAP Business One, Odoo, WooCommerce-based systems) have API access or Zapier connectors.
+
+**Total:** €38–€108/month before your time investment.
+
+The time investment — building the knowledge base, training the AI on your product catalog and standard responses, configuring escalation routing — takes 2–4 weeks of focused part-time work. After that, maintenance is 1–2 hours per week.
+
+---
+
+## Why Most Deployments Stay Stuck at 10%
+
+The gap between "we installed a chatbot" and "our chatbot resolves 65% of queries" is almost entirely explained by these four skipped steps:
+
+**Skipped: training on your actual products.** A generic AI trained on your website copy will produce generic answers. An AI trained on your specific SKU catalog, your pricing structure, your delivery zones, and your return policy produces specific answers. The training step is manual, repetitive, and not glamorous — and it's where most operators stop.
+
+**Skipped: ERP integration.** Static knowledge ("we have this product in stock, typically") doesn't satisfy "do you have item X in stock right now in the warehouse?" Real-time integration does. The integration step typically takes 4–8 hours with Zapier.
+
+**Skipped: escalation routing.** When the AI can't answer, it shouldn't just say "contact us." It should route to the relevant person (order queries → order desk; billing queries → accounts; technical queries → product specialist) with the conversation context attached. Setting this up takes another 2–4 hours.
+
+**Skipped: first-week monitoring.** The first week after go-live reveals what the AI gets wrong. Checking the escalation queue daily for the first two weeks and updating the knowledge base based on what breaks covers 80% of the training gaps.
+
+---
+
+## The ROI Math
+
+For a distributor handling 20 queries per day:
+
+- Without AI: 20 queries × €9 average human cost per query (at 15 min/query, €36/hr) = €180/day, ~€46,800/year
+- With AI at 65% resolution: 7 human queries × €9 = €63/day, ~€16,380/year
+- AI tool cost: ~€75/month = €900/year
+- **Net saving: ~€29,500/year** on a tool that costs €900
+
+These numbers are conservative — they use the low end of the human cost estimate and the base-tier resolution rate. The 30-day payback math works at query volumes well below 20/day.
+
+---
+
+## Getting Started
+
+The sequence that reaches 65% resolution:
+
+1. Audit your current query types — pull the last 3 months of support emails/messages and categorize them. You'll find that 70–80% fall into 5–7 categories.
+2. Build a knowledge base document covering those categories completely. Not FAQ bullets — full policy explanations with specific examples.
+3. Set up Tidio and train it on the knowledge base. Start with web chat only.
+4. Wire up the ERP integration for order status via Zapier.
+5. Configure escalation routing for query types the AI can't handle.
+6. Go live and monitor daily for the first two weeks.
+
+That sequence takes 2–4 weeks for a first-time implementation. The resolution rate on day 1 will be 20–30%. By week 6, with knowledge base updates based on real query patterns, 60–70% is achievable.
+
+---
+
+**AHoosh builds AI support implementations for B2B distributors.** The audit, stack recommendation, training, and integration setup — done for you. [ahoosh.ai/contact](https://ahoosh.ai/contact)
