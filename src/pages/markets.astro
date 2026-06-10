@@ -67,7 +67,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <strong style="color:var(--silver-dim);">Disclaimer:</strong> This data is for informational purposes only and is not financial advice.
       Data may be delayed or incomplete. Verify all figures independently before making financial or business decisions.
       AHoosh is not a broker, trading platform, or investment service.<br/>
-      Data sources: European Central Bank (via Frankfurter API) · CoinGecko · Manual sourcing for selected rates.
+      Data sources: European Central Bank (via Frankfurter API) · <a href="https://tgju.org" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">TGJU</a> (Iranian Rial market rates) · ExchangeRate-API (RSD) · Yahoo Finance (commodities) · CoinGecko (crypto). IRR rates are free-market rates in rials, refreshed ~5 min.
     </div>
   </div>
 
@@ -133,18 +133,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     const FALLBACK = {
       fx: [
-        { symbol: 'EUR/USD', name: 'Euro / US Dollar',       price: 1.0823, change: +0.21 },
-        { symbol: 'EUR/GBP', name: 'Euro / British Pound',   price: 0.8512, change: -0.08 },
-        { symbol: 'EUR/CHF', name: 'Euro / Swiss Franc',     price: 0.9401, change: +0.04 },
-        { symbol: 'EUR/RSD', name: 'Euro / Serbian Dinar',   price: 117.23, change: 0.00  },
-        { symbol: 'EUR/TRY', name: 'Euro / Turkish Lira',    price: 35.12,  change: -0.31 },
-        { symbol: 'EUR/IRR', name: 'Euro / Iranian Rial',    price: 63400,  change: null  },
+        { symbol: 'EUR/USD', name: 'Euro / US Dollar',       price: 1.1539,  change: null },
+        { symbol: 'EUR/GBP', name: 'Euro / British Pound',   price: 0.8623,  change: null },
+        { symbol: 'EUR/CHF', name: 'Euro / Swiss Franc',     price: 0.9222,  change: null },
+        { symbol: 'EUR/RSD', name: 'Euro / Serbian Dinar',   price: 117.38,  change: null },
+        { symbol: 'EUR/TRY', name: 'Euro / Turkish Lira',    price: 53.24,   change: null },
+        { symbol: 'USD/IRR', name: 'US Dollar / Iranian Rial (market)', price: 1769800, change: null },
+        { symbol: 'EUR/IRR', name: 'Euro / Iranian Rial (market)',      price: 2043100, change: null },
       ],
       commodities: [
-        { symbol: 'XAU/USD', name: 'Gold oz',        price: 2340.50, change: +0.53 },
-        { symbol: 'XAG/USD', name: 'Silver oz',      price: 29.85,   change: +1.53 },
-        { symbol: 'BRENT',   name: 'Brent Crude',    price: 84.20,   change: -0.40 },
-        { symbol: 'WTI',     name: 'WTI Crude',      price: 80.65,   change: -0.38 },
+        { symbol: 'XAU/USD', name: 'Gold oz',        price: 4079.90, change: null },
+        { symbol: 'XAG/USD', name: 'Silver oz',      price: 64.21,   change: null },
+        { symbol: 'BRENT',   name: 'Brent Crude',    price: 93.55,   change: null },
+        { symbol: 'WTI',     name: 'WTI Crude',      price: 90.51,   change: null },
       ],
       crypto: [
         { symbol: 'BTC', name: 'Bitcoin',   price: 67500,  change: +1.24 },
@@ -239,32 +240,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     async function fetchLive() {
       try {
-        // EUR FX via Frankfurter (ECB)
+        // EUR majors via Frankfurter v1 (ECB — note: no RSD, no IRR there)
         const fxResp = await fetch(
-          'https://api.frankfurter.app/latest?from=EUR&to=USD,GBP,CHF,RSD,TRY',
+          'https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD,GBP,CHF,TRY',
           { signal: AbortSignal.timeout(8000) }
-        );
-        const fxData = fxResp.ok ? await fxResp.json() : null;
+        ).catch(function(){ return null; });
+        const fxData = fxResp && fxResp.ok ? await fxResp.json() : null;
+
+        // IRR (TGJU market rates) + RSD + commodities via our edge proxy
+        const mResp = await fetch('/api/markets', {
+          signal: AbortSignal.timeout(15000),
+        }).catch(function(){ return null; });
+        const mData = mResp && mResp.ok ? await mResp.json() : null;
 
         // Crypto via CoinGecko
         const cgResp = await fetch(
           'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=8&page=1&price_change_percentage=24h',
           { signal: AbortSignal.timeout(12000) }
-        );
-        const cgData = cgResp.ok ? await cgResp.json() : null;
+        ).catch(function(){ return null; });
+        const cgData = cgResp && cgResp.ok ? await cgResp.json() : null;
 
         const result = JSON.parse(JSON.stringify(FALLBACK)); // deep clone fallback
 
-        if (fxData && fxData.rates) {
-          result.fx = [
-            { symbol: 'EUR/USD', name: 'Euro / US Dollar',     price: fxData.rates.USD || FALLBACK.fx[0].price, change: null },
-            { symbol: 'EUR/GBP', name: 'Euro / British Pound', price: fxData.rates.GBP || FALLBACK.fx[1].price, change: null },
-            { symbol: 'EUR/CHF', name: 'Euro / Swiss Franc',   price: fxData.rates.CHF || FALLBACK.fx[2].price, change: null },
-            { symbol: 'EUR/RSD', name: 'Euro / Serbian Dinar', price: fxData.rates.RSD || FALLBACK.fx[3].price, change: null },
-            { symbol: 'EUR/TRY', name: 'Euro / Turkish Lira',  price: fxData.rates.TRY || FALLBACK.fx[4].price, change: null },
-            { symbol: 'EUR/IRR', name: 'Euro / Iranian Rial',  price: FALLBACK.fx[5].price, change: null },
-          ];
-        }
+        const rates = (fxData && fxData.rates) || {};
+        const m = mData || {};
+        const irrUsd = (m.irr && m.irr.usd) || null;
+        const irrEur = (m.irr && m.irr.eur) || null;
+        const rsd = m.eur_rsd || null;
+        result.fx = [
+          { symbol: 'EUR/USD', name: 'Euro / US Dollar',     price: rates.USD || FALLBACK.fx[0].price, change: null },
+          { symbol: 'EUR/GBP', name: 'Euro / British Pound', price: rates.GBP || FALLBACK.fx[1].price, change: null },
+          { symbol: 'EUR/CHF', name: 'Euro / Swiss Franc',   price: rates.CHF || FALLBACK.fx[2].price, change: null },
+          { symbol: 'EUR/RSD', name: 'Euro / Serbian Dinar', price: (rsd && rsd.price) || FALLBACK.fx[3].price, change: null },
+          { symbol: 'EUR/TRY', name: 'Euro / Turkish Lira',  price: rates.TRY || FALLBACK.fx[4].price, change: null },
+          { symbol: 'USD/IRR', name: 'US Dollar / Iranian Rial (market)',
+            price: (irrUsd && irrUsd.price) || FALLBACK.fx[5].price,
+            change: irrUsd ? irrUsd.change : null },
+          { symbol: 'EUR/IRR', name: 'Euro / Iranian Rial (market)',
+            price: (irrEur && irrEur.price) || FALLBACK.fx[6].price,
+            change: irrEur ? irrEur.change : null },
+        ];
+
+        const com = m.commodities || {};
+        result.commodities = [
+          { symbol: 'XAU/USD', name: 'Gold oz',     price: (com.gold   && com.gold.price)   || FALLBACK.commodities[0].price, change: com.gold   ? com.gold.change   : null },
+          { symbol: 'XAG/USD', name: 'Silver oz',   price: (com.silver && com.silver.price) || FALLBACK.commodities[1].price, change: com.silver ? com.silver.change : null },
+          { symbol: 'BRENT',   name: 'Brent Crude', price: (com.brent  && com.brent.price)  || FALLBACK.commodities[2].price, change: com.brent  ? com.brent.change  : null },
+          { symbol: 'WTI',     name: 'WTI Crude',   price: (com.wti    && com.wti.price)    || FALLBACK.commodities[3].price, change: com.wti    ? com.wti.change    : null },
+        ];
 
         if (cgData && Array.isArray(cgData)) {
           result.crypto = cgData.slice(0, 8).map(function(c) {
