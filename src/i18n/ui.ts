@@ -59,9 +59,9 @@ export const CHROME: Record<
     about: 'درباره ما',
     markets: 'بازارها',
     assess: 'آزمون‌ها ✦',
-    bookCall: 'رزرو گفت‌وگو',
+    bookCall: 'تماس با ما',
     contact: 'تماس',
-    bookDiscovery: 'رزرو جلسه آشنایی',
+    bookDiscovery: 'گفت‌وگو با آهوش',
     footerTagline: 'هوش مصنوعی · داده بازار · پژوهش · مشاوره',
   },
   de: {
