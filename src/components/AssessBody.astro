@@ -118,10 +118,7 @@ const { banner } = Astro.props;
   // ─── TEST CATALOGUE ───────────────────────────────────
   const TESTS=[
     {id:'big5',title:'Big Five Personality',subtitle:'IPIP-50 · 50 questions · ~10 min',icon:'🧠',color:'#7C3AED',desc:'The most widely used personality framework. Measures 5 core traits that predict workplace behavior, team dynamics, and career fit.',questions:BIG5_Q,labels:[{v:1,s:"Very Inaccurate"},{v:2,s:"Mod. Inaccurate"},{v:3,s:"Neither"},{v:4,s:"Mod. Accurate"},{v:5,s:"Very Accurate"}],score:scoreBig5,resultType:'big5',traits:BIG5_TRAITS,traitOrder:['E','A','C','N','O'],tagline:'Personality'},
-    {id:'eq',title:'Emotional Intelligence',subtitle:'SREIT · 33 questions · ~8 min',icon:'❤️',color:'#EC4899',desc:'Measures your ability to perceive, manage, and use emotions effectively — a key predictor of leadership success and team cohesion.',questions:EQ_Q,labels:EQ_LABELS,score:scoreEQ,resultType:'eq',traits:EQ_TRAITS,traitOrder:['PE','MO','MO2','UE'],tagline:'Emotional Intelligence'},
-    {id:'eysenck',title:'Core Traits Snapshot',subtitle:'IPIP · 30 questions · ~7 min',icon:'⚡',color:'#D97706',desc:'A focused 3-factor personality model measuring Extraversion, Neuroticism (emotional stability), and Conscientiousness.',questions:EYS_Q,labels:EYS_LABELS,score:scoreEYS,resultType:'standard',traits:EYS_TRAITS,traitOrder:['E','N','P'],tagline:'Personality'},
     {id:'selfesteem',title:'Self-Esteem',subtitle:'Rosenberg Scale · 10 questions · ~3 min',icon:'🌟',color:'#0891B2',desc:'The gold standard for self-esteem measurement. Used in clinical, educational, and HR contexts worldwide.',questions:SE_Q,labels:SE_LABELS,score:scoreSE,resultType:'selfesteem',tagline:'Self & Wellbeing'},
-    {id:'leadership',title:'Leadership Style',subtitle:'Original · 20 questions · ~5 min',icon:'🎯',color:'#059669',desc:'Identifies your dominant leadership orientation across 4 dimensions: Directive, Collaborative, Strategic, and Adaptive.',questions:LS_Q,labels:LS_LABELS,score:scoreLS,resultType:'standard',traits:LS_TRAITS,traitOrder:['DI','CO','ST','AD'],tagline:'Leadership'},
   ];
 
   // ─── SHARED COMPONENTS ────────────────────────────────
