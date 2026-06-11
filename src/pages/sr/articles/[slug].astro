@@ -1,15 +1,13 @@
 ---
-import BlogPost from '../../layouts/BlogPost.astro';
+import BlogPost from '../../../layouts/BlogPost.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  // English articles only — translations live under fa/ de/ sr/ subfolders
-  // and are served by the locale routes (/fa/articles/... etc.)
   return posts
-    .filter((post) => !/^(fa|de|sr)\//.test(post.id))
+    .filter((post) => post.id.startsWith('sr/'))
     .map((post) => ({
-      params: { slug: post.id },
+      params: { slug: post.id.slice(3) },
       props: { post },
     }));
 }

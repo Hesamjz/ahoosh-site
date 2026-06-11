@@ -11,6 +11,12 @@
  */
 
 import BaseLayout from './BaseLayout.astro';
+import { localeOf, LOCALE_META } from '../i18n/ui';
+
+const _locale = localeOf(Astro.url.pathname);
+const _base = LOCALE_META[_locale].base;
+const _backLabel = { en: '← All Articles', fa: '← همه مقالات', de: '← Alle Artikel', sr: '← Svi članci' }[_locale];
+const _dateLocale = { en: 'en-GB', fa: 'fa-IR', de: 'de-DE', sr: 'sr-Latn-RS' }[_locale];
 
 interface FaqItem {
   question: string;
@@ -130,10 +136,10 @@ const faqSchema = faq.length > 0 ? {
         </p>
       )}
       <p style="font-size:12px;color:var(--silver-muted);">
-        {data.pubDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
+        {data.pubDate.toLocaleDateString(_dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
         {data.updatedDate && (
-          <span style="margin-left:12px;color:var(--silver-muted);">
-            (Updated {data.updatedDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })})
+          <span style="margin-inline-start:12px;color:var(--silver-muted);">
+            ({data.updatedDate.toLocaleDateString(_dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })})
           </span>
         )}
       </p>
@@ -162,7 +168,7 @@ const faqSchema = faq.length > 0 ? {
     )}
 
     <div style="margin-top:48px;padding-top:24px;border-top:1px solid rgba(215,161,61,0.1);">
-      <a href="/articles" class="link-gold" style="font-size:13px;">← All Articles</a>
+      <a href={`${_base}/articles`} class="link-gold" style="font-size:13px;">{_backLabel}</a>
     </div>
   </article>
 

@@ -1,0 +1,107 @@
+---
+title: "Četiri metrike koje AI pretvaraju iz troška u dokumentovanu prednost"
+description: "68% veledistributera koji koriste AI ne može da izmeri njegov ROI. Problem merenja nije problem podataka — već problem polazne vrednosti. Evo okvira od četiri metrike koji ga zatvara."
+pubDate: 2026-06-10
+tags: ["AI Operations", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80"
+lang: sr
+translationOf: "2026-06-10_ai-measurement-framework"
+---
+
+<img src="/charts/ai-roi-gap.png" alt="Jaz u merenju ROI od AI — 68% distributera ne može da izmeri ROI od AI" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+68% veledistributera koji koriste AI ne može da izmeri njegov ROI. Alate su uveli, veruju da rade posao, ali nemaju brojke koje to dokazuju (Applied AI for Distributors 2026).
+
+Ovo nije problem podataka. Podaci postoje u svakoj operaciji koja koristi AI — broj tiketa, stope rešavanja, broj izuzetaka kod porudžbina, vremena obrade. Problem je u tome što niko nije utvrdio kako su ti brojevi izgledali *pre* nego što je AI pušten u rad. Bez stanja „pre", nema poređenja. Bez poređenja, nema dokaza.
+
+Rešenje nije komplikovano. Četiri metrike, utvrđene kao polazne vrednosti pre puštanja u rad, praćene nedeljno posle toga.
+
+---
+
+## Zašto jaz u merenju uopšte postoji
+
+Tri obrasca se dosledno ponavljaju u organizacijama koje ne mogu da izmere ROI od AI:
+
+**Obrazac 1 — Alat je kupljen iz tehnološkog budžeta, a ne iz operativnog.** Tehnološke nabavke često ne prolaze isti prag opravdanja ROI kao operativni troškovi. Alat se kupi, uvede i utopi u stavku za softver, bez ikakvog očekivanja da će se nešto meriti.
+
+**Obrazac 2 — Uvođenje je prošlo bez snimanja polaznog stanja.** Tim je uveo AI preko vikenda. U ponedeljak ujutru, AI je već radio. Niko nije izvukao podatke o tiketima iz prethodnih šest nedelja da utvrdi kolika je bila stopa rešavanja, prosečno vreme obrade i trošak po upitu pre toga. Ta polazna vrednost je sada nedostupna.
+
+**Obrazac 3 — Pratile su se metrike obima umesto jedinične ekonomije.** U mesečnom izveštaju piše: „AI je ovog meseca obradio 1.200 tiketa." To je metrika obima. ROI metrika glasi: „AI je obradio 1.200 tiketa po €1,50 svaki, naspram ljudske polazne vrednosti od €9 po tiketu — ušteda od €9.000 ovog meseca." Obim bez troška u imeniocu nije ROI.
+
+---
+
+## Četiri metrike
+
+<img src="/charts/ai-roi-timeline.png" alt="Vremenska linija ROI za AI alate u podršci, unosu porudžbina i preporukama" style="width:100%;border-radius:6px;margin:24px 0;" />
+
+**Metrika 1 — Stopa rešavanja**
+
+*Definicija:* Procenat dolaznih upita koje AI u potpunosti reši bez eskalacije ka čoveku.
+
+*Industrijski reper:* 65–70% za dobro podešenu B2B implementaciju podrške (Gleap, 2026).
+
+*Kako se meri:* Iz analitičkog panela vašeg AI alata. „Rešeno" znači da je kupac dobio odgovor i nije eskalirao. „Eskalirano" znači da je AI prebacio upit na čoveka.
+
+*Korak za polaznu vrednost:* Pre puštanja AI u rad, pratite stopu rešavanja iz prvog kontakta kod vašeg tima — procenat upita rešenih bez potrebe za drugim javljanjem. To postaje ljudska polazna vrednost za poređenje.
+
+**Metrika 2 — Trošak po upitu**
+
+*Definicija:* Ukupan trošak podrške podeljen ukupnim brojem upita, za dati period.
+
+*Kako se računa:* (sati rada tima podrške × satnica + mesečni trošak AI alata) ÷ ukupan broj upita.
+
+*Razlika u reperima:* Ljudska podrška: €6–€12 po upitu (u zavisnosti od složenosti upita i vremena obrade). AI podrška: €1–€2 po upitu na većem obimu.
+
+*Korak za polaznu vrednost:* Izvucite sate tima podrške i broj upita za poslednja 3 meseca. Izračunajte trošak po upitu. To je vaša polazna vrednost pre AI.
+
+**Metrika 3 — Stopa izuzetaka kod porudžbenica (za AI unos porudžbina)**
+
+*Definicija:* Procenat porudžbenica obrađenih kroz AI koje zahtevaju ručnu ispravku pre unosa u ERP.
+
+*Cilj:* ≤5% za zrelu implementaciju sa čistim podacima u ERP-u.
+
+*Zašto je važna:* Pri stopi izuzetaka iznad 5%, AI pravi više posla nego što štedi — svaki izuzetak zahteva da čovek istraži, ispravi i ponovo obradi. Ispod 5% (&lt;5%), dobitak u propusnosti je stvaran.
+
+*Korak za polaznu vrednost:* Pre AI unosa porudžbina, pratite stopu grešaka ručnog unosa — procenat ručno unetih porudžbina koje su zahtevale ispravku. To uporedite sa stopom izuzetaka AI-ja posle puštanja u rad.
+
+**Metrika 4 — Vreme prvog odgovora**
+
+*Definicija:* Vreme od slanja upita kupca do prvog suštinskog odgovora.
+
+*Ljudski reper:* medijana 10–20 minuta za popunjen B2B desk podrške tokom radnog vremena.
+
+*AI reper:* ispod 30 sekundi za standardne upite.
+
+*Zašto je važno u B2B:* Vreme prvog odgovora utiče na to koliko kupac doživljava dobavljača kao pouzdanog. B2B kupac koji status porudžbine dobije za 20 sekundi i onaj koji čeka 15 minuta doživljavaju istog dobavljača različito — čak i kada je informacija identična.
+
+---
+
+## Protokol snimanja polaznog stanja
+
+Nedelju dana pre puštanja AI u rad:
+
+1. Izvezite sve tikete podrške iz poslednjih 90 dana sa: vremenskom oznakom, kategorijom upita, statusom rešenja, vremenom obrade, dodeljenim agentom.
+2. Izračunajte: prosečno vreme obrade po kategoriji, stopu rešavanja, trošak po upitu (sa punim troškom satnice vašeg tima).
+3. Dokumentujte u jednoj tabeli: „Polazno stanje pre AI — [datum]."
+4. Zakažite pregled 30 dana posle puštanja u rad, radi poređenja.
+
+Ukupno vreme: 2–3 sata. To je korak koji 30 dana kasnije čini ROI argument mogućim.
+
+---
+
+## Šta ako ste već uveli AI bez polaznog stanja
+
+Polazna vrednost nije sasvim izgubljena. Delimično je možete rekonstruisati iz:
+- istorijskih podataka o tiketima (ako vaš alat čuva istoriju iz perioda pre AI)
+- evidencije radnog vremena tima iz perioda pre AI
+- faktura ili izveštaja o troškovima rada iz perioda pre uvođenja
+
+Rekonstruisana polazna vrednost je manje čista od planirane, ali je bolja od nikakve — i obično je dovoljna za interni ROI argument.
+
+---
+
+Ovaj okvir merenja ne postoji zato da biste alat opravdali pred CFO-om (mada služi i tome). Postoji zato da biste alat vodili kako treba. Organizacije koje prate ove četiri metrike zatvaraju jaz u merenju od 68% — i pronalaze konkretna podešavanja koja stopu rešavanja podižu sa 40% na 65%.
+
+---
+
+**AHoosh gradi okvir merenja uporedo sa implementacijom.** [ahoosh.ai/contact](https://ahoosh.ai/contact)

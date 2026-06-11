@@ -2,9 +2,19 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const posts = (await getCollection('blog'))
-  .filter((p) => !p.data.draft)
+const all = await getCollection('blog');
+const en = all
+  .filter((p) => !p.data.draft && !/^(fa|de|sr)\//.test(p.id))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const translated = new Map(
+  all.filter((p) => p.id.startsWith('de/') && !p.data.draft).map((p) => [p.id.slice(3), p])
+);
+const posts = en.map((p) => {
+  const t = translated.get(p.id);
+  return t
+    ? { href: `/de/articles/${p.id}`, data: t.data, isEnglish: false }
+    : { href: `/articles/${p.id}`, data: p.data, isEnglish: true };
+});
 ---
 
 <BaseLayout title="Artikel" description="Praxisperspektiven zu KI, B2B-Operations und Geschäftsaufbau in Schwellenmärkten." locale="de">
@@ -20,13 +30,13 @@ const posts = (await getCollection('blog'))
   <!-- Article list -->
   <div style="padding:24px 24px 40px;max-width:680px;margin:0 auto;">
     {posts.map((post) => (
-      <a href={`/articles/${post.id}`} style="display:block;text-decoration:none;">
+      <a href={post.href} style="display:block;text-decoration:none;">
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:20px;margin-bottom:12px;transition:border-color 150ms ease;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
             <span style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);">
               {(post.data as any).tags?.[0] ?? 'Artikel'}
             </span>
-            <span style="font-size:9px;font-weight:700;border:1px solid rgba(215,161,61,0.4);color:var(--gold);padding:2px 7px;border-radius:999px;">EN</span>
+            {post.isEnglish && (<span style="font-size:9px;font-weight:700;border:1px solid rgba(215,161,61,0.4);color:var(--gold);padding:2px 7px;border-radius:999px;">EN</span>)}
           </div>
           <div style="font-family:var(--font-head);font-weight:600;font-size:15px;line-height:1.4;color:var(--silver);margin-bottom:8px;">
             {post.data.title}
