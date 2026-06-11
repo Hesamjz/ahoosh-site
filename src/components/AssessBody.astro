@@ -102,6 +102,9 @@ const { banner, lang = 'en' } = Astro.props;
   // ─── SCORING (reads keying from META; identical math across locales) ───
   function scoreBig5(ans){const s={E:0,A:0,C:0,N:0,O:0};for(const q of BIG5_META){const r=ans[q.id];if(!r)continue;s[q.t]+=q.r?6-r:r;}const res={};for(const[t,raw]of Object.entries(s)){const d=t==='N'?60-raw:raw;const pct=Math.max(0,Math.min(100,Math.round((d-10)/40*100)));res[t]={raw,pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
   function scoreSE(ans){let total=0;for(const q of SE_META){const r=ans[q.id];if(!r)continue;total+=q.r?5-r:r;}const pct=Math.max(0,Math.min(100,Math.round((total-10)/30*100)));let level;if(pct>=70)level='high';else if(pct>=45)level='medium';else level='low';return{total,pct,level};}
+  // Self-Efficacy (GSE): 10 items, all positively keyed, 4-point scale, sum 10-40
+  const SELFEFF_META=[{id:1,r:false},{id:2,r:false},{id:3,r:false},{id:4,r:false},{id:5,r:false},{id:6,r:false},{id:7,r:false},{id:8,r:false},{id:9,r:false},{id:10,r:false}];
+  function scoreSelfEff(ans){let total=0;for(const q of SELFEFF_META){const r=ans[q.id];if(!r)continue;total+=q.r?5-r:r;}const pct=Math.max(0,Math.min(100,Math.round((total-10)/30*100)));let level;if(pct>=70)level='high';else if(pct>=45)level='medium';else level='low';return{total,pct,level};}
 
   // ─── TRANSLATABLE CONTENT ─────────────────────────────
   const DATA={
@@ -146,6 +149,19 @@ const { banner, lang = 'en' } = Astro.props;
         },
         questions:["On the whole, I am satisfied with myself.","At times I think I am no good at all.","I feel that I have a number of good qualities.","I am able to do things as well as most other people.","I feel I do not have much to be proud of.","I certainly feel useless at times.","I feel that I am a person of worth, at least on an equal plane with others.","I wish I could have more respect for myself.","All in all, I am inclined to feel that I am a failure.","I take a positive attitude toward myself."],
       },
+      selfeff:{
+        title:'Self-Efficacy',subtitle:'GSE · 10 questions · ~3 min',
+        desc:'Measures your belief in your own ability to handle challenges and reach goals — a strong predictor of resilience and performance at work.',
+        tagline:'Self & Wellbeing',scaleName:'General Self-Efficacy Scale',
+        footer:'Based on the General Self-Efficacy Scale (Schwarzer & Jerusalem, 1995).',
+        labels:["Not at all true","Hardly true","Moderately true","Exactly true"],
+        levels:{
+          high:{label:'High Self-Efficacy',desc:'You have strong confidence in your ability to meet challenges and solve problems through your own effort. This belief drives persistence, resilience, and strong performance under pressure.'},
+          medium:{label:'Moderate Self-Efficacy',desc:'You generally trust your ability to cope, with some situations where self-doubt creeps in. Building on past successes can strengthen this further.'},
+          low:{label:'Developing Self-Efficacy',desc:'You may doubt your ability to handle difficult or unexpected situations. Self-efficacy grows through small, repeated successes and supportive feedback.'},
+        },
+        questions:["I can always manage to solve difficult problems if I try hard enough.","If someone opposes me, I can find the means and ways to get what I want.","It is easy for me to stick to my aims and accomplish my goals.","I am confident that I could deal efficiently with unexpected events.","Thanks to my resourcefulness, I know how to handle unforeseen situations.","I can solve most problems if I invest the necessary effort.","I can remain calm when facing difficulties because I can rely on my coping abilities.","When I am confronted with a problem, I can usually find several solutions.","If I am in trouble, I can usually think of a solution.","I can usually handle whatever comes my way."],
+      },
     },
     de:{
       ui:{
@@ -187,6 +203,19 @@ const { banner, lang = 'en' } = Astro.props;
           low:{label:'Niedriges Selbstwertgefühl',desc:'Sie könnten mit Selbstzweifeln und negativer Selbstbewertung zu kämpfen haben. Das kann Leistung und Beziehungen beeinträchtigen. Professionelle Unterstützung oder Coaching kann sehr hilfreich sein.'},
         },
         questions:["Alles in allem bin ich mit mir selbst zufrieden.","Hin und wieder denke ich, dass ich gar nichts tauge.","Ich besitze eine Reihe guter Eigenschaften.","Ich kann vieles genauso gut wie die meisten anderen Menschen auch.","Ich fürchte, es gibt nicht viel, worauf ich stolz sein kann.","Ich fühle mich von Zeit zu Zeit richtig nutzlos.","Ich halte mich für einen wertvollen Menschen, jedenfalls bin ich nicht weniger wertvoll als andere.","Ich wünschte, ich könnte vor mir selbst mehr Achtung haben.","Alles in allem neige ich dazu, mich für einen Versager zu halten.","Ich habe eine positive Einstellung zu mir selbst gefunden."],
+      },
+      selfeff:{
+        title:'Selbstwirksamkeit',subtitle:'SWE · 10 Fragen · ~3 Min.',
+        desc:'Misst Ihre Überzeugung, Herausforderungen aus eigener Kraft zu bewältigen und Ziele zu erreichen — ein starker Prädiktor für Belastbarkeit und Leistung im Beruf.',
+        tagline:'Selbst & Wohlbefinden',scaleName:'Skala zur Allgemeinen Selbstwirksamkeitserwartung',
+        footer:'Basierend auf der Skala zur Allgemeinen Selbstwirksamkeitserwartung (Schwarzer & Jerusalem, 1995).',
+        labels:["Stimmt nicht","Stimmt kaum","Stimmt eher","Stimmt genau"],
+        levels:{
+          high:{label:'Hohe Selbstwirksamkeit',desc:'Sie vertrauen stark darauf, Herausforderungen zu meistern und Probleme aus eigener Kraft zu lösen. Diese Überzeugung fördert Ausdauer, Belastbarkeit und gute Leistung unter Druck.'},
+          medium:{label:'Mittlere Selbstwirksamkeit',desc:'Sie vertrauen im Allgemeinen Ihrer Bewältigungsfähigkeit, mit einigen Situationen, in denen Selbstzweifel aufkommen. Frühere Erfolge können dies weiter stärken.'},
+          low:{label:'Sich entwickelnde Selbstwirksamkeit',desc:'Sie zweifeln möglicherweise an Ihrer Fähigkeit, schwierige oder unerwartete Situationen zu bewältigen. Selbstwirksamkeit wächst durch kleine, wiederholte Erfolge und unterstützendes Feedback.'},
+        },
+        questions:["Wenn sich Widerstände auftun, finde ich Mittel und Wege, mich durchzusetzen.","Die Lösung schwieriger Probleme gelingt mir immer, wenn ich mich darum bemühe.","Es bereitet mir keine Schwierigkeiten, meine Absichten und Ziele zu verwirklichen.","In unerwarteten Situationen weiß ich immer, wie ich mich verhalten soll.","Auch bei überraschenden Ereignissen glaube ich, dass ich gut mit ihnen zurechtkommen kann.","Schwierigkeiten sehe ich gelassen entgegen, weil ich meinen Fähigkeiten immer vertrauen kann.","Was auch immer passiert, ich werde schon klarkommen.","Für jedes Problem kann ich eine Lösung finden.","Wenn eine neue Sache auf mich zukommt, weiß ich, wie ich damit umgehen kann.","Wenn ein Problem auftaucht, kann ich es aus eigener Kraft meistern."],
       },
     },
     fa:{
@@ -230,6 +259,19 @@ const { banner, lang = 'en' } = Astro.props;
         },
         questions:["روی‌هم‌رفته از خودم راضی هستم.","گاهی فکر می‌کنم اصلاً به درد نمی‌خورم.","احساس می‌کنم چند ویژگی خوب دارم.","می‌توانم کارها را به‌خوبیِ بیشتر مردم انجام دهم.","احساس می‌کنم چیز زیادی برای افتخار کردن ندارم.","گاهی به‌یقین احساس بی‌فایده بودن می‌کنم.","احساس می‌کنم انسان ارزشمندی هستم، دست‌کم هم‌تراز با دیگران.","کاش می‌توانستم برای خودم احترام بیشتری قائل باشم.","روی‌هم‌رفته تمایل دارم خودم را شکست‌خورده بدانم.","نگرشی مثبت نسبت به خودم دارم."],
       },
+      selfeff:{
+        title:'خودکارآمدی',subtitle:'GSE · ۱۰ پرسش · حدود ۳ دقیقه',
+        desc:'باور شما به توانایی‌تان در رویارویی با چالش‌ها و رسیدن به اهداف را می‌سنجد — پیش‌بینی‌کننده‌ای قوی برای تاب‌آوری و عملکرد در کار.',
+        tagline:'خود و بهزیستی',scaleName:'مقیاس خودکارآمدی عمومی',
+        footer:'بر پایه مقیاس خودکارآمدی عمومی (شوارتزر و یروسالم، ۱۹۹۵).',
+        labels:["اصلاً درست نیست","کمی درست است","تا حدی درست است","کاملاً درست است"],
+        levels:{
+          high:{label:'خودکارآمدی بالا',desc:'به توانایی خود در رویارویی با چالش‌ها و حل مسائل با تلاش خودتان اعتماد زیادی دارید. این باور پشتکار، تاب‌آوری و عملکرد قوی زیر فشار را تقویت می‌کند.'},
+          medium:{label:'خودکارآمدی متوسط',desc:'به‌طور کلی به توانایی خود در کنار آمدن با مسائل اعتماد دارید، هرچند در برخی موقعیت‌ها تردید به خود راه می‌یابد. تکیه بر موفقیت‌های گذشته می‌تواند این را تقویت کند.'},
+          low:{label:'خودکارآمدی در حال رشد',desc:'ممکن است به توانایی خود در مدیریت موقعیت‌های دشوار یا غیرمنتظره تردید داشته باشید. خودکارآمدی با موفقیت‌های کوچک و پیاپی و بازخورد حمایتگر رشد می‌کند.'},
+        },
+        questions:["اگر به‌اندازه کافی تلاش کنم، همیشه می‌توانم مشکلات دشوار را حل کنم.","اگر کسی با من مخالفت کند، می‌توانم راه و روشی برای رسیدن به خواسته‌ام پیدا کنم.","پایبند ماندن به هدف‌هایم و رسیدن به آن‌ها برایم آسان است.","مطمئنم که می‌توانم با رویدادهای غیرمنتظره به‌خوبی کنار بیایم.","به‌لطف کاردانی‌ام، می‌دانم چگونه با موقعیت‌های پیش‌بینی‌نشده برخورد کنم.","اگر تلاش لازم را به کار ببرم، می‌توانم بیشتر مشکلات را حل کنم.","هنگام رویارویی با دشواری‌ها آرام می‌مانم، چون می‌توانم به توانایی‌های خود تکیه کنم.","وقتی با مشکلی روبه‌رو می‌شوم، معمولاً می‌توانم چند راه‌حل پیدا کنم.","اگر در دردسر بیفتم، معمولاً می‌توانم راه‌حلی به ذهن بیاورم.","معمولاً می‌توانم از پس هر چه پیش بیاید بربیایم."],
+      },
     },
     sr:{
       ui:{
@@ -272,6 +314,19 @@ const { banner, lang = 'en' } = Astro.props;
         },
         questions:["Sve u svemu, zadovoljan sam sobom.","Ponekad mislim da uopšte ništa ne vredim.","Smatram da imam niz dobrih osobina.","Sposoban sam da radim stvari jednako dobro kao i većina drugih ljudi.","Osećam da nemam mnogo čime bih se ponosio.","Sigurno se ponekad osećam beskorisno.","Smatram da sam vredna osoba, bar ravnopravna sa drugima.","Voleo bih da mogu više da poštujem sebe.","Sve u svemu, sklon sam da sebe smatram neuspešnim.","Imam pozitivan stav prema sebi."],
       },
+      selfeff:{
+        title:'Samoefikasnost',subtitle:'GSE · 10 pitanja · ~3 min',
+        desc:'Meri vaše uverenje u sopstvenu sposobnost da se nosite sa izazovima i ostvarite ciljeve — snažan prediktor otpornosti i učinka na poslu.',
+        tagline:'Sebstvo i blagostanje',scaleName:'Skala opšte samoefikasnosti',
+        footer:'Zasnovano na Skali opšte samoefikasnosti (Schwarzer & Jerusalem, 1995).',
+        labels:["Uopšte nije tačno","Jedva da je tačno","Umereno tačno","Potpuno tačno"],
+        levels:{
+          high:{label:'Visoka samoefikasnost',desc:'Snažno verujete u svoju sposobnost da savladate izazove i rešite probleme sopstvenim trudom. To uverenje podstiče istrajnost, otpornost i dobar učinak pod pritiskom.'},
+          medium:{label:'Umerena samoefikasnost',desc:'Uglavnom verujete u svoju sposobnost da se izborite, uz situacije u kojima se javlja sumnja u sebe. Oslanjanje na ranije uspehe može to dodatno ojačati.'},
+          low:{label:'Samoefikasnost u razvoju',desc:'Možda sumnjate u svoju sposobnost da se nosite sa teškim ili neočekivanim situacijama. Samoefikasnost raste kroz male, ponovljene uspehe i podsticajnu povratnu informaciju.'},
+        },
+        questions:["Uvek mogu da rešim teške probleme ako se dovoljno potrudim.","Ako mi se neko suprotstavi, mogu da nađem način da postignem ono što želim.","Lako mi je da se držim svojih ciljeva i da ih ostvarim.","Siguran sam da mogu efikasno da se izborim sa neočekivanim događajima.","Zahvaljujući svojoj snalažljivosti, znam kako da se nosim sa nepredviđenim situacijama.","Mogu da rešim većinu problema ako uložim potreban trud.","Mogu da ostanem smiren kada se suočim sa teškoćama jer mogu da se oslonim na svoje sposobnosti.","Kada se suočim sa problemom, obično mogu da nađem nekoliko rešenja.","Ako sam u nevolji, obično mogu da smislim rešenje.","Obično mogu da se izborim sa svim što mi se nađe na putu."],
+      },
     },
   };
   const T = DATA[LANG] || DATA.en;
@@ -281,13 +336,16 @@ const { banner, lang = 'en' } = Astro.props;
   function buildSEQuestions(){return SE_META.map(function(m,i){return{id:m.id,r:m.r,text:T.selfesteem.questions[i]};});}
   function big5LabelObjs(){return T.big5.labels.map(function(s,i){return{v:i+1,s:s};});}
   function seLabelObjs(){return T.selfesteem.labels.map(function(s,i){return{v:i+1,s:s};});}
+  function buildSelfEffQuestions(){return SELFEFF_META.map(function(m,i){return{id:m.id,r:m.r,text:T.selfeff.questions[i]};});}
+  function selfEffLabelObjs(){return T.selfeff.labels.map(function(s,i){return{v:i+1,s:s};});}
 
   // Compose trait objects (name + interpretations from T, color/bg from TRAIT_STYLE)
   function big5Traits(){const out={};for(const k of ['E','A','C','N','O']){out[k]=Object.assign({},T.big5.traits[k],TRAIT_STYLE[k]);}return out;}
 
   const TESTS=[
     {id:'big5',title:T.big5.title,subtitle:T.big5.subtitle,icon:'🧠',color:'#7C3AED',desc:T.big5.desc,questions:buildBig5Questions(),labels:big5LabelObjs(),score:scoreBig5,resultType:'big5',traits:big5Traits(),traitOrder:['E','A','C','N','O'],tagline:T.big5.tagline,footer:T.big5.footer},
-    {id:'selfesteem',title:T.selfesteem.title,subtitle:T.selfesteem.subtitle,icon:'🌟',color:'#0891B2',desc:T.selfesteem.desc,questions:buildSEQuestions(),labels:seLabelObjs(),score:scoreSE,resultType:'selfesteem',tagline:T.selfesteem.tagline,footer:T.selfesteem.footer},
+    {id:'selfesteem',title:T.selfesteem.title,subtitle:T.selfesteem.subtitle,icon:'🌟',color:'#0891B2',desc:T.selfesteem.desc,questions:buildSEQuestions(),labels:seLabelObjs(),score:scoreSE,resultType:'single',levels:T.selfesteem.levels,scaleName:T.selfesteem.scaleName,tagline:T.selfesteem.tagline,footer:T.selfesteem.footer},
+    {id:'selfeff',title:T.selfeff.title,subtitle:T.selfeff.subtitle,icon:'💪',color:'#0D9488',desc:T.selfeff.desc,questions:buildSelfEffQuestions(),labels:selfEffLabelObjs(),score:scoreSelfEff,resultType:'single',levels:T.selfeff.levels,scaleName:T.selfeff.scaleName,tagline:T.selfeff.tagline,footer:T.selfeff.footer},
   ];
 
   function levelLabel(level){return level==='high'?T.ui.high:level==='low'?T.ui.low:T.ui.medium;}
@@ -372,14 +430,14 @@ const { banner, lang = 'en' } = Astro.props;
       h('button',{onClick:onHome,className:'bg-gold text-navy font-bold text-sm px-6 py-2 rounded-lg'},T.ui.backToTests)
     );
 
-    if(test.resultType==='selfesteem'){
+    if(test.resultType==='single'){
       const{pct,level}=scores;
-      const lv=T.selfesteem.levels[level];
+      const lv=test.levels[level];
       const color=pct>=70?'#10B981':pct>=45?'#F59E0B':'#EF4444';
       return h('div',{className:'bg-gray-50'},
-        h(ResultActions,{onRetake,onHome,title:T.selfesteem.title}),
+        h(ResultActions,{onRetake,onHome,title:test.title}),
         h('div',{className:'max-w-2xl mx-auto px-4 py-8'},
-          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold mb-1'},T.selfesteem.title+T.ui.resultsSuffix),h('p',{className:'text-gray-400 text-sm'},T.selfesteem.scaleName)),
+          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold mb-1'},test.title+T.ui.resultsSuffix),h('p',{className:'text-gray-400 text-sm'},test.scaleName)),
           h('div',{className:'bg-navy text-white rounded-2xl p-6 mb-6 text-center'},
             h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-2'},T.ui.yourScore),
             h('p',{className:'text-5xl font-bold mb-1'},pct),
