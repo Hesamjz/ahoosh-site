@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Home"
+  description="AHoosh combines AI, market data, research, and practical consulting to help founders, companies, and decision-makers understand markets, evaluate opportunities, and act with better information."
+>
+
+  <!-- Hero -->
+  <section style="
+    background: radial-gradient(ellipse 100% 80% at 50% 0%, #0e2444 0%, #061228 40%, #010A18 75%);
+    padding: 64px 24px 60px;
+    border-bottom: 1px solid rgba(215,161,61,0.14);
+    position: relative;
+    overflow: hidden;
+  ">
+    <!-- subtle corner accent -->
+    <div style="position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(ellipse at top right,rgba(215,161,61,0.06) 0%,transparent 65%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:0;left:0;width:200px;height:200px;background:radial-gradient(ellipse at bottom left,rgba(215,161,61,0.04) 0%,transparent 65%);pointer-events:none;"></div>
+
+    <div style="max-width:680px;margin:0 auto;position:relative;">
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:32px;">
+        <canvas id="vc" width="320" height="240" style="cursor:grab;display:block;touch-action:none;width:min(320px,80vw);aspect-ratio:320/240;flex-shrink:0;filter:drop-shadow(0 0 32px rgba(215,161,61,0.18));"></canvas>
+
+        <div style="text-align:center;max-width:560px;">
+          <div class="section-eyebrow" style="margin-bottom:12px;">Founded by Hesam Jafarzadeh</div>
+          <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(28px,6vw,46px);letter-spacing:-0.025em;line-height:1.1;color:var(--silver);margin-bottom:20px;text-shadow:0 2px 20px rgba(0,0,0,0.4);">AI, Market Data, and<br/>Research for Better Decisions</h1>
+          <p style="font-size:15px;line-height:1.8;color:var(--silver-dim);margin-bottom:36px;">
+            AHoosh helps founders, companies, consultants, and decision-makers combine AI tools,
+            market signals, and practical research to understand opportunities, reduce uncertainty,
+            and build smarter strategies.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+            <a href="/markets" class="btn-primary" style="width:100%;max-width:280px;">Explore Market Data</a>
+            <a href="/contact" class="btn-secondary" style="width:100%;max-width:280px;">Request Consultation</a>
+            <a href="/articles" class="link-gold" style="font-size:13px;padding:8px 0;">Read Articles</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Founder card -->
+      <div class="card-dark" style="display:flex;align-items:center;gap:16px;margin-top:48px;padding:20px;">
+        <div style="flex-shrink:0;width:64px;height:64px;border-radius:50%;overflow:hidden;border:2px solid rgba(215,161,61,0.45);background:rgba(215,161,61,0.1);box-shadow:0 0 16px rgba(215,161,61,0.12);">
+          <img src="/assets/hesam.png" alt="Hesam Jafarzadeh" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
+            onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:18px;color:var(--gold);\'>HJ</div>';" />
+        </div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--silver);line-height:1.2;">Hesam Jafarzadeh</div>
+          <div style="font-size:12px;color:var(--gold-light);font-weight:500;letter-spacing:0.04em;margin-top:3px;">Founder · Researcher · AI and Market Intelligence Consultant</div>
+          <div style="font-size:12px;color:var(--silver-muted);margin-top:4px;">15+ years across industries · PhD researcher, University of Belgrade</div>
+        </div>
+        <a href="/about" style="margin-left:auto;flex-shrink:0;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);white-space:nowrap;">About →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <script is:inline>
+  (function(){
+    const canvas=document.getElementById("vc");
+    const ctx=canvas.getContext("2d");
+    const W=canvas.width,H=canvas.height,CX=W/2,CY=H/2-4;
+    const NA=5,ND=26,AK=[0,1,2,0,1],R=100,FOV=280,AE=Math.PI*0.88,WR=1.3;
+    const WHITE=[247,244,236],GOLD=[216,166,66],HR=60;
+    const BASE=[];
+    for(let a=0;a<NA;a++){for(let i=0;i<ND;i++){const t=i/(ND-1);const alpha=0.04+AE*t;const phi=(a/NA)*2*Math.PI-t*2*Math.PI*WR;const sa=Math.sin(alpha);BASE.push({x:R*sa*Math.cos(phi),y:R*sa*Math.sin(phi),z:R*Math.cos(alpha),isW:t>0.55&&(i+AK[a])%3===0,br:0.15+6.0*t,t});}}
+    const HX=-0.20,HY=0.0,HZ=0.0;let rX=HX,rY=HY,rZ=HZ,velX=0,velY=0,drag=false,lmx=0,lmy=0,mx=-999,my=-999;
+    const rxf=(x,y,z,a)=>{const c=Math.cos(a),s=Math.sin(a);return[x,y*c-z*s,y*s+z*c];};
+    const ryf=(x,y,z,a)=>{const c=Math.cos(a),s=Math.sin(a);return[x*c+z*s,y,-x*s+z*c];};
+    const rzf=(x,y,z,a)=>{const c=Math.cos(a),s=Math.sin(a);return[x*c-y*s,x*s+y*c,z];};
+    canvas.addEventListener("mousedown",e=>{drag=true;lmx=e.clientX;lmy=e.clientY;velX=0;velY=0;});
+    window.addEventListener("mousemove",e=>{const r=canvas.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;if(!drag)return;const dx=e.clientX-lmx,dy=e.clientY-lmy;velY=dx*0.012;velX=dy*0.012;rY+=velY;rX+=velX;rX=Math.max(-1.2,Math.min(1.2,rX));lmx=e.clientX;lmy=e.clientY;});
+    window.addEventListener("mouseup",()=>{drag=false;});
+    canvas.addEventListener("mouseleave",()=>{if(!drag){mx=-999;my=-999;}});
+    canvas.addEventListener("touchstart",e=>{e.preventDefault();drag=true;lmx=e.touches[0].clientX;lmy=e.touches[0].clientY;velX=0;velY=0;},{passive:false});
+    canvas.addEventListener("touchmove",e=>{e.preventDefault();const dx=e.touches[0].clientX-lmx,dy=e.touches[0].clientY-lmy;velY=dx*0.012;velX=dy*0.012;rY+=velY;rX+=velX;rX=Math.max(-1.2,Math.min(1.2,rX));lmx=e.touches[0].clientX;lmy=e.touches[0].clientY;},{passive:false});
+    canvas.addEventListener("touchend",()=>{drag=false;});
+    function frame(){
+      if(!drag){velX*=0.90;velY*=0.90;rX+=velX;rY+=velY;rX+=(HX-rX)*0.025;rY+=(HY-rY)*0.025;rZ+=(HZ-rZ)*0.025;}
+      ctx.clearRect(0,0,W,H);
+      const pts=BASE.map(p=>{let [x,y,z]=rzf(p.x,p.y,p.z,rZ);[x,y,z]=ryf(x,y,z,rY);[x,y,z]=rxf(x,y,z,rX);const sc=FOV/(FOV+z),px=CX+x*sc,py=CY-y*sc;const df=(z+R)/(2*R),op=Math.max(0,Math.pow(1-df,2.2));const ddx=px-mx,ddy=py-my,hv=Math.max(0,1-Math.sqrt(ddx*ddx+ddy*ddy)/HR);const fo=Math.min(1,op+hv*0.9);return{...p,px,py,sc,depth:z,fo,hv};}).sort((a,b)=>a.depth-b.depth);
+      pts.forEach(p=>{const dr=Math.max(0.3,p.br*p.sc),fo=p.fo;const [r,g,b]=p.isW?WHITE:GOLD;if(p.hv>0.1){ctx.beginPath();ctx.arc(p.px,p.py,dr*1.8,0,6.28);ctx.fillStyle="rgba("+r+","+g+","+b+","+(p.hv*0.15).toFixed(3)+")";ctx.fill();}const rd=Math.max(0.4,dr),grad=ctx.createRadialGradient(p.px,p.py,0,p.px,p.py,rd);grad.addColorStop(0,"rgba("+Math.min(255,r+40)+","+Math.min(255,g+30)+","+Math.min(255,b+20)+","+fo.toFixed(3)+")");grad.addColorStop(0.6,"rgba("+r+","+g+","+b+","+fo.toFixed(3)+")");grad.addColorStop(1,"rgba("+r+","+g+","+b+","+fo.toFixed(3)+")");ctx.beginPath();ctx.arc(p.px,p.py,rd,0,6.28);ctx.fillStyle=grad;ctx.fill();});
+      requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+  </script>
+
+  <!-- What AHoosh does -->
+  <section style="padding:52px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">What AHoosh Does</div>
+    <h2 class="section-title">Four Layers, One Practice</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">🤖</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">AI-Assisted Research</div>
+        <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Using AI tools to collect, organize, compare, and explain information faster than traditional methods.</div>
+      </div>
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">📊</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Market Intelligence</div>
+        <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Tracking prices, trends, signals, and public data that affect business and investment decisions.</div>
+      </div>
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">🧩</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Consulting</div>
+        <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Helping founders and companies turn unclear problems into practical decisions and action plans.</div>
+      </div>
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">📝</div>
+        <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Content &amp; Education</div>
+        <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Publishing articles, guides, and explanations for a global audience.</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:28px;">
+      <a href="/consulting" class="link-gold">See All Consulting Services</a>
+    </div>
+  </section>
+
+  <!-- Who it's for -->
+  <section style="padding:44px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">Who It's For</div>
+    <h2 class="section-title">Built for Decision-Makers</h2>
+    <p style="font-size:14px;line-height:1.85;color:var(--silver-dim);">
+      AHoosh works with founders, startups, consultants, established companies, and individual decision-makers who need clarity before they move — whether they are studying a market, testing a business idea, improving internal operations, or looking for better ways to use AI.
+    </p>
+    <p style="font-size:14px;line-height:1.85;color:var(--silver-dim);margin-top:14px;">
+      The practice is designed for anyone who wants practical research, useful market signals, and AI-assisted decision support — wherever they operate.
+    </p>
+  </section>
+
+  <!-- Articles teaser -->
+  <section style="padding:44px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">Intelligence</div>
+    <h2 class="section-title">Recent Articles</h2>
+    <div class="card-dark" style="padding:18px;margin-bottom:10px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">AI &amp; Decision-Making</div>
+      <div style="font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.4;color:var(--silver);margin-bottom:6px;">Why Most AI Implementations Fail in the First 90 Days</div>
+      <div style="font-size:11px;color:var(--silver-muted);">June 2026</div>
+    </div>
+    <div class="card-dark" style="padding:18px;margin-bottom:20px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Market Intelligence</div>
+      <div style="font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.4;color:var(--silver);margin-bottom:6px;">Reading Market Signals: What Founders Miss and Why It Matters</div>
+      <div style="font-size:11px;color:var(--silver-muted);">May 2026</div>
+    </div>
+    <a href="/articles" class="link-gold">All Articles</a>
+  </section>
+
+  <!-- CTA band -->
+  <section style="
+    background: linear-gradient(160deg, rgba(215,161,61,0.07) 0%, rgba(6,18,40,0.8) 50%, rgba(215,161,61,0.04) 100%);
+    border-top: 1px solid rgba(215,161,61,0.18);
+    padding: 56px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(215,161,61,0.05) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="max-width:480px;margin:0 auto;position:relative;">
+      <div style="width:60px;height:60px;border-radius:50%;overflow:hidden;border:2px solid rgba(215,161,61,0.45);margin:0 auto 20px;background:rgba(215,161,61,0.1);box-shadow:0 0 24px rgba(215,161,61,0.15);">
+        <img src="/assets/hesam.png" alt="Hesam" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;" onerror="this.style.display='none';" />
+      </div>
+      <h2 style="font-family:var(--font-head);font-weight:700;font-size:24px;letter-spacing:-0.02em;color:var(--silver);margin-bottom:10px;line-height:1.25;">Tell me what you're trying to figure out</h2>
+      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:28px;line-height:1.75;">No pitch deck. Just a direct conversation about what you need.</p>
+      <a href="/contact" class="btn-primary" style="display:inline-block;min-width:220px;">Contact AHoosh</a>
+    </div>
+  </section>
+
+</BaseLayout>

@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About"
+  description="Hesam Jafarzadeh — researcher, consultant, and operator. Founder of AHoosh.ai, PhD researcher in Software Engineering and E-Business at the University of Belgrade, combining AI tools, market data, research methods, and practical business experience."
+>
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">About</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,36px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:8px;">Hesam Jafarzadeh</h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;">Founder of AHoosh.ai · Researcher · AI and Market Intelligence Consultant</p>
+  </section>
+
+  <!-- Founder card -->
+  <div style="max-width:680px;margin:32px auto 0;padding:0 24px;">
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:8px;overflow:hidden;">
+      <div style="width:100%;height:340px;background:linear-gradient(135deg,#03142E 0%,#1a2e50 100%);display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(215,161,61,0.1);overflow:hidden;">
+        <img src="/assets/hesam.png" alt="Hesam Jafarzadeh" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div style="display:none;width:80px;height:80px;border-radius:50%;background:rgba(215,161,61,0.15);border:2px solid var(--gold);align-items:center;justify-content:center;font-family:var(--font-head);font-weight:600;font-size:22px;color:var(--gold);letter-spacing:0.05em;">HJ</div>
+      </div>
+      <div style="padding:20px;">
+        <div style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);margin-bottom:4px;">Hesam Jafarzadeh</div>
+        <div style="font-size:13px;color:var(--gold);font-weight:500;letter-spacing:0.04em;margin-bottom:14px;">Founder · AHoosh.ai · Researcher &amp; Consultant</div>
+        <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);">
+          I am a researcher, consultant, and operator with 15+ years of experience across different industries.
+          AHoosh is my attempt to build a new kind of consulting practice: one that combines AI tools, market data,
+          research methods, and practical business experience.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- What AHoosh Does -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">What AHoosh Does</div>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);margin-bottom:20px;">AHoosh brings together four layers:</p>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">1. AI-Assisted Research</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Using AI tools to collect, organize, compare, and explain information faster.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">2. Market Intelligence</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Tracking prices, trends, signals, and public data that affect business decisions.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">3. Consulting</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Helping founders and companies turn unclear problems into practical decisions and action plans.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">4. Content &amp; Education</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Publishing articles, guides, and explanations for Persian and global readers.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why I Built It -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Why I Built It</div>
+    <div style="font-size:14px;line-height:1.85;color:var(--silver-dim);display:flex;flex-direction:column;gap:16px;">
+      <p>
+        I have spent years working across industries — running operations, managing projects, watching companies struggle with the same problems: too much manual work, too little clarity, and tools that never quite fit the actual situation.
+      </p>
+      <p>
+        When AI tools became genuinely useful, I stopped doing things the old way and rebuilt everything around a new model. Not because it is trendy, but because I have seen firsthand what happens when the right combination of research, data, and AI tools is applied to a real problem. The difference is structural, not incremental.
+      </p>
+      <p>
+        The goal is simple: help people make better decisions with better information.
+      </p>
+    </div>
+  </div>
+
+  <!-- My Background -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">My Background</div>
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">2022–present</strong> — Founded AHoosh. Built an AI and research-based consulting practice. Serving founders, companies, and decision-makers across different industries and geographies.</div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">2010–2022</strong> — 12+ years in operations, digital transformation, e-commerce, and business development across different industries and markets.</div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">PhD (in progress)</strong> — Software Engineering and E-Business, University of Belgrade, Faculty of Organizational Sciences. Research on AI adoption, decision-making frameworks, and B2B digital transformation.</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">Research</strong> — Peer-reviewed publications with Springer; conference papers and awards (see below).</div>
+      </div>
+    </div>
+    <!-- Credential pills -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;">
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">15+ Years Experience</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">AI Research &amp; Consulting</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Market Intelligence</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Operations &amp; Digital Transformation</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Persian Market Expertise</span>
+    </div>
+  </div>
+
+  <!-- Publications -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Selected Publications</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <a href="https://doi.org/10.1007/978-981-96-3077-6_10" target="_blank" rel="noopener" style="display:block;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;text-decoration:none;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:4px;">The Role of AI in B2B E-Business</div>
+        <div style="font-size:12px;color:var(--silver-muted);">Springer · DOI 10.1007/978-981-96-3077-6_10</div>
+      </a>
+      <a href="https://doi.org/10.1007/978-3-032-08093-6_12" target="_blank" rel="noopener" style="display:block;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;text-decoration:none;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:4px;">Enhancing B2B Business Models: The Influence of Digital Trends and Technological Integration</div>
+        <div style="font-size:12px;color:var(--silver-muted);">Springer · DOI 10.1007/978-3-032-08093-6_12</div>
+      </a>
+      <div style="font-size:12px;color:var(--silver-dim);padding:0 4px;">Also: SymOrg 2024 conference (2nd place award) · ICMarkTech conference proceedings.</div>
+    </div>
+  </div>
+
+  <!-- Who It Is For -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Who It Is For</div>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);">
+      I work with founders, companies, startups, consultants, and decision-makers who need clarity before they move —
+      whether they are studying a market, testing a business idea, improving internal operations,
+      or looking for better ways to use AI.
+    </p>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);margin-top:12px;">
+      The platform is designed for anyone who wants practical research,
+      useful market signals, and AI-assisted decision support — wherever they operate.
+    </p>
+  </div>
+
+  <!-- How I Work -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">How I Work</div>
+    <div style="font-size:14px;line-height:1.85;color:var(--silver-dim);display:flex;flex-direction:column;gap:14px;">
+      <p>I work directly with every client. AHoosh is not an agency — it is a founder-led practice, which means you get direct access to me and a focused team assembled for your specific context.</p>
+      <p>I do not use generic templates or standard reports. Each engagement starts from the actual problem, uses the right combination of research methods and AI tools, and ends with something practical you can use.</p>
+      <p>I believe research without action is a waste of time. The goal is always to produce something that changes how you think or what you do next.</p>
+    </div>
+  </div>
+
+  <!-- Social links -->
+  <div style="padding:32px 24px 40px;max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Find Me Online</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <a href="https://www.linkedin.com/in/hesam-jafarzadeh-43697679" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">LinkedIn</a>
+      <a href="https://x.com/AHOOSHai" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">X / Twitter</a>
+      <a href="https://www.instagram.com/ahoosh.ai/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">Instagram</a>
+      <a href="https://t.me/ahooshai" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">Telegram</a>
+    </div>
+  </div>
+
+  <!-- CTA band -->
+  <section style="background:linear-gradient(135deg,rgba(215,161,61,0.08) 0%,rgba(3,20,46,0.6) 100%);border-top:1px solid rgba(215,161,61,0.15);padding:40px 24px;text-align:center;">
+    <div style="max-width:480px;margin:0 auto;">
+      <h2 style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);margin-bottom:8px;line-height:1.3;">Work with me directly</h2>
+      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:24px;">Tell me what you are trying to understand, build, improve, or decide.</p>
+      <a href="/contact" class="btn-primary" style="display:inline-block;min-width:200px;">Contact AHoosh</a>
+    </div>
+  </section>
+
+</BaseLayout>

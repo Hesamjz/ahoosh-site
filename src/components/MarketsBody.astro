@@ -1,0 +1,557 @@
+---
+// Shared markets page body — all four locales render this with their strings.
+interface Strings {
+  eyebrow: string;
+  h1: string;
+  subtitle: string;
+  fxHeading: string;
+  commoditiesHeading: string;
+  cryptoHeading: string;
+  indicesHeading: string;
+  newsHeading: string;
+  bridgeTitle: string;
+  bridgeText: string;
+  bridgeCta: string;
+  disclaimerLabel: string;
+  disclaimerText: string;
+  sourcesHtml: string;
+  updatedLabel: string;
+  names: Record<string, string>;
+}
+interface Props {
+  t: Strings;
+  contactHref: string;
+}
+const { t, contactHref } = Astro.props;
+
+const GROUP_LABELS = {
+  major:  { en: 'Major Pairs', fa: 'جفت‌ارزهای اصلی' },
+  usd:    { en: 'USD Cross Rates', fa: 'نرخ متقاطع دلار' },
+  asia:   { en: 'Asia-Pacific', fa: 'آسیا-اقیانوسیه' },
+  europe: { en: 'European', fa: 'اروپایی' },
+  em:     { en: 'Emerging Markets', fa: 'بازارهای نوظهور' },
+  iran:   { en: 'Iran — Free Market (TGJU)', fa: 'ایران — بازار آزاد (TGJU)' },
+};
+---
+
+<!-- Hero -->
+<section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:40px 24px 28px;border-bottom:1px solid rgba(215,161,61,0.1);">
+  <div style="max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div class="section-eyebrow" style="margin-bottom:6px;">{t.eyebrow}</div>
+      <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--silver);margin:0;line-height:1.2;" set:html={t.h1} />
+      <p style="font-size:13px;color:var(--silver-dim);margin-top:6px;">{t.subtitle}</p>
+    </div>
+    <div id="last-updated" style="font-size:11px;color:var(--silver-muted);"></div>
+  </div>
+</section>
+
+<!-- Dashboard -->
+<div style="max-width:1040px;margin:0 auto;padding:24px 24px 48px;">
+
+  <!-- FX — grouped -->
+  <section style="margin-bottom:32px;">
+    <div class="mkt-section-head">{t.fxHeading}</div>
+
+    <div class="group-label" id="gl-major"></div>
+    <div id="fx-major" class="price-grid" style="margin-bottom:16px;">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+
+    <div class="group-label" id="gl-usd"></div>
+    <div id="fx-usd" class="price-grid" style="margin-bottom:16px;">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+
+    <div class="group-label" id="gl-asia"></div>
+    <div id="fx-asia" class="price-grid" style="margin-bottom:16px;">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+
+    <div class="group-label" id="gl-europe"></div>
+    <div id="fx-europe" class="price-grid" style="margin-bottom:16px;">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+
+    <div class="group-label" id="gl-em"></div>
+    <div id="fx-em" class="price-grid" style="margin-bottom:16px;">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+
+    <div class="group-label" id="gl-iran"></div>
+    <div id="fx-iran" class="price-grid">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+  </section>
+
+  <!-- Equity Indices -->
+  <section style="margin-bottom:32px;">
+    <div class="mkt-section-head">{t.indicesHeading}</div>
+    <div style="font-size:11px;color:var(--silver-muted);margin-bottom:10px;">~15 min delay · Yahoo Finance</div>
+    <div id="indices-grid" class="price-grid">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+  </section>
+
+  <!-- Commodities -->
+  <section style="margin-bottom:32px;">
+    <div class="mkt-section-head">{t.commoditiesHeading}</div>
+    <div id="commodity-grid" class="price-grid">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+  </section>
+
+  <!-- Crypto -->
+  <section style="margin-bottom:32px;">
+    <div class="mkt-section-head">{t.cryptoHeading}</div>
+    <div id="crypto-grid" class="price-grid">
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+      <div class="price-skeleton"></div><div class="price-skeleton"></div>
+    </div>
+  </section>
+
+  <!-- Latest News -->
+  <section style="margin-bottom:40px;">
+    <div class="mkt-section-head">{t.newsHeading}</div>
+    <div id="news-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">
+      <div class="price-skeleton" style="height:80px;"></div>
+      <div class="price-skeleton" style="height:80px;"></div>
+      <div class="price-skeleton" style="height:80px;"></div>
+    </div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="/fa/news" style="font-size:12px;color:var(--gold);text-decoration:none;letter-spacing:0.06em;">← مشاهده همه اخبار + تلویزیون زنده</a>
+    </div>
+  </section>
+
+  <!-- Consulting bridge -->
+  <div style="background:rgba(215,161,61,0.07);border:1px solid rgba(215,161,61,0.2);border-radius:8px;padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--silver);margin-bottom:4px;">{t.bridgeTitle}</div>
+      <div style="font-size:13px;color:var(--silver-dim);">{t.bridgeText}</div>
+    </div>
+    <a href={contactHref} class="btn-primary" style="white-space:nowrap;flex-shrink:0;">{t.bridgeCta}</a>
+  </div>
+
+  <!-- Attribution + disclaimer -->
+  <div style="margin-top:24px;font-size:11px;color:var(--silver-muted);line-height:1.8;">
+    <strong style="color:var(--silver-dim);">{t.disclaimerLabel}</strong> {t.disclaimerText}<br/>
+    <Fragment set:html={t.sourcesHtml} />
+  </div>
+</div>
+
+<style is:global>
+  .mkt-section-head {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .group-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8a9bb0;
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 8px;
+  }
+  .price-skeleton {
+    height: 88px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 6px;
+    border: 1px solid rgba(215,161,61,0.08);
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  .price-card {
+    background: rgba(10,30,60,0.85);
+    border: 1px solid rgba(215,161,61,0.22);
+    border-radius: 6px;
+    padding: 12px 14px;
+    transition: border-color 150ms ease;
+  }
+  .price-card:hover { border-color: rgba(215,161,61,0.5); }
+  .price-card .symbol {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #e8eaf0;
+    margin-bottom: 2px;
+    direction: ltr;
+  }
+  .price-card .name {
+    font-size: 10px;
+    color: #8a9bb0;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .price-card .price {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 16px;
+    color: #D7A13D;
+    line-height: 1;
+    margin-bottom: 5px;
+    direction: ltr;
+  }
+  .price-card .change {
+    font-size: 11px;
+    font-weight: 600;
+    direction: ltr;
+  }
+  .change-up   { color: #34d399; }
+  .change-down { color: #f87171; }
+  .change-flat { color: #8a9bb0; }
+
+  .news-card {
+    background: rgba(10,30,60,0.7);
+    border: 1px solid rgba(215,161,61,0.15);
+    border-radius: 6px;
+    padding: 12px 14px;
+    transition: border-color 150ms ease;
+    cursor: pointer;
+  }
+  .news-card:hover { border-color: rgba(215,161,61,0.4); }
+  .news-card .src-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(215,161,61,0.1);
+    border-radius: 3px;
+    padding: 2px 6px;
+    margin-bottom: 6px;
+  }
+  .news-card .headline {
+    font-size: 12px;
+    color: var(--silver);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .news-card .headline[dir="rtl"] { text-align: right; font-size: 13px; }
+
+  @keyframes flashUp   { 0%{background:rgba(52,211,153,0.25)} 100%{background:rgba(10,30,60,0.85)} }
+  @keyframes flashDown { 0%{background:rgba(248,113,113,0.25)} 100%{background:rgba(10,30,60,0.85)} }
+  .flash-up   { animation: flashUp   0.8s ease forwards; }
+  .flash-down { animation: flashDown 0.8s ease forwards; }
+</style>
+
+<script is:inline define:vars={{ NAMES: t.names, UPDATED_LABEL: t.updatedLabel }}>
+(function () {
+
+  // ── Pair definitions ──────────────────────────────────────────────────────
+  // type: 'eur'=EUR/to from Frankfurter | 'usd'=USD/to computed |
+  //       'cross'=rates[n]/rates[d] | 'irr-usd'|'irr-eur'|'rsd'=special
+  const PAIRS = [
+    // Major
+    { sym:'EUR/USD', type:'eur', to:'USD',  name:'Euro / US Dollar',            g:'major' },
+    { sym:'EUR/GBP', type:'eur', to:'GBP',  name:'Euro / British Pound',         g:'major' },
+    { sym:'EUR/JPY', type:'eur', to:'JPY',  name:'Euro / Japanese Yen',          g:'major' },
+    { sym:'EUR/CHF', type:'eur', to:'CHF',  name:'Euro / Swiss Franc',           g:'major' },
+    { sym:'EUR/AUD', type:'eur', to:'AUD',  name:'Euro / Australian Dollar',     g:'major' },
+    { sym:'EUR/CAD', type:'eur', to:'CAD',  name:'Euro / Canadian Dollar',       g:'major' },
+    { sym:'EUR/NZD', type:'eur', to:'NZD',  name:'Euro / New Zealand Dollar',    g:'major' },
+    { sym:'GBP/USD', type:'cross', n:'USD', d:'GBP', name:'British Pound / US Dollar',  g:'major' },
+    { sym:'AUD/USD', type:'cross', n:'USD', d:'AUD', name:'Australian Dollar / US Dollar', g:'major' },
+    // USD Cross
+    { sym:'USD/JPY', type:'usd', to:'JPY',  name:'US Dollar / Japanese Yen',     g:'usd' },
+    { sym:'USD/CHF', type:'usd', to:'CHF',  name:'US Dollar / Swiss Franc',      g:'usd' },
+    { sym:'USD/CAD', type:'usd', to:'CAD',  name:'US Dollar / Canadian Dollar',  g:'usd' },
+    { sym:'USD/SGD', type:'usd', to:'SGD',  name:'US Dollar / Singapore Dollar', g:'usd' },
+    { sym:'USD/HKD', type:'usd', to:'HKD',  name:'US Dollar / Hong Kong Dollar', g:'usd' },
+    { sym:'USD/KRW', type:'usd', to:'KRW',  name:'US Dollar / South Korean Won', g:'usd' },
+    { sym:'USD/INR', type:'usd', to:'INR',  name:'US Dollar / Indian Rupee',     g:'usd' },
+    { sym:'USD/TRY', type:'usd', to:'TRY',  name:'US Dollar / Turkish Lira',     g:'usd' },
+    { sym:'USD/MXN', type:'usd', to:'MXN',  name:'US Dollar / Mexican Peso',     g:'usd' },
+    // Asia-Pacific
+    { sym:'EUR/SGD', type:'eur', to:'SGD',  name:'Euro / Singapore Dollar',      g:'asia' },
+    { sym:'EUR/HKD', type:'eur', to:'HKD',  name:'Euro / Hong Kong Dollar',      g:'asia' },
+    { sym:'EUR/KRW', type:'eur', to:'KRW',  name:'Euro / South Korean Won',      g:'asia' },
+    { sym:'EUR/INR', type:'eur', to:'INR',  name:'Euro / Indian Rupee',          g:'asia' },
+    { sym:'EUR/IDR', type:'eur', to:'IDR',  name:'Euro / Indonesian Rupiah',     g:'asia' },
+    { sym:'EUR/MYR', type:'eur', to:'MYR',  name:'Euro / Malaysian Ringgit',     g:'asia' },
+    { sym:'EUR/THB', type:'eur', to:'THB',  name:'Euro / Thai Baht',             g:'asia' },
+    // European
+    { sym:'EUR/NOK', type:'eur', to:'NOK',  name:'Euro / Norwegian Krone',       g:'europe' },
+    { sym:'EUR/SEK', type:'eur', to:'SEK',  name:'Euro / Swedish Krona',         g:'europe' },
+    { sym:'EUR/DKK', type:'eur', to:'DKK',  name:'Euro / Danish Krone',          g:'europe' },
+    { sym:'EUR/PLN', type:'eur', to:'PLN',  name:'Euro / Polish Zloty',          g:'europe' },
+    { sym:'EUR/CZK', type:'eur', to:'CZK',  name:'Euro / Czech Koruna',          g:'europe' },
+    { sym:'EUR/HUF', type:'eur', to:'HUF',  name:'Euro / Hungarian Forint',      g:'europe' },
+    { sym:'EUR/RON', type:'eur', to:'RON',  name:'Euro / Romanian Leu',          g:'europe' },
+    { sym:'EUR/BGN', type:'eur', to:'BGN',  name:'Euro / Bulgarian Lev',         g:'europe' },
+    { sym:'EUR/TRY', type:'eur', to:'TRY',  name:'Euro / Turkish Lira',          g:'europe' },
+    { sym:'EUR/RSD', type:'rsd',            name:'Euro / Serbian Dinar',         g:'europe' },
+    // EM & Other
+    { sym:'EUR/BRL', type:'eur', to:'BRL',  name:'Euro / Brazilian Real',        g:'em' },
+    { sym:'EUR/MXN', type:'eur', to:'MXN',  name:'Euro / Mexican Peso',          g:'em' },
+    { sym:'EUR/ZAR', type:'eur', to:'ZAR',  name:'Euro / South African Rand',    g:'em' },
+    { sym:'EUR/ILS', type:'eur', to:'ILS',  name:'Euro / Israeli Shekel',        g:'em' },
+    // Iran
+    { sym:'USD/IRR', type:'irr-usd', name:'دلار / ریال (بازار آزاد)',            g:'iran' },
+    { sym:'EUR/IRR', type:'irr-eur', name:'یورو / ریال (بازار آزاد)',            g:'iran' },
+  ];
+
+  const FX_SYMBOLS = 'USD,GBP,JPY,CHF,AUD,CAD,NZD,SGD,HKD,KRW,INR,IDR,MYR,THB,BRL,MXN,ZAR,NOK,SEK,DKK,PLN,CZK,HUF,RON,BGN,ILS,TRY';
+
+  const GROUP_IDS = ['major','usd','asia','europe','em','iran'];
+  const GROUP_LABELS = {
+    major:  ['Major Pairs','جفت‌ارزهای اصلی'],
+    usd:    ['USD Cross Rates','نرخ متقاطع دلار'],
+    asia:   ['Asia-Pacific','آسیا-اقیانوسیه'],
+    europe: ['European','اروپایی'],
+    em:     ['Emerging Markets','بازارهای نوظهور'],
+    iran:   ['Iran — Free Market (TGJU)','ایران — بازار آزاد (TGJU)'],
+  };
+
+  // Detect locale (FA = RTL)
+  const isFa = document.documentElement.lang === 'fa' || document.documentElement.dir === 'rtl';
+
+  // Set group labels on page load
+  GROUP_IDS.forEach(function(g) {
+    const el = document.getElementById('gl-' + g);
+    if (el) el.textContent = isFa ? GROUP_LABELS[g][1] : GROUP_LABELS[g][0];
+  });
+
+  // ── Formatting helpers ────────────────────────────────────────────────────
+  function fmt(price) {
+    if (price === null || price === undefined) return '—';
+    if (price >= 1e6)   return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    if (price >= 10000) return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    if (price >= 1000)  return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (price >= 100)   return price.toFixed(2);
+    if (price >= 10)    return price.toFixed(3);
+    if (price >= 1)     return price.toFixed(4);
+    return price.toFixed(4);
+  }
+
+  function cls(c) {
+    if (c === null || c === undefined) return 'change-flat';
+    return c > 0 ? 'change-up' : c < 0 ? 'change-down' : 'change-flat';
+  }
+
+  function lbl(c) {
+    if (c === null || c === undefined) return '—';
+    const sign = c > 0 ? '▲ +' : c < 0 ? '▼ ' : '';
+    return sign + Math.abs(c).toFixed(2) + '%';
+  }
+
+  // ── Card builders ─────────────────────────────────────────────────────────
+  const prevPrices = {};
+
+  function buildCard(sym, name, price, change) {
+    const nm = NAMES[sym] || name;
+    const d = document.createElement('div');
+    d.className = 'price-card';
+    d.dataset.symbol = sym;
+    d.innerHTML =
+      '<div class="symbol">' + sym + '</div>' +
+      '<div class="name">' + nm + '</div>' +
+      '<div class="price">' + fmt(price) + '</div>' +
+      '<div class="change ' + cls(change) + '">' + lbl(change) + '</div>';
+    prevPrices[sym] = price;
+    return d;
+  }
+
+  function updateCard(card, sym, price, change) {
+    const prev = prevPrices[sym];
+    const priceEl  = card.querySelector('.price');
+    const changeEl = card.querySelector('.change');
+    if (priceEl)  priceEl.textContent  = fmt(price);
+    if (changeEl) { changeEl.textContent = lbl(change); changeEl.className = 'change ' + cls(change); }
+    if (prev !== undefined && price !== null && price !== prev) {
+      card.classList.remove('flash-up','flash-down');
+      void card.offsetWidth;
+      card.classList.add(price > prev ? 'flash-up' : 'flash-down');
+    }
+    prevPrices[sym] = price;
+  }
+
+  // ── Render FX groups ──────────────────────────────────────────────────────
+  function renderFxGroups(pairs) {
+    GROUP_IDS.forEach(function(g) {
+      const grid = document.getElementById('fx-' + g);
+      if (!grid) return;
+      const items = pairs.filter(function(p) { return p.g === g; });
+      const existing = grid.querySelectorAll('.price-card');
+      if (existing.length === 0 || existing.length !== items.length) {
+        grid.innerHTML = '';
+        items.forEach(function(p) { grid.appendChild(buildCard(p.sym, p.name, p.price, p.change)); });
+      } else {
+        items.forEach(function(p, i) { updateCard(existing[i], p.sym, p.price, p.change); });
+      }
+    });
+  }
+
+  // ── Render Indices ────────────────────────────────────────────────────────
+  function renderIndices(indices) {
+    const grid = document.getElementById('indices-grid');
+    if (!grid || !indices || !indices.length) return;
+    const existing = grid.querySelectorAll('.price-card');
+    if (existing.length === 0 || existing.length !== indices.length) {
+      grid.innerHTML = '';
+      indices.forEach(function(idx) { grid.appendChild(buildCard(idx.short, idx.name, idx.price, idx.change)); });
+    } else {
+      indices.forEach(function(idx, i) { updateCard(existing[i], idx.short, idx.price, idx.change); });
+    }
+  }
+
+  // ── Render Commodities ────────────────────────────────────────────────────
+  const COM_FALLBACK = [
+    { sym:'XAU/USD', name:'Gold oz',     price:4079.90, change:null },
+    { sym:'XAG/USD', name:'Silver oz',   price:64.21,   change:null },
+    { sym:'BRENT',   name:'Brent Crude', price:93.55,   change:null },
+    { sym:'WTI',     name:'WTI Crude',   price:90.51,   change:null },
+  ];
+
+  function renderCommodities(com) {
+    const grid = document.getElementById('commodity-grid');
+    if (!grid) return;
+    const items = [
+      { sym:'XAU/USD', name:'Gold oz',     price:(com.gold   && com.gold.price)   || COM_FALLBACK[0].price, change:com.gold   ? com.gold.change   : null },
+      { sym:'XAG/USD', name:'Silver oz',   price:(com.silver && com.silver.price) || COM_FALLBACK[1].price, change:com.silver ? com.silver.change : null },
+      { sym:'BRENT',   name:'Brent Crude', price:(com.brent  && com.brent.price)  || COM_FALLBACK[2].price, change:com.brent  ? com.brent.change  : null },
+      { sym:'WTI',     name:'WTI Crude',   price:(com.wti    && com.wti.price)    || COM_FALLBACK[3].price, change:com.wti    ? com.wti.change    : null },
+    ];
+    const existing = grid.querySelectorAll('.price-card');
+    if (existing.length === 0) {
+      grid.innerHTML = '';
+      items.forEach(function(it) { grid.appendChild(buildCard(it.sym, it.name, it.price, it.change)); });
+    } else {
+      items.forEach(function(it, i) { if (existing[i]) updateCard(existing[i], it.sym, it.price, it.change); });
+    }
+  }
+
+  // ── Render Crypto ─────────────────────────────────────────────────────────
+  function renderCrypto(cgData) {
+    const grid = document.getElementById('crypto-grid');
+    if (!grid || !cgData || !Array.isArray(cgData)) return;
+    const items = cgData.slice(0, 10).map(function(c) {
+      return { sym: c.symbol.toUpperCase(), name: c.name, price: c.current_price, change: c.price_change_percentage_24h ? parseFloat(c.price_change_percentage_24h.toFixed(2)) : null };
+    });
+    const existing = grid.querySelectorAll('.price-card');
+    if (existing.length === 0 || existing.length !== items.length) {
+      grid.innerHTML = '';
+      items.forEach(function(it) { grid.appendChild(buildCard(it.sym, it.name, it.price, it.change)); });
+    } else {
+      items.forEach(function(it, i) { updateCard(existing[i], it.sym, it.price, it.change); });
+    }
+  }
+
+  // ── Render News ───────────────────────────────────────────────────────────
+  var newsLoaded = false;
+  function renderNews(articles) {
+    const container = document.getElementById('news-container');
+    if (!container || !articles || !articles.length) return;
+    container.innerHTML = '';
+    articles.slice(0, 9).forEach(function(a) {
+      const card = document.createElement('a');
+      card.className = 'news-card';
+      card.href = a.link || '#';
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      const isRtl = a.lang === 'fa' || a.lang === 'ar';
+      card.innerHTML =
+        '<div class="src-badge">' + a.source + '</div>' +
+        '<div class="headline"' + (isRtl ? ' dir="rtl"' : '') + '>' + a.title + '</div>';
+      container.appendChild(card);
+    });
+  }
+
+  async function fetchNews() {
+    if (newsLoaded) return;
+    try {
+      const r = await fetch('/api/news', { signal: AbortSignal.timeout(12000) }).catch(function(){ return null; });
+      if (r && r.ok) {
+        const d = await r.json();
+        if (d.articles && d.articles.length) { renderNews(d.articles); newsLoaded = true; }
+      }
+    } catch (e) {}
+  }
+
+  // ── Last updated label ────────────────────────────────────────────────────
+  function setUpdated() {
+    const lu = document.getElementById('last-updated');
+    if (lu) lu.textContent = UPDATED_LABEL + ' ' + new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  // ── Main fetch ────────────────────────────────────────────────────────────
+  async function fetchLive() {
+    try {
+      // Parallel: Frankfurter (all FX), /api/markets (commodities+IRR+indices), CoinGecko
+      const [fxResp, mResp, cgResp] = await Promise.all([
+        fetch('https://api.frankfurter.dev/v1/latest?base=EUR&symbols=' + FX_SYMBOLS, { signal: AbortSignal.timeout(8000) }).catch(function(){ return null; }),
+        fetch('/api/markets', { signal: AbortSignal.timeout(15000) }).catch(function(){ return null; }),
+        fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&price_change_percentage=24h', { signal: AbortSignal.timeout(12000) }).catch(function(){ return null; }),
+      ]);
+
+      const fxData = fxResp && fxResp.ok ? await fxResp.json() : null;
+      const mData  = mResp  && mResp.ok  ? await mResp.json()  : null;
+      const cgData = cgResp && cgResp.ok ? await cgResp.json() : null;
+
+      const rates  = (fxData && fxData.rates) || {};
+      const m      = mData  || {};
+      const irrUsd = (m.irr && m.irr.usd) || null;
+      const irrEur = (m.irr && m.irr.eur) || null;
+      const rsd    = m.eur_rsd || null;
+
+      // Build pair data
+      const pairs = PAIRS.map(function(p) {
+        var price = null, change = null;
+        if (p.type === 'eur')     { price = rates[p.to] || null; }
+        else if (p.type === 'usd') { price = (rates[p.to] && rates['USD']) ? rates[p.to] / rates['USD'] : null; }
+        else if (p.type === 'cross') { price = (rates[p.n] && rates[p.d]) ? rates[p.n] / rates[p.d] : null; }
+        else if (p.type === 'rsd') { price = rsd ? rsd.price : null; change = rsd ? rsd.change : null; }
+        else if (p.type === 'irr-usd') { price = irrUsd ? irrUsd.price : null; change = irrUsd ? irrUsd.change : null; }
+        else if (p.type === 'irr-eur') { price = irrEur ? irrEur.price : null; change = irrEur ? irrEur.change : null; }
+        return Object.assign({}, p, { price: price, change: change });
+      });
+
+      renderFxGroups(pairs);
+      if (m.commodities) renderCommodities(m.commodities);
+      if (m.indices)     renderIndices(m.indices);
+      if (cgData)        renderCrypto(cgData);
+
+      setUpdated();
+    } catch (e) {
+      console.error('markets fetch error:', e);
+    }
+  }
+
+  // Init
+  fetchLive();
+  fetchNews();
+  setInterval(fetchLive, 60000);       // markets every 60s
+  setInterval(fetchNews, 300000);      // news every 5 min
+
+})();
+</script>

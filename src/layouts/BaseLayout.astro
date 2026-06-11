@@ -1,0 +1,268 @@
+---
+import '../styles/global.css';
+import {
+  CHROME,
+  LOCALES,
+  LOCALE_META,
+  LOCALIZED_ROUTES,
+  localeOf,
+  stripLocale,
+  type Locale,
+} from '../i18n/ui';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  locale?: Locale;
+}
+
+const {
+  title,
+  description = 'AI, market data, and research for better decisions. AHoosh helps founders, companies, and decision-makers act with better information.',
+  ogImage = '/assets/logo-dark.png',
+  locale = localeOf(Astro.url.pathname),
+} = Astro.props;
+
+const meta = LOCALE_META[locale];
+const t = CHROME[locale];
+const base = meta.base;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// hreflang alternates — only for routes that exist in every locale
+const routeKey = stripLocale(Astro.url.pathname);
+const isLocalized = LOCALIZED_ROUTES.includes(routeKey);
+const alternates = isLocalized
+  ? LOCALES.map((l) => ({
+      lang: LOCALE_META[l].lang,
+      href: new URL((LOCALE_META[l].base + routeKey) || '/', Astro.site).href,
+    }))
+  : [];
+---
+
+<!doctype html>
+<html lang={meta.lang} dir={meta.dir}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title>{title} | AHoosh</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={a.lang} href={a.href} />
+    ))}
+    {isLocalized && (
+      <link rel="alternate" hreflang="x-default" href={new URL(routeKey || '/', Astro.site).href} />
+    )}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={`${title} | AHoosh`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    {locale === 'fa' && (
+      <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    )}
+    {locale === 'fa' && (
+      <style is:inline>
+        :root { --font-head: 'Vazirmatn', 'Montserrat', system-ui, sans-serif; --font-body: 'Vazirmatn', 'Inter', system-ui, sans-serif; }
+        body { letter-spacing: 0 !important; }
+      </style>
+    )}
+    <slot name="head" />
+  </head>
+  <body>
+    <!-- Sticky Nav -->
+    <header id="site-header" style="
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy-dark);
+      border-bottom: 1px solid rgba(215,161,61,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+    ">
+      <!-- Logo -->
+      <a href={base || '/'} aria-label="AHoosh home" style="display:flex;align-items:center;">
+        <img
+          src="/assets/logo.png"
+          alt="AHoosh"
+          style="height:52px;width:auto;"
+        />
+      </a>
+
+      <!-- Desktop nav (lg+) -->
+      <nav id="desktop-nav" style="
+        display: none;
+        gap: 26px;
+        align-items: center;
+      ">
+        <a href={`${base}/consulting`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.consulting}</a>
+        <a href={`${base}/articles`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.articles}</a>
+        <a href={`${base}/news`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.news}</a>
+        <a href={`${base}/about`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.about}</a>
+        <a href={`${base}/markets`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.markets}</a>
+        <a href={`${base}/assess`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--gold);letter-spacing:0.04em;transition:color 150ms ease;border:1px solid rgba(215,161,61,0.4);padding:6px 14px;border-radius:6px;">{t.assess}</a>
+        <a href={`${base}/contact`} class="btn-primary" style="padding:10px 20px;font-size:12px;min-height:40px;display:inline-flex;align-items:center;">{t.bookCall}</a>
+
+        <!-- Language switcher (desktop) -->
+        <div style="display:flex;gap:2px;border:1px solid rgba(215,161,61,0.25);border-radius:6px;padding:2px;">
+          {LOCALES.map((l) => (
+            <a
+              href={(LOCALE_META[l].base + (isLocalized ? routeKey : '')) || '/'}
+              style={`font-family:var(--font-head);font-size:11px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.02em;${
+                l === locale
+                  ? 'background:var(--gold);color:var(--navy-dark);'
+                  : 'color:var(--silver-dim);'
+              }`}
+            >{LOCALE_META[l].label}</a>
+          ))}
+        </div>
+      </nav>
+
+      <!-- Mobile: switcher + hamburger -->
+      <div style="display:flex;align-items:center;gap:10px;" id="mobile-controls">
+        <div id="mobile-lang" style="display:flex;gap:2px;border:1px solid rgba(215,161,61,0.25);border-radius:6px;padding:2px;">
+          {LOCALES.map((l) => (
+            <a
+              href={(LOCALE_META[l].base + (isLocalized ? routeKey : '')) || '/'}
+              style={`font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 6px;border-radius:4px;${
+                l === locale
+                  ? 'background:var(--gold);color:var(--navy-dark);'
+                  : 'color:var(--silver-dim);'
+              }`}
+            >{LOCALE_META[l].label}</a>
+          ))}
+        </div>
+        <button id="nav-toggle" aria-label="Open menu" style="
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 4px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 5px;
+          width: 44px;
+          height: 44px;
+          align-items: center;
+        ">
+          <span style="display:block;height:1.5px;width:24px;background:var(--silver);border-radius:2px;"></span>
+          <span style="display:block;height:1.5px;width:24px;background:var(--silver);border-radius:2px;"></span>
+          <span style="display:block;height:1.5px;width:16px;background:var(--silver);border-radius:2px;align-self:flex-end;"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile menu drawer -->
+    <div id="mobile-menu" style="
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--navy-dark);
+      z-index: 200;
+      padding: 24px;
+      flex-direction: column;
+    ">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;">
+        <img src="/assets/logo.png" alt="AHoosh" style="height:52px;width:auto;" />
+        <button id="menu-close" aria-label="Close menu" style="
+          background:none;border:none;cursor:pointer;
+          color:var(--silver);font-size:28px;line-height:1;
+          width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+        ">×</button>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:4px;">
+        <a href={`${base}/consulting`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.consulting}</a>
+        <a href={`${base}/articles`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.articles}</a>
+        <a href={`${base}/news`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.news}</a>
+        <a href={`${base}/about`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.about}</a>
+        <a href={`${base}/markets`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.markets}</a>
+        <a href={`${base}/assess`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--gold);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.assess}</a>
+        <a href={`${base}/contact`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.contact}</a>
+      </nav>
+      <div style="margin-top:auto;padding-top:32px;">
+        <a href={`${base}/contact`} class="btn-primary" style="width:100%;display:block;text-align:center;padding:16px;">{t.bookDiscovery}</a>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer style="
+      background: var(--navy-dark);
+      border-top: 1px solid rgba(215,161,61,0.1);
+      padding: 40px 24px;
+    ">
+      <div style="max-width:680px;margin:0 auto;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px;margin-bottom:32px;">
+          <div>
+            <img src="/assets/logo.png" alt="AHoosh" style="height:44px;width:auto;margin-bottom:8px;" />
+            <p style="font-size:12px;color:var(--silver-muted);margin:0;">{t.footerTagline}</p>
+          </div>
+          <nav style="display:flex;flex-direction:column;gap:10px;">
+            <a href={`${base}/consulting`} style="font-size:13px;color:var(--silver-dim);">{t.consulting}</a>
+            <a href={`${base}/articles`} style="font-size:13px;color:var(--silver-dim);">{t.articles}</a>
+            <a href={`${base}/about`} style="font-size:13px;color:var(--silver-dim);">{t.about}</a>
+            <a href={`${base}/markets`} style="font-size:13px;color:var(--silver-dim);">{t.markets}</a>
+            <a href={`${base}/assess`} style="font-size:13px;color:var(--gold);">{t.assess.replace(' ✦','')}</a>
+            <a href={`${base}/contact`} style="font-size:13px;color:var(--silver-dim);">{t.contact}</a>
+          </nav>
+        </div>
+        <div style="border-top:1px solid rgba(215,161,61,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <p style="font-size:11px;color:var(--silver-muted);margin:0;">© {new Date().getFullYear()} AHoosh</p>
+          <a href="mailto:contact@ahoosh.ai" style="font-size:11px;color:var(--gold);">contact@ahoosh.ai</a>
+        </div>
+      </div>
+    </footer>
+
+    <style>
+      /* Desktop nav breakpoint */
+      @media (min-width: 900px) {
+        #desktop-nav { display: flex !important; }
+        #mobile-controls #nav-toggle { display: none !important; }
+        #mobile-lang { display: none !important; }
+      }
+    </style>
+
+    <script>
+      const toggle = document.getElementById('nav-toggle');
+      const closeBtn = document.getElementById('menu-close');
+      const menu = document.getElementById('mobile-menu');
+
+      toggle?.addEventListener('click', () => {
+        menu!.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      });
+
+      closeBtn?.addEventListener('click', () => {
+        menu!.style.display = 'none';
+        document.body.style.overflow = '';
+      });
+    </script>
+  </body>
+</html>

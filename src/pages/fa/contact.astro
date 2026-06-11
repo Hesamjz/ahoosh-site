@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="تماس"
+  description="تماس با آهوش — استراتژی هوش مصنوعی، پژوهش بازار، مشاوره، ساختار داده، محتوا و پشتیبانی تصمیم."
+  locale="fa"
+>
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">تماس</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,36px);color:var(--silver);margin-bottom:10px;">بگویید چه نیازی دارید</h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:2;max-width:420px;margin:0 auto;">
+      بگویید دنبال فهمیدن، ساختن، بهبود یا تصمیم‌گیری درباره چه چیزی هستید.
+      آهوش در استراتژی هوش مصنوعی، پژوهش بازار، مشاوره، ساختار داده، محتوا و پشتیبانی تصمیم کمک می‌کند.
+    </p>
+  </section>
+
+  <!-- Form -->
+  <section style="padding:32px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <form method="POST" action="https://formspree.io/f/YOUR_FORM_ID" style="display:flex;flex-direction:column;gap:0;">
+      <input type="hidden" name="_next" value="/contact/thanks" />
+      <input type="hidden" name="_subject" value="New contact from ahoosh.ai (fa)" />
+      <input type="text" name="_gotcha" style="display:none" />
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--silver-dim);margin-bottom:6px;">نام شما</label>
+        <input type="text" name="name" placeholder="نام و نام خانوادگی" required style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;" />
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--silver-dim);margin-bottom:6px;">ایمیل</label>
+        <input type="email" name="email" placeholder="you@company.com" required dir="ltr" style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;" />
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--silver-dim);margin-bottom:6px;">شرکت / پروژه</label>
+        <input type="text" name="company" placeholder="نام شرکت یا پروژه (اختیاری)" style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;" />
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--silver-dim);margin-bottom:6px;">به چه کمکی نیاز دارید؟</label>
+        <textarea name="message" placeholder="توضیح دهید دنبال فهمیدن، ساختن، بهبود یا تصمیم‌گیری درباره چه چیزی هستید…" rows="4" required style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;resize:vertical;min-height:100px;"></textarea>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--silver-dim);margin-bottom:6px;">دنبال چه هستید…</label>
+        <select name="request_type" style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;">
+          <option value="" style="background:#010A18;">انتخاب کنید…</option>
+          <option value="consulting" style="background:#010A18;">مشاوره</option>
+          <option value="market_research" style="background:#010A18;">پژوهش بازار</option>
+          <option value="data_access" style="background:#010A18;">دسترسی به داده</option>
+          <option value="ai_strategy" style="background:#010A18;">استراتژی هوش مصنوعی</option>
+          <option value="content" style="background:#010A18;">محتوا و رهبری فکری</option>
+          <option value="other" style="background:#010A18;">موضوع دیگر</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width:100%;padding:16px;font-size:13px;border:none;cursor:pointer;">
+        ارسال پیام
+      </button>
+    </form>
+  </section>
+
+  <!-- Social links -->
+  <div style="padding:32px 24px 48px;max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow" style="margin-bottom:4px;">یا از این راه‌ها</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
+      <a href="https://linkedin.com/in/hesam-jafarzadeh-43697679" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px;min-height:44px;">
+        <div style="flex-shrink:0;width:40px;height:40px;border-radius:6px;background:rgba(215,161,61,0.12);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--gold);">in</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:2px;">لینکدین</div>
+          <div style="font-size:12px;color:var(--silver-muted);">حسام جعفرزاده · بنیان‌گذار آهوش</div>
+        </div>
+      </a>
+      <a href="mailto:contact@ahoosh.ai" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px;min-height:44px;">
+        <div style="flex-shrink:0;width:40px;height:40px;border-radius:6px;background:rgba(215,161,61,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;">✉</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:2px;">ایمیل</div>
+          <div style="font-size:12px;color:var(--silver-muted);direction:ltr;">contact@ahoosh.ai</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<style>
+  input:focus, textarea:focus, select:focus { border-color: var(--gold) !important; }
+  input::placeholder, textarea::placeholder { color: var(--silver-muted); }
+</style>

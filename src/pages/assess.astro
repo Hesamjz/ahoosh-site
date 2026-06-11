@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AssessBody from '../components/AssessBody.astro';
+import AssessHead from '../components/AssessHead.astro';
+---
+
+<BaseLayout
+  title="Assess"
+  description="Scientifically validated workplace assessments — the Big Five (IPIP) personality test and the Rosenberg Self-Esteem Scale. Free, instant results."
+  locale="en"
+>
+  <Fragment slot="head"><AssessHead /></Fragment>
+  <AssessBody lang="en" />
+</BaseLayout>

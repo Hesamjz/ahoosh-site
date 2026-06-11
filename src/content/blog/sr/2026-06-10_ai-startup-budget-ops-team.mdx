@@ -1,0 +1,84 @@
+---
+title: "Izgradnja AI-First operativnog tima sa startap budžetom"
+description: "Nije vam potreban tim za nauku o podacima ni šestocifreni AI budžet da biste vodili operacije pojačane veštačkom inteligencijom. Evo kako izgleda operativni tim od 2 do 5 ljudi kada je od početka izgrađen kao AI-First."
+pubDate: 2026-06-10
+tags: ["AI Operations", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80"
+lang: sr
+translationOf: "2026-06-10_ai-startup-budget-ops-team"
+---
+
+<img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80" alt="Mali tim radi zajedno" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Greška u većini razgovora o „AI za operacije" jeste to što se ona posmatra kao sloj dodat postojećoj strukturi tima. Tim od deset ljudi koji uvodi AI alate i dalje je tim od deset ljudi sa AI alatima. Zanimljivo pitanje je drugačije: kako izgleda operativni tim od tri osobe ako je od početka osmišljen oko AI — a ne naknadno prilagođen?
+
+Odgovor je tim koji obavlja obim posla i složenost tradicionalnog tima od šest do osam ljudi, uz otprilike polovinu troškova.
+
+---
+
+## Šta „AI-First" zaista znači u operacijama
+
+AI-First u kontekstu operacija ne znači zamenu ljudi veštačkom inteligencijom. Znači osmišljavanje svakog radnog toka tako da AI obavlja repetitivne, na pravilima zasnovane zadatke velikog obima — a ljudi se bave procenom, odnosima i izuzecima.
+
+Tradicionalni operativni tok: prijem porudžbine → ručni unos u ERP → provera zaliha → potvrda sa kupcem → organizacija logistike → praćenje isporuke → obrada upita kupca o isporuci.
+
+AI-First verzija istog toka: porudžbina je primljena → AI izvlači i unosi u ERP → AI proverava zalihe i pokreće isporuku → AI šalje kupcu potvrdu sa linkom za praćenje → AI prati status isporuke → AI obrađuje standardni upit o isporuci; eskalira samo ako je u kašnjenju ili složen.
+
+Ljudska uloga u AI-First verziji: pregled reda izuzetaka, upravljanje odnosima sa dobavljačima, obrada složenih eskalacija kupaca i kontinuirano poboljšavanje AI radnih tokova. Čovek obavlja posao veće vrednosti. AI obavlja posao po obimu.
+
+---
+
+## AI-First operativni stek za ispod 500 €/mesec
+
+Za tim od 2 do 5 ljudi koji obavlja B2B distributivne operacije:
+
+**Obrada porudžbina:** izvlačenje porudžbina putem Claude API ili Zapier → unos u ERP. Trošak: 50–150 €/mesec u zavisnosti od obima porudžbina.
+
+**Korisnička podrška:** Tidio sa AI slojem, obučen na katalogu proizvoda i podacima o porudžbinama. Trošak: 50–80 €/mesec.
+
+**Interna baza znanja:** Notion (za timske SOP-ove, informacije o dobavljačima, katalog proizvoda) + Notion AI za pretragu i generisanje nacrta. Trošak: 20–40 €/mesec.
+
+**Pisanje i praćenje imejlova:** Claude API ili Notion AI za standardne nacrte imejlova (praćenje dobavljača, potvrde kupcima, obaveštenja o kašnjenju). Trošak: uključen u pretplate na AI alate.
+
+**Izveštavanje i kontrolne table:** Google Sheets ili Notion baze podataka kao sloj podataka; AI upiti za ad-hoc analizu. Trošak: 0 € (Google) ili uključen u Notion.
+
+**Ukupan trošak alata:** 120–270 €/mesec. Tim od tri osobe sa ovim stekom pokriva operativni obim posla tima od pet do šest ljudi izgrađenog na tradicionalnim ručnim radnim tokovima.
+
+---
+
+## Struktura uloga
+
+**Uloga 1 — vođa operacija (1 osoba):** nosilac odnosa sa dobavljačima, upravlja redovima izuzetaka iz AI radnih tokova, odobrava odluke o cenama, obrađuje eskalirane probleme kupaca. Veći deo nedelje provodi na poslu koji zavisi od odnosa i procene. Nedeljno pregleda AI radne tokove kako bi uočio obrasce grešaka.
+
+**Uloga 2 — saradnik u operacijama (1–2 osobe):** obrađuje red izuzetaka iz AI obrade porudžbina (onih 4–5 % porudžbina kojima je potrebna ručna pažnja), upravlja ažuriranjima baze znanja (obuka AI na novim proizvodima, politikama, graničnim slučajevima) i obrađuje složene upite kupaca koje je AI eskalirao.
+
+**Opciona uloga 3 — specijalista za AI radne tokove (skraćeno radno vreme ili honorarno):** gradi i održava sloj automatizacije — Zapier radne tokove, konfiguracije AI promptova, ERP integracije. U malom timu, ovo je često honorarna uloga (konsultant koji održava stek) umesto zaposlenja sa punim radnim vremenom.
+
+Ova struktura obrađuje 50–200 porudžbina dnevno, 50–150 upita korisničke podrške nedeljno i standardno izveštavanje za menadžment tim — sa 2–3 osobe. Tradicionalna struktura za isti obim zahtevala bi 5–8 ljudi.
+
+---
+
+## Šta je potrebno da se do toga stigne
+
+Izgradnja AI-First operativnog tima od nule zahteva 8–12 nedelja fokusiranog rada:
+
+- **Nedelje 1–2:** Mapirajte svaki trenutni radni tok. Dokumentujte svaki korak, ko ga obavlja i koliko traje. Ovo otkriva koji radni tokovi imaju najveći obim i najviše ponavljanja — oni idu prvi.
+- **Nedelje 3–5:** Automatizujte radni tok najvećeg obima (obično unos porudžbina ili korisničku podršku). Validirajte stopu izuzetaka. Izgradite bazu znanja.
+- **Nedelje 6–8:** Dodajte drugi radni tok (sledeći po obimu). Izgradite usmeravanje eskalacije između AI i čoveka.
+- **Nedelje 9–12:** Dodajte izveštavanje i optimizujte. Nedeljno pregledajte obrasce izuzetaka i ažurirajte AI konfiguraciju.
+
+Do dvanaeste nedelje, tim radi na AI-First steku. Preostala 3–4 meseca su iteracija — pronalaženje konkretnih praznina u bazi znanja, graničnih slučajeva integracije i varijacija radnih tokova koje početna izgradnja nije pokrila.
+
+---
+
+## Česta greška: prevelik početak
+
+Najčešći obrazac neuspeha u izgradnji AI-First operacija jeste pokušaj da se sve automatizuje istovremeno. Timovi koji planiraju šestomesečni projekat AI transformacije za celu operativnu funkciju neuspevaju češće od timova koji jedan radni tok automatizuju u potpunosti, validiraju ga, a zatim prelaze na sledeći.
+
+Kontraintuitivna istina: četvoronedeljni projekat za potpunu automatizaciju unosa porudžbina — uključujući usmeravanje izuzetaka, ERP integraciju i potvrdu kupcu — donosi trajniju vrednost od šestomesečnog projekta za „uvođenje AI u sve operacije".
+
+Počnite sa pojedinačnim repetitivnim zadatkom najvećeg obima. Izgradite ga u potpunosti. Izmerite ga. Zatim proširite.
+
+---
+
+**AHoosh osmišljava i gradi AI-First operativne strukture za B2B preduzeća — od revizije radnih tokova do steka u radu.** [ahoosh.ai/contact](https://ahoosh.ai/contact)
