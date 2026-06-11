@@ -8,16 +8,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 >
 
   <!-- Hero -->
-  <section style="background:#010A18;padding:64px 24px 56px;border-bottom:1px solid rgba(215,161,61,0.12);">
-    <div style="max-width:680px;margin:0 auto;">
+  <section style="
+    background: radial-gradient(ellipse 100% 80% at 50% 0%, #0e2444 0%, #061228 40%, #010A18 75%);
+    padding: 64px 24px 60px;
+    border-bottom: 1px solid rgba(215,161,61,0.14);
+    position: relative;
+    overflow: hidden;
+  ">
+    <!-- subtle corner accent -->
+    <div style="position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(ellipse at top right,rgba(215,161,61,0.06) 0%,transparent 65%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:0;left:0;width:200px;height:200px;background:radial-gradient(ellipse at bottom left,rgba(215,161,61,0.04) 0%,transparent 65%);pointer-events:none;"></div>
+
+    <div style="max-width:680px;margin:0 auto;position:relative;">
 
       <div style="display:flex;flex-direction:column;align-items:center;gap:32px;">
-        <canvas id="vc" width="320" height="240" style="cursor:grab;display:block;touch-action:none;width:min(320px,80vw);aspect-ratio:320/240;flex-shrink:0;"></canvas>
+        <canvas id="vc" width="320" height="240" style="cursor:grab;display:block;touch-action:none;width:min(320px,80vw);aspect-ratio:320/240;flex-shrink:0;filter:drop-shadow(0 0 32px rgba(215,161,61,0.18));"></canvas>
 
         <div style="text-align:center;max-width:560px;">
-          <div class="section-eyebrow" style="margin-bottom:10px;">Founded by Hesam Jafarzadeh</div>
-          <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(26px,6vw,42px);letter-spacing:-0.02em;line-height:1.15;color:var(--silver);margin-bottom:18px;">AI, Market Data, and<br/>Research for Better Decisions</h1>
-          <p style="font-size:15px;line-height:1.75;color:var(--silver-dim);margin-bottom:32px;">
+          <div class="section-eyebrow" style="margin-bottom:12px;">Founded by Hesam Jafarzadeh</div>
+          <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(28px,6vw,46px);letter-spacing:-0.025em;line-height:1.1;color:var(--silver);margin-bottom:20px;text-shadow:0 2px 20px rgba(0,0,0,0.4);">AI, Market Data, and<br/>Research for Better Decisions</h1>
+          <p style="font-size:15px;line-height:1.8;color:var(--silver-dim);margin-bottom:36px;">
             AHoosh helps founders, companies, consultants, and decision-makers combine AI tools,
             market signals, and practical research to understand opportunities, reduce uncertainty,
             and build smarter strategies.
@@ -25,20 +35,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
             <a href="/markets" class="btn-primary" style="width:100%;max-width:280px;">Explore Market Data</a>
             <a href="/contact" class="btn-secondary" style="width:100%;max-width:280px;">Request Consultation</a>
-            <a href="/articles" class="link-gold" style="font-size:14px;padding:8px 0;">Read Articles →</a>
+            <a href="/articles" class="link-gold" style="font-size:13px;padding:8px 0;">Read Articles</a>
           </div>
         </div>
       </div>
 
       <!-- Founder card -->
-      <div style="display:flex;align-items:center;gap:16px;margin-top:48px;padding:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:8px;">
-        <div style="flex-shrink:0;width:64px;height:64px;border-radius:50%;overflow:hidden;border:2px solid rgba(215,161,61,0.4);background:rgba(215,161,61,0.1);">
+      <div class="card-dark" style="display:flex;align-items:center;gap:16px;margin-top:48px;padding:20px;">
+        <div style="flex-shrink:0;width:64px;height:64px;border-radius:50%;overflow:hidden;border:2px solid rgba(215,161,61,0.45);background:rgba(215,161,61,0.1);box-shadow:0 0 16px rgba(215,161,61,0.12);">
           <img src="/assets/hesam.png" alt="Hesam Jafarzadeh" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
             onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:18px;color:var(--gold);\'>HJ</div>';" />
         </div>
         <div>
           <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--silver);line-height:1.2;">Hesam Jafarzadeh</div>
-          <div style="font-size:12px;color:var(--gold);font-weight:500;letter-spacing:0.04em;margin-top:3px;">Founder · Researcher · AI and Market Intelligence Consultant</div>
+          <div style="font-size:12px;color:var(--gold-light);font-weight:500;letter-spacing:0.04em;margin-top:3px;">Founder · Researcher · AI and Market Intelligence Consultant</div>
           <div style="font-size:12px;color:var(--silver-muted);margin-top:4px;">15+ years across industries · PhD researcher, University of Belgrade</div>
         </div>
         <a href="/about" style="margin-left:auto;flex-shrink:0;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);white-space:nowrap;">About →</a>
@@ -79,73 +89,81 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </script>
 
   <!-- What AHoosh does -->
-  <section style="padding:48px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+  <section style="padding:52px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
     <div class="section-eyebrow">What AHoosh Does</div>
     <h2 class="section-title">Four Layers, One Practice</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
-        <div style="font-size:20px;margin-bottom:8px;">🤖</div>
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">🤖</div>
         <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">AI-Assisted Research</div>
         <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Using AI tools to collect, organize, compare, and explain information faster than traditional methods.</div>
       </div>
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
-        <div style="font-size:20px;margin-bottom:8px;">📊</div>
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">📊</div>
         <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Market Intelligence</div>
         <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Tracking prices, trends, signals, and public data that affect business and investment decisions.</div>
       </div>
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
-        <div style="font-size:20px;margin-bottom:8px;">🧩</div>
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">🧩</div>
         <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Consulting</div>
         <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Helping founders and companies turn unclear problems into practical decisions and action plans.</div>
       </div>
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:18px;">
-        <div style="font-size:20px;margin-bottom:8px;">📝</div>
+      <div class="card-dark" style="padding:18px;">
+        <div style="font-size:20px;margin-bottom:10px;">📝</div>
         <div style="font-family:var(--font-head);font-weight:600;font-size:13px;color:var(--silver);margin-bottom:6px;">Content &amp; Education</div>
         <div style="font-size:12px;line-height:1.6;color:var(--silver-dim);">Publishing articles, guides, and explanations for a global audience.</div>
       </div>
     </div>
-    <div style="text-align:center;margin-top:24px;">
-      <a href="/consulting" class="link-gold">See All Consulting Services →</a>
+    <div style="text-align:center;margin-top:28px;">
+      <a href="/consulting" class="link-gold">See All Consulting Services</a>
     </div>
   </section>
 
   <!-- Who it's for -->
-  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+  <section style="padding:44px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
     <div class="section-eyebrow">Who It's For</div>
     <h2 class="section-title">Built for Decision-Makers</h2>
-    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);">
+    <p style="font-size:14px;line-height:1.85;color:var(--silver-dim);">
       AHoosh works with founders, startups, consultants, established companies, and individual decision-makers who need clarity before they move — whether they are studying a market, testing a business idea, improving internal operations, or looking for better ways to use AI.
     </p>
-    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);margin-top:12px;">
+    <p style="font-size:14px;line-height:1.85;color:var(--silver-dim);margin-top:14px;">
       The practice is designed for anyone who wants practical research, useful market signals, and AI-assisted decision support — wherever they operate.
     </p>
   </section>
 
   <!-- Articles teaser -->
-  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+  <section style="padding:44px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
     <div class="section-eyebrow">Intelligence</div>
     <h2 class="section-title">Recent Articles</h2>
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:18px;margin-bottom:12px;">
-      <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">AI &amp; Decision-Making</div>
+    <div class="card-dark" style="padding:18px;margin-bottom:10px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">AI &amp; Decision-Making</div>
       <div style="font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.4;color:var(--silver);margin-bottom:6px;">Why Most AI Implementations Fail in the First 90 Days</div>
       <div style="font-size:11px;color:var(--silver-muted);">June 2026</div>
     </div>
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:18px;margin-bottom:16px;">
-      <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Market Intelligence</div>
+    <div class="card-dark" style="padding:18px;margin-bottom:20px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Market Intelligence</div>
       <div style="font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.4;color:var(--silver);margin-bottom:6px;">Reading Market Signals: What Founders Miss and Why It Matters</div>
       <div style="font-size:11px;color:var(--silver-muted);">May 2026</div>
     </div>
-    <a href="/articles" class="link-gold">All Articles →</a>
+    <a href="/articles" class="link-gold">All Articles</a>
   </section>
 
   <!-- CTA band -->
-  <section style="background:linear-gradient(135deg,rgba(215,161,61,0.08) 0%,rgba(3,20,46,0.6) 100%);border-top:1px solid rgba(215,161,61,0.15);padding:48px 24px;text-align:center;">
-    <div style="max-width:480px;margin:0 auto;">
-      <div style="width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid rgba(215,161,61,0.4);margin:0 auto 16px;background:rgba(215,161,61,0.1);">
+  <section style="
+    background: linear-gradient(160deg, rgba(215,161,61,0.07) 0%, rgba(6,18,40,0.8) 50%, rgba(215,161,61,0.04) 100%);
+    border-top: 1px solid rgba(215,161,61,0.18);
+    padding: 56px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(215,161,61,0.05) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="max-width:480px;margin:0 auto;position:relative;">
+      <div style="width:60px;height:60px;border-radius:50%;overflow:hidden;border:2px solid rgba(215,161,61,0.45);margin:0 auto 20px;background:rgba(215,161,61,0.1);box-shadow:0 0 24px rgba(215,161,61,0.15);">
         <img src="/assets/hesam.png" alt="Hesam" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;" onerror="this.style.display='none';" />
       </div>
-      <h2 style="font-family:var(--font-head);font-weight:700;font-size:22px;color:var(--silver);margin-bottom:8px;line-height:1.3;">Tell me what you're trying to figure out</h2>
-      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:24px;">No pitch deck. Just a direct conversation about what you need.</p>
+      <h2 style="font-family:var(--font-head);font-weight:700;font-size:24px;letter-spacing:-0.02em;color:var(--silver);margin-bottom:10px;line-height:1.25;">Tell me what you're trying to figure out</h2>
+      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:28px;line-height:1.75;">No pitch deck. Just a direct conversation about what you need.</p>
       <a href="/contact" class="btn-primary" style="display:inline-block;min-width:220px;">Contact AHoosh</a>
     </div>
   </section>
