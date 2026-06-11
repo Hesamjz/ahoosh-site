@@ -105,6 +105,9 @@ const { banner, lang = 'en' } = Astro.props;
   // Self-Efficacy (GSE): 10 items, all positively keyed, 4-point scale, sum 10-40
   const SELFEFF_META=[{id:1,r:false},{id:2,r:false},{id:3,r:false},{id:4,r:false},{id:5,r:false},{id:6,r:false},{id:7,r:false},{id:8,r:false},{id:9,r:false},{id:10,r:false}];
   function scoreSelfEff(ans){let total=0;for(const q of SELFEFF_META){const r=ans[q.id];if(!r)continue;total+=q.r?5-r:r;}const pct=Math.max(0,Math.min(100,Math.round((total-10)/30*100)));let level;if(pct>=70)level='high';else if(pct>=45)level='medium';else level='low';return{total,pct,level};}
+  // Optimism (LOT-R): 5-point scale (v1-5 → 0-4); items 2,5,6,8 are fillers (f) and not scored; 3,7,9 reverse-keyed
+  const LOT_META=[{id:1,r:false,f:false},{id:2,f:true},{id:3,r:true,f:false},{id:4,r:false,f:false},{id:5,f:true},{id:6,f:true},{id:7,r:true,f:false},{id:8,f:true},{id:9,r:true,f:false},{id:10,r:false,f:false}];
+  function scoreOptimism(ans){let total=0;for(const q of LOT_META){if(q.f)continue;const v=ans[q.id];if(!v)continue;const s=v-1;total+=q.r?4-s:s;}const pct=Math.max(0,Math.min(100,Math.round(total/24*100)));let level;if(pct>=67)level='high';else if(pct>=34)level='medium';else level='low';return{total,pct,level};}
 
   // ─── TRANSLATABLE CONTENT ─────────────────────────────
   const DATA={
@@ -162,6 +165,19 @@ const { banner, lang = 'en' } = Astro.props;
         },
         questions:["I can always manage to solve difficult problems if I try hard enough.","If someone opposes me, I can find the means and ways to get what I want.","It is easy for me to stick to my aims and accomplish my goals.","I am confident that I could deal efficiently with unexpected events.","Thanks to my resourcefulness, I know how to handle unforeseen situations.","I can solve most problems if I invest the necessary effort.","I can remain calm when facing difficulties because I can rely on my coping abilities.","When I am confronted with a problem, I can usually find several solutions.","If I am in trouble, I can usually think of a solution.","I can usually handle whatever comes my way."],
       },
+      optimism:{
+        title:'Optimism',subtitle:'LOT-R · 10 questions · ~3 min',
+        desc:'Measures dispositional optimism — your general expectation that good things will happen. Linked to resilience, coping, and wellbeing.',
+        tagline:'Self & Wellbeing',scaleName:'Life Orientation Test–Revised',
+        footer:'Based on the Life Orientation Test–Revised (Scheier, Carver & Bridges, 1994).',
+        labels:["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"],
+        levels:{
+          high:{label:'High Optimism',desc:'You generally expect good outcomes and approach the future with confidence. This dispositional optimism supports resilience, persistence, and wellbeing under stress.'},
+          medium:{label:'Balanced Outlook',desc:'You hold a realistic mix of optimism and caution. You expect good outcomes in some areas while staying guarded in others.'},
+          low:{label:'Cautious Outlook',desc:'You tend to expect difficulties and brace for the worst. This caution can guard against disappointment, but cultivating optimism is linked to better coping and wellbeing.'},
+        },
+        questions:["In uncertain times, I usually expect the best.","It's easy for me to relax.","If something can go wrong for me, it will.","I'm always optimistic about my future.","I enjoy my friends a lot.","It's important for me to keep busy.","I hardly ever expect things to go my way.","I don't get upset too easily.","I rarely count on good things happening to me.","Overall, I expect more good things to happen to me than bad."],
+      },
     },
     de:{
       ui:{
@@ -216,6 +232,19 @@ const { banner, lang = 'en' } = Astro.props;
           low:{label:'Sich entwickelnde Selbstwirksamkeit',desc:'Sie zweifeln möglicherweise an Ihrer Fähigkeit, schwierige oder unerwartete Situationen zu bewältigen. Selbstwirksamkeit wächst durch kleine, wiederholte Erfolge und unterstützendes Feedback.'},
         },
         questions:["Wenn sich Widerstände auftun, finde ich Mittel und Wege, mich durchzusetzen.","Die Lösung schwieriger Probleme gelingt mir immer, wenn ich mich darum bemühe.","Es bereitet mir keine Schwierigkeiten, meine Absichten und Ziele zu verwirklichen.","In unerwarteten Situationen weiß ich immer, wie ich mich verhalten soll.","Auch bei überraschenden Ereignissen glaube ich, dass ich gut mit ihnen zurechtkommen kann.","Schwierigkeiten sehe ich gelassen entgegen, weil ich meinen Fähigkeiten immer vertrauen kann.","Was auch immer passiert, ich werde schon klarkommen.","Für jedes Problem kann ich eine Lösung finden.","Wenn eine neue Sache auf mich zukommt, weiß ich, wie ich damit umgehen kann.","Wenn ein Problem auftaucht, kann ich es aus eigener Kraft meistern."],
+      },
+      optimism:{
+        title:'Optimismus',subtitle:'LOT-R · 10 Fragen · ~3 Min.',
+        desc:'Misst dispositionalen Optimismus — Ihre allgemeine Erwartung, dass Gutes geschehen wird. Verbunden mit Belastbarkeit, Bewältigung und Wohlbefinden.',
+        tagline:'Selbst & Wohlbefinden',scaleName:'Life Orientation Test–Revised',
+        footer:'Basierend auf dem Life Orientation Test–Revised (Scheier, Carver & Bridges, 1994).',
+        labels:["Stimme gar nicht zu","Stimme nicht zu","Neutral","Stimme zu","Stimme voll zu"],
+        levels:{
+          high:{label:'Hoher Optimismus',desc:'Sie erwarten im Allgemeinen gute Ergebnisse und blicken zuversichtlich in die Zukunft. Dieser dispositionale Optimismus stützt Belastbarkeit, Ausdauer und Wohlbefinden unter Stress.'},
+          medium:{label:'Ausgewogene Sicht',desc:'Sie halten eine realistische Mischung aus Optimismus und Vorsicht. In manchen Bereichen erwarten Sie Gutes, in anderen bleiben Sie zurückhaltend.'},
+          low:{label:'Vorsichtige Sicht',desc:'Sie neigen dazu, Schwierigkeiten zu erwarten und sich auf das Schlimmste einzustellen. Diese Vorsicht kann vor Enttäuschung schützen, aber mehr Optimismus ist mit besserer Bewältigung und Wohlbefinden verbunden.'},
+        },
+        questions:["In unsicheren Zeiten erwarte ich meist das Beste.","Es fällt mir leicht, mich zu entspannen.","Wenn bei mir etwas schiefgehen kann, dann tut es das auch.","Ich blicke immer optimistisch in meine Zukunft.","Ich genieße die Zeit mit meinen Freunden sehr.","Es ist mir wichtig, beschäftigt zu sein.","Ich erwarte so gut wie nie, dass die Dinge nach meinem Willen laufen.","Ich rege mich nicht so leicht auf.","Ich rechne selten damit, dass mir Gutes widerfährt.","Insgesamt erwarte ich, dass mir mehr Gutes als Schlechtes widerfährt."],
       },
     },
     fa:{
@@ -272,6 +301,19 @@ const { banner, lang = 'en' } = Astro.props;
         },
         questions:["اگر به‌اندازه کافی تلاش کنم، همیشه می‌توانم مشکلات دشوار را حل کنم.","اگر کسی با من مخالفت کند، می‌توانم راه و روشی برای رسیدن به خواسته‌ام پیدا کنم.","پایبند ماندن به هدف‌هایم و رسیدن به آن‌ها برایم آسان است.","مطمئنم که می‌توانم با رویدادهای غیرمنتظره به‌خوبی کنار بیایم.","به‌لطف کاردانی‌ام، می‌دانم چگونه با موقعیت‌های پیش‌بینی‌نشده برخورد کنم.","اگر تلاش لازم را به کار ببرم، می‌توانم بیشتر مشکلات را حل کنم.","هنگام رویارویی با دشواری‌ها آرام می‌مانم، چون می‌توانم به توانایی‌های خود تکیه کنم.","وقتی با مشکلی روبه‌رو می‌شوم، معمولاً می‌توانم چند راه‌حل پیدا کنم.","اگر در دردسر بیفتم، معمولاً می‌توانم راه‌حلی به ذهن بیاورم.","معمولاً می‌توانم از پس هر چه پیش بیاید بربیایم."],
       },
+      optimism:{
+        title:'خوش‌بینی',subtitle:'LOT-R · ۱۰ پرسش · حدود ۳ دقیقه',
+        desc:'خوش‌بینی به‌منزله یک ویژگی پایدار را می‌سنجد — انتظار کلی شما از اینکه اتفاق‌های خوب رخ خواهد داد. با تاب‌آوری، کنار آمدن با دشواری‌ها و بهزیستی پیوند دارد.',
+        tagline:'خود و بهزیستی',scaleName:'آزمون جهت‌گیری زندگی — بازنگری‌شده',
+        footer:'بر پایه آزمون جهت‌گیری زندگی — بازنگری‌شده (شایر، کارور و بریجز، ۱۹۹۴).',
+        labels:["کاملاً مخالفم","مخالفم","بی‌نظر","موافقم","کاملاً موافقم"],
+        levels:{
+          high:{label:'خوش‌بینی بالا',desc:'به‌طور کلی انتظار نتایج خوب دارید و با اطمینان به آینده می‌نگرید. این خوش‌بینیِ پایدار از تاب‌آوری، پشتکار و بهزیستی زیر فشار پشتیبانی می‌کند.'},
+          medium:{label:'نگاه متعادل',desc:'ترکیبی واقع‌بینانه از خوش‌بینی و احتیاط دارید. در برخی زمینه‌ها انتظار نتایج خوب دارید و در برخی دیگر محتاط می‌مانید.'},
+          low:{label:'نگاه محتاطانه',desc:'تمایل دارید انتظار دشواری داشته باشید و خود را برای بدترین حالت آماده کنید. این احتیاط می‌تواند از سرخوردگی محافظت کند، اما پرورش خوش‌بینی با کنار آمدن بهتر و بهزیستی پیوند دارد.'},
+        },
+        questions:["در زمان‌های نامطمئن، معمولاً انتظار بهترین‌ها را دارم.","به‌راحتی می‌توانم آرام بگیرم.","اگر قرار باشد چیزی برایم بد پیش برود، همان می‌شود.","همیشه نسبت به آینده‌ام خوش‌بین هستم.","از بودن با دوستانم بسیار لذت می‌برم.","مشغول بودن برایم مهم است.","به‌ندرت انتظار دارم کارها بر وفق مرادم پیش برود.","به‌راحتی ناراحت نمی‌شوم.","به‌ندرت روی رخ دادن اتفاق‌های خوب حساب می‌کنم.","روی‌هم‌رفته انتظار دارم بیشتر اتفاق‌های خوب برایم رخ دهد تا بد."],
+      },
     },
     sr:{
       ui:{
@@ -327,6 +369,19 @@ const { banner, lang = 'en' } = Astro.props;
         },
         questions:["Uvek mogu da rešim teške probleme ako se dovoljno potrudim.","Ako mi se neko suprotstavi, mogu da nađem način da postignem ono što želim.","Lako mi je da se držim svojih ciljeva i da ih ostvarim.","Siguran sam da mogu efikasno da se izborim sa neočekivanim događajima.","Zahvaljujući svojoj snalažljivosti, znam kako da se nosim sa nepredviđenim situacijama.","Mogu da rešim većinu problema ako uložim potreban trud.","Mogu da ostanem smiren kada se suočim sa teškoćama jer mogu da se oslonim na svoje sposobnosti.","Kada se suočim sa problemom, obično mogu da nađem nekoliko rešenja.","Ako sam u nevolji, obično mogu da smislim rešenje.","Obično mogu da se izborim sa svim što mi se nađe na putu."],
       },
+      optimism:{
+        title:'Optimizam',subtitle:'LOT-R · 10 pitanja · ~3 min',
+        desc:'Meri dispozicioni optimizam — vaše opšte očekivanje da će se dešavati dobre stvari. Povezan sa otpornošću, prevladavanjem i blagostanjem.',
+        tagline:'Sebstvo i blagostanje',scaleName:'Test životne orijentacije — revidirani',
+        footer:'Zasnovano na Testu životne orijentacije — revidiranom (Scheier, Carver & Bridges, 1994).',
+        labels:["Uopšte se ne slažem","Ne slažem se","Neutralno","Slažem se","Potpuno se slažem"],
+        levels:{
+          high:{label:'Visok optimizam',desc:'Uglavnom očekujete dobre ishode i budućnosti pristupate sa samopouzdanjem. Taj dispozicioni optimizam podržava otpornost, istrajnost i blagostanje pod stresom.'},
+          medium:{label:'Uravnotežen pogled',desc:'Imate realističnu mešavinu optimizma i opreza. U nekim oblastima očekujete dobro, dok u drugima ostajete obazrivi.'},
+          low:{label:'Oprezan pogled',desc:'Skloni ste da očekujete teškoće i da se pripremate na najgore. Taj oprez može da zaštiti od razočaranja, ali negovanje optimizma povezano je sa boljim prevladavanjem i blagostanjem.'},
+        },
+        questions:["U neizvesnim vremenima obično očekujem najbolje.","Lako mi je da se opustim.","Ako nešto može da krene naopako po mene, hoće.","Uvek sam optimističan u pogledu svoje budućnosti.","Veoma uživam u društvu svojih prijatelja.","Važno mi je da budem zauzet.","Gotovo nikada ne očekujem da će stvari ići onako kako želim.","Ne uznemirim se previše lako.","Retko računam na to da će mi se desiti dobre stvari.","Sve u svemu, očekujem da će mi se desiti više dobrih nego loših stvari."],
+      },
     },
   };
   const T = DATA[LANG] || DATA.en;
@@ -338,6 +393,8 @@ const { banner, lang = 'en' } = Astro.props;
   function seLabelObjs(){return T.selfesteem.labels.map(function(s,i){return{v:i+1,s:s};});}
   function buildSelfEffQuestions(){return SELFEFF_META.map(function(m,i){return{id:m.id,r:m.r,text:T.selfeff.questions[i]};});}
   function selfEffLabelObjs(){return T.selfeff.labels.map(function(s,i){return{v:i+1,s:s};});}
+  function buildOptimismQuestions(){return LOT_META.map(function(m,i){return{id:m.id,text:T.optimism.questions[i]};});}
+  function optimismLabelObjs(){return T.optimism.labels.map(function(s,i){return{v:i+1,s:s};});}
 
   // Compose trait objects (name + interpretations from T, color/bg from TRAIT_STYLE)
   function big5Traits(){const out={};for(const k of ['E','A','C','N','O']){out[k]=Object.assign({},T.big5.traits[k],TRAIT_STYLE[k]);}return out;}
@@ -346,6 +403,7 @@ const { banner, lang = 'en' } = Astro.props;
     {id:'big5',title:T.big5.title,subtitle:T.big5.subtitle,icon:'🧠',color:'#7C3AED',desc:T.big5.desc,questions:buildBig5Questions(),labels:big5LabelObjs(),score:scoreBig5,resultType:'big5',traits:big5Traits(),traitOrder:['E','A','C','N','O'],tagline:T.big5.tagline,footer:T.big5.footer},
     {id:'selfesteem',title:T.selfesteem.title,subtitle:T.selfesteem.subtitle,icon:'🌟',color:'#0891B2',desc:T.selfesteem.desc,questions:buildSEQuestions(),labels:seLabelObjs(),score:scoreSE,resultType:'single',levels:T.selfesteem.levels,scaleName:T.selfesteem.scaleName,tagline:T.selfesteem.tagline,footer:T.selfesteem.footer},
     {id:'selfeff',title:T.selfeff.title,subtitle:T.selfeff.subtitle,icon:'💪',color:'#0D9488',desc:T.selfeff.desc,questions:buildSelfEffQuestions(),labels:selfEffLabelObjs(),score:scoreSelfEff,resultType:'single',levels:T.selfeff.levels,scaleName:T.selfeff.scaleName,tagline:T.selfeff.tagline,footer:T.selfeff.footer},
+    {id:'optimism',title:T.optimism.title,subtitle:T.optimism.subtitle,icon:'🌅',color:'#F59E0B',desc:T.optimism.desc,questions:buildOptimismQuestions(),labels:optimismLabelObjs(),score:scoreOptimism,resultType:'single',levels:T.optimism.levels,scaleName:T.optimism.scaleName,tagline:T.optimism.tagline,footer:T.optimism.footer},
   ];
 
   function levelLabel(level){return level==='high'?T.ui.high:level==='low'?T.ui.low:T.ui.medium;}
