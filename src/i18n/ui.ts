@@ -35,6 +35,7 @@ export const CHROME: Record<
     articles: string;
     about: string;
     markets: string;
+    news: string;
     assess: string;
     bookCall: string;
     contact: string;
@@ -47,6 +48,7 @@ export const CHROME: Record<
     articles: 'Articles',
     about: 'About',
     markets: 'Markets',
+    news: 'News',
     assess: 'Assess ✦',
     bookCall: 'Book a Call',
     contact: 'Contact',
@@ -58,6 +60,7 @@ export const CHROME: Record<
     articles: 'مقالات',
     about: 'درباره ما',
     markets: 'بازارها',
+    news: 'اخبار',
     assess: 'آزمون‌ها ✦',
     bookCall: 'تماس با ما',
     contact: 'تماس',
@@ -69,6 +72,7 @@ export const CHROME: Record<
     articles: 'Artikel',
     about: 'Über uns',
     markets: 'Märkte',
+    news: 'Nachrichten',
     assess: 'Tests ✦',
     bookCall: 'Gespräch buchen',
     contact: 'Kontakt',
@@ -80,6 +84,7 @@ export const CHROME: Record<
     articles: 'Članci',
     about: 'O nama',
     markets: 'Tržišta',
+    news: 'Vesti',
     assess: 'Testovi ✦',
     bookCall: 'Zakaži razgovor',
     contact: 'Kontakt',

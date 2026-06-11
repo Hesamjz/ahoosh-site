@@ -1,9 +1,9 @@
 // Cloudflare Pages Function — /api/markets
-// Server-side price proxy for sources that block browser CORS:
-//   TGJU (USD/IRR, EUR/IRR — Iranian free-market rates, attribution required)
-//   Yahoo Finance (gold GC=F, silver SI=F, Brent BZ=F, WTI CL=F)
-//   exchangerate-api open endpoint (EUR/RSD — ECB/Frankfurter has no RSD)
-// Cached at the edge for 5 minutes to stay polite to upstreams.
+// Server-side price proxy:
+//   TGJU (USD/IRR, EUR/IRR — Iranian free-market rates)
+//   Yahoo Finance (commodities + 12 global equity indices)
+//   exchangerate-api open endpoint (EUR/RSD)
+// Cached at the edge for 5 minutes.
 
 const TTL_SECONDS = 300;
 
@@ -13,6 +13,21 @@ const TGJU_HEADERS = {
   Referer: 'https://tgju.org/',
   Accept: 'application/json',
 };
+
+const INDICES = [
+  { symbol: '%5EGSPC',  short: 'SPX',    name: 'S&P 500' },
+  { symbol: '%5EOEX',   short: 'OEX',    name: 'S&P 100' },
+  { symbol: '%5EIXIC',  short: 'COMP',   name: 'NASDAQ Composite' },
+  { symbol: '%5ENDX',   short: 'NDX',    name: 'NASDAQ 100' },
+  { symbol: '%5EDJI',   short: 'DJI',    name: 'Dow Jones 30' },
+  { symbol: '%5ERUT',   short: 'RUT',    name: 'Russell 2000' },
+  { symbol: '%5EFTSE',  short: 'UKX',    name: 'FTSE 100' },
+  { symbol: '%5EGDAXI', short: 'DAX',    name: 'DAX (Germany)' },
+  { symbol: '%5EFCHI',  short: 'CAC',    name: 'CAC 40 (France)' },
+  { symbol: '%5ESTOXX50E', short: 'SX5E', name: 'Euro Stoxx 50' },
+  { symbol: '%5EN225',  short: 'NI225',  name: 'Nikkei 225' },
+  { symbol: '%5EHSI',   short: 'HSI',    name: 'Hang Seng (HK)' },
+];
 
 async function fetchTgju(symbol) {
   const res = await fetch(
@@ -37,7 +52,7 @@ async function fetchTgju(symbol) {
 
 async function fetchYahoo(symbol) {
   const res = await fetch(
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`,
+    `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`,
     { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(10000) }
   );
   if (!res.ok) throw new Error(`yahoo ${symbol}: HTTP ${res.status}`);
@@ -68,22 +83,36 @@ export async function onRequestGet(context) {
   const hit = await cache.match(cacheKey);
   if (hit) return hit;
 
-  const [usdIrr, eurIrr, gold, silver, brent, wti, eurRsd] = await Promise.allSettled([
-    fetchTgju('price_dollar_rl'),
-    fetchTgju('price_eur'),
-    fetchYahoo('GC=F'),
-    fetchYahoo('SI=F'),
-    fetchYahoo('BZ=F'),
-    fetchYahoo('CL=F'),
-    fetchRsd(),
-  ]);
+  // Fetch core data + all 12 indices in parallel
+  const [usdIrr, eurIrr, gold, silver, brent, wti, eurRsd, ...indexResults] =
+    await Promise.allSettled([
+      fetchTgju('price_dollar_rl'),
+      fetchTgju('price_eur'),
+      fetchYahoo('GC%3DF'),
+      fetchYahoo('SI%3DF'),
+      fetchYahoo('BZ%3DF'),
+      fetchYahoo('CL%3DF'),
+      fetchRsd(),
+      ...INDICES.map((idx) => fetchYahoo(idx.symbol)),
+    ]);
 
   const val = (r) => (r.status === 'fulfilled' ? r.value : null);
+
+  const indices = INDICES.map((idx, i) => {
+    const v = val(indexResults[i]);
+    return {
+      symbol: decodeURIComponent(idx.symbol),
+      short: idx.short,
+      name: idx.name,
+      price: v ? v.price : null,
+      change: v ? v.change : null,
+    };
+  });
 
   const body = JSON.stringify({
     updated: new Date().toISOString(),
     irr: {
-      usd: val(usdIrr), // TGJU free-market rate, rial
+      usd: val(usdIrr),
       eur: val(eurIrr),
       source: 'TGJU',
       source_url: 'https://tgju.org',
@@ -96,6 +125,8 @@ export async function onRequestGet(context) {
       wti: val(wti),
       source: 'Yahoo Finance',
     },
+    indices,
+    indices_note: '~15 min delay (Yahoo Finance)',
   });
 
   const resp = new Response(body, {
