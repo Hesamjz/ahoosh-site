@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AssessBody from '../../components/AssessBody.astro';
+import AssessHead from '../../components/AssessHead.astro';
+---
+
+<BaseLayout
+  title="آزمون‌ها"
+  description="آزمون‌های علمی محیط کار — شخصیت پنج‌عاملی، هوش هیجانی، عزت نفس، آیزنک و سبک رهبری. رایگان، با نتیجه فوری."
+  locale="fa"
+>
+  <Fragment slot="head"><AssessHead /></Fragment>
+  <AssessBody banner="پرسش‌های آزمون‌ها فعلاً به زبان انگلیسی هستند — نسخه فارسیِ معتبر و استاندارد این آزمون‌ها در حال آماده‌سازی است." />
+</BaseLayout>

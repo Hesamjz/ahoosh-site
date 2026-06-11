@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Über mich"
+  description="Hesam Jafarzadeh — iranischer Forscher, Berater und Operator. Gründer von AHoosh.ai, der KI-Werkzeuge, Marktdaten, Forschungsmethoden und praktische Geschäftserfahrung verbindet."
+  locale="de"
+>
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">Über mich</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,36px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:8px;">Hesam Jafarzadeh</h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;">Gründer von AHoosh.ai · Forscher · Berater für KI und Marktintelligenz</p>
+  </section>
+
+  <!-- Founder card -->
+  <div style="max-width:680px;margin:32px auto 0;padding:0 24px;">
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:8px;overflow:hidden;">
+      <div style="width:100%;height:340px;background:linear-gradient(135deg,#03142E 0%,#1a2e50 100%);display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(215,161,61,0.1);overflow:hidden;">
+        <img src="/assets/hesam.png" alt="Hesam Jafarzadeh" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div style="display:none;width:80px;height:80px;border-radius:50%;background:rgba(215,161,61,0.15);border:2px solid var(--gold);align-items:center;justify-content:center;font-family:var(--font-head);font-weight:600;font-size:22px;color:var(--gold);letter-spacing:0.05em;">HJ</div>
+      </div>
+      <div style="padding:20px;">
+        <div style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);margin-bottom:4px;">Hesam Jafarzadeh</div>
+        <div style="font-size:13px;color:var(--gold);font-weight:500;letter-spacing:0.04em;margin-bottom:14px;">Gründer · AHoosh.ai · Forscher &amp; Berater</div>
+        <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);">
+          Ich bin ein iranischer Forscher, Berater und Operator mit über 15 Jahren Erfahrung in verschiedenen Branchen.
+          AHoosh ist mein Versuch, eine neue Art von Beratungspraxis aufzubauen: eine, die KI-Werkzeuge, Marktdaten,
+          Forschungsmethoden und praktische Geschäftserfahrung verbindet.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- What AHoosh Does -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Was AHoosh macht</div>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);margin-bottom:20px;">AHoosh vereint vier Ebenen:</p>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">1. KI-gestütztes Research</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Mit KI-Werkzeugen Informationen schneller sammeln, ordnen, vergleichen und erklären.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">2. Marktintelligenz</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Preise, Trends, Signale und öffentliche Daten verfolgen, die Geschäftsentscheidungen beeinflussen.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">3. Beratung</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Gründern und Unternehmen helfen, unklare Probleme in praktische Entscheidungen und Aktionspläne zu verwandeln.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">4. Inhalte &amp; Wissensvermittlung</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Artikel, Leitfäden und Erklärungen für persischsprachige und internationale Leser.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why I Built It -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Warum ich AHoosh gegründet habe</div>
+    <div style="font-size:14px;line-height:1.85;color:var(--silver-dim);display:flex;flex-direction:column;gap:16px;">
+      <p>
+        Ich habe jahrelang in verschiedenen Branchen gearbeitet — Betrieb geführt, Projekte gemanagt und dabei beobachtet, wie Unternehmen immer wieder mit denselben Problemen kämpfen: zu viel manuelle Arbeit, zu wenig Klarheit und Werkzeuge, die nie ganz zur tatsächlichen Situation passen.
+      </p>
+      <p>
+        Als KI-Werkzeuge wirklich nützlich wurden, habe ich aufgehört, Dinge auf die alte Art zu tun, und alles um ein neues Modell herum aufgebaut. Nicht, weil es im Trend liegt, sondern weil ich aus erster Hand gesehen habe, was passiert, wenn die richtige Kombination aus Research, Daten und KI-Werkzeugen auf ein echtes Problem angewendet wird. Der Unterschied ist strukturell, nicht graduell.
+      </p>
+      <p>
+        Das Ziel ist einfach: Menschen helfen, mit besseren Informationen bessere Entscheidungen zu treffen.
+      </p>
+    </div>
+  </div>
+
+  <!-- My Background -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Mein Werdegang</div>
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">2022–heute</strong> — Gründung von AHoosh. Aufbau einer Beratungspraxis auf Basis von KI und Research. Für Gründer, Unternehmen und Entscheider in verschiedenen Branchen und Regionen.</div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">2010–2022</strong> — Über 12 Jahre in Operations, digitaler Transformation, E-Commerce und Business Development in verschiedenen Branchen und Märkten.</div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">Forschung</strong> — Aktive Forschung zu KI-Einführung, Entscheidungs-Frameworks und Marktintelligenz. Veröffentlichungen im akademischen und beruflichen Kontext.</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">Sprachen</strong> — Persisch (Muttersprache), Englisch (verhandlungssicher)</div>
+      </div>
+    </div>
+    <!-- Credential pills -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;">
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">15+ Jahre Erfahrung</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">KI-Forschung &amp; Beratung</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Marktintelligenz</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Operations &amp; Digitale Transformation</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Expertise für den persischen Markt</span>
+    </div>
+  </div>
+
+  <!-- Who It Is For -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Für wen</div>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);">
+      Ich arbeite mit Gründern, Unternehmen, Startups, Beratern und Entscheidern, die Klarheit brauchen, bevor sie handeln —
+      ob sie einen Markt untersuchen, eine Geschäftsidee testen, interne Abläufe verbessern
+      oder bessere Wege suchen, KI einzusetzen.
+    </p>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);margin-top:12px;">
+      AHoosh ist besonders mit Blick auf <strong style="color:var(--silver);">persischsprachige Nutzer</strong> gebaut,
+      aber nicht auf sie beschränkt. Die Plattform richtet sich an alle, die praktisches Research,
+      nützliche Marktsignale und KI-gestützte Entscheidungsunterstützung wollen.
+    </p>
+  </div>
+
+  <!-- How I Work -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Wie ich arbeite</div>
+    <div style="font-size:14px;line-height:1.85;color:var(--silver-dim);display:flex;flex-direction:column;gap:14px;">
+      <p>Ich arbeite mit jedem Kunden direkt. AHoosh ist keine Agentur — es ist eine gründergeführte Praxis. Das heißt: Sie haben direkten Zugang zu mir und einem fokussierten Team, das für Ihren konkreten Kontext zusammengestellt wird.</p>
+      <p>Ich verwende keine generischen Vorlagen oder Standardberichte. Jedes Projekt beginnt beim tatsächlichen Problem, nutzt die richtige Kombination aus Forschungsmethoden und KI-Werkzeugen und endet mit etwas Praktischem, das Sie nutzen können.</p>
+      <p>Ich bin überzeugt: Research ohne Handlung ist Zeitverschwendung. Das Ziel ist immer ein Ergebnis, das verändert, wie Sie denken oder was Sie als Nächstes tun.</p>
+    </div>
+  </div>
+
+  <!-- Social links -->
+  <div style="padding:32px 24px 40px;max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Online zu finden</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <a href="https://www.linkedin.com/in/hesam-jafarzadeh-43697679" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">LinkedIn</a>
+      <a href="https://x.com/AHOOSHai" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">X / Twitter</a>
+      <a href="https://www.instagram.com/ahoosh.ai/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">Instagram</a>
+      <a href="https://t.me/ahooshai" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">Telegram</a>
+    </div>
+  </div>
+
+  <!-- CTA band -->
+  <section style="background:linear-gradient(135deg,rgba(215,161,61,0.08) 0%,rgba(3,20,46,0.6) 100%);border-top:1px solid rgba(215,161,61,0.15);padding:40px 24px;text-align:center;">
+    <div style="max-width:480px;margin:0 auto;">
+      <h2 style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);margin-bottom:8px;line-height:1.3;">Arbeiten Sie direkt mit mir</h2>
+      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:24px;">Sagen Sie mir, was Sie verstehen, aufbauen, verbessern oder entscheiden wollen.</p>
+      <a href="/de/contact" class="btn-primary" style="display:inline-block;min-width:200px;">AHoosh kontaktieren</a>
+    </div>
+  </section>
+
+</BaseLayout>

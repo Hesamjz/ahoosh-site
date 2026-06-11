@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AssessBody from '../../components/AssessBody.astro';
+import AssessHead from '../../components/AssessHead.astro';
+---
+
+<BaseLayout
+  title="Testovi"
+  description="Naučno zasnovane procene za radno okruženje — petofaktorska ličnost, emocionalna inteligencija, samopouzdanje, Ajzenk i stil liderstva. Besplatno, sa trenutnim rezultatima."
+  locale="sr"
+>
+  <Fragment slot="head"><AssessHead /></Fragment>
+  <AssessBody banner="Pitanja testova su trenutno na engleskom — validirane srpske verzije instrumenata su u pripremi." />
+</BaseLayout>

@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="O meni"
+  description="Hesam Jafarzadeh — iranski istraživač, konsultant i operativac. Osnivač AHoosh.ai, koji spaja AI alate, tržišne podatke, istraživačke metode i praktično poslovno iskustvo."
+  locale="sr"
+>
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">O meni</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,36px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:8px;">Hesam Jafarzadeh</h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;">Osnivač AHoosh.ai · Istraživač · Konsultant za AI i tržišnu inteligenciju</p>
+  </section>
+
+  <!-- Founder card -->
+  <div style="max-width:680px;margin:32px auto 0;padding:0 24px;">
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:8px;overflow:hidden;">
+      <div style="width:100%;height:340px;background:linear-gradient(135deg,#03142E 0%,#1a2e50 100%);display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(215,161,61,0.1);overflow:hidden;">
+        <img src="/assets/hesam.png" alt="Hesam Jafarzadeh" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div style="display:none;width:80px;height:80px;border-radius:50%;background:rgba(215,161,61,0.15);border:2px solid var(--gold);align-items:center;justify-content:center;font-family:var(--font-head);font-weight:600;font-size:22px;color:var(--gold);letter-spacing:0.05em;">HJ</div>
+      </div>
+      <div style="padding:20px;">
+        <div style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);margin-bottom:4px;">Hesam Jafarzadeh</div>
+        <div style="font-size:13px;color:var(--gold);font-weight:500;letter-spacing:0.04em;margin-bottom:14px;">Osnivač · AHoosh.ai · Istraživač i konsultant</div>
+        <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);">
+          Iranski sam istraživač, konsultant i operativac sa više od 15 godina iskustva u različitim industrijama.
+          AHoosh je moj pokušaj da izgradim novu vrstu konsalting prakse: onu koja spaja AI alate, tržišne podatke,
+          istraživačke metode i praktično poslovno iskustvo.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- What AHoosh Does -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Šta AHoosh radi</div>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);margin-bottom:20px;">AHoosh spaja četiri sloja:</p>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">1. Istraživanje uz pomoć AI</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Korišćenje AI alata za brže prikupljanje, organizovanje, poređenje i objašnjavanje informacija.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">2. Tržišna inteligencija</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Praćenje cena, trendova, signala i javnih podataka koji utiču na poslovne odluke.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">3. Konsalting</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Pomoć osnivačima i kompanijama da nejasne probleme pretvore u praktične odluke i planove akcije.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:6px;">4. Sadržaj i edukacija</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);">Objavljivanje članaka, vodiča i objašnjenja za persijske i globalne čitaoce.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why I Built It -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Zašto sam ga napravio</div>
+    <div style="font-size:14px;line-height:1.85;color:var(--silver-dim);display:flex;flex-direction:column;gap:16px;">
+      <p>
+        Godinama sam radio u različitim industrijama — vodio operacije, upravljao projektima i gledao kako se kompanije bore sa istim problemima: previše ručnog rada, premalo jasnoće i alati koji nikada sasvim ne odgovaraju stvarnoj situaciji.
+      </p>
+      <p>
+        Kada su AI alati postali zaista korisni, prestao sam da radim na stari način i sve sam iznova postavio oko novog modela. Ne zato što je to u trendu, već zato što sam iz prve ruke video šta se dešava kada se prava kombinacija istraživanja, podataka i AI alata primeni na stvaran problem. Razlika je strukturna, a ne postepena.
+      </p>
+      <p>
+        Cilj je jednostavan: pomoći ljudima da donose bolje odluke uz bolje informacije.
+      </p>
+    </div>
+  </div>
+
+  <!-- My Background -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Moje iskustvo</div>
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">2022–danas</strong> — Osnovao AHoosh. Izgradio konsalting praksu zasnovanu na AI i istraživanju. Radim sa osnivačima, kompanijama i donosiocima odluka u različitim industrijama i geografijama.</div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">2010–2022</strong> — Više od 12 godina u operacijama, digitalnoj transformaciji, e-trgovini i razvoju poslovanja u različitim industrijama i na različitim tržištima.</div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">Istraživanje</strong> — Aktivno istraživanje o usvajanju AI, okvirima za donošenje odluka i tržišnoj inteligenciji. Objavljivano u akademskim i profesionalnim kontekstima.</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start;">
+        <div style="flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;"></div>
+        <div style="font-size:13px;line-height:1.6;color:var(--silver-dim);"><strong style="color:var(--silver);font-weight:600;">Jezici</strong> — persijski (maternji), engleski (profesionalni nivo)</div>
+      </div>
+    </div>
+    <!-- Credential pills -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;">
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">15+ godina iskustva</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">AI istraživanje i konsalting</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Tržišna inteligencija</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Operacije i digitalna transformacija</span>
+      <span style="background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);color:var(--gold-light);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;">Ekspertiza za persijsko tržište</span>
+    </div>
+  </div>
+
+  <!-- Who It Is For -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Za koga</div>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);">
+      Radim sa osnivačima, kompanijama, startapima, konsultantima i donosiocima odluka kojima je potrebna jasnoća pre nego što krenu —
+      bilo da proučavaju tržište, testiraju poslovnu ideju, unapređuju interne procese
+      ili traže bolje načine da koriste AI.
+    </p>
+    <p style="font-size:14px;line-height:1.8;color:var(--silver-dim);margin-top:12px;">
+      AHoosh je posebno građen sa mišlju na <strong style="color:var(--silver);">persijske korisnike</strong>,
+      ali nije ograničen na njih. Platforma je namenjena svima koji žele praktično istraživanje,
+      korisne tržišne signale i podršku odlučivanju uz pomoć AI.
+    </p>
+  </div>
+
+  <!-- How I Work -->
+  <div style="padding:32px 24px;max-width:680px;margin:0 auto;border-bottom:1px solid rgba(215,161,61,0.08);">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Kako radim</div>
+    <div style="font-size:14px;line-height:1.85;color:var(--silver-dim);display:flex;flex-direction:column;gap:14px;">
+      <p>Radim direktno sa svakim klijentom. AHoosh nije agencija — to je praksa koju vodi osnivač, što znači da dobijate direktan pristup meni i fokusiran tim sastavljen za vaš konkretan kontekst.</p>
+      <p>Ne koristim generičke šablone ni standardne izveštaje. Svaki angažman kreće od stvarnog problema, koristi pravu kombinaciju istraživačkih metoda i AI alata i završava se nečim praktičnim što možete da koristite.</p>
+      <p>Verujem da je istraživanje bez akcije gubljenje vremena. Cilj je uvek da nastane nešto što menja način na koji razmišljate ili ono što ćete sledeće uraditi.</p>
+    </div>
+  </div>
+
+  <!-- Social links -->
+  <div style="padding:32px 24px 40px;max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow" style="margin-bottom:14px;">Gde me možete naći</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <a href="https://www.linkedin.com/in/hesam-jafarzadeh-43697679" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">LinkedIn</a>
+      <a href="https://x.com/AHOOSHai" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">X / Twitter</a>
+      <a href="https://www.instagram.com/ahoosh.ai/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">Instagram</a>
+      <a href="https://t.me/ahooshai" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:8px 14px;font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--silver-dim);letter-spacing:0.04em;">Telegram</a>
+    </div>
+  </div>
+
+  <!-- CTA band -->
+  <section style="background:linear-gradient(135deg,rgba(215,161,61,0.08) 0%,rgba(3,20,46,0.6) 100%);border-top:1px solid rgba(215,161,61,0.15);padding:40px 24px;text-align:center;">
+    <div style="max-width:480px;margin:0 auto;">
+      <h2 style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);margin-bottom:8px;line-height:1.3;">Radite direktno sa mnom</h2>
+      <p style="font-size:14px;color:var(--silver-dim);margin-bottom:24px;">Recite mi šta pokušavate da razumete, izgradite, unapredite ili odlučite.</p>
+      <a href="/sr/contact" class="btn-primary" style="display:inline-block;min-width:200px;">Kontaktiraj AHoosh</a>
+    </div>
+  </section>
+
+</BaseLayout>

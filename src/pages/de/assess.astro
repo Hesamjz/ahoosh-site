@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AssessBody from '../../components/AssessBody.astro';
+import AssessHead from '../../components/AssessHead.astro';
+---
+
+<BaseLayout
+  title="Tests"
+  description="Wissenschaftlich fundierte Arbeitsplatz-Assessments — Big-Five-Persönlichkeit, Emotionale Intelligenz, Selbstwertgefühl, Eysenck und Führungsstil. Kostenlos, sofortige Ergebnisse."
+  locale="de"
+>
+  <Fragment slot="head"><AssessHead /></Fragment>
+  <AssessBody banner="Die Testfragen sind derzeit auf Englisch — validierte deutsche Fassungen der Instrumente sind in Vorbereitung." />
+</BaseLayout>

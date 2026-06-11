@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Kontakt"
+  description="Kontakt zu AHoosh — KI-Strategie, Marktforschung, Beratung, Datenstruktur, Inhalte und Entscheidungsunterstützung."
+  locale="de"
+>
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">Kontakt</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,36px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:10px;">Sagen Sie mir, was Sie brauchen</h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:1.7;max-width:420px;margin:0 auto;">
+      Sagen Sie mir, was Sie verstehen, aufbauen, verbessern oder entscheiden wollen.
+      AHoosh hilft bei KI-Strategie, Marktforschung, Beratung, Datenstruktur, Inhalten und Entscheidungsunterstützung.
+    </p>
+  </section>
+
+  <!-- Form -->
+  <section style="padding:32px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <form method="POST" action="https://formspree.io/f/YOUR_FORM_ID" style="display:flex;flex-direction:column;gap:0;">
+      <input type="hidden" name="_next" value="/contact/thanks" />
+      <input type="hidden" name="_subject" value="New contact from ahoosh.ai (de)" />
+      <input type="text" name="_gotcha" style="display:none" />
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:6px;">Ihr Name</label>
+        <input type="text" name="name" placeholder="Vor- und Nachname" required style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;" />
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:6px;">E-Mail</label>
+        <input type="email" name="email" placeholder="sie@firma.de" required style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;" />
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:6px;">Firma / Projekt</label>
+        <input type="text" name="company" placeholder="Firmen- oder Projektname (optional)" style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;" />
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:6px;">Wobei brauchen Sie Hilfe?</label>
+        <textarea name="message" placeholder="Beschreiben Sie, was Sie verstehen, aufbauen, verbessern oder entscheiden wollen…" rows="4" required style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;resize:vertical;min-height:100px;"></textarea>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:6px;">Sie suchen…</label>
+        <select name="request_type" style="display:block;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:12px 14px;font-family:var(--font-body);font-size:14px;color:var(--silver);outline:none;min-height:44px;">
+          <option value="" style="background:#010A18;">Bitte wählen…</option>
+          <option value="consulting" style="background:#010A18;">Beratung</option>
+          <option value="market_research" style="background:#010A18;">Marktforschung</option>
+          <option value="data_access" style="background:#010A18;">Datenzugang</option>
+          <option value="ai_strategy" style="background:#010A18;">KI-Strategie</option>
+          <option value="content" style="background:#010A18;">Inhalte &amp; Thought Leadership</option>
+          <option value="other" style="background:#010A18;">Etwas anderes</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width:100%;padding:16px;font-size:13px;border:none;cursor:pointer;">
+        Nachricht senden
+      </button>
+    </form>
+  </section>
+
+  <!-- Social links -->
+  <div style="padding:32px 24px 48px;max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow" style="margin-bottom:4px;">Oder erreichen Sie mich über</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
+      <a href="https://linkedin.com/in/hesam-jafarzadeh-43697679" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px;min-height:44px;">
+        <div style="flex-shrink:0;width:40px;height:40px;border-radius:6px;background:rgba(215,161,61,0.12);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--gold);">in</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:2px;">LinkedIn</div>
+          <div style="font-size:12px;color:var(--silver-muted);">Hesam Jafarzadeh · Gründer, AHoosh</div>
+        </div>
+      </a>
+      <a href="mailto:contact@ahoosh.ai" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:16px;min-height:44px;">
+        <div style="flex-shrink:0;width:40px;height:40px;border-radius:6px;background:rgba(215,161,61,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;">✉</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);margin-bottom:2px;">E-Mail</div>
+          <div style="font-size:12px;color:var(--silver-muted);">contact@ahoosh.ai</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<style>
+  input:focus, textarea:focus, select:focus { border-color: var(--gold) !important; }
+  input::placeholder, textarea::placeholder { color: var(--silver-muted); }
+</style>
