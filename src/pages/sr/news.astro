@@ -44,18 +44,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 <script is:inline>
 (function(){
 const CHANNELS = [
-  { id:'france24', name:'France 24',     type:'youtube', vid:'HvZt-nh9sGg' },
-  { id:'dw',       name:'DW News',       type:'youtube', vid:'LuKwFajn37U' },
-  { id:'aljazeera',name:'Al Jazeera EN', type:'link', url:'https://www.youtube.com/@AlJazeeraEnglish/live' },
-  { id:'bbc-en',   name:'BBC News',      type:'link', url:'https://www.youtube.com/@BBCNews/live' },
-  { id:'sky',      name:'Sky News',      type:'link', url:'https://www.youtube.com/@SkyNews/live' },
-  { id:'ap',       name:'AP News',       type:'link', url:'https://www.youtube.com/@AssociatedPress/live' },
+  // English
+  { id:'france24',  name:'France 24',     type:'youtube', vid:'HvZt-nh9sGg' },
+  { id:'aljazeera', name:'Al Jazeera EN', type:'youtube', vid:'LkfNJ6EFkwM' },
+  { id:'sky',       name:'Sky News',      type:'youtube', vid:'9Auq9mYxFEE'  },
+  { id:'bloomberg', name:'Bloomberg TV',  type:'youtube', vid:'dp8PhLsUcFE'  },
+  { id:'dw',        name:'DW News',       type:'youtube', vid:'LuKwFajn37U'  },
+  // Persian
+  { id:'bbc-fa',    name:'BBC Persian',   type:'youtube', vid:'XRHV-9m_WO4'  },
+  { id:'iranintl',  name:'Iran Intl',     type:'youtube', vid:'5JDxjsAVaGk'  },
+  { id:'voa-fa',    name:'VOA Persian',   type:'hls', src:'https://voa-ingest.akamaized.net/hls/live/2033876/tvmc07/playlist.m3u8' },
 ];
-var hlsInstance=null;
-function loadYoutube(vid){var v=document.getElementById('live-video'),i=document.getElementById('live-iframe');v.style.display='none';if(hlsInstance){hlsInstance.destroy();hlsInstance=null;}i.src='https://www.yout-ube.com/embed/'+vid+'?autoplay=1&rel=0';i.style.display='block';}
-function loadChannel(ch){if(ch.type==='link'){window.open(ch.url,'_blank','noopener');return;}document.querySelectorAll('.ch-btn').forEach(function(b){b.classList.toggle('active',b.dataset.id===ch.id);});document.getElementById('channel-info').textContent='▶ '+ch.name+' — Uživo';loadYoutube(ch.vid);}
+var hlsInstance=null,hlsReady=false;
+function loadYoutube(vid){var v=document.getElementById('live-video'),i=document.getElementById('live-iframe');v.style.display='none';if(hlsInstance){hlsInstance.destroy();hlsInstance=null;}i.src='https://www.yout-ube.com/embed/'+vid+'?autoplay=1&rel=0&playsinline=1&fs=0';i.style.display='block';}
+function loadHls(src){var v=document.getElementById('live-video'),i=document.getElementById('live-iframe');i.src='';i.style.display='none';v.style.display='block';function go(){if(window.Hls&&Hls.isSupported()){if(hlsInstance)hlsInstance.destroy();hlsInstance=new Hls({enableWorker:true,lowLatencyMode:true});hlsInstance.loadSource(src);hlsInstance.attachMedia(v);hlsInstance.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){});});}else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=src;v.play().catch(function(){});}}if(hlsReady){go();}else{var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js';s.onload=function(){hlsReady=true;go();};document.head.appendChild(s);}}
+function loadChannel(ch){document.querySelectorAll('.ch-btn').forEach(function(b){b.classList.toggle('active',b.dataset.id===ch.id);});document.getElementById('channel-info').textContent='▶ '+ch.name+' — Uživo';if(ch.type==='youtube'){loadYoutube(ch.vid);}else{loadHls(ch.src);}}
 var bc=document.getElementById('channel-btns');
-CHANNELS.forEach(function(ch){var b=document.createElement('button');b.className='ch-btn';b.dataset.id=ch.id;b.textContent=ch.name+(ch.type==='link'?' ↗':'');b.addEventListener('click',function(){loadChannel(ch);});bc.appendChild(b);});
+CHANNELS.forEach(function(ch){var b=document.createElement('button');b.className='ch-btn';b.dataset.id=ch.id;b.textContent=ch.name;b.addEventListener('click',function(){loadChannel(ch);});bc.appendChild(b);});
 loadChannel(CHANNELS[0]);
 var allArticles=[],activeLang='all',searchTerm='';
 function timeAgo(p){if(!p)return'';try{var d=new Date(p),f=(Date.now()-d.getTime())/60000;if(f<1)return'Upravo sada';if(f<60)return Math.round(f)+' min pre';if(f<1440)return Math.round(f/60)+' sat pre';return Math.round(f/1440)+' dana pre';}catch(e){return p;}}
