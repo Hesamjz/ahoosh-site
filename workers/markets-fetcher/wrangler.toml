@@ -1,0 +1,36 @@
+name = "ahoosh-markets-fetcher"
+main = "src/index.ts"
+compatibility_date = "2026-06-08"
+workers_dev = true
+
+# Pipeline 1 — Markets. Cron every 1 minute (sources_of_truth_v2.md polling = 1 min).
+[triggers]
+crons = ["* * * * *"]
+
+# D1 — historical snapshots + per-source failure state.
+[[d1_databases]]
+binding = "DB"
+database_name = "ahoosh-markets"
+database_id = "a81f8ee0-c741-4873-b1bd-401d10fd9dbb"
+
+# KV — latest assembled snapshot as one JSON blob (sub-10ms reads for the page).
+[[kv_namespaces]]
+binding = "MARKETS_KV"
+id = "8266445bbdbd40458094160d7f8db09b"
+
+[observability]
+enabled = true
+
+# Exact routes only — deeper paths than the existing /api/markets Pages Function,
+# so that function is NOT shadowed. (Smoke-test passed on workers.dev first.)
+[[routes]]
+pattern = "ahoosh.ai/api/markets/latest"
+zone_name = "ahoosh.ai"
+
+[[routes]]
+pattern = "ahoosh.ai/api/markets/history"
+zone_name = "ahoosh.ai"
+
+# TELEGRAM_BOT_TOKEN + TELEGRAM_HESAM_CHAT_ID are set as secrets, not vars:
+#   npx wrangler secret put TELEGRAM_BOT_TOKEN
+#   npx wrangler secret put TELEGRAM_HESAM_CHAT_ID
