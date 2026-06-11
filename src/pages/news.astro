@@ -1,9 +1,257 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
+
 <BaseLayout title="News &amp; Live TV" description="Live international news from 50+ sources. Updated every 5 minutes." locale="en">
-  <div style="text-align:center;padding:80px 24px;">
-    <p style="color:var(--silver-dim);margin-bottom:20px;">Live news and TV available in Persian:</p>
-    <a href="/fa/news" class="btn-primary" style="display:inline-block;">اخبار + تلویزیون زنده ←</a>
+
+<!-- Hero -->
+<section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:32px 24px 24px;border-bottom:1px solid rgba(215,161,61,0.1);">
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div class="section-eyebrow" style="margin-bottom:6px;">News + Live TV</div>
+      <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--silver);margin:0;">World Events — Live</h1>
+      <p style="font-size:13px;color:var(--silver-dim);margin-top:6px;">Persian &amp; international news · Updated every 5 minutes · Information only</p>
+    </div>
+    <div id="news-updated" style="font-size:11px;color:var(--silver-muted);"></div>
   </div>
+</section>
+
+<div style="max-width:1100px;margin:0 auto;padding:24px 24px 64px;">
+
+  <!-- ══ LIVE TV ══════════════════════════════════════════════════════ -->
+  <section style="margin-bottom:40px;">
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">
+      📺 Live TV
+    </div>
+
+    <div id="channel-btns" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+
+    <div style="position:relative;width:100%;max-width:800px;background:#000;border-radius:8px;overflow:hidden;border:1px solid rgba(215,161,61,0.2);">
+      <video id="live-video" controls muted style="width:100%;display:block;aspect-ratio:16/9;background:#000;"></video>
+      <iframe id="live-iframe" style="width:100%;aspect-ratio:16/9;border:none;display:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+
+    <div id="channel-info" style="margin-top:10px;font-size:12px;color:var(--silver-muted);"></div>
+  </section>
+
+  <!-- ══ NEWS FEED ════════════════════════════════════════════════════ -->
+  <section>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">
+        📰 Latest News
+      </div>
+      <div id="lang-tabs" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+
+    <input id="news-search" type="text" placeholder="Search news..." style="
+      width:100%;max-width:360px;display:block;margin-bottom:14px;
+      background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);
+      border-radius:6px;padding:8px 12px;color:var(--silver);font-size:13px;
+      font-family:var(--font-body);outline:none;
+    " />
+
+    <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">
+      <div class="news-skeleton"></div><div class="news-skeleton"></div>
+      <div class="news-skeleton"></div><div class="news-skeleton"></div>
+      <div class="news-skeleton"></div><div class="news-skeleton"></div>
+    </div>
+
+    <div style="margin-top:16px;text-align:center;font-size:11px;color:var(--silver-muted);" id="news-meta"></div>
+  </section>
+
+</div>
+
+<style is:global>
+  .news-skeleton {
+    height: 90px;
+    background: linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.07) 50%,rgba(255,255,255,0.04) 75%);
+    background-size:200% 100%;
+    animation:shimmer 1.4s infinite;
+    border-radius:6px;border:1px solid rgba(215,161,61,0.08);
+  }
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .news-card-full {
+    background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.15);
+    border-radius:6px;padding:14px;cursor:pointer;transition:border-color 150ms ease;
+    text-decoration:none;display:block;
+  }
+  .news-card-full:hover{border-color:rgba(215,161,61,0.45);}
+  .news-card-full .src-badge{
+    display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);
+    border-radius:3px;padding:2px 6px;margin-bottom:7px;
+  }
+  .news-card-full .headline{font-size:13px;color:var(--silver);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .news-card-full .date{font-size:10px;color:var(--silver-muted);margin-top:6px;}
+  .ch-btn{
+    background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);
+    border-radius:6px;padding:6px 12px;font-size:12px;color:var(--silver-dim);cursor:pointer;
+    font-family:var(--font-body);transition:all 150ms ease;
+  }
+  .ch-btn:hover,.ch-btn.active{background:rgba(215,161,61,0.15);border-color:rgba(215,161,61,0.5);color:var(--gold);}
+  .lang-tab{
+    background:rgba(10,30,60,0.6);border:1px solid rgba(215,161,61,0.15);
+    border-radius:4px;padding:4px 10px;font-size:11px;color:var(--silver-muted);cursor:pointer;
+    font-family:var(--font-body);transition:all 150ms ease;
+  }
+  .lang-tab:hover,.lang-tab.active{background:rgba(215,161,61,0.12);border-color:rgba(215,161,61,0.4);color:var(--gold);}
+</style>
+
+<script is:inline>
+(function(){
+
+const CHANNELS = [
+  { id:'france24', name:'France 24',       type:'youtube', vid:'HvZt-nh9sGg' },
+  { id:'dw',       name:'DW News',         type:'youtube', vid:'LuKwFajn37U' },
+  { id:'aljazeera',name:'Al Jazeera EN',   type:'link', url:'https://www.youtube.com/@AlJazeeraEnglish/live' },
+  { id:'bbc-en',   name:'BBC News',        type:'link', url:'https://www.youtube.com/@BBCNews/live' },
+  { id:'sky',      name:'Sky News',        type:'link', url:'https://www.youtube.com/@SkyNews/live' },
+  { id:'fox',      name:'Fox News',        type:'link', url:'https://www.youtube.com/@FoxNews/live' },
+  { id:'ap',       name:'AP News',         type:'link', url:'https://www.youtube.com/@AssociatedPress/live' },
+];
+
+var currentCh = null;
+var hlsInstance = null;
+
+function loadYoutube(vid) {
+  var videoEl = document.getElementById('live-video');
+  var ifr = document.getElementById('live-iframe');
+  videoEl.style.display = 'none';
+  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+  ifr.src = 'https://www.yout-ube.com/embed/' + vid + '?autoplay=1&rel=0';
+  ifr.style.display = 'block';
+}
+
+function loadChannel(ch) {
+  if (ch.type === 'link') { window.open(ch.url, '_blank', 'noopener'); return; }
+  currentCh = ch.id;
+  document.querySelectorAll('.ch-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.id === ch.id);
+  });
+  document.getElementById('channel-info').textContent = '▶ ' + ch.name + ' — Live';
+  loadYoutube(ch.vid);
+}
+
+var btnContainer = document.getElementById('channel-btns');
+CHANNELS.forEach(function(ch){
+  var btn = document.createElement('button');
+  btn.className = 'ch-btn';
+  btn.dataset.id = ch.id;
+  btn.textContent = ch.name + (ch.type === 'link' ? ' ↗' : '');
+  btn.addEventListener('click', function(){ loadChannel(ch); });
+  btnContainer.appendChild(btn);
+});
+loadChannel(CHANNELS[0]);
+
+// ── News Feed ──────────────────────────────────────────────────────────────
+var allArticles = [];
+var activeLang = 'all';
+var searchTerm = '';
+
+function timeAgo(pubDate) {
+  if (!pubDate) return '';
+  try {
+    var d = new Date(pubDate);
+    var diff = (Date.now() - d.getTime()) / 60000;
+    if (diff < 1) return 'Just now';
+    if (diff < 60) return Math.round(diff) + ' min ago';
+    if (diff < 1440) return Math.round(diff/60) + ' hr ago';
+    return Math.round(diff/1440) + ' days ago';
+  } catch(e){ return pubDate; }
+}
+
+function renderNewsGrid() {
+  var grid = document.getElementById('news-grid');
+  if (!grid) return;
+  var filtered = allArticles.filter(function(a){
+    if (activeLang !== 'all' && a.lang !== activeLang) return false;
+    if (searchTerm) {
+      var q = searchTerm.toLowerCase();
+      return (a.title||'').toLowerCase().includes(q) || (a.source||'').toLowerCase().includes(q);
+    }
+    return true;
+  });
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="color:var(--silver-muted);font-size:13px;padding:24px 0;grid-column:1/-1;text-align:center;">No results found.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  filtered.slice(0,60).forEach(function(a){
+    var card = document.createElement('a');
+    card.className = 'news-card-full';
+    card.href = a.link || '#';
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    var isRtl = (a.lang === 'fa' || a.lang === 'ar');
+    card.innerHTML =
+      '<div class="src-badge">' + a.source + '</div>' +
+      '<div class="headline"' + (isRtl ? ' dir="rtl" style="text-align:right"' : '') + '>' + a.title + '</div>' +
+      '<div class="date">' + timeAgo(a.pubDate) + '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function buildLangTabs(articles) {
+  var langs = {};
+  articles.forEach(function(a){ langs[a.lang] = (langs[a.lang]||0)+1; });
+  var tabs = document.getElementById('lang-tabs');
+  if (!tabs) return;
+  tabs.innerHTML = '';
+  var all = document.createElement('button');
+  all.className = 'lang-tab active';
+  all.textContent = 'All';
+  all.addEventListener('click', function(){
+    activeLang = 'all';
+    document.querySelectorAll('.lang-tab').forEach(function(t){ t.classList.remove('active'); });
+    all.classList.add('active');
+    renderNewsGrid();
+  });
+  tabs.appendChild(all);
+  var langNames = { fa:'Persian', en:'English', de:'Deutsch', fr:'Français', sr:'Srpski', ja:'日本語', ar:'Arabic' };
+  Object.keys(langs).sort().forEach(function(l){
+    var tab = document.createElement('button');
+    tab.className = 'lang-tab';
+    tab.textContent = (langNames[l]||l) + ' (' + langs[l] + ')';
+    tab.addEventListener('click', function(){
+      activeLang = l;
+      document.querySelectorAll('.lang-tab').forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      renderNewsGrid();
+    });
+    tabs.appendChild(tab);
+  });
+}
+
+var searchEl = document.getElementById('news-search');
+if (searchEl) {
+  searchEl.addEventListener('input', function(){
+    searchTerm = this.value.trim();
+    renderNewsGrid();
+  });
+}
+
+async function fetchAndRenderNews() {
+  try {
+    var r = await fetch('/api/news', { signal: AbortSignal.timeout(20000) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    var data = await r.json();
+    allArticles = data.articles || [];
+    buildLangTabs(allArticles);
+    renderNewsGrid();
+    var meta = document.getElementById('news-meta');
+    if (meta) meta.textContent = allArticles.length + ' articles from ' + (data.sources||0) + ' sources · Updated: ' + new Date().toLocaleTimeString('en-GB');
+    var upd = document.getElementById('news-updated');
+    if (upd) upd.textContent = 'Last updated: ' + new Date().toLocaleTimeString('en-GB');
+  } catch(e) {
+    var grid = document.getElementById('news-grid');
+    if (grid) grid.innerHTML = '<div style="color:var(--silver-muted);font-size:13px;padding:24px 0;grid-column:1/-1;">Failed to load news. Please try again.</div>';
+  }
+}
+
+fetchAndRenderNews();
+setInterval(fetchAndRenderNews, 300000);
+
+})();
+</script>
+
 </BaseLayout>
