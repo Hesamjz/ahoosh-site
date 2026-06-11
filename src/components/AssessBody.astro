@@ -1,10 +1,11 @@
 ---
 // Shared assess mini-app body. The React/Tailwind CDN scripts must be added
-// by each page wrapper via <Fragment slot="head"> (see AssessHead below).
-// Pass `banner` to show a locale notice above the app (fa/de/sr while the
-// validated translations of the test items are in progress).
-interface Props { banner?: string }
-const { banner } = Astro.props;
+// by each page wrapper via <Fragment slot="head"> (see AssessHead).
+// Locale-aware: pass `lang` (en/de/fa/sr). All questions, labels, traits,
+// interpretations and UI strings are translated. Scoring/keying is
+// language-agnostic (BIG5_META / SE_META), so every locale scores identically.
+interface Props { banner?: string; lang?: string }
+const { banner, lang = 'en' } = Astro.props;
 ---
 
 {banner && (
@@ -63,63 +64,233 @@ const { banner } = Astro.props;
     #root .sticky { background: rgba(6,15,30,0.97) !important; backdrop-filter: blur(8px); }
   </style>
 
-  <div id="root" class="antialiased"></div>
+  <div id="root" class="antialiased" data-lang={lang}></div>
 
   <script is:inline>
   (function(){
   const {useState} = React;
   const h = React.createElement;
+  const LANG = (document.getElementById('root').dataset.lang) || 'en';
+  const RTL = LANG === 'fa';
 
-  // ─── BIG FIVE (IPIP-50) ───────────────────────────────
-  const BIG5_TRAITS = {
-    E:{name:'Extraversion',color:'#F59E0B',bg:'#FEF3C7',high:'You are energized by social situations, enjoy being around people, and tend to be outgoing. You feel comfortable in group settings.',medium:'You balance social engagement with alone time. You can be outgoing when needed but also appreciate quieter moments.',low:'You tend to be reserved and prefer smaller groups. You recharge alone — a strength in roles requiring deep focus.'},
-    A:{name:'Agreeableness',color:'#10B981',bg:'#D1FAE5',high:'You are warm, cooperative, and considerate. You value harmony and excel in team environments requiring empathy.',medium:'You balance cooperation with assertiveness. Compassionate when needed, but you hold your ground.',low:'You are direct and results-focused. Comfortable with conflict — a strength in negotiation and leadership.'},
-    C:{name:'Conscientiousness',color:'#3B82F6',bg:'#DBEAFE',high:'You are highly organized, reliable, and goal-driven. You plan ahead and follow through. You excel in structured environments.',medium:'Reasonably organized. Diligent when motivated, though you may prefer some flexibility.',low:'Flexible and spontaneous. You adapt as things unfold and may thrive in dynamic environments.'},
-    N:{name:'Emotional Stability',color:'#EF4444',bg:'#FEE2E2',high:'You remain calm under pressure, recover quickly from setbacks, and maintain balance in stressful situations.',medium:'You experience typical emotional ups and downs and handle most stress reasonably well.',low:'You experience emotions intensely. This sensitivity can be a strength in empathy-requiring roles.'},
-    O:{name:'Openness',color:'#8B5CF6',bg:'#EDE9FE',high:'Intellectually curious, creative, and open to new experiences. You enjoy complexity and abstract thinking.',medium:'You balance practicality with curiosity, engaging with creativity when the context calls for it.',low:'Practical and grounded. You prefer proven approaches — a strength in roles that reward consistency.'},
+  // ─── LANGUAGE-AGNOSTIC METADATA (drives scoring; never translated) ───
+  // Big Five (IPIP-50): {id, t∈E/A/C/N/O, r=reverse-key}
+  const BIG5_META=[
+    {id:1,t:'E',r:false},{id:2,t:'A',r:true},{id:3,t:'C',r:false},{id:4,t:'N',r:false},{id:5,t:'O',r:false},
+    {id:6,t:'E',r:true},{id:7,t:'A',r:false},{id:8,t:'C',r:true},{id:9,t:'N',r:true},{id:10,t:'O',r:true},
+    {id:11,t:'E',r:false},{id:12,t:'A',r:true},{id:13,t:'C',r:false},{id:14,t:'N',r:false},{id:15,t:'O',r:false},
+    {id:16,t:'E',r:true},{id:17,t:'A',r:false},{id:18,t:'C',r:true},{id:19,t:'N',r:true},{id:20,t:'O',r:true},
+    {id:21,t:'E',r:false},{id:22,t:'A',r:true},{id:23,t:'C',r:false},{id:24,t:'N',r:false},{id:25,t:'O',r:false},
+    {id:26,t:'E',r:true},{id:27,t:'A',r:false},{id:28,t:'C',r:true},{id:29,t:'N',r:true},{id:30,t:'O',r:true},
+    {id:31,t:'E',r:false},{id:32,t:'A',r:true},{id:33,t:'C',r:false},{id:34,t:'N',r:false},{id:35,t:'O',r:false},
+    {id:36,t:'E',r:true},{id:37,t:'A',r:false},{id:38,t:'C',r:true},{id:39,t:'N',r:true},{id:40,t:'O',r:true},
+    {id:41,t:'E',r:false},{id:42,t:'A',r:true},{id:43,t:'C',r:false},{id:44,t:'N',r:false},{id:45,t:'O',r:false},
+    {id:46,t:'E',r:true},{id:47,t:'A',r:false},{id:48,t:'C',r:true},{id:49,t:'N',r:true},{id:50,t:'O',r:true},
+  ];
+  // Rosenberg Self-Esteem: {id, r=reverse-key}
+  const SE_META=[{id:1,r:false},{id:2,r:true},{id:3,r:false},{id:4,r:false},{id:5,r:true},{id:6,r:true},{id:7,r:false},{id:8,r:true},{id:9,r:true},{id:10,r:false}];
+
+  // ─── TRAIT STYLING (language-agnostic; keyed by trait letter) ───
+  const TRAIT_STYLE={
+    E:{color:'#F59E0B',bg:'#FEF3C7'},
+    A:{color:'#10B981',bg:'#D1FAE5'},
+    C:{color:'#3B82F6',bg:'#DBEAFE'},
+    N:{color:'#EF4444',bg:'#FEE2E2'},
+    O:{color:'#8B5CF6',bg:'#EDE9FE'},
   };
-  const BIG5_Q=[
-    {id:1,text:"I am the life of the party.",t:'E',r:false},{id:2,text:"I insult people.",t:'A',r:true},{id:3,text:"I am always prepared.",t:'C',r:false},{id:4,text:"I get stressed out easily.",t:'N',r:false},{id:5,text:"I have a rich vocabulary.",t:'O',r:false},
-    {id:6,text:"I don't talk a lot.",t:'E',r:true},{id:7,text:"I am interested in people.",t:'A',r:false},{id:8,text:"I leave my belongings around.",t:'C',r:true},{id:9,text:"I am relaxed most of the time.",t:'N',r:true},{id:10,text:"I have difficulty understanding abstract ideas.",t:'O',r:true},
-    {id:11,text:"I feel comfortable around people.",t:'E',r:false},{id:12,text:"I am not really interested in others.",t:'A',r:true},{id:13,text:"I pay attention to details.",t:'C',r:false},{id:14,text:"I worry about things.",t:'N',r:false},{id:15,text:"I have a vivid imagination.",t:'O',r:false},
-    {id:16,text:"I keep in the background.",t:'E',r:true},{id:17,text:"I sympathize with others' feelings.",t:'A',r:false},{id:18,text:"I make a mess of things.",t:'C',r:true},{id:19,text:"I seldom feel blue.",t:'N',r:true},{id:20,text:"I am not interested in abstract ideas.",t:'O',r:true},
-    {id:21,text:"I start conversations.",t:'E',r:false},{id:22,text:"I am not interested in other people's problems.",t:'A',r:true},{id:23,text:"I get chores done right away.",t:'C',r:false},{id:24,text:"I am easily disturbed.",t:'N',r:false},{id:25,text:"I have excellent ideas.",t:'O',r:false},
-    {id:26,text:"I have little to say.",t:'E',r:true},{id:27,text:"I have a soft heart.",t:'A',r:false},{id:28,text:"I often forget to put things back in their proper place.",t:'C',r:true},{id:29,text:"I am not easily bothered by things.",t:'N',r:true},{id:30,text:"I do not have a good imagination.",t:'O',r:true},
-    {id:31,text:"I talk to a lot of different people at parties.",t:'E',r:false},{id:32,text:"I don't have a soft side.",t:'A',r:true},{id:33,text:"I like order.",t:'C',r:false},{id:34,text:"I get upset easily.",t:'N',r:false},{id:35,text:"I am quick to understand things.",t:'O',r:false},
-    {id:36,text:"I don't like to draw attention to myself.",t:'E',r:true},{id:37,text:"I take time out for others.",t:'A',r:false},{id:38,text:"I shirk my duties.",t:'C',r:true},{id:39,text:"I don't get irritated easily.",t:'N',r:true},{id:40,text:"I avoid difficult reading material.",t:'O',r:true},
-    {id:41,text:"I don't mind being the center of attention.",t:'E',r:false},{id:42,text:"I feel little concern for others.",t:'A',r:true},{id:43,text:"I follow a schedule.",t:'C',r:false},{id:44,text:"I change my mood a lot.",t:'N',r:false},{id:45,text:"I use difficult words.",t:'O',r:false},
-    {id:46,text:"I am quiet around strangers.",t:'E',r:true},{id:47,text:"I feel others' emotions.",t:'A',r:false},{id:48,text:"I don't see things through.",t:'C',r:true},{id:49,text:"I rarely feel depressed.",t:'N',r:true},{id:50,text:"I have difficulty imagining things.",t:'O',r:true},
-  ];
-  function scoreBig5(ans){const s={E:0,A:0,C:0,N:0,O:0};for(const q of BIG5_Q){const r=ans[q.id];if(!r)continue;s[q.t]+=q.r?6-r:r;}const res={};for(const[t,raw]of Object.entries(s)){const d=t==='N'?60-raw:raw;const pct=Math.max(0,Math.min(100,Math.round((d-10)/40*100)));res[t]={raw,pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
 
-  // ─── SELF-ESTEEM (Rosenberg) ──────────────────────────
-  const SE_Q=[{id:1,text:"On the whole, I am satisfied with myself.",r:false},{id:2,text:"At times I think I am no good at all.",r:true},{id:3,text:"I feel that I have a number of good qualities.",r:false},{id:4,text:"I am able to do things as well as most other people.",r:false},{id:5,text:"I feel I do not have much to be proud of.",r:true},{id:6,text:"I certainly feel useless at times.",r:true},{id:7,text:"I feel that I am a person of worth, at least on an equal plane with others.",r:false},{id:8,text:"I wish I could have more respect for myself.",r:true},{id:9,text:"All in all, I am inclined to feel that I am a failure.",r:true},{id:10,text:"I take a positive attitude toward myself.",r:false}];
-  const SE_LABELS=[{v:1,s:"Strongly Disagree"},{v:2,s:"Disagree"},{v:3,s:"Agree"},{v:4,s:"Strongly Agree"}];
-  function scoreSE(ans){let total=0;for(const q of SE_Q){const r=ans[q.id];if(!r)continue;total+=q.r?5-r:r;}const pct=Math.max(0,Math.min(100,Math.round((total-10)/30*100)));let level,label,desc;if(pct>=70){level='high';label='High Self-Esteem';desc='You have a strong, stable sense of your own worth. You approach challenges with confidence and recover well from setbacks. This is a significant asset in leadership and high-pressure roles.';}else if(pct>=45){level='medium';label='Moderate Self-Esteem';desc='You have a reasonably positive self-image with some areas of self-doubt. This is typical and healthy — you can build confidence further through experience and reflection.';}else{level='low';label='Low Self-Esteem';desc='You may struggle with self-doubt and negative self-evaluation. This can affect performance and relationships. Professional support or coaching can be very helpful.';}return{total,pct,level,label,desc};}
+  // ─── SCORING (reads keying from META; identical math across locales) ───
+  function scoreBig5(ans){const s={E:0,A:0,C:0,N:0,O:0};for(const q of BIG5_META){const r=ans[q.id];if(!r)continue;s[q.t]+=q.r?6-r:r;}const res={};for(const[t,raw]of Object.entries(s)){const d=t==='N'?60-raw:raw;const pct=Math.max(0,Math.min(100,Math.round((d-10)/40*100)));res[t]={raw,pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
+  function scoreSE(ans){let total=0;for(const q of SE_META){const r=ans[q.id];if(!r)continue;total+=q.r?5-r:r;}const pct=Math.max(0,Math.min(100,Math.round((total-10)/30*100)));let level;if(pct>=70)level='high';else if(pct>=45)level='medium';else level='low';return{total,pct,level};}
 
-  // ─── EMOTIONAL INTELLIGENCE (SREIT) ──────────────────
-  const EQ_TRAITS={PE:{name:'Perceiving Emotions',color:'#EC4899',bg:'#FCE7F3',high:'Excellent at reading emotional cues in yourself and others. You pick up on subtle moods and body language.',medium:'Reasonable emotional awareness with some blind spots.',low:'May miss emotional cues from others. Developing this skill can significantly improve relationships.'},MO:{name:'Managing Own Emotions',color:'#F97316',bg:'#FFEDD5',high:'You regulate your emotions effectively, staying composed under pressure and bouncing back from setbacks.',medium:'Generally manage emotions well, though high-pressure situations can be challenging.',low:'May find strong emotions hard to regulate. Mindfulness and stress management techniques can help.'},MO2:{name:"Managing Others' Emotions",color:'#14B8A6',bg:'#CCFBF1',high:'Skilled at helping others manage their emotional states. You naturally calm tense situations.',medium:'Can support others emotionally but may struggle in highly charged interpersonal situations.',low:"May find it difficult to navigate others' emotional states. Empathy training can be valuable."},UE:{name:'Utilizing Emotions',color:'#6366F1',bg:'#E0E7FF',high:'You harness emotions to motivate yourself and others, channelling feelings into productive action.',medium:'Sometimes use emotions constructively, with room to develop this further.',low:'Emotions may feel disruptive rather than useful. Learning to channel them can boost performance.'}};
-  const EQ_Q=[{id:1,text:"I know when to speak about my personal problems to others.",t:'PE',r:false},{id:2,text:"When I am faced with obstacles, I remember times I faced similar obstacles and overcame them.",t:'MO',r:false},{id:3,text:"I expect that I will do well on most things I try.",t:'MO',r:false},{id:4,text:"Other people find it easy to confide in me.",t:'MO2',r:false},{id:5,text:"I find it hard to understand the non-verbal messages of other people.",t:'PE',r:true},{id:6,text:"Some of the major events of my life have led me to re-evaluate what is important and not important.",t:'UE',r:false},{id:7,text:"When my mood changes, I see new possibilities.",t:'UE',r:false},{id:8,text:"Emotions are one of the things that make my life worth living.",t:'UE',r:false},{id:9,text:"I am aware of my emotions as I experience them.",t:'PE',r:false},{id:10,text:"I expect good things to happen.",t:'MO',r:false},{id:11,text:"I like to share my emotions with others.",t:'MO2',r:false},{id:12,text:"When I experience a positive emotion, I know how to make it last.",t:'MO',r:false},{id:13,text:"I arrange events others enjoy.",t:'MO2',r:false},{id:14,text:"I seek out activities that make me happy.",t:'MO',r:false},{id:15,text:"I am aware of the non-verbal messages I send to others.",t:'PE',r:false},{id:16,text:"I present myself in a way that makes a good impression on others.",t:'MO2',r:false},{id:17,text:"When I am in a positive mood, solving problems is easy for me.",t:'UE',r:false},{id:18,text:"By looking at their facial expressions, I recognize the emotions people are experiencing.",t:'PE',r:false},{id:19,text:"I know why my emotions change.",t:'PE',r:false},{id:20,text:"When I am in a positive mood, I am able to come up with new ideas.",t:'UE',r:false},{id:21,text:"I have control over my emotions.",t:'MO',r:false},{id:22,text:"I easily recognize my emotions as I experience them.",t:'PE',r:false},{id:23,text:"I motivate myself by imagining a good outcome to tasks I take on.",t:'MO',r:false},{id:24,text:"I compliment others when they have done something well.",t:'MO2',r:false},{id:25,text:"I am aware of the non-verbal messages other people send.",t:'PE',r:false},{id:26,text:"When another person tells me about an important event in their life, I almost feel as though I experienced it myself.",t:'PE',r:false},{id:27,text:"When I feel a change in emotions, I tend to come up with new ideas.",t:'UE',r:false},{id:28,text:"When I am faced with a challenge, I give up because I believe I will fail.",t:'MO',r:true},{id:29,text:"I know what other people are feeling just by looking at them.",t:'PE',r:false},{id:30,text:"I help other people feel better when they are down.",t:'MO2',r:false},{id:31,text:"I use good moods to help myself keep trying in the face of obstacles.",t:'MO',r:false},{id:32,text:"I can tell how people are feeling by listening to the tone of their voice.",t:'PE',r:false},{id:33,text:"It is difficult for me to understand why people feel the way they do.",t:'PE',r:true}];
-  const EQ_LABELS=[{v:1,s:"Not at all"},{v:2,s:"Somewhat"},{v:3,s:"Neutral"},{v:4,s:"Often"},{v:5,s:"Very much"}];
-  function scoreEQ(ans){const sums={PE:0,MO:0,MO2:0,UE:0};const cnts={PE:0,MO:0,MO2:0,UE:0};for(const q of EQ_Q){const r=ans[q.id];if(!r)continue;sums[q.t]+=q.r?6-r:r;cnts[q.t]++;}const res={};for(const t of Object.keys(sums)){const avg=cnts[t]>0?sums[t]/cnts[t]:3;const pct=Math.round((avg-1)/4*100);res[t]={pct,level:pct>=65?'high':pct>=35?'medium':'low'};}const overall=Math.round(Object.values(res).reduce((a,b)=>a+b.pct,0)/4);return{...res,overall};}
+  // ─── TRANSLATABLE CONTENT ─────────────────────────────
+  const DATA={
+    en:{
+      ui:{
+        kicker:'HR Assessments',heroTitle:'Workplace Assessments',
+        heroSubtitle:'Science-based personality and HR assessments. Free, instant results. Choose a test to begin.',
+        available:'Assessments Available',back:'← Back',previous:'← Previous',question:'Question',
+        selectPrompt:'Select the most accurate response',print:'🖨 Print',retake:'Retake',allTests:'All Tests',
+        backToTests:'← Back to Tests',resultsSuffix:' Results',yourScore:'Your Score',outOf:'out of 100',
+        yourProfile:'Your Profile',characterizedAs:'You are most strongly characterized as ',
+        scoreOverview:'Score Overview',detailedResults:'Detailed Results',yourScores:'Your Scores',
+        high:'High',medium:'Medium',low:'Low',axisLow:'Low',axisHigh:'High',
+        tagPersonality:'Personality',tagSelf:'Self & Wellbeing',forInfoOnly:'For informational purposes only.',
+      },
+      tags:{Personality:'bg-violet-100 text-violet-700','Self & Wellbeing':'bg-sky-100 text-sky-700'},
+      big5:{
+        title:'Big Five Personality',subtitle:'IPIP-50 · 50 questions · ~10 min',
+        desc:'The most widely used personality framework. Measures 5 core traits that predict workplace behavior, team dynamics, and career fit.',
+        tagline:'Personality',footer:'Based on the IPIP-50 (public domain). For informational purposes only.',
+        labels:["Very Inaccurate","Mod. Inaccurate","Neither","Mod. Accurate","Very Accurate"],
+        profile:{E:'sociable',A:'agreeable',C:'organized',N:'calm & resilient',O:'curious'},
+        traits:{
+          E:{name:'Extraversion',high:'You are energized by social situations, enjoy being around people, and tend to be outgoing. You feel comfortable in group settings.',medium:'You balance social engagement with alone time. You can be outgoing when needed but also appreciate quieter moments.',low:'You tend to be reserved and prefer smaller groups. You recharge alone — a strength in roles requiring deep focus.'},
+          A:{name:'Agreeableness',high:'You are warm, cooperative, and considerate. You value harmony and excel in team environments requiring empathy.',medium:'You balance cooperation with assertiveness. Compassionate when needed, but you hold your ground.',low:'You are direct and results-focused. Comfortable with conflict — a strength in negotiation and leadership.'},
+          C:{name:'Conscientiousness',high:'You are highly organized, reliable, and goal-driven. You plan ahead and follow through. You excel in structured environments.',medium:'Reasonably organized. Diligent when motivated, though you may prefer some flexibility.',low:'Flexible and spontaneous. You adapt as things unfold and may thrive in dynamic environments.'},
+          N:{name:'Emotional Stability',high:'You remain calm under pressure, recover quickly from setbacks, and maintain balance in stressful situations.',medium:'You experience typical emotional ups and downs and handle most stress reasonably well.',low:'You experience emotions intensely. This sensitivity can be a strength in empathy-requiring roles.'},
+          O:{name:'Openness',high:'Intellectually curious, creative, and open to new experiences. You enjoy complexity and abstract thinking.',medium:'You balance practicality with curiosity, engaging with creativity when the context calls for it.',low:'Practical and grounded. You prefer proven approaches — a strength in roles that reward consistency.'},
+        },
+        questions:["I am the life of the party.","I insult people.","I am always prepared.","I get stressed out easily.","I have a rich vocabulary.","I don't talk a lot.","I am interested in people.","I leave my belongings around.","I am relaxed most of the time.","I have difficulty understanding abstract ideas.","I feel comfortable around people.","I am not really interested in others.","I pay attention to details.","I worry about things.","I have a vivid imagination.","I keep in the background.","I sympathize with others' feelings.","I make a mess of things.","I seldom feel blue.","I am not interested in abstract ideas.","I start conversations.","I am not interested in other people's problems.","I get chores done right away.","I am easily disturbed.","I have excellent ideas.","I have little to say.","I have a soft heart.","I often forget to put things back in their proper place.","I am not easily bothered by things.","I do not have a good imagination.","I talk to a lot of different people at parties.","I don't have a soft side.","I like order.","I get upset easily.","I am quick to understand things.","I don't like to draw attention to myself.","I take time out for others.","I shirk my duties.","I don't get irritated easily.","I avoid difficult reading material.","I don't mind being the center of attention.","I feel little concern for others.","I follow a schedule.","I change my mood a lot.","I use difficult words.","I am quiet around strangers.","I feel others' emotions.","I don't see things through.","I rarely feel depressed.","I have difficulty imagining things."],
+      },
+      selfesteem:{
+        title:'Self-Esteem',subtitle:'Rosenberg Scale · 10 questions · ~3 min',
+        desc:'The gold standard for self-esteem measurement. Used in clinical, educational, and HR contexts worldwide.',
+        tagline:'Self & Wellbeing',scaleName:'Rosenberg Self-Esteem Scale',
+        footer:'Based on the Rosenberg Self-Esteem Scale (public domain). For informational purposes only.',
+        labels:["Strongly Disagree","Disagree","Agree","Strongly Agree"],
+        levels:{
+          high:{label:'High Self-Esteem',desc:'You have a strong, stable sense of your own worth. You approach challenges with confidence and recover well from setbacks. This is a significant asset in leadership and high-pressure roles.'},
+          medium:{label:'Moderate Self-Esteem',desc:'You have a reasonably positive self-image with some areas of self-doubt. This is typical and healthy — you can build confidence further through experience and reflection.'},
+          low:{label:'Low Self-Esteem',desc:'You may struggle with self-doubt and negative self-evaluation. This can affect performance and relationships. Professional support or coaching can be very helpful.'},
+        },
+        questions:["On the whole, I am satisfied with myself.","At times I think I am no good at all.","I feel that I have a number of good qualities.","I am able to do things as well as most other people.","I feel I do not have much to be proud of.","I certainly feel useless at times.","I feel that I am a person of worth, at least on an equal plane with others.","I wish I could have more respect for myself.","All in all, I am inclined to feel that I am a failure.","I take a positive attitude toward myself."],
+      },
+    },
+    de:{
+      ui:{
+        kicker:'HR-Assessments',heroTitle:'Arbeitsplatz-Assessments',
+        heroSubtitle:'Wissenschaftlich fundierte Persönlichkeits- und HR-Assessments. Kostenlos, sofortige Ergebnisse. Wählen Sie einen Test, um zu beginnen.',
+        available:'Verfügbare Assessments',back:'← Zurück',previous:'← Vorherige',question:'Frage',
+        selectPrompt:'Wählen Sie die zutreffendste Antwort',print:'🖨 Drucken',retake:'Wiederholen',allTests:'Alle Tests',
+        backToTests:'← Zurück zu den Tests',resultsSuffix:' – Ergebnisse',yourScore:'Ihr Ergebnis',outOf:'von 100',
+        yourProfile:'Ihr Profil',characterizedAs:'Sie zeichnen sich am stärksten aus als ',
+        scoreOverview:'Ergebnisübersicht',detailedResults:'Detaillierte Ergebnisse',yourScores:'Ihre Ergebnisse',
+        high:'Hoch',medium:'Mittel',low:'Niedrig',axisLow:'Niedrig',axisHigh:'Hoch',
+        tagPersonality:'Persönlichkeit',tagSelf:'Selbst & Wohlbefinden',forInfoOnly:'Nur zu Informationszwecken.',
+      },
+      tags:{'Persönlichkeit':'bg-violet-100 text-violet-700','Selbst & Wohlbefinden':'bg-sky-100 text-sky-700'},
+      big5:{
+        title:'Big Five Persönlichkeit',subtitle:'IPIP-50 · 50 Fragen · ~10 Min.',
+        desc:'Das am weitesten verbreitete Persönlichkeitsmodell. Misst 5 Kernmerkmale, die Verhalten am Arbeitsplatz, Teamdynamik und berufliche Passung vorhersagen.',
+        tagline:'Persönlichkeit',footer:'Basierend auf dem IPIP-50 (gemeinfrei). Nur zu Informationszwecken.',
+        labels:["Sehr unzutreffend","Eher unzutreffend","Weder noch","Eher zutreffend","Sehr zutreffend"],
+        profile:{E:'gesellig',A:'verträglich',C:'organisiert',N:'ruhig & belastbar',O:'wissbegierig'},
+        traits:{
+          E:{name:'Extraversion',high:'Soziale Situationen geben Ihnen Energie, Sie sind gern unter Menschen und eher kontaktfreudig. In Gruppen fühlen Sie sich wohl.',medium:'Sie halten soziale Aktivität und Zeit für sich in Balance. Sie können kontaktfreudig sein, schätzen aber auch ruhigere Momente.',low:'Sie sind eher zurückhaltend und bevorzugen kleinere Gruppen. Sie tanken allein auf — eine Stärke in Rollen, die tiefe Konzentration erfordern.'},
+          A:{name:'Verträglichkeit',high:'Sie sind warmherzig, kooperativ und rücksichtsvoll. Sie schätzen Harmonie und glänzen in Teamumfeldern, die Empathie erfordern.',medium:'Sie halten Kooperation und Durchsetzungsvermögen in Balance. Mitfühlend, wenn nötig, aber Sie behaupten sich.',low:'Sie sind direkt und ergebnisorientiert. Konflikte machen Ihnen nichts aus — eine Stärke in Verhandlung und Führung.'},
+          C:{name:'Gewissenhaftigkeit',high:'Sie sind sehr organisiert, zuverlässig und zielstrebig. Sie planen voraus und ziehen Dinge durch. In strukturierten Umfeldern glänzen Sie.',medium:'Recht organisiert. Sorgfältig, wenn Sie motiviert sind, auch wenn Sie etwas Flexibilität bevorzugen.',low:'Flexibel und spontan. Sie passen sich an, wie sich Dinge entwickeln, und können in dynamischen Umfeldern aufblühen.'},
+          N:{name:'Emotionale Stabilität',high:'Sie bleiben unter Druck ruhig, erholen sich schnell von Rückschlägen und bewahren in stressigen Situationen die Balance.',medium:'Sie erleben typische emotionale Höhen und Tiefen und kommen mit den meisten Belastungen recht gut zurecht.',low:'Sie erleben Emotionen intensiv. Diese Sensibilität kann eine Stärke in Rollen sein, die Empathie erfordern.'},
+          O:{name:'Offenheit',high:'Intellektuell neugierig, kreativ und offen für neue Erfahrungen. Sie mögen Komplexität und abstraktes Denken.',medium:'Sie halten Bodenständigkeit und Neugier in Balance und lassen sich auf Kreativität ein, wenn der Kontext es verlangt.',low:'Praktisch und bodenständig. Sie bevorzugen bewährte Ansätze — eine Stärke in Rollen, die Beständigkeit belohnen.'},
+        },
+        questions:["Ich bringe eine Party in Schwung.","Ich beleidige andere.","Ich bin immer vorbereitet.","Ich gerate leicht in Stress.","Ich besitze einen großen Wortschatz.","Ich spreche nicht viel.","Ich bin interessiert an anderen Menschen.","Ich lasse meine Sachen herumliegen.","Ich bin die meiste Zeit entspannt.","Ich habe Schwierigkeiten, abstrakte Ideen zu verstehen.","Ich fühle mich wohl unter Menschen.","Ich bin nicht wirklich interessiert an anderen.","Ich achte auf Details.","Ich grüble über Dinge.","Ich habe eine lebhafte Vorstellungskraft.","Ich halte mich im Hintergrund.","Ich fühle mit anderen Menschen mit.","Ich verursache großes Durcheinander.","Ich fühle mich selten deprimiert.","Ich bin an abstrakten Ideen nicht interessiert.","Ich beginne Gespräche.","Ich bin nicht interessiert an den Problemen anderer Leute.","Ich erledige Hausarbeiten unmittelbar.","Ich bin leicht beunruhigt.","Ich habe ausgezeichnete Ideen.","Ich habe wenig zu sagen.","Ich habe ein weiches Herz.","Ich vergesse oft, Dinge an ihren Platz zurückzulegen.","Ich lasse mich nicht so leicht von Dingen beunruhigen.","Ich habe kein gutes Vorstellungsvermögen.","Ich spreche mit vielen verschiedenen Leuten auf Parties.","Ich habe keine weiche Seite.","Ich mag Ordnung.","Ich rege mich leicht auf.","Ich verstehe Dinge schnell.","Ich mag es nicht, Aufmerksamkeit auf mich zu ziehen.","Ich nehme mir Zeit für andere.","Ich drücke mich vor meinen Pflichten.","Ich lasse mich nicht leicht reizen.","Ich meide schwierige Lektüre.","Es macht mir nichts aus, im Zentrum der Aufmerksamkeit zu stehen.","Ich empfinde wenig für andere.","Ich folge einem Plan.","Ich wechsle oft meine Stimmung.","Ich gebrauche schwierige Wörter.","Ich bin still unter Fremden.","Ich fühle die Gefühle anderer.","Ich bringe Dinge nicht zu Ende.","Ich fühle mich selten niedergeschlagen.","Es fällt mir schwer, mir Dinge vorzustellen."],
+      },
+      selfesteem:{
+        title:'Selbstwertgefühl',subtitle:'Rosenberg-Skala · 10 Fragen · ~3 Min.',
+        desc:'Der Goldstandard zur Messung des Selbstwertgefühls. Weltweit in klinischen, pädagogischen und HR-Kontexten eingesetzt.',
+        tagline:'Selbst & Wohlbefinden',scaleName:'Rosenberg-Skala zum Selbstwertgefühl',
+        footer:'Basierend auf der Rosenberg-Skala zum Selbstwertgefühl (gemeinfrei). Nur zu Informationszwecken.',
+        labels:["Trifft gar nicht zu","Trifft eher nicht zu","Trifft eher zu","Trifft voll und ganz zu"],
+        levels:{
+          high:{label:'Hohes Selbstwertgefühl',desc:'Sie haben ein starkes, stabiles Gefühl für Ihren eigenen Wert. Sie gehen Herausforderungen mit Zuversicht an und erholen sich gut von Rückschlägen. Das ist ein bedeutender Vorteil in Führungs- und Hochdruckrollen.'},
+          medium:{label:'Mittleres Selbstwertgefühl',desc:'Sie haben ein recht positives Selbstbild mit einigen Bereichen von Selbstzweifeln. Das ist typisch und gesund — durch Erfahrung und Reflexion können Sie Ihr Selbstvertrauen weiter aufbauen.'},
+          low:{label:'Niedriges Selbstwertgefühl',desc:'Sie könnten mit Selbstzweifeln und negativer Selbstbewertung zu kämpfen haben. Das kann Leistung und Beziehungen beeinträchtigen. Professionelle Unterstützung oder Coaching kann sehr hilfreich sein.'},
+        },
+        questions:["Alles in allem bin ich mit mir selbst zufrieden.","Hin und wieder denke ich, dass ich gar nichts tauge.","Ich besitze eine Reihe guter Eigenschaften.","Ich kann vieles genauso gut wie die meisten anderen Menschen auch.","Ich fürchte, es gibt nicht viel, worauf ich stolz sein kann.","Ich fühle mich von Zeit zu Zeit richtig nutzlos.","Ich halte mich für einen wertvollen Menschen, jedenfalls bin ich nicht weniger wertvoll als andere.","Ich wünschte, ich könnte vor mir selbst mehr Achtung haben.","Alles in allem neige ich dazu, mich für einen Versager zu halten.","Ich habe eine positive Einstellung zu mir selbst gefunden."],
+      },
+    },
+    fa:{
+      ui:{
+        kicker:'آزمون‌های منابع انسانی',heroTitle:'آزمون‌های محیط کار',
+        heroSubtitle:'آزمون‌های شخصیت و منابع انسانی بر پایه علم. رایگان، با نتیجه فوری. برای شروع یک آزمون را انتخاب کنید.',
+        available:'آزمون در دسترس',back:'→ بازگشت',previous:'→ قبلی',question:'پرسش',
+        selectPrompt:'دقیق‌ترین پاسخ را انتخاب کنید',print:'🖨 چاپ',retake:'انجام دوباره',allTests:'همه آزمون‌ها',
+        backToTests:'→ بازگشت به آزمون‌ها',resultsSuffix:' — نتایج',yourScore:'امتیاز شما',outOf:'از ۱۰۰',
+        yourProfile:'نیم‌رخ شما',characterizedAs:'بارزترین ویژگی‌های شما ',
+        scoreOverview:'نمای کلی امتیازها',detailedResults:'نتایج تفصیلی',yourScores:'امتیازهای شما',
+        high:'بالا',medium:'متوسط',low:'پایین',axisLow:'پایین',axisHigh:'بالا',
+        tagPersonality:'شخصیت',tagSelf:'خود و بهزیستی',forInfoOnly:'صرفاً برای اطلاع‌رسانی.',
+      },
+      tags:{'شخصیت':'bg-violet-100 text-violet-700','خود و بهزیستی':'bg-sky-100 text-sky-700'},
+      big5:{
+        title:'شخصیت پنج‌عاملی',subtitle:'IPIP-50 · ۵۰ پرسش · حدود ۱۰ دقیقه',
+        desc:'پرکاربردترین چارچوب شخصیت. پنج ویژگی اصلی را می‌سنجد که رفتار در محیط کار، پویایی تیم و تناسب شغلی را پیش‌بینی می‌کنند.',
+        tagline:'شخصیت',footer:'بر پایه IPIP-50 (مالکیت عمومی). صرفاً برای اطلاع‌رسانی.',
+        labels:["کاملاً نادرست","تا حدی نادرست","نه این نه آن","تا حدی درست","کاملاً درست"],
+        profile:{E:'اجتماعی',A:'سازگار',C:'منظم',N:'آرام و تاب‌آور',O:'کنجکاو'},
+        traits:{
+          E:{name:'برون‌گرایی',high:'موقعیت‌های اجتماعی به شما انرژی می‌دهند، از بودن در کنار دیگران لذت می‌برید و معمولاً اهل معاشرت هستید. در جمع احساس راحتی می‌کنید.',medium:'میان حضور اجتماعی و تنهایی تعادل برقرار می‌کنید. در صورت نیاز اهل معاشرت هستید اما لحظات آرام‌تر را هم می‌پسندید.',low:'بیشتر کم‌حرف هستید و جمع‌های کوچک‌تر را ترجیح می‌دهید. در تنهایی انرژی می‌گیرید — این یک نقطه قوت در نقش‌هایی است که تمرکز عمیق می‌طلبند.'},
+          A:{name:'سازگاری',high:'گرم، اهل همکاری و ملاحظه‌گر هستید. به همدلی اهمیت می‌دهید و در محیط‌های تیمیِ نیازمند همدلی می‌درخشید.',medium:'میان همکاری و قاطعیت تعادل برقرار می‌کنید. در صورت نیاز دلسوز هستید، اما بر سر مواضع خود می‌ایستید.',low:'صریح و نتیجه‌محور هستید. با تعارض راحت کنار می‌آیید — این یک نقطه قوت در مذاکره و رهبری است.'},
+          C:{name:'وظیفه‌شناسی',high:'بسیار منظم، قابل اتکا و هدف‌گرا هستید. از پیش برنامه‌ریزی می‌کنید و کارها را به سرانجام می‌رسانید. در محیط‌های ساختارمند می‌درخشید.',medium:'تا حد معقولی منظم هستید. هنگام انگیزه‌مندی کوشا هستید، هرچند کمی انعطاف را ترجیح می‌دهید.',low:'انعطاف‌پذیر و خودانگیخته هستید. همگام با پیشرفت کارها خود را وفق می‌دهید و ممکن است در محیط‌های پویا شکوفا شوید.'},
+          N:{name:'ثبات هیجانی',high:'زیر فشار آرام می‌مانید، از ناکامی‌ها به‌سرعت بهبود می‌یابید و در موقعیت‌های پرتنش تعادل خود را حفظ می‌کنید.',medium:'فرازوفرودهای هیجانی معمول را تجربه می‌کنید و با بیشتر فشارها به‌خوبی کنار می‌آیید.',low:'هیجان‌ها را شدید تجربه می‌کنید. این حساسیت می‌تواند در نقش‌های نیازمند همدلی یک نقطه قوت باشد.'},
+          O:{name:'گشودگی',high:'از نظر فکری کنجکاو، خلاق و پذیرای تجربه‌های تازه هستید. از پیچیدگی و تفکر انتزاعی لذت می‌برید.',medium:'میان عمل‌گرایی و کنجکاوی تعادل برقرار می‌کنید و هرگاه شرایط بطلبد سراغ خلاقیت می‌روید.',low:'عمل‌گرا و واقع‌بین هستید. رویکردهای آزموده‌شده را ترجیح می‌دهید — این یک نقطه قوت در نقش‌هایی است که به ثبات پاداش می‌دهند.'},
+        },
+        questions:["من جان جمع هستم.","به دیگران توهین می‌کنم.","همیشه آماده‌ام.","به‌راحتی دچار استرس می‌شوم.","دایره واژگان گسترده‌ای دارم.","زیاد حرف نمی‌زنم.","به مردم علاقه‌مندم.","وسایلم را اینجا و آنجا رها می‌کنم.","بیشتر اوقات آرام هستم.","در درک ایده‌های انتزاعی دشواری دارم.","در کنار مردم احساس راحتی می‌کنم.","واقعاً به دیگران علاقه‌ای ندارم.","به جزئیات توجه می‌کنم.","نگران مسائل می‌شوم.","تخیل زنده‌ای دارم.","در حاشیه می‌مانم.","با احساسات دیگران همدردی می‌کنم.","کارها را به‌هم می‌ریزم.","به‌ندرت غمگین می‌شوم.","به ایده‌های انتزاعی علاقه‌ای ندارم.","سر صحبت را باز می‌کنم.","به مشکلات دیگران علاقه‌ای ندارم.","کارها را بی‌درنگ انجام می‌دهم.","به‌راحتی آشفته می‌شوم.","ایده‌های عالی دارم.","حرف چندانی برای گفتن ندارم.","دل نازکی دارم.","اغلب فراموش می‌کنم چیزها را سر جای‌شان بگذارم.","به‌سادگی از چیزها آزرده نمی‌شوم.","تخیل خوبی ندارم.","در مهمانی‌ها با افراد گوناگون بسیار حرف می‌زنم.","جنبه احساسی و لطیف ندارم.","نظم را دوست دارم.","به‌راحتی ناراحت می‌شوم.","چیزها را سریع درک می‌کنم.","دوست ندارم توجه‌ها را به خود جلب کنم.","برای دیگران وقت می‌گذارم.","از زیر وظایفم شانه خالی می‌کنم.","به‌راحتی برانگیخته و عصبانی نمی‌شوم.","از خواندن مطالب دشوار پرهیز می‌کنم.","از مرکز توجه بودن ناراحت نمی‌شوم.","نسبت به دیگران چندان احساس نگرانی نمی‌کنم.","از یک برنامه پیروی می‌کنم.","حال‌وهوایم زیاد تغییر می‌کند.","از واژه‌های دشوار استفاده می‌کنم.","در کنار غریبه‌ها ساکت هستم.","احساسات دیگران را درک می‌کنم.","کارها را تا انتها پیش نمی‌برم.","به‌ندرت احساس افسردگی می‌کنم.","در تصور کردن چیزها دشواری دارم."],
+      },
+      selfesteem:{
+        title:'عزت نفس',subtitle:'مقیاس روزنبرگ · ۱۰ پرسش · حدود ۳ دقیقه',
+        desc:'معیار طلایی سنجش عزت نفس. در سراسر جهان در زمینه‌های بالینی، آموزشی و منابع انسانی به کار می‌رود.',
+        tagline:'خود و بهزیستی',scaleName:'مقیاس عزت نفس روزنبرگ',
+        footer:'بر پایه مقیاس عزت نفس روزنبرگ (مالکیت عمومی). صرفاً برای اطلاع‌رسانی.',
+        labels:["کاملاً مخالفم","مخالفم","موافقم","کاملاً موافقم"],
+        levels:{
+          high:{label:'عزت نفس بالا',desc:'حس قوی و پایداری از ارزشمندی خود دارید. با اعتمادبه‌نفس به چالش‌ها روی می‌آورید و از ناکامی‌ها به‌خوبی بهبود می‌یابید. این یک سرمایه چشمگیر در نقش‌های رهبری و پرفشار است.'},
+          medium:{label:'عزت نفس متوسط',desc:'تصویری نسبتاً مثبت از خود دارید با اندکی تردید به خود. این امری معمول و سالم است — با تجربه و خوداندیشی می‌توانید اعتمادبه‌نفس خود را بیشتر بسازید.'},
+          low:{label:'عزت نفس پایین',desc:'ممکن است با تردید به خود و ارزیابی منفی از خود دست‌وپنجه نرم کنید. این می‌تواند بر عملکرد و روابط اثر بگذارد. حمایت حرفه‌ای یا مربیگری می‌تواند بسیار سودمند باشد.'},
+        },
+        questions:["روی‌هم‌رفته از خودم راضی هستم.","گاهی فکر می‌کنم اصلاً به درد نمی‌خورم.","احساس می‌کنم چند ویژگی خوب دارم.","می‌توانم کارها را به‌خوبیِ بیشتر مردم انجام دهم.","احساس می‌کنم چیز زیادی برای افتخار کردن ندارم.","گاهی به‌یقین احساس بی‌فایده بودن می‌کنم.","احساس می‌کنم انسان ارزشمندی هستم، دست‌کم هم‌تراز با دیگران.","کاش می‌توانستم برای خودم احترام بیشتری قائل باشم.","روی‌هم‌رفته تمایل دارم خودم را شکست‌خورده بدانم.","نگرشی مثبت نسبت به خودم دارم."],
+      },
+    },
+    sr:{
+      ui:{
+        kicker:'HR procene',heroTitle:'Procene za radno okruženje',
+        heroSubtitle:'Naučno zasnovane procene ličnosti i HR procene. Besplatno, sa trenutnim rezultatima. Izaberite test da biste počeli.',
+        available:'Dostupnih procena',back:'← Nazad',previous:'← Prethodno',question:'Pitanje',
+        selectPrompt:'Izaberite najtačniji odgovor',print:'🖨 Štampaj',retake:'Ponovi',allTests:'Svi testovi',
+        backToTests:'← Nazad na testove',resultsSuffix:' – Rezultati',yourScore:'Vaš rezultat',outOf:'od 100',
+        yourProfile:'Vaš profil',characterizedAs:'Najizraženije vas karakteriše to što ste ',
+        scoreOverview:'Pregled rezultata',detailedResults:'Detaljni rezultati',yourScores:'Vaši rezultati',
+        high:'Visoko',medium:'Srednje',low:'Nisko',axisLow:'Nisko',axisHigh:'Visoko',
+        tagPersonality:'Ličnost',tagSelf:'Sebstvo i blagostanje',forInfoOnly:'Samo u informativne svrhe.',
+      },
+      tags:{'Ličnost':'bg-violet-100 text-violet-700','Sebstvo i blagostanje':'bg-sky-100 text-sky-700'},
+      big5:{
+        title:'Petofaktorska ličnost',subtitle:'IPIP-50 · 50 pitanja · ~10 min',
+        desc:'Najšire korišćen okvir ličnosti. Meri 5 osnovnih crta koje predviđaju ponašanje na radnom mestu, timsku dinamiku i karijernu usklađenost.',
+        tagline:'Ličnost',footer:'Zasnovano na IPIP-50 (javno vlasništvo). Samo u informativne svrhe.',
+        labels:["Sasvim netačno","Uglavnom netačno","Ni jedno ni drugo","Uglavnom tačno","Sasvim tačno"],
+        profile:{E:'društveni',A:'saradljivi',C:'organizovani',N:'smireni i otporni',O:'radoznali'},
+        traits:{
+          E:{name:'Ekstraverzija',high:'Društvene situacije vas energizuju, uživate u društvu ljudi i obično ste otvoreni. U grupama se osećate prijatno.',medium:'Balansirate društvenu aktivnost i vreme za sebe. Možete biti otvoreni kada je potrebno, ali cenite i mirnije trenutke.',low:'Skloni ste suzdržanosti i radije birate manje grupe. Energiju obnavljate u samoći — prednost u ulogama koje traže duboku koncentraciju.'},
+          A:{name:'Saradljivost',high:'Topli ste, saradljivi i obzirni. Cenite sklad i blistate u timskim okruženjima koja zahtevaju empatiju.',medium:'Balansirate saradnju i odlučnost. Saosećajni kada treba, ali ostajete pri svom stavu.',low:'Direktni ste i usmereni na rezultat. Sukob vam ne smeta — prednost u pregovaranju i vođenju.'},
+          C:{name:'Savesnost',high:'Veoma ste organizovani, pouzdani i usmereni ka cilju. Planirate unapred i dovodite stvari do kraja. Blistate u strukturiranim okruženjima.',medium:'Razumno organizovani. Vredni kada ste motivisani, mada možda volite izvesnu fleksibilnost.',low:'Fleksibilni i spontani. Prilagođavate se kako stvari teku i možete uspevati u dinamičnim okruženjima.'},
+          N:{name:'Emocionalna stabilnost',high:'Ostajete smireni pod pritiskom, brzo se oporavljate od neuspeha i održavate ravnotežu u stresnim situacijama.',medium:'Doživljavate uobičajene emocionalne uspone i padove i sa većinom stresa se nosite razumno dobro.',low:'Emocije doživljavate intenzivno. Ta osetljivost može biti prednost u ulogama koje traže empatiju.'},
+          O:{name:'Otvorenost',high:'Intelektualno radoznali, kreativni i otvoreni za nova iskustva. Uživate u složenosti i apstraktnom mišljenju.',medium:'Balansirate praktičnost i radoznalost, prihvatajući kreativnost kada to kontekst zahteva.',low:'Praktični i prizemljeni. Birate proverene pristupe — prednost u ulogama koje nagrađuju doslednost.'},
+        },
+        questions:["Ja sam duša provoda.","Vređam ljude.","Uvek sam pripremljen.","Lako zapadnem u stres.","Imam bogat rečnik.","Ne pričam mnogo.","Zanimaju me ljudi.","Ostavljam svoje stvari razbacane.","Većinu vremena sam opušten.","Teško mi je da razumem apstraktne ideje.","Prijatno mi je u društvu ljudi.","Drugi me baš i ne zanimaju.","Obraćam pažnju na detalje.","Brinem o stvarima.","Imam živu maštu.","Držim se po strani.","Saosećam sa osećanjima drugih.","Pravim haos od stvari.","Retko sam neraspoložen.","Apstraktne ideje me ne zanimaju.","Započinjem razgovore.","Ne zanimaju me problemi drugih ljudi.","Obaveze obavljam odmah.","Lako me je uznemiriti.","Imam odlične ideje.","Imam malo toga da kažem.","Imam meko srce.","Često zaboravim da vratim stvari na mesto.","Stvari me ne uznemiravaju lako.","Nemam dobru maštu.","Na zabavama pričam sa mnogo različitih ljudi.","Nemam nežnu stranu.","Volim red.","Lako se uznemirim.","Brzo shvatam stvari.","Ne volim da privlačim pažnju na sebe.","Izdvajam vreme za druge.","Izbegavam svoje dužnosti.","Ne razdražim se lako.","Izbegavam teško štivo.","Ne smeta mi da budem u centru pažnje.","Slabo brinem o drugima.","Pratim raspored.","Mnogo menjam raspoloženje.","Koristim teške reči.","Tih sam u društvu nepoznatih.","Osećam emocije drugih.","Ne dovodim stvari do kraja.","Retko se osećam depresivno.","Teško mi je da nešto zamislim."],
+      },
+      selfesteem:{
+        title:'Samopouzdanje',subtitle:'Rozenbergova skala · 10 pitanja · ~3 min',
+        desc:'Zlatni standard za merenje samopouzdanja. Koristi se širom sveta u kliničkim, obrazovnim i HR kontekstima.',
+        tagline:'Sebstvo i blagostanje',scaleName:'Rozenbergova skala samopouzdanja',
+        footer:'Zasnovano na Rozenbergovoj skali samopouzdanja (javno vlasništvo). Samo u informativne svrhe.',
+        labels:["Uopšte se ne slažem","Ne slažem se","Slažem se","Potpuno se slažem"],
+        levels:{
+          high:{label:'Visoko samopouzdanje',desc:'Imate snažan, stabilan osećaj sopstvene vrednosti. Izazovima pristupate sa samopouzdanjem i dobro se oporavljate od neuspeha. To je značajna prednost u liderskim i ulogama pod pritiskom.'},
+          medium:{label:'Umereno samopouzdanje',desc:'Imate razumno pozitivnu sliku o sebi sa ponekom sumnjom u sebe. To je uobičajeno i zdravo — samopouzdanje možete dalje graditi kroz iskustvo i promišljanje.'},
+          low:{label:'Nisko samopouzdanje',desc:'Možda se borite sa sumnjom u sebe i negativnom samoprocenom. To može uticati na učinak i odnose. Stručna podrška ili koučing mogu biti veoma korisni.'},
+        },
+        questions:["Sve u svemu, zadovoljan sam sobom.","Ponekad mislim da uopšte ništa ne vredim.","Smatram da imam niz dobrih osobina.","Sposoban sam da radim stvari jednako dobro kao i većina drugih ljudi.","Osećam da nemam mnogo čime bih se ponosio.","Sigurno se ponekad osećam beskorisno.","Smatram da sam vredna osoba, bar ravnopravna sa drugima.","Voleo bih da mogu više da poštujem sebe.","Sve u svemu, sklon sam da sebe smatram neuspešnim.","Imam pozitivan stav prema sebi."],
+      },
+    },
+  };
+  const T = DATA[LANG] || DATA.en;
 
-  // ─── CORE TRAITS (IPIP 3-factor: Extraversion / Neuroticism / Conscientiousness) ───────────────────────
-  const EYS_TRAITS={E:{name:'Extraversion',color:'#F59E0B',bg:'#FEF3C7',high:'You are outgoing, sociable, and energized by others.',medium:'Moderately social — comfortable in groups but also content alone.',low:'Reserved and introspective. You prefer calm environments.'},N:{name:'Neuroticism',color:'#EF4444',bg:'#FEE2E2',high:'You experience emotions strongly and may be prone to anxiety or mood shifts.',medium:'Emotionally typical — some stress sensitivity but generally stable.',low:'Emotionally stable, calm, and resilient under pressure.'},P:{name:'Conscientiousness',color:'#3B82F6',bg:'#DBEAFE',high:'Highly organized, disciplined, and thorough.',medium:'Reasonably organized and dependable.',low:'Flexible and spontaneous; may struggle with strict routines.'}};
-  const EYS_Q=[{id:1,text:"I am the life of the party.",t:'E',r:false},{id:2,text:"I feel comfortable around people.",t:'E',r:false},{id:3,text:"I start conversations.",t:'E',r:false},{id:4,text:"I talk to a lot of different people at parties.",t:'E',r:false},{id:5,text:"I don't mind being the center of attention.",t:'E',r:false},{id:6,text:"I don't talk a lot.",t:'E',r:true},{id:7,text:"I keep in the background.",t:'E',r:true},{id:8,text:"I have little to say.",t:'E',r:true},{id:9,text:"I don't like to draw attention to myself.",t:'E',r:true},{id:10,text:"I am quiet around strangers.",t:'E',r:true},{id:11,text:"I get stressed out easily.",t:'N',r:false},{id:12,text:"I worry about things.",t:'N',r:false},{id:13,text:"I am easily disturbed.",t:'N',r:false},{id:14,text:"I get upset easily.",t:'N',r:false},{id:15,text:"I change my mood a lot.",t:'N',r:false},{id:16,text:"I am relaxed most of the time.",t:'N',r:true},{id:17,text:"I seldom feel blue.",t:'N',r:true},{id:18,text:"I am not easily bothered by things.",t:'N',r:true},{id:19,text:"I don't get irritated easily.",t:'N',r:true},{id:20,text:"I rarely feel depressed.",t:'N',r:true},{id:21,text:"I am always prepared.",t:'P',r:false},{id:22,text:"I pay attention to details.",t:'P',r:false},{id:23,text:"I get chores done right away.",t:'P',r:false},{id:24,text:"I like order.",t:'P',r:false},{id:25,text:"I follow a schedule.",t:'P',r:false},{id:26,text:"I leave my belongings around.",t:'P',r:true},{id:27,text:"I make a mess of things.",t:'P',r:true},{id:28,text:"I often forget to put things back in their proper place.",t:'P',r:true},{id:29,text:"I shirk my duties.",t:'P',r:true},{id:30,text:"I don't see things through.",t:'P',r:true}];
-  const EYS_LABELS=[{v:1,s:"Very Inaccurate"},{v:2,s:"Mod. Inaccurate"},{v:3,s:"Neither"},{v:4,s:"Mod. Accurate"},{v:5,s:"Very Accurate"}];
-  function scoreEYS(ans){const s={E:0,N:0,P:0};for(const q of EYS_Q){const r=ans[q.id];if(!r)continue;s[q.t]+=q.r?6-r:r;}const res={};for(const[t,raw]of Object.entries(s)){const pct=Math.max(0,Math.min(100,Math.round((raw-10)/40*100)));res[t]={raw,pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
+  // ─── BUILD TESTS FROM T (questions get id+keying from META) ───
+  function buildBig5Questions(){return BIG5_META.map(function(m,i){return{id:m.id,t:m.t,r:m.r,text:T.big5.questions[i]};});}
+  function buildSEQuestions(){return SE_META.map(function(m,i){return{id:m.id,r:m.r,text:T.selfesteem.questions[i]};});}
+  function big5LabelObjs(){return T.big5.labels.map(function(s,i){return{v:i+1,s:s};});}
+  function seLabelObjs(){return T.selfesteem.labels.map(function(s,i){return{v:i+1,s:s};});}
 
-  // ─── LEADERSHIP STYLE (original) ─────────────────────
-  const LS_TRAITS={DI:{name:'Directive Leadership',color:'#DC2626',bg:'#FEE2E2',high:'You lead with clear direction, decisive action, and high standards. You take charge and drive results.',medium:'You balance directing with listening. You give guidance but invite input.',low:'You tend to step back and let others lead. You prefer consensus over command.'},CO:{name:'Collaborative Leadership',color:'#059669',bg:'#D1FAE5',high:'You build strong teams, invest in people, and lead through relationships and shared ownership.',medium:'You value collaboration but balance it with decisiveness when needed.',low:'May prefer working independently. Team dynamics may feel slow or frustrating.'},ST:{name:'Strategic Thinking',color:'#7C3AED',bg:'#EDE9FE',high:'You think long-term, connect the dots across systems, and anticipate future challenges.',medium:'You balance day-to-day execution with some forward thinking.',low:'You prefer tangible, immediate tasks. Big-picture thinking may feel abstract.'},AD:{name:'Adaptability',color:'#0891B2',bg:'#CFFAFE',high:'You thrive in change, stay calm in uncertainty, and adjust your approach rapidly.',medium:'You handle moderate change well, with some discomfort in extreme uncertainty.',low:'You prefer stability and predictable environments. Frequent change can feel unsettling.'}};
-  const LS_Q=[{id:1,text:"I make decisions quickly and confidently, even with limited information.",t:'DI',r:false},{id:2,text:"I clearly communicate expectations and hold people accountable.",t:'DI',r:false},{id:3,text:"I step in and take charge when a group lacks direction.",t:'DI',r:false},{id:4,text:"I set high standards and push others to meet them.",t:'DI',r:false},{id:5,text:"I prefer to be the one making the final call.",t:'DI',r:false},{id:6,text:"I prefer asking for consensus rather than deciding alone.",t:'DI',r:true},{id:7,text:"I invest significant time in developing the people around me.",t:'CO',r:false},{id:8,text:"I make sure every team member feels heard and valued.",t:'CO',r:false},{id:9,text:"I believe the best outcomes come from diverse perspectives.",t:'CO',r:false},{id:10,text:"I share credit freely and celebrate the team's success.",t:'CO',r:false},{id:11,text:"I prioritize team trust over short-term efficiency.",t:'CO',r:false},{id:12,text:"I am more focused on tasks than on relationships.",t:'CO',r:true},{id:13,text:"I regularly think about where my organization will be in 3–5 years.",t:'ST',r:false},{id:14,text:"I connect day-to-day decisions to long-term goals.",t:'ST',r:false},{id:15,text:"I identify risks and opportunities others often overlook.",t:'ST',r:false},{id:16,text:"I enjoy complex, ambiguous problems with no obvious solution.",t:'ST',r:false},{id:17,text:"I think about industry trends and how they affect my work.",t:'ST',r:false},{id:18,text:"I find abstract planning less useful than practical action.",t:'ST',r:true},{id:19,text:"I adjust my leadership style based on the situation.",t:'AD',r:false},{id:20,text:"I stay calm and focused when plans suddenly change.",t:'AD',r:false}];
-  const LS_LABELS=[{v:1,s:"Never"},{v:2,s:"Rarely"},{v:3,s:"Sometimes"},{v:4,s:"Often"},{v:5,s:"Always"}];
-  function scoreLS(ans){const s={DI:0,CO:0,ST:0,AD:0};const c={DI:0,CO:0,ST:0,AD:0};for(const q of LS_Q){const r=ans[q.id];if(!r)continue;s[q.t]+=q.r?6-r:r;c[q.t]++;}const res={};for(const t of Object.keys(s)){const avg=c[t]>0?s[t]/c[t]:3;const pct=Math.max(0,Math.min(100,Math.round((avg-1)/4*100)));res[t]={pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
+  // Compose trait objects (name + interpretations from T, color/bg from TRAIT_STYLE)
+  function big5Traits(){const out={};for(const k of ['E','A','C','N','O']){out[k]=Object.assign({},T.big5.traits[k],TRAIT_STYLE[k]);}return out;}
 
-  // ─── TEST CATALOGUE ───────────────────────────────────
   const TESTS=[
-    {id:'big5',title:'Big Five Personality',subtitle:'IPIP-50 · 50 questions · ~10 min',icon:'🧠',color:'#7C3AED',desc:'The most widely used personality framework. Measures 5 core traits that predict workplace behavior, team dynamics, and career fit.',questions:BIG5_Q,labels:[{v:1,s:"Very Inaccurate"},{v:2,s:"Mod. Inaccurate"},{v:3,s:"Neither"},{v:4,s:"Mod. Accurate"},{v:5,s:"Very Accurate"}],score:scoreBig5,resultType:'big5',traits:BIG5_TRAITS,traitOrder:['E','A','C','N','O'],tagline:'Personality'},
-    {id:'selfesteem',title:'Self-Esteem',subtitle:'Rosenberg Scale · 10 questions · ~3 min',icon:'🌟',color:'#0891B2',desc:'The gold standard for self-esteem measurement. Used in clinical, educational, and HR contexts worldwide.',questions:SE_Q,labels:SE_LABELS,score:scoreSE,resultType:'selfesteem',tagline:'Self & Wellbeing'},
+    {id:'big5',title:T.big5.title,subtitle:T.big5.subtitle,icon:'🧠',color:'#7C3AED',desc:T.big5.desc,questions:buildBig5Questions(),labels:big5LabelObjs(),score:scoreBig5,resultType:'big5',traits:big5Traits(),traitOrder:['E','A','C','N','O'],tagline:T.big5.tagline,footer:T.big5.footer},
+    {id:'selfesteem',title:T.selfesteem.title,subtitle:T.selfesteem.subtitle,icon:'🌟',color:'#0891B2',desc:T.selfesteem.desc,questions:buildSEQuestions(),labels:seLabelObjs(),score:scoreSE,resultType:'selfesteem',tagline:T.selfesteem.tagline,footer:T.selfesteem.footer},
   ];
+
+  function levelLabel(level){return level==='high'?T.ui.high:level==='low'?T.ui.low:T.ui.medium;}
 
   // ─── SHARED COMPONENTS ────────────────────────────────
   function ProgressHeader({title,current,total,onBack}){
@@ -127,7 +298,7 @@ const { banner } = Astro.props;
     return h('div',{className:'bg-white border-b border-gray-100 px-4 py-3 sticky top-0 z-10'},
       h('div',{className:'max-w-2xl mx-auto'},
         h('div',{className:'flex items-center justify-between mb-2'},
-          h('button',{onClick:onBack,className:'text-gray-400 hover:text-navy text-sm font-medium focus:outline-none transition-colors'},'← Back'),
+          h('button',{onClick:onBack,className:'text-gray-400 hover:text-navy text-sm font-medium focus:outline-none transition-colors'},T.ui.back),
           h('span',{className:'text-navy font-semibold text-sm truncate mx-4'},title),
           h('span',{className:'text-gray-400 text-xs font-medium whitespace-nowrap'},current+'/'+total)
         ),
@@ -144,12 +315,12 @@ const { banner } = Astro.props;
       h(ProgressHeader,{title:testTitle,current,total,onBack}),
       h('div',{className:'flex flex-col items-center justify-center px-4 py-8'},
         h('div',{className:'max-w-2xl w-full fade-in'},
-          h('p',{className:'text-gray-400 text-xs font-semibold uppercase tracking-wider text-center mb-4'},'Question '+current),
+          h('p',{className:'text-gray-400 text-xs font-semibold uppercase tracking-wider text-center mb-4'},T.ui.question+' '+current),
           h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5 text-center'},
             h('p',{className:'text-navy text-xl font-semibold leading-snug'},'"'+question.text+'"')
           ),
           h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-5'},
-            h('p',{className:'text-gray-400 text-xs font-medium text-center mb-4'},'Select the most accurate response'),
+            h('p',{className:'text-gray-400 text-xs font-medium text-center mb-4'},T.ui.selectPrompt),
             h('div',{className:'flex flex-col sm:flex-row gap-2'},
               labels.map(function(opt){
                 return h('button',{key:opt.v,onClick:function(){onPick(opt.v);},className:'flex-1 py-3 px-2 rounded-xl border-2 text-xs font-semibold text-center transition-all focus:outline-none '+(picked===opt.v?'border-gold bg-amber-50 text-navy':'border-gray-200 text-gray-500 hover:border-yellow-300')},opt.s);
@@ -157,7 +328,7 @@ const { banner } = Astro.props;
             )
           ),
           h('div',{className:'flex justify-start mt-4'},
-            h('button',{onClick:onBack,disabled:current<=1,className:'text-gray-400 text-sm font-medium disabled:opacity-30 focus:outline-none'},'← Previous')
+            h('button',{onClick:onBack,disabled:current<=1,className:'text-gray-400 text-sm font-medium disabled:opacity-30 focus:outline-none'},T.ui.previous)
           )
         )
       )
@@ -170,14 +341,14 @@ const { banner } = Astro.props;
         h('div',{className:'flex items-center gap-2'},
           h('span',{className:'w-2.5 h-2.5 rounded-full',style:{background:color}}),
           h('span',{className:'font-semibold text-navy text-sm'},name),
-          h('span',{className:'text-xs font-semibold px-2 py-0.5 rounded-full',style:{background:bg,color:color}},level==='high'?'High':level==='low'?'Low':'Medium')
+          h('span',{className:'text-xs font-semibold px-2 py-0.5 rounded-full',style:{background:bg,color:color}},levelLabel(level))
         ),
         h('span',{className:'text-gray-400 text-sm font-semibold'},pct+'%')
       ),
       h('div',{className:'w-full bg-gray-100 rounded-full h-2.5 mb-1'},
         h('div',{className:'bar-fill h-2.5 rounded-full',style:{width:pct+'%',background:color}})
       ),
-      h('div',{className:'flex justify-between text-gray-300 text-xs mb-2'},h('span',null,'Low'),h('span',null,'High')),
+      h('div',{className:'flex justify-between text-gray-300 text-xs mb-2'},h('span',null,T.ui.axisLow),h('span',null,T.ui.axisHigh)),
       h('p',{className:'text-gray-600 text-sm leading-relaxed bg-gray-50 rounded-xl px-4 py-3'},interpretation)
     );
   }
@@ -187,9 +358,9 @@ const { banner } = Astro.props;
       h('div',{className:'max-w-2xl mx-auto flex items-center justify-between'},
         h('span',{className:'text-navy font-bold text-sm'},title),
         h('div',{className:'flex items-center gap-2'},
-          h('button',{onClick:function(){window.print();},className:'text-gray-500 text-xs font-medium focus:outline-none'},'🖨 Print'),
-          h('button',{onClick:onRetake,className:'border border-gray-300 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-lg focus:outline-none'},'Retake'),
-          h('button',{onClick:onHome,className:'bg-navy text-white text-xs font-medium px-3 py-1.5 rounded-lg focus:outline-none no-print'},'All Tests')
+          h('button',{onClick:function(){window.print();},className:'text-gray-500 text-xs font-medium focus:outline-none'},T.ui.print),
+          h('button',{onClick:onRetake,className:'border border-gray-300 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-lg focus:outline-none'},T.ui.retake),
+          h('button',{onClick:onHome,className:'bg-navy text-white text-xs font-medium px-3 py-1.5 rounded-lg focus:outline-none no-print'},T.ui.allTests)
         )
       )
     );
@@ -198,92 +369,70 @@ const { banner } = Astro.props;
   function ResultsWrapper({test,scores,onRetake,onHome}){
     const ORDER=test.traitOrder||[];
     const backBtn=h('div',{className:'mt-6 bg-navy rounded-2xl p-5 text-center no-print'},
-      h('button',{onClick:onHome,className:'bg-gold text-navy font-bold text-sm px-6 py-2 rounded-lg'},'← Back to Tests')
+      h('button',{onClick:onHome,className:'bg-gold text-navy font-bold text-sm px-6 py-2 rounded-lg'},T.ui.backToTests)
     );
 
     if(test.resultType==='selfesteem'){
-      const{pct,label,desc}=scores;
+      const{pct,level}=scores;
+      const lv=T.selfesteem.levels[level];
       const color=pct>=70?'#10B981':pct>=45?'#F59E0B':'#EF4444';
       return h('div',{className:'bg-gray-50'},
-        h(ResultActions,{onRetake,onHome,title:'Self-Esteem'}),
+        h(ResultActions,{onRetake,onHome,title:T.selfesteem.title}),
         h('div',{className:'max-w-2xl mx-auto px-4 py-8'},
-          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold mb-1'},'Self-Esteem Results'),h('p',{className:'text-gray-400 text-sm'},'Rosenberg Self-Esteem Scale')),
+          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold mb-1'},T.selfesteem.title+T.ui.resultsSuffix),h('p',{className:'text-gray-400 text-sm'},T.selfesteem.scaleName)),
           h('div',{className:'bg-navy text-white rounded-2xl p-6 mb-6 text-center'},
-            h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-2'},'Your Score'),
+            h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-2'},T.ui.yourScore),
             h('p',{className:'text-5xl font-bold mb-1'},pct),
-            h('p',{className:'text-sm mb-3',style:{color:'rgba(138,155,176,0.7)'}},'out of 100'),
-            h('span',{className:'inline-block text-sm font-semibold px-4 py-1.5 rounded-full',style:{background:color+'33',color:color}},label)
+            h('p',{className:'text-sm mb-3',style:{color:'rgba(138,155,176,0.7)'}},T.ui.outOf),
+            h('span',{className:'inline-block text-sm font-semibold px-4 py-1.5 rounded-full',style:{background:color+'33',color:color}},lv.label)
           ),
           h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6'},
             h('div',{className:'w-full bg-gray-100 rounded-full h-4 mb-4'},h('div',{className:'bar-fill h-4 rounded-full',style:{width:pct+'%',background:color}})),
-            h('p',{className:'text-gray-600 text-sm leading-relaxed'},desc)
+            h('p',{className:'text-gray-600 text-sm leading-relaxed'},lv.desc)
           ),
-          h('p',{className:'text-gray-400 text-xs text-center mb-4'},'Based on the Rosenberg Self-Esteem Scale (public domain). For informational purposes only.'),
-          backBtn
-        )
-      );
-    }
-
-    if(test.resultType==='eq'){
-      const{overall,...traitScores}=scores;
-      const oc=overall>=65?'#10B981':overall>=35?'#F59E0B':'#EF4444';
-      const ol=overall>=65?'High EQ':overall>=35?'Moderate EQ':'Developing EQ';
-      return h('div',{className:'bg-gray-50'},
-        h(ResultActions,{onRetake,onHome,title:'Emotional Intelligence'}),
-        h('div',{className:'max-w-2xl mx-auto px-4 py-8'},
-          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold'},'Emotional Intelligence Results')),
-          h('div',{className:'bg-navy text-white rounded-2xl p-6 mb-6 text-center'},
-            h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-2'},'Overall EQ Score'),
-            h('p',{className:'text-5xl font-bold mb-1'},overall),
-            h('p',{className:'text-sm mb-2',style:{color:'rgba(138,155,176,0.7)'}},'out of 100'),
-            h('span',{className:'inline-block text-sm font-semibold px-4 py-1.5 rounded-full',style:{background:oc+'33',color:oc}},ol)
-          ),
-          h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6'},
-            h('h2',{className:'text-navy font-semibold text-sm mb-5'},'EQ Breakdown'),
-            ORDER.map(function(k){const t=test.traits[k];const s=traitScores[k];if(!t||!s)return null;return h(TraitBar,{key:k,name:t.name,pct:s.pct,level:s.level,color:t.color,bg:t.bg,interpretation:t[s.level]});})
-          ),
-          h('p',{className:'text-gray-400 text-xs text-center mb-4'},'Based on the Schutte Self-Report Emotional Intelligence Test. For informational purposes only.'),
+          h('p',{className:'text-gray-400 text-xs text-center mb-4'},test.footer),
           backBtn
         )
       );
     }
 
     if(test.resultType==='big5'){
-      const pMap={E:'sociable',A:'agreeable',C:'organized',N:'calm & resilient',O:'curious'};
+      const pMap=T.big5.profile;
       const topTwo=ORDER.map(function(k){return[k,scores[k]];}).sort(function(a,b){return b[1].pct-a[1].pct;}).slice(0,2);
-      const profileDesc=topTwo.map(function(x){return pMap[x[0]];}).join(' and ');
+      const joiner=LANG==='de'?' und ':LANG==='fa'?' و ':LANG==='sr'?' i ':' and ';
+      const profileDesc=topTwo.map(function(x){return pMap[x[0]];}).join(joiner);
       return h('div',{className:'bg-gray-50'},
-        h(ResultActions,{onRetake,onHome,title:'Big Five Personality'}),
+        h(ResultActions,{onRetake,onHome,title:T.big5.title}),
         h('div',{className:'max-w-2xl mx-auto px-4 py-8'},
-          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold'},'Big Five Personality Results')),
+          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold'},T.big5.title+T.ui.resultsSuffix)),
           h('div',{className:'bg-navy text-white rounded-2xl p-6 mb-6'},
-            h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-2'},'Your Profile'),
-            h('p',{className:'font-semibold'},'You are most strongly characterized as ',h('span',{className:'text-gold'},profileDesc),'.')
+            h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-2'},T.ui.yourProfile),
+            h('p',{className:'font-semibold'},T.ui.characterizedAs,h('span',{className:'text-gold'},profileDesc),'.')
           ),
           h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4'},
-            h('h2',{className:'text-navy font-semibold text-sm mb-4'},'Score Overview'),
+            h('h2',{className:'text-navy font-semibold text-sm mb-4'},T.ui.scoreOverview),
             ORDER.map(function(k){const t=test.traits[k];const s=scores[k];return h('div',{key:k,className:'flex items-center gap-3 mb-3'},h('span',{className:'text-gray-500 text-xs w-36 flex-shrink-0'},t.name),h('div',{className:'flex-1 bg-gray-100 rounded-full h-2'},h('div',{className:'bar-fill h-2 rounded-full',style:{width:s.pct+'%',background:t.color}})),h('span',{className:'text-gray-400 text-xs font-semibold w-8 text-right'},s.pct+'%'));})
           ),
           h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6'},
-            h('h2',{className:'text-navy font-semibold text-sm mb-6'},'Detailed Results'),
+            h('h2',{className:'text-navy font-semibold text-sm mb-6'},T.ui.detailedResults),
             ORDER.map(function(k){const t=test.traits[k];const s=scores[k];return h(TraitBar,{key:k,name:t.name,pct:s.pct,level:s.level,color:t.color,bg:t.bg,interpretation:t[s.level]});})
           ),
-          h('p',{className:'text-gray-400 text-xs text-center mb-4'},'Based on the IPIP-50 (public domain). For informational purposes only.'),
+          h('p',{className:'text-gray-400 text-xs text-center mb-4'},test.footer),
           backBtn
         )
       );
     }
 
-    // Generic (Core Traits, Leadership)
+    // Generic fallback
     return h('div',{className:'bg-gray-50'},
       h(ResultActions,{onRetake,onHome,title:test.title}),
       h('div',{className:'max-w-2xl mx-auto px-4 py-8'},
-        h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold'},test.title+' Results')),
+        h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold'},test.title+T.ui.resultsSuffix)),
         h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4'},
-          h('h2',{className:'text-navy font-semibold text-sm mb-5'},'Your Scores'),
+          h('h2',{className:'text-navy font-semibold text-sm mb-5'},T.ui.yourScores),
           ORDER.map(function(k){const t=test.traits[k];const s=scores[k];if(!t||!s)return null;return h(TraitBar,{key:k,name:t.name,pct:s.pct,level:s.level,color:t.color,bg:t.bg,interpretation:t[s.level]});})
         ),
-        h('p',{className:'text-gray-400 text-xs text-center mb-4'},'For informational purposes only.'),
+        h('p',{className:'text-gray-400 text-xs text-center mb-4'},T.ui.forInfoOnly),
         backBtn
       )
     );
@@ -302,15 +451,15 @@ const { banner } = Astro.props;
   }
 
   function Home({onSelectTest}){
-    const tagColors={'Personality':'bg-violet-100 text-violet-700','Emotional Intelligence':'bg-pink-100 text-pink-700','Self & Wellbeing':'bg-sky-100 text-sky-700','Leadership':'bg-emerald-100 text-emerald-700'};
+    const tagColors=T.tags||{};
     return h('div',{className:'bg-gray-50'},
       h('div',{className:'bg-navy px-6 py-10 text-center'},
-        h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-3'},'HR Assessments'),
-        h('h1',{className:'text-white text-3xl font-bold mb-3'},'Workplace Assessments'),
-        h('p',{className:'text-silver/80 text-base max-w-xl mx-auto'},'Science-based personality and HR assessments. Free, instant results. Choose a test to begin.')
+        h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-3'},T.ui.kicker),
+        h('h1',{className:'text-white text-3xl font-bold mb-3'},T.ui.heroTitle),
+        h('p',{className:'text-silver/80 text-base max-w-xl mx-auto'},T.ui.heroSubtitle)
       ),
       h('div',{className:'max-w-2xl mx-auto px-4 pt-8 pb-16'},
-        h('p',{className:'text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4 text-center'},TESTS.length+' Assessments Available'),
+        h('p',{className:'text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4 text-center'},TESTS.length+' '+T.ui.available),
         h('div',{className:'space-y-4'},
           TESTS.map(function(test){
             return h('div',{key:test.id,onClick:function(){onSelectTest(test.id);},className:'card-hover bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-4 shadow-sm'},
@@ -339,12 +488,13 @@ const { banner } = Astro.props;
     function selectTest(id){setActive(id);setScreen('survey');window.scrollTo(0,0);}
     function handleComplete(ans){setScores(test.score(ans));setScreen('results');window.scrollTo(0,0);}
     function goHome(){setScreen('home');setActive(null);setScores(null);window.scrollTo(0,0);}
-    if(screen==='home') return h(Home,{onSelectTest:selectTest});
-    if(screen==='survey') return h(SurveyRunner,{test,onComplete:handleComplete,onBack:goHome});
-    if(screen==='results') return h(ResultsWrapper,{test,scores,onRetake:function(){selectTest(activeId);},onHome:goHome});
+    let content;
+    if(screen==='home') content=h(Home,{onSelectTest:selectTest});
+    else if(screen==='survey') content=h(SurveyRunner,{test,onComplete:handleComplete,onBack:goHome});
+    else content=h(ResultsWrapper,{test,scores,onRetake:function(){selectTest(activeId);},onHome:goHome});
+    return h('div',{dir:RTL?'rtl':'ltr'},content);
   }
 
   ReactDOM.createRoot(document.getElementById('root')).render(h(App));
   })();
   </script>
-
