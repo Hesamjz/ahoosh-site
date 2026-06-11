@@ -23,6 +23,7 @@ export const LOCALIZED_ROUTES = [
   '/about',
   '/consulting',
   '/contact',
+  '/news',
   '/articles',
   '/assess',
   '/markets',
