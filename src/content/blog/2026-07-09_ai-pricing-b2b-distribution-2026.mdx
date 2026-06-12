@@ -1,0 +1,111 @@
+---
+title: "AI-Assisted Pricing in B2B Distribution: When It Helps, When It Doesn't"
+description: "AI pricing tools can add 50+ basis points of margin — but for mid-market B2B distributors, dynamic pricing has a trust cost most models ignore. Here's the honest map."
+pubDate: 2026-07-09
+tags: ["AI Operations", "B2B", "Distribution"]
+heroImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80" alt="Spreadsheet with pricing columns and pen on dark desk" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+A $15 billion B2B distributor using agentic AI for pricing delivered 50+ basis points of margin improvement on top of 200 basis points already captured by traditional analytics. That's the headline from McKinsey's 2026 B2B pricing research. It circulates at industry conferences, and it's accurate — for that operator, at that scale.
+
+For a mid-market distributor running 50–500 accounts with a two-person commercial team, the question is not whether AI pricing *can* do that. It's whether the conditions that made it work at $15 billion exist in your operation — and whether chasing dynamic pricing optimization will help margins or quietly cost you the account relationships that are harder to replace than the basis points you're after.
+
+The right framing is not "should we do dynamic pricing?" It's "which pricing decisions benefit from AI analysis and which ones should stay stable?" Those are different questions with different answers.
+
+---
+
+## What AI Pricing Tools Actually Do
+
+The marketing version of AI pricing is: *feed in your data, get optimal prices out*. The operational version is more specific.
+
+AI pricing tools — tools like Pricefx, Zilliant, Vendavo, or the pricing modules inside more general distribution platforms — do four things:
+
+**1. Margin floor visibility.** They calculate, at SKU level, what your actual landed cost is and what margin you're currently realising. Many distributors find significant margin variance at SKU level when they do this analysis — not because of bad judgment, but because pricing was set incrementally over years and never audited systematically.
+
+**2. Competitive price sensing.** Better tools pull external price signals — competitor list prices, spot market rates, published benchmark indices — and flag where your prices are significantly above or below the apparent market rate.
+
+**3. Elasticity modelling.** For accounts with transaction history, AI can model price sensitivity: which customers reordered at a higher price, which ones reduced order size or switched products. This is useful input for a pricing review; it is not a recommendation engine you should run without a commercial judgment layer on top.
+
+**4. Approval workflow and simulation.** The more mature platforms let you run "what if" scenarios on a price change before executing it — model the margin impact, the expected volume change, the net effect on account revenue — and route the change through a manager approval before it goes live.
+
+What they don't do: replace account knowledge. The system doesn't know that a particular buyer renegotiates every September, that a loyal five-year account is currently reviewing three competitors, or that a product category is under price pressure because a new regional competitor entered the market two months ago. That context lives with the commercial team.
+
+---
+
+## Where Dynamic Pricing Creates Value in B2B Distribution
+
+There are two situations where AI-driven dynamic pricing consistently produces measurable return in mid-market B2B distribution.
+
+**Situation 1: New customer pricing and RFQ responses.**
+
+For accounts you don't have a long history with, dynamic pricing support reduces the risk of leaving margin on the table during initial quote. The AI can suggest an opening price based on comparable account profiles, product category margin targets, and competitive position — giving the commercial team a starting point with a rationale rather than a number from intuition or the last quote.
+
+Distributors that have implemented pricing support for RFQ responses report 15–25% reduction in quote-to-order time and improved margin on new account wins. The AI doesn't close the deal — it reduces the internal back-and-forth before the quote goes out.
+
+**Situation 2: Infrequently reviewed SKUs.**
+
+A distributor with 2,000+ SKUs has, at any given point, a long tail of products that haven't had a price review in 18 months. These are often categories where costs have moved (fuel surcharges, supplier price increases, FX shifts) but list prices haven't been updated. AI margin analysis, run quarterly, systematically identifies where the gap has opened. The finding rate on these audits is usually high enough to justify the tool cost in the first quarter.
+
+This is not dynamic pricing in the "price changes weekly" sense. It's systematic review with AI support, applied to the long tail that manual processes reliably miss.
+
+---
+
+## Where It Damages Relationships — the Trust Cost Most Models Ignore
+
+B2B pricing is not like airline pricing. The fundamental dynamic of a B2B distribution relationship is that the buyer has planned their procurement around your prices. When they do a purchase order, they've already quoted their customer, calculated their margin, and committed to a delivery. A price change between their last order and this one — even a small one — creates a problem.
+
+The [Simon-Kucher research on dynamic pricing in B2B industrials](https://www.simon-kucher.com/en/insights/ai-and-dynamic-pricing-b2b-industrial-companies-why-its-not-match-made-heaven) is direct on this point: B2B buyers expect price stability as part of the supplier relationship. Frequent, opaque price changes produce four outcomes, in order: confusion, a phone call to your sales rep, a recalculation of their customer pricing, and, eventually, a conversation with a competitor about a framework agreement. The operational friction is real, and it accumulates before you see it in order data.
+
+The operators most exposed to this dynamic are mid-market distributors in commodity-adjacent categories — chemicals, packaging, food ingredients, construction materials — where buyers are price-sensitive and alternatives are available. Implementing aggressive dynamic pricing in these categories to capture basis points on the upside can produce account churn that costs multiples of the margin gain.
+
+The McKinsey 50+ basis point result came from a sophisticated implementation with transparent buyer communication, category-specific rules for which products could flex and which stayed fixed, and a commercial team that managed the exception conversations. That context matters as much as the headline number.
+
+For a useful operational framework, the [AI measurement framework](/articles/ai-measurement-framework/) applies here: run a controlled test on a defined subset of SKUs or account segments, measure the margin and volume impact with a clean baseline, and review at 90 days before expanding.
+
+---
+
+## The Two Use Cases with Clear ROI for Mid-Market Operators
+
+Based on what works at the mid-market scale (distributors with €5M–€100M annual revenue, 50–500 active accounts), the two use cases with clear ROI are:
+
+**Use case 1: Margin floor monitoring and exception alerts.**
+
+Configure your pricing tool — or build a simple spreadsheet-based model if you're not ready for a paid tool — to flag any active SKU where the current selling price has fallen within 5 percentage points of your margin floor. This catches erosion before it becomes a problem. Implementation time: 2–4 hours for a basic version; 2–4 weeks for an integrated tool deployment.
+
+Expected return: distributors running margin floor monitoring consistently identify 3–8% of their active SKU list with margin compression that wasn't visible without systematic review. Correcting these represents real margin recovery without touching account relationships.
+
+**Use case 2: New account and spot-sale pricing support.**
+
+For transactions outside established framework agreements — new accounts, one-time orders, spot buys — AI pricing support reduces quote variability and improves average margin on the segment where your commercial team has the least historical context.
+
+This doesn't require an enterprise pricing platform. A well-structured internal reference document, updated monthly, with SKU-level margin ranges, competitive benchmarks, and account tier guidelines performs most of the same function at near-zero cost. The AI layer adds elasticity modelling and automation; the underlying logic is the same.
+
+This is complementary to [product recommendations in B2B distribution](/articles/product-recommendations-b2b-distribution/) — both are cases where AI analysis of order history and account patterns produces better commercial decisions than intuition alone, applied to the right moment in the customer interaction.
+
+---
+
+## What You Need in Place Before a Pricing Tool Adds Value
+
+If you're evaluating a pricing tool, the preconditions matter as much as the tool selection.
+
+**Clean, SKU-level cost data.** If your landed costs aren't accurately reflected in your system — if freight, customs, surcharges, and supplier rebates are tracked inconsistently — the pricing tool will be working from incorrect margin figures. Garbage in, garbage out applies directly here.
+
+**Transaction history by account.** Elasticity modelling requires a meaningful volume of transactions per account. A distributor with 200 accounts and three years of order data has enough. A distributor with 50 accounts in year one doesn't. In the latter case, the AI layer doesn't have enough signal to add value over commercial judgment.
+
+**A defined pricing governance process.** Who can change a price? Who approves exceptions? What's the review cadence? AI pricing tools surface opportunities; without a process to act on them consistently, they produce a backlog of recommendations nobody implements.
+
+**Account segmentation.** Not all accounts should be priced the same way. Your top 10 accounts by revenue probably have negotiated framework agreements that should stay stable. Your long-tail occasional buyers are where price sensitivity analysis is most useful. Before deploying a pricing tool, segment your account base and define which rules apply to which segment.
+
+The sequencing question — ERP vs. AI tool vs. pricing tool — is covered in the [AI vs. ERP: Which First analysis](/articles/ai-vs-erp-which-first/). The short version: pricing tools require clean underlying data to function. If your ERP data quality is poor, fix that first.
+
+---
+
+The 50+ basis point headline is real. But it comes from operators who had clean data, a defined process, an account segmentation strategy, and the commercial discipline to apply the AI output selectively — not from operators who turned on dynamic pricing and let the algorithm run. For mid-market B2B distribution, the return on AI-assisted pricing is real and achievable; it just looks more like systematic margin monitoring and better RFQ support than the "optimal dynamic price" framing that gets used in vendor marketing.
+
+The two use cases above — margin floor alerts and new account pricing support — are where to start. They're low risk, measurable, and don't require a trust conversation with your long-term accounts.
+
+---
+
+**AHoosh helps B2B distributors evaluate and implement pricing tools against their actual account and data context.** [ahoosh.ai/contact](https://ahoosh.ai/contact)
