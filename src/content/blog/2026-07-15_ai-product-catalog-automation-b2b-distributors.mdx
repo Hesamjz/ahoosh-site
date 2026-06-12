@@ -1,0 +1,142 @@
+---
+title: "Automating Your B2B Product Catalog with AI: Descriptions at Scale"
+description: "AI catalog automation solves 2,000 missing product descriptions in days — but only if your source data is clean. Workflow, quality control, and cost explained."
+pubDate: 2026-07-15
+tags: ["AI Operations", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80" alt="Product catalog grid on screen — B2B distributor catalog automation with AI" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+A B2B distributor with 2,000 active SKUs that writes product descriptions manually has a catalog problem and an SEO problem at the same time. Most distributors in this position have one of three things: no descriptions (bare specifications), copy-pasted supplier text (duplicate content penalty), or a backlog of 18 months of "we'll get to it."
+
+AI catalog automation solves this at a cost and speed that makes the problem disappear in days — not quarters. But only if the source data is clean enough to work from. A fast generation pipeline fed dirty input produces 2,000 wrong descriptions faster than a human ever could.
+
+This article explains the workflow end to end: what clean data means in practice, how to design prompts for bulk processing, what multi-language generation looks like across EN/FA/DE/SR, and how to build a quality-check step that catches errors without requiring someone to read every output.
+
+---
+
+## The Catalog Problem in Numbers — Why 2,000 Manual Descriptions Is a Real Cost
+
+A good product description for a B2B catalog takes a competent writer 15–20 minutes: reading the spec sheet, extracting the relevant buyer-facing attributes, writing a 100–150 word description, checking it, done. At 20 minutes per SKU, 2,000 SKUs is 667 hours of writing time. At an internal cost of €25/hour, that's €16,700 — before editing, translation, or upload.
+
+Most distributors never do this calculation explicitly. They just don't get to it.
+
+The cost doesn't end at writing time. Bare-spec catalog pages — part number, a table of measurements, nothing else — are invisible to search. A buyer searching for "food-grade silicone gasket 50mm DN50" does not find your catalog page if it contains only the code and a spec table. Google has nothing to rank. Competitors who have written descriptions, even mediocre ones, outrank you on queries you own.
+
+Supplier-text copy-paste is worse. If twelve distributors use the same manufacturer description, Google treats all twelve pages as duplicate content. None rank well. The manufacturer's own site — with original content and domain authority — wins.
+
+The practical cost of an undescribed catalog is invisible because it shows up as absent traffic rather than as a line item on a P&L. That makes it easy to defer. AI generation removes the reason to defer.
+
+---
+
+## What AI Catalog Generation Actually Requires from Your Data
+
+The generation workflow is straightforward. The data preparation is where most projects stall.
+
+AI generation requires structured input per SKU. The minimum viable input set is:
+
+- **Product name and category** — what the product is and where it sits in your hierarchy
+- **Core specifications** — the technical attributes that define the product (dimensions, materials, certifications, compatible standards)
+- **Use case or application** — what it's used for, what industry or process it serves
+- **Differentiating attributes** — anything that distinguishes this SKU from adjacent ones (certifications, temperature range, chemical compatibility)
+
+What it does not need: supplier codes, internal warehouse IDs, purchase price, or supplier names. These fields actively degrade output quality by crowding the prompt with irrelevant tokens.
+
+"Clean enough" means: consistent field names across SKUs, no truncated or corrupted values, no mixed-language fields in the same column, and application/use-case data present for at least the majority of SKUs.
+
+If your catalog data lives in an ERP export, it typically requires one cleanup pass before generation is viable. Common problems: specification fields that mix units ("500mm / 50cm" in the same column), category labels that don't reflect what the product actually is, and application data completely absent because nobody ever populated it. A data audit before generation saves more time than it costs — a generation run on dirty input produces outputs that require more manual correction than they save.
+
+For a 2,000-SKU catalog, this cleanup typically takes 8–15 hours of focused work in a spreadsheet, depending on how consistent the original ERP export is.
+
+---
+
+## The Generation Workflow — Prompt Design, Bulk Processing, Output Review
+
+Once data is clean, the workflow has three steps: prompt design, bulk run, and output sampling.
+
+**Prompt design** is where quality is set. A weak prompt produces generic descriptions. A well-structured prompt produces descriptions that are usable with minimal editing. The prompt needs to specify:
+
+- Audience (purchasing manager at a mid-size manufacturer, not a retail consumer)
+- Tone (factual, direct — no marketing language)
+- Length (80–120 words for standard SKUs, 150–200 for complex or high-value items)
+- Required elements (what the product is, key specifications, primary application, any relevant standards or certifications)
+- What to exclude (pricing, lead time, supplier identity, comparative claims)
+
+A working prompt for a bulk run looks like this:
+
+> *Write a product description for a B2B distributor catalog. Audience: purchasing managers in manufacturing or construction. Tone: factual and direct. Length: 100–120 words. Include: product name, key specifications, primary application. Do not mention pricing, delivery, or compare to other products. Product data: [PRODUCT_NAME], [CATEGORY], [SPECS], [APPLICATION].*
+
+**Bulk processing** uses a script that iterates through your cleaned spreadsheet, calls the API for each row, and writes the output back. For a 2,000-SKU catalog at typical API rates using Claude's API, the total generation cost runs to €15–40 depending on output length and model tier. Processing time for 2,000 descriptions at a standard rate limit is 2–4 hours unattended. This is the step that replaced the 667 hours of manual writing.
+
+**Output review** does not mean reading all 2,000 descriptions. It means sampling intelligently and checking for systemic errors.
+
+---
+
+## Multi-Language Catalog — What Changes Between EN, FA, DE, SR Versions
+
+If your distribution operation serves multiple markets — EU buyers in German, Serbian dealers, buyers in Persian-language markets — multi-language catalog generation is the same workflow run again per language, with adjustments.
+
+The adjustments that matter:
+
+**Language-specific prompt calibration.** Formal German catalog language is denser and more specification-forward than English. Persian catalog text has different register conventions — buyer expectations around description formality differ. Prompts tuned for English often produce awkward output when simply passed to a different language model endpoint. Each language benefits from a prompt written for that language's conventions, not translated from the English prompt.
+
+**Right-to-left rendering.** Persian (Farsi) descriptions require RTL field handling in whatever system displays the catalog. Generating the text is straightforward; rendering it correctly in your ERP, website, or PIM system may require a separate configuration step. Identify this before the generation run, not after.
+
+**Translation vs. generation.** You have two options for non-English descriptions: translate the English output, or generate natively from the source data in the target language. Native generation produces better output for buyers but requires a language-specific quality check. Translation from English is faster and cheaper but can carry over awkward constructions. For high-value SKUs or markets where the catalog is a primary sales touchpoint, native generation is worth the extra step. For long-tail SKUs in secondary markets, translation from English is usually sufficient.
+
+**Terminology consistency.** Technical terminology varies by language market. The German term for a specific fitting standard differs from the English ISO name. A terminology glossary per language — even a short one covering 50–100 key terms — dramatically improves output consistency across a large run. Build this before generation, not as a correction step after.
+
+For a 2,000-SKU catalog in four languages, the total generation cost across all language runs remains under €150. The time cost is primarily in prompt calibration and the quality-check pass, not in generation itself.
+
+---
+
+## The Quality-Check Process That Catches Errors Without Reading Every Entry
+
+A 2,000-description output requires a structured sampling approach, not a full read. Three layers of checks catch the categories of error that matter.
+
+**Layer 1 — Automated string checks.** Run pattern matching on the output file before any human reads it:
+
+- Flag descriptions under 60 words or over 200 words (prompt adherence failure)
+- Flag any description containing the product code or supplier name (instruction violation)
+- Flag descriptions that start with identical phrases across multiple SKUs in the same category (model fell into a template — usually means the input data for that category is too sparse)
+- Flag any description containing banned phrases you specified: "revolutionary," "best-in-class," "world-class," pricing language, delivery promises
+
+This automated pass takes minutes and isolates the rows that need human review. On a clean dataset, typically 3–7% of outputs are flagged — 60–140 rows rather than 2,000.
+
+**Layer 2 — Category sample review.** From the unflagged outputs, pull a 5% random sample stratified by product category. Read these. Check whether the description correctly reflects the product, uses the right terminology for the category, and reads like something a purchasing manager would find useful. If you find a systematic error in one category — wrong application claim, incorrect specification framing — that signals a data quality issue in the source data for that category. Fix the source, rerun that category.
+
+**Layer 3 — High-value SKU review.** Identify your top 100–150 SKUs by revenue or strategic importance. Read these individually. These are the descriptions buyers will encounter most often and where errors cause the most damage. Budget 2–3 minutes per SKU for a factual accuracy check against the spec sheet.
+
+Total quality-check time for 2,000 descriptions, using this three-layer approach: 6–10 hours for one person. Compared to 667 hours of manual writing, this is a material reduction even accounting for the cleanup and prompt calibration work.
+
+The output at the end of this process is a description file ready to upload. For a distributor with an existing [B2B website](/articles/b2b-website-conversion-2026/), this plugs directly into the product page template. For a distributor building or rebuilding SEO from a low base, this is the content foundation that makes [search visibility for B2B services](/articles/seo-b2b-services-2026/) possible at catalog scale.
+
+---
+
+## What This Costs and What to Measure Against
+
+Total project cost for a 2,000-SKU catalog generation in one language, including data cleanup, prompt calibration, generation, and quality check:
+
+- Data cleanup: 8–15 hours internal time
+- Prompt design and test run: 2–3 hours
+- API generation cost: €15–40
+- Quality check (three layers): 6–10 hours internal time
+- Total internal time: 16–28 hours
+- Total external cost: under €50
+
+A mid-size distributor's marketing or operations team can run this end-to-end in one focused week. The same scope as a manual writing project would require 4–6 months of part-time effort or €15,000+ of copywriting budget.
+
+The ROI measurement is straightforward for [AI operations projects](/articles/ai-order-entry-2026/) that have search impact: track organic traffic to catalog pages 60 and 90 days after descriptions go live, compare to the 90-day baseline before. For a catalog that previously had no descriptions, the baseline is zero. Any organic traffic above zero is attributable to the content.
+
+For distributors evaluating catalog automation as part of a broader [product recommendations strategy](/articles/product-recommendations-b2b-distribution/), the same clean data that feeds description generation also feeds recommendation models — they need structured attribute data per SKU to identify substitutes and accessories. Running both projects from a single data cleanup pass compounds the return on the preparation work.
+
+One external benchmark worth noting: [Anthropic's Claude API automation documentation](https://rpa-automate.com/blog/claude-api-automation-use-cases-2026-how-leading-enterprises-are-scaling-ai-driven-workflows) covers bulk text generation workflows at enterprise scale, including catalog and product content use cases. The cost and throughput figures cited here are consistent with standard API pricing at the time of writing; check current rate card before budgeting a large run.
+
+---
+
+**A correctly built AI catalog generation workflow is a one-time infrastructure investment.** Once the data pipeline, prompt library, and quality-check process exist, adding descriptions for new SKUs takes minutes, not weeks. The catalog problem stops being a backlog and starts being a routine.
+
+---
+
+**AHoosh builds catalog automation pipelines for B2B distributors.** [ahoosh.ai/contact](https://ahoosh.ai/contact)

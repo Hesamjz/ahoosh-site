@@ -1,0 +1,192 @@
+---
+title: "Brevo from Zero to Automated: A Setup Guide for B2B Marketing Teams"
+description: "How to configure Brevo for B2B marketing from scratch — list architecture, DKIM/SPF, five automation workflows, and deliverability testing before first send."
+pubDate: 2026-07-14
+tags: ["Marketing", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&q=80" alt="Laptop open to an email automation workflow canvas on a dark desk" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Brevo (formerly Sendinblue) is the most cost-effective full-stack email marketing and automation platform for B2B companies in the €0–€150/month budget range. Its free tier covers 300 emails/day, a visual automation workflow builder, basic CRM, and landing pages — enough to build the first three automation sequences before paying anything.
+
+Most teams that buy it use less than 20% of what it offers in the first six months. Not because the features are hidden, but because there is no setup sequence that explains what order to do things in and why the sequence matters.
+
+This guide covers the full path: account configuration, list architecture, DKIM/SPF authentication (often skipped, always regretted), the five automation workflows that matter for B2B, and deliverability testing before your first real send.
+
+---
+
+## Account Setup — The Configuration Decisions That Matter from Day One
+
+**Sender domain, not a personal inbox.**
+
+The first thing Brevo asks for is a sender email. Many teams enter a personal Gmail address to get started quickly. Don't. Any email you send from a personal domain (gmail.com, outlook.com) is blocked or flagged by corporate spam filters by default in 2026. Use your company domain from the start: `marketing@yourcompany.com` or `noreply@yourcompany.com`. You will need DNS access to the domain to complete authentication — more on this below.
+
+**Sending limits and plan selection.**
+
+Brevo's pricing is based on email volume sent per month, not on the number of contacts. This is structurally better for B2B teams than per-contact pricing (HubSpot's model), because a B2B team typically has a small, high-value list rather than a large broadcast volume.
+
+- Free: 300 emails/day (9,000/month), unlimited contacts, automation included
+- Starter: from €9/month for 5,000 sends/month up to €25/month for 20,000
+- Business: from €18/month — adds A/B testing, advanced reporting, multi-user
+
+For a B2B team with under 500 contacts sending 2–3 campaigns per month plus automation sequences, the free tier covers real usage. The trigger to upgrade is when you consistently approach the 300/day send limit — which typically means more than 300 active contacts receiving onboarding or nurture sequences simultaneously.
+
+**Time zone and unsubscribe settings.**
+
+Set your account time zone to match your primary audience. B2B open rates peak on Tuesday–Thursday between 9–11am and 1–3pm in the recipient's local time. Brevo's send-time optimisation feature (Starter and above) handles this automatically per contact, but even on free, the time zone setting determines when scheduled sends go out.
+
+Enable double opt-in for new contact sign-ups before you do anything else. It adds one confirmation step for subscribers, but it materially reduces spam complaints — which are the primary reason Brevo suspends accounts.
+
+---
+
+## List Architecture for B2B — Segments, Tags, and the Logic That Scales
+
+**The core B2B list structure.**
+
+Most email tools present lists as siloed buckets. Brevo's model is better: contacts exist in a single database and are organised through lists (static groupings) and segments (dynamic filters). For B2B, the recommended architecture is:
+
+- **One master list** — every contact in your database, regardless of status
+- **Functional lists** by lifecycle stage: `Leads`, `Customers`, `Churned`, `Partners`
+- **Segments** (dynamic) built on attributes: `industry = wholesale`, `last_open > 30_days`, `deal_stage = negotiation`
+
+The advantage of segments over static lists is that contacts move automatically as their attributes change. A contact in `Leads` who signs a contract should appear in `Customers` the next day without manual list management.
+
+**Attributes to configure before importing contacts.**
+
+Before you import your first CSV, create the custom attributes you'll actually use. Brevo's standard attributes cover first name, last name, and email. For B2B, add:
+
+- `COMPANY` (text)
+- `ROLE` (text: owner, manager, buyer, etc.)
+- `INDUSTRY` (text or dropdown)
+- `LIFECYCLE_STAGE` (dropdown: lead / customer / churned)
+- `LAST_ORDER_DATE` (date)
+- `ACCOUNT_VALUE` (number)
+
+Setting these up before import means your automation conditions can immediately reference real data. Adding them after import requires a re-import to populate historical records.
+
+**Tagging logic.**
+
+Tags in Brevo are freeform labels attached to individual contacts. Use them for granular behavioural tracking that doesn't warrant a full attribute: `attended-webinar-june`, `requested-pricing`, `trade-fair-contact`. Tags feed into segment conditions and automation triggers without cluttering your attribute schema.
+
+---
+
+## DKIM and SPF Authentication — Why It Matters and How to Check It in 15 Minutes
+
+This is the section most setup guides bury in a footnote. It is, in practice, the single decision with the largest impact on whether your emails reach inboxes.
+
+**What DKIM and SPF actually do.**
+
+SPF (Sender Policy Framework) tells receiving mail servers which IP addresses are authorised to send email on behalf of your domain. DKIM (DomainKeys Identified Mail) adds a cryptographic signature to each email header that the receiving server verifies against a public key in your DNS.
+
+Without both, your emails are sent from Brevo's shared IP infrastructure with no domain-level proof that your domain authorised the send. Gmail, Outlook, and most corporate mail servers now apply heavy filtering or bulk-folder routing to unauthenticated commercial email. [Google's 2024 bulk sender requirements](https://support.google.com/mail/answer/81126) made SPF+DKIM+DMARC mandatory for any domain sending more than 5,000 messages per day to Gmail — but even at lower volumes, authentication affects placement.
+
+**How to complete it.**
+
+In Brevo: Settings → Senders & IPs → Authenticate a domain.
+
+Brevo generates three DNS records:
+1. A TXT record for SPF
+2. A CNAME record for DKIM
+3. Optionally, a DMARC TXT record (strongly recommended)
+
+Add these to your domain's DNS at your registrar (Cloudflare, GoDaddy, Namecheap, etc.). Propagation takes up to 48 hours but is typically complete within 2–4 hours.
+
+**Verification.**
+
+Once propagated, verify using [MXToolbox](https://mxtoolbox.com/spf.aspx). Paste your domain into the SPF lookup and confirm the Brevo IP range appears. Run the same check for DKIM. Both should show green before you send your first campaign.
+
+A 15-minute investment in authentication prevents the scenario where you send your first campaign to 300 contacts and 220 of them land in spam.
+
+---
+
+## The Five Automation Workflows to Build First
+
+Brevo's automation builder is visual and drag-drop. Each workflow has: an **entry trigger**, one or more **conditions**, and one or more **actions** (send email, update attribute, add tag, notify team member).
+
+Build these in order. Each one builds on the list architecture and attribute schema you set up earlier.
+
+**Workflow 1 — New lead welcome sequence (3 emails over 7 days)**
+
+*Trigger:* Contact added to `Leads` list.
+
+*Sequence:*
+- Day 0: Welcome email — who you are, what you do, single clear CTA (book a call or download a resource)
+- Day 3: Value email — one concrete problem your buyers face and how you approach it. No CTA pressure.
+- Day 7: Direct ask — short, specific invitation to a conversation. Reply-based, not form-based.
+
+*Exit condition:* Contact moves to `Customers` list (cancels remaining sequence) or clicks the CTA on any email.
+
+This is the highest-ROI automation for most B2B teams. It runs without attention and converts leads who arrive when you're occupied.
+
+**Workflow 2 — Post-purchase onboarding (3 emails over 14 days)**
+
+*Trigger:* Lifecycle stage changes to `customer`.
+
+*Purpose:* Reduce first-month churn by making sure new customers know how to extract value from what they just purchased. This is where the automated email benchmark gap is most visible — post-purchase sequences achieve [30.63% open rates vs. 20.73% for broadcast campaigns](https://www.brevo.com/blog/email-marketing-benchmarks/), because the timing aligns with the buyer's actual attention.
+
+*Content structure:*
+- Day 0: Confirmation + what happens next
+- Day 5: Getting started resource or key contacts
+- Day 14: Check-in + invitation to raise any issues
+
+**Workflow 3 — Inactivity re-engagement (triggered at 60 days of no opens)**
+
+*Trigger:* Segment condition: `last_email_open > 60 days` AND `lifecycle = customer`.
+
+*Sequence:* Single email, subject line that acknowledges the gap directly. Not a promotional email. A short question: "Are you still the right contact for [topic] at [company]?" This cleans the list and occasionally reactivates contacts who drifted.
+
+*Action on no response after 14 days:* Move to `Churned` list. Remove from active segments.
+
+**Workflow 4 — Reorder or renewal reminder**
+
+*Trigger:* Date-based condition using `LAST_ORDER_DATE` attribute. Set condition: `LAST_ORDER_DATE + 90 days = today` (or whatever your typical reorder cycle is).
+
+*Purpose:* For distribution and product-based businesses, this is the highest direct revenue automation. It catches buyers at the reorder moment before they search for alternatives. The article on [email automation for B2B distributors](/articles/email-automation-b2b-distributors-results/) covers the revenue mechanics in detail.
+
+**Workflow 5 — Internal sales notification on high-intent signals**
+
+*Trigger:* Contact opens a pricing page, visits a specific URL (trackable via Brevo's website tracking snippet), or clicks a pricing CTA in an email.
+
+*Action:* Send internal notification to sales (Brevo supports email notifications and webhooks to Slack). Update contact attribute `INTENT_SIGNAL = pricing_page_visit`.
+
+This workflow doesn't send an email to the prospect. It notifies a human. The conversion on human-followed-up leads who showed high-intent signals is consistently higher than automated follow-up on the same trigger — which is the correct use of automation: handling the volume work so humans can focus on the signals that warrant direct contact.
+
+This kind of selective automation is also what separates a minimal but effective marketing stack from a bloated one. See [how a minimal tech stack structures this logic](/articles/minimal-tech-stack-b2b-consulting/) for the broader system view.
+
+---
+
+## Deliverability Testing Before Your First Real Send
+
+**Why this step exists.**
+
+Deliverability is not binary. An email can reach an inbox, land in spam, or get soft-blocked by the receiving server. The third category — soft blocks — is invisible unless you test. Your email appears to have sent successfully (Brevo marks it delivered), but it never appears in the recipient's inbox or spam folder.
+
+**The three-tool pre-send check.**
+
+Before your first campaign goes to real contacts, run these three checks:
+
+1. **Mail Tester ([mail-tester.com](https://www.mail-tester.com))** — Send a test email to the address mail-tester generates. It returns a score out of 10 with specific issues flagged. You want 9+. Common reasons for low scores: missing DKIM, SPF fail, spammy phrases in subject line, missing unsubscribe link.
+
+2. **GlockApps seed list test** — GlockApps lets you send to a seed list of real email addresses across Gmail, Outlook, Yahoo, and corporate providers. It tells you, per provider, whether your email landed in inbox or spam. Run this before any new campaign type (new automation sequence, new broadcast format).
+
+3. **Brevo's internal deliverability score** — Under Settings → Sending Statistics, Brevo shows your domain's historical delivery rate, open rate, and complaint rate. Complaint rate above 0.1% is a risk signal. Above 0.3% will trigger account review.
+
+**What to do if you fail a pre-send check.**
+
+The most common fixable issues:
+
+- SPF record missing or misconfigured → return to DNS and correct
+- Subject line flagged as spammy → remove ALL CAPS, excessive punctuation, phrases like "FREE", "LIMITED TIME", "ACT NOW"
+- No physical address in footer → Brevo requires a postal address in every commercial email (CAN-SPAM / GDPR compliance)
+- List quality too low → clean the list using [NeverBounce](https://neverbounce.com) or ZeroBounce before sending. Hard bounces above 2% damage your sender reputation.
+
+---
+
+Getting from zero to a functioning automated B2B email system in Brevo takes roughly one working day if you have DNS access and a cleaned contact list ready. Most of that time is authentication setup and workflow logic — the actual email copy is usually the smaller effort.
+
+The return on this day of setup is not measured in open rates. It's measured in leads that enter a sequence the moment they sign up, customers who receive onboarding without a team member manually writing emails, and buyers who get a reorder reminder at the moment they're already thinking about the purchase. For how this connects to a broader [AI-assisted support and communication layer](/articles/ai-support-layer-200-month/), the mechanics are similar: small upfront configuration cost, compounding return over time.
+
+---
+
+**Sources:** [Brevo B2B marketing automation guide](https://www.brevo.com/blog/b2b-marketing-automation/) · [Brevo email benchmark data](https://www.brevo.com/blog/email-marketing-benchmarks/)
