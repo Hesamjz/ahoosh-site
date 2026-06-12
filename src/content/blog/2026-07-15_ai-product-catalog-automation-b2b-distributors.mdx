@@ -100,7 +100,7 @@ A 2,000-description output requires a structured sampling approach, not a full r
 - Flag descriptions under 60 words or over 200 words (prompt adherence failure)
 - Flag any description containing the product code or supplier name (instruction violation)
 - Flag descriptions that start with identical phrases across multiple SKUs in the same category (model fell into a template — usually means the input data for that category is too sparse)
-- Flag any description containing banned phrases you specified: "revolutionary," "best-in-class," "world-class," pricing language, delivery promises
+- Flag any description containing empty superlatives (the marketing-hype adjectives that add no product information), pricing language, or delivery promises
 
 This automated pass takes minutes and isolates the rows that need human review. On a clean dataset, typically 3–7% of outputs are flagged — 60–140 rows rather than 2,000.
 

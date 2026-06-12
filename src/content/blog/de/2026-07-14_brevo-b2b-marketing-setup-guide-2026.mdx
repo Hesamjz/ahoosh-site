@@ -1,0 +1,194 @@
+---
+title: "Brevo von Null bis zur Automatisierung: Ein Einrichtungsleitfaden für B2B-Marketingteams"
+description: "Brevo für B2B-Marketing von Grund auf konfigurieren — Listenarchitektur, DKIM/SPF, fünf Automatisierungsworkflows und Zustellbarkeitstests vor dem ersten Versand."
+pubDate: 2026-07-14
+tags: ["Marketing", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&q=80"
+lang: de
+translationOf: "2026-07-14_brevo-b2b-marketing-setup-guide-2026"
+---
+
+<img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&q=80" alt="Aufgeklappter Laptop mit einem E-Mail-Automatisierungs-Workflow-Canvas auf einem dunklen Schreibtisch" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Brevo (früher Sendinblue) ist die kosteneffizienteste Full-Stack-Plattform für E-Mail-Marketing und Automatisierung für B2B-Unternehmen im Budget von 0–150 €/Monat. Der kostenlose Tarif umfasst 300 E-Mails/Tag, einen visuellen Automatisierungs-Workflow-Builder, ein einfaches CRM und Landing Pages — genug, um die ersten drei Automatisierungssequenzen aufzubauen, ohne etwas zu bezahlen.
+
+Die meisten Teams, die es kaufen, nutzen in den ersten sechs Monaten weniger als 20 % der gebotenen Funktionen. Nicht weil die Funktionen versteckt wären, sondern weil es keine Einrichtungsreihenfolge gibt, die erklärt, in welcher Reihenfolge Dinge zu tun sind und warum diese Reihenfolge wichtig ist.
+
+Dieser Leitfaden deckt den vollständigen Pfad ab: Kontokonfiguration, Listenarchitektur, DKIM/SPF-Authentifizierung (oft übersprungen, immer bereut), die fünf relevanten Automatisierungsworkflows für B2B und Zustellbarkeitstests vor dem ersten echten Versand.
+
+---
+
+## Kontoeinrichtung — Die Konfigurationsentscheidungen, die von Tag eins an wichtig sind
+
+**Absenderdomain, keine persönliche Inbox.**
+
+Das Erste, wonach Brevo fragt, ist eine Absender-E-Mail. Viele Teams geben eine persönliche Gmail-Adresse ein, um schnell loszulegen. Tun Sie das nicht. Jede E-Mail, die von einer persönlichen Domain (gmail.com, outlook.com) gesendet wird, wird von Corporate-Spam-Filtern im Jahr 2026 standardmäßig blockiert oder markiert. Verwenden Sie von Anfang an Ihre Firmendomain: `marketing@yourcompany.com` oder `noreply@yourcompany.com`. Sie benötigen DNS-Zugriff auf die Domain, um die Authentifizierung abzuschließen — dazu weiter unten mehr.
+
+**Sendelimits und Planauswahl.**
+
+Brevos Preisgestaltung basiert auf dem monatlich gesendeten E-Mail-Volumen, nicht auf der Anzahl der Kontakte. Das ist strukturell besser für B2B-Teams als kontaktbasierte Preisgestaltung (HubSpots Modell), weil ein B2B-Team typischerweise eine kleine, hochwertige Liste hat statt eines großen Broadcast-Volumens.
+
+- Kostenlos: 300 E-Mails/Tag (9.000/Monat), unbegrenzte Kontakte, Automatisierung inbegriffen
+- Starter: ab 9 €/Monat für 5.000 Sendungen/Monat bis 25 €/Monat für 20.000
+- Business: ab 18 €/Monat — fügt A/B-Testing, erweiterte Berichte, Mehrbenutzer hinzu
+
+Für ein B2B-Team mit unter 500 Kontakten, das 2–3 Kampagnen pro Monat plus Automatisierungssequenzen sendet, deckt der kostenlose Tarif die reale Nutzung ab. Der Auslöser zum Upgrade ist, wenn Sie konsequent an das Sendelimit von 300/Tag heranrücken — was typischerweise bedeutet, dass mehr als 300 aktive Kontakte gleichzeitig Onboarding- oder Nurture-Sequenzen empfangen.
+
+**Zeitzone und Abmeldeeinstellungen.**
+
+Stellen Sie Ihre Kontozeitzone passend zu Ihrem Hauptpublikum ein. B2B-Öffnungsraten erreichen ihren Höhepunkt dienstags bis donnerstags zwischen 9–11 Uhr und 13–15 Uhr in der Ortszeit des Empfängers. Brevos Versandzeitoptimierungsfunktion (Starter und höher) erledigt das automatisch pro Kontakt, aber auch im kostenlosen Tarif bestimmt die Zeitzoneneinstellung, wann geplante Sendungen erfolgen.
+
+Aktivieren Sie Double-Opt-in für neue Kontaktanmeldungen, bevor Sie sonst etwas tun. Es fügt Abonnenten einen Bestätigungsschritt hinzu, reduziert aber wesentlich Spam-Beschwerden — die primäre Ursache für Kontosperrungen bei Brevo.
+
+---
+
+## Listenarchitektur für B2B — Segmente, Tags und die Logik, die skaliert
+
+**Die grundlegende B2B-Listenstruktur.**
+
+Die meisten E-Mail-Tools präsentieren Listen als isolierte Behälter. Brevos Modell ist besser: Kontakte existieren in einer einzigen Datenbank und werden durch Listen (statische Gruppierungen) und Segmente (dynamische Filter) organisiert. Für B2B ist die empfohlene Architektur:
+
+- **Eine Master-Liste** — jeder Kontakt in Ihrer Datenbank, unabhängig vom Status
+- **Funktionale Listen** nach Lebenszyklusphase: `Leads`, `Customers`, `Churned`, `Partners`
+- **Segmente** (dynamisch) auf Basis von Attributen: `industry = wholesale`, `last_open > 30_days`, `deal_stage = negotiation`
+
+Der Vorteil von Segmenten gegenüber statischen Listen ist, dass Kontakte sich automatisch bewegen, wenn sich ihre Attribute ändern. Ein Kontakt in `Leads`, der einen Vertrag unterzeichnet, sollte am nächsten Tag in `Customers` erscheinen, ohne manuelle Listenverwaltung.
+
+**Vor dem Import von Kontakten zu konfigurierende Attribute.**
+
+Erstellen Sie vor dem Import Ihrer ersten CSV die benutzerdefinierten Attribute, die Sie tatsächlich verwenden werden. Brevos Standardattribute decken Vorname, Nachname und E-Mail ab. Für B2B hinzufügen:
+
+- `COMPANY` (Text)
+- `ROLE` (Text: owner, manager, buyer etc.)
+- `INDUSTRY` (Text oder Dropdown)
+- `LIFECYCLE_STAGE` (Dropdown: lead / customer / churned)
+- `LAST_ORDER_DATE` (Datum)
+- `ACCOUNT_VALUE` (Zahl)
+
+Diese vor dem Import einzurichten bedeutet, dass Ihre Automatisierungsbedingungen sofort auf echte Daten verweisen können. Sie nach dem Import hinzuzufügen erfordert einen erneuten Import, um historische Datensätze zu befüllen.
+
+**Tagging-Logik.**
+
+Tags in Brevo sind freie Labels, die einzelnen Kontakten angehängt werden. Verwenden Sie sie für granulares Verhaltens-Tracking, das kein vollständiges Attribut rechtfertigt: `attended-webinar-june`, `requested-pricing`, `trade-fair-contact`. Tags fließen in Segmentbedingungen und Automatisierungsauslöser ein, ohne Ihr Attributschema zu überfrachten.
+
+---
+
+## DKIM- und SPF-Authentifizierung — Warum es wichtig ist und wie Sie es in 15 Minuten prüfen
+
+Das ist der Abschnitt, den die meisten Einrichtungsleitfäden in einer Fußnote vergraben. Es ist in der Praxis die einzige Entscheidung mit dem größten Einfluss darauf, ob Ihre E-Mails Posteingänge erreichen.
+
+**Was DKIM und SPF tatsächlich tun.**
+
+SPF (Sender Policy Framework) teilt empfangenden Mailservern mit, welche IP-Adressen autorisiert sind, E-Mails im Namen Ihrer Domain zu senden. DKIM (DomainKeys Identified Mail) fügt jedem E-Mail-Header eine kryptografische Signatur hinzu, die der empfangende Server gegen einen öffentlichen Schlüssel in Ihrem DNS prüft.
+
+Ohne beides werden Ihre E-Mails von Brevos gemeinsamer IP-Infrastruktur gesendet, ohne domain-seitigen Beweis, dass Ihre Domain den Versand autorisiert hat. Gmail, Outlook und die meisten Corporate-Mailserver wenden nun starkes Filtern oder Massen-Ordner-Routing auf unauthentifizierte kommerzielle E-Mails an. [Googles Anforderungen für Massen-Sender 2024](https://support.google.com/mail/answer/81126) haben SPF+DKIM+DMARC für jede Domain, die mehr als 5.000 Nachrichten pro Tag an Gmail sendet, verpflichtend gemacht — aber selbst bei niedrigeren Volumina beeinflusst Authentifizierung die Zustellbarkeit.
+
+**So schließen Sie es ab.**
+
+In Brevo: Settings → Senders & IPs → Authenticate a domain.
+
+Brevo generiert drei DNS-Einträge:
+1. Einen TXT-Eintrag für SPF
+2. Einen CNAME-Eintrag für DKIM
+3. Optional einen DMARC TXT-Eintrag (dringend empfohlen)
+
+Fügen Sie diese dem DNS Ihrer Domain bei Ihrem Registrar hinzu (Cloudflare, GoDaddy, Namecheap etc.). Die Verbreitung dauert bis zu 48 Stunden, ist aber typischerweise innerhalb von 2–4 Stunden abgeschlossen.
+
+**Verifizierung.**
+
+Nach der Verbreitung mit [MXToolbox](https://mxtoolbox.com/spf.aspx) prüfen. Geben Sie Ihre Domain in die SPF-Suche ein und bestätigen Sie, dass der Brevo-IP-Bereich erscheint. Führen Sie dieselbe Prüfung für DKIM durch. Beide sollten grün sein, bevor Sie Ihre erste Kampagne senden.
+
+Eine 15-minütige Investition in Authentifizierung verhindert das Szenario, bei dem Sie Ihre erste Kampagne an 300 Kontakte senden und 220 davon im Spam landen.
+
+---
+
+## Die fünf Automatisierungsworkflows, die zuerst aufgebaut werden sollten
+
+Brevos Automatisierungs-Builder ist visuell und Drag-and-Drop. Jeder Workflow hat: einen **Eingangsauslöser**, eine oder mehrere **Bedingungen** und eine oder mehrere **Aktionen** (E-Mail senden, Attribut aktualisieren, Tag hinzufügen, Teammitglied benachrichtigen).
+
+Bauen Sie diese in Reihenfolge auf. Jeder baut auf der Listenarchitektur und dem Attributschema auf, das Sie zuvor eingerichtet haben.
+
+**Workflow 1 — Willkommenssequenz für neue Leads (3 E-Mails über 7 Tage)**
+
+*Auslöser:* Kontakt zur `Leads`-Liste hinzugefügt.
+
+*Sequenz:*
+- Tag 0: Willkommens-E-Mail — wer Sie sind, was Sie tun, ein klarer CTA (Termin buchen oder Ressource herunterladen)
+- Tag 3: Wert-E-Mail — ein konkretes Problem Ihrer Käufer und wie Sie es angehen. Kein CTA-Druck.
+- Tag 7: Direkte Anfrage — kurze, spezifische Einladung zu einem Gespräch. Antwortbasiert, nicht formularbasiert.
+
+*Ausgangsbedingung:* Kontakt wechselt zur `Customers`-Liste (bricht verbleibende Sequenz ab) oder klickt auf den CTA in einer E-Mail.
+
+Das ist die Automatisierung mit dem höchsten ROI für die meisten B2B-Teams. Sie läuft ohne Aufmerksamkeit und konvertiert Leads, die ankommen, wenn Sie beschäftigt sind.
+
+**Workflow 2 — Onboarding nach dem Kauf (3 E-Mails über 14 Tage)**
+
+*Auslöser:* Lebenszyklusphase ändert sich auf `customer`.
+
+*Zweck:* Churn im ersten Monat reduzieren, indem sichergestellt wird, dass neue Kunden wissen, wie sie aus dem Gekauften Wert schöpfen können. Hier ist die automatisierte E-Mail-Benchmark-Lücke am sichtbarsten — Post-Purchase-Sequenzen erreichen [30,63 % Öffnungsraten gegenüber 20,73 % bei Broadcast-Kampagnen](https://www.brevo.com/blog/email-marketing-benchmarks/), weil das Timing mit der tatsächlichen Aufmerksamkeit des Käufers übereinstimmt.
+
+*Inhaltsstruktur:*
+- Tag 0: Bestätigung + was als nächstes passiert
+- Tag 5: Erste-Schritte-Ressource oder wichtige Kontakte
+- Tag 14: Check-in + Einladung, etwaige Probleme anzusprechen
+
+**Workflow 3 — Reaktivierung bei Inaktivität (ausgelöst bei 60 Tagen ohne Öffnungen)**
+
+*Auslöser:* Segmentbedingung: `last_email_open > 60 days` UND `lifecycle = customer`.
+
+*Sequenz:* Einzelne E-Mail, Betreff, der die Unterbrechung direkt anspricht. Keine Werbe-E-Mail. Eine kurze Frage: "Sind Sie noch der richtige Ansprechpartner für [Thema] bei [Unternehmen]?" Das bereinigt die Liste und reaktiviert gelegentlich abgedriftete Kontakte.
+
+*Aktion bei keiner Reaktion nach 14 Tagen:* Zur `Churned`-Liste verschieben. Aus aktiven Segmenten entfernen.
+
+**Workflow 4 — Nachbestellungs- oder Verlängerungserinnerung**
+
+*Auslöser:* Datumsbasierte Bedingung mit dem Attribut `LAST_ORDER_DATE`. Bedingung setzen: `LAST_ORDER_DATE + 90 days = today` (oder Ihr typischer Nachbestellungszyklus).
+
+*Zweck:* Für Distributions- und produktbasierte Unternehmen ist das die Automatisierung mit dem höchsten direkten Umsatzeffekt. Sie erreicht Käufer im Nachbestellungsmoment, bevor sie nach Alternativen suchen. Der Artikel über [E-Mail-Automatisierung für B2B-Distributoren](/de/articles/email-automation-b2b-distributors-results/) behandelt die Umsatzmechanik im Detail.
+
+**Workflow 5 — Interne Verkaufsbenachrichtigung bei Signalen mit hoher Kaufabsicht**
+
+*Auslöser:* Kontakt öffnet eine Preisseite, besucht eine bestimmte URL (verfolgbar über Brevos Website-Tracking-Snippet) oder klickt auf einen Preis-CTA in einer E-Mail.
+
+*Aktion:* Interne Benachrichtigung an den Vertrieb senden (Brevo unterstützt E-Mail-Benachrichtigungen und Webhooks an Slack). Kontaktattribut `INTENT_SIGNAL = pricing_page_visit` aktualisieren.
+
+Dieser Workflow sendet keine E-Mail an den Interessenten. Er benachrichtigt einen Menschen. Die Konversionsrate bei menschlich nachverfolgten Leads, die Signale mit hoher Kaufabsicht gezeigt haben, ist konstant höher als bei automatisierter Nachverfolgung beim gleichen Auslöser — das ist der korrekte Einsatz von Automatisierung: Volumenarbeit erledigen, damit Menschen sich auf die Signale konzentrieren können, die direkten Kontakt rechtfertigen.
+
+Diese Art selektiver Automatisierung ist auch das, was einen minimalen, aber effektiven Marketing-Stack von einem aufgeblähten trennt. Für die breitere Systemsicht siehe [wie ein minimaler Tech-Stack diese Logik strukturiert](/de/articles/minimal-tech-stack-b2b-consulting/).
+
+---
+
+## Zustellbarkeitstests vor dem ersten echten Versand
+
+**Warum dieser Schritt existiert.**
+
+Zustellbarkeit ist nicht binär. Eine E-Mail kann im Posteingang ankommen, im Spam landen oder vom empfangenden Server soft-geblockt werden. Die dritte Kategorie — Soft-Blocks — ist unsichtbar, wenn man nicht testet. Ihre E-Mail scheint erfolgreich gesendet worden zu sein (Brevo markiert sie als zugestellt), erscheint aber nie im Posteingang oder Spam-Ordner des Empfängers.
+
+**Die Drei-Tool-Prüfung vor dem Versand.**
+
+Führen Sie diese drei Prüfungen durch, bevor Ihre erste Kampagne echte Kontakte erreicht:
+
+1. **Mail Tester ([mail-tester.com](https://www.mail-tester.com))** — Senden Sie eine Test-E-Mail an die von mail-tester generierte Adresse. Es gibt eine Punktzahl von 10 mit markierten spezifischen Problemen zurück. Sie wollen 9+. Häufige Gründe für niedrige Punktzahlen: fehlendes DKIM, SPF-Fehler, spammige Phrasen in der Betreffzeile, fehlender Abmeldelink.
+
+2. **GlockApps Seed-Liste-Test** — GlockApps ermöglicht es Ihnen, an eine Seed-Liste echter E-Mail-Adressen bei Gmail, Outlook, Yahoo und Corporate-Anbietern zu senden. Es zeigt Ihnen, pro Anbieter, ob Ihre E-Mail im Posteingang oder Spam gelandet ist. Führen Sie das vor jedem neuen Kampagnentyp durch (neue Automatisierungssequenz, neues Broadcast-Format).
+
+3. **Brevos interner Zustellbarkeitsscore** — Unter Settings → Sending Statistics zeigt Brevo die historische Zustellrate, Öffnungsrate und Beschwerderate Ihrer Domain. Eine Beschwerderate über 0,1 % ist ein Risikosignal. Über 0,3 % löst eine Kontoprüfung aus.
+
+**Was tun, wenn Sie eine Vorversand-Prüfung nicht bestehen.**
+
+Die häufigsten behebbaren Probleme:
+
+- SPF-Eintrag fehlend oder falsch konfiguriert → zurück zu DNS und korrigieren
+- Betreffzeile als spammig markiert → ALLE GROSSBUCHSTABEN, übermäßige Satzzeichen, Phrasen wie "KOSTENLOS", "BEGRENZTE ZEIT", "JETZT HANDELN" entfernen
+- Keine physische Adresse in der Fußzeile → Brevo verlangt eine Postadresse in jeder kommerziellen E-Mail (CAN-SPAM / DSGVO-Konformität)
+- Listenqualität zu niedrig → Liste mit [NeverBounce](https://neverbounce.com) oder ZeroBounce vor dem Versand bereinigen. Hard Bounces über 2 % beschädigen Ihre Absenderreputation.
+
+---
+
+Von null zu einem funktionierenden automatisierten B2B-E-Mail-System in Brevo zu gelangen dauert etwa einen Arbeitstag, wenn Sie DNS-Zugriff und eine bereinigte Kontaktliste bereit haben. Der Großteil dieser Zeit entfällt auf Authentifizierungseinrichtung und Workflow-Logik — der eigentliche E-Mail-Text erfordert normalerweise den geringeren Aufwand.
+
+Die Rendite dieses Einrichtungstages wird nicht in Öffnungsraten gemessen. Sie wird gemessen in Leads, die in dem Moment in eine Sequenz eintreten, wenn sie sich anmelden, Kunden, die Onboarding erhalten, ohne dass ein Teammitglied manuell E-Mails schreibt, und Käufern, die eine Nachbestellungserinnerung genau dann erhalten, wenn sie ohnehin schon an den Kauf denken. Wie das mit einer breiteren [KI-gestützten Support- und Kommunikationsebene](/de/articles/ai-support-layer-200-month/) zusammenhängt: die Mechanik ist ähnlich — geringe Vorausinvestition, wachsende Rendite über Zeit.
+
+---
+
+**Quellen:** [Brevo B2B-Marketing-Automatisierungsleitfaden](https://www.brevo.com/blog/b2b-marketing-automation/) · [Brevo E-Mail-Benchmark-Daten](https://www.brevo.com/blog/email-marketing-benchmarks/)
