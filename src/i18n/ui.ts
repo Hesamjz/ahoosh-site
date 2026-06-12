@@ -5,7 +5,7 @@
 
 export type Locale = 'en' | 'fa' | 'de' | 'sr';
 
-export const LOCALES: Locale[] = ['en', 'fa', 'de', 'sr'];
+export const LOCALES: Locale[] = ['fa', 'en', 'de', 'sr'];
 
 export const LOCALE_META: Record<
   Locale,
