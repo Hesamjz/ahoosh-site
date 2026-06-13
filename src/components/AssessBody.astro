@@ -62,7 +62,190 @@ const { banner, lang = 'en' } = Astro.props;
 
     /* Sticky question header */
     #root .sticky { background: rgba(6,15,30,0.97) !important; backdrop-filter: blur(8px); }
+
+    /* ── Business Tools Section ── */
+    .biz-tools-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 0;
+    }
+    .biz-tools-header { text-align: center; margin-bottom: 2rem; }
+    .biz-tools-eyebrow {
+      display: inline-block;
+      background: rgba(215,161,61,0.12);
+      color: #D7A13D;
+      border: 1px solid rgba(215,161,61,0.25);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      margin-bottom: 0.75rem;
+    }
+    .biz-tools-title {
+      font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+      color: #e8eaf0;
+      margin: 0 0 0.5rem;
+      font-weight: 700;
+    }
+    .biz-tools-sub { color: #8a9bb0; font-size: 0.95rem; margin: 0; }
+    .biz-tools-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 640px) { .biz-tools-grid { grid-template-columns: 1fr; } }
+    .biz-tool-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: rgba(8,22,50,0.95);
+      border: 1px solid rgba(215,161,61,0.18);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .biz-tool-card:hover {
+      border-color: rgba(215,161,61,0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    }
+    .btc-icon {
+      width: 44px; height: 44px;
+      background: rgba(215,161,61,0.12);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #D7A13D;
+      flex-shrink: 0;
+    }
+    .btc-icon svg { width: 22px; height: 22px; }
+    .btc-icon-ai { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .btc-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #D7A13D;
+      margin-bottom: 0.4rem;
+    }
+    .btc-badge-ai { color: #a78bfa; }
+    .btc-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #e8eaf0;
+      margin: 0 0 0.5rem;
+    }
+    .btc-desc {
+      font-size: 0.87rem;
+      color: #8a9bb0;
+      line-height: 1.6;
+      margin: 0 0 0.75rem;
+    }
+    .btc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .btc-tags span {
+      font-size: 0.68rem;
+      background: rgba(255,255,255,0.06);
+      color: #8a9bb0;
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-weight: 500;
+    }
+    .btc-arrow {
+      position: absolute;
+      top: 1.25rem; right: 1.25rem;
+      color: rgba(215,161,61,0.4);
+      font-size: 1.2rem;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .biz-tool-card:hover .btc-arrow { color: #D7A13D; transform: translateX(4px); }
+
+    .assess-divider {
+      text-align: center;
+      margin: 2.5rem auto 0;
+      max-width: 900px;
+      padding: 0 1.5rem;
+      position: relative;
+    }
+    .assess-divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 1.5rem; right: 1.5rem;
+      border-top: 1px solid rgba(215,161,61,0.12);
+    }
+    .assess-divider span {
+      position: relative;
+      background: #060F1E;
+      padding: 0 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #5e6e82;
+    }
   </style>
+
+  <!-- ── Business Tools Section ── -->
+  <div class="biz-tools-section">
+    <div class="biz-tools-header">
+      <span class="biz-tools-eyebrow">Business Tools</span>
+      <h2 class="biz-tools-title">Analyze Your Business — Free</h2>
+      <p class="biz-tools-sub">Instant, AI-powered insights. No signup required.</p>
+    </div>
+    <div class="biz-tools-grid">
+      <a href="/tools/seo-audit" class="biz-tool-card">
+        <div class="btc-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0015.803 15.803z"/>
+          </svg>
+        </div>
+        <div class="btc-content">
+          <div class="btc-badge">Powered by Google Lighthouse</div>
+          <h3 class="btc-title">SEO &amp; Performance Audit</h3>
+          <p class="btc-desc">Paste your URL — get performance scores, Core Web Vitals, SEO gaps, and the top issues holding your site back. Takes ~15 seconds.</p>
+          <div class="btc-tags">
+            <span>Performance Score</span>
+            <span>Core Web Vitals</span>
+            <span>SEO Issues</span>
+            <span>Accessibility</span>
+          </div>
+        </div>
+        <div class="btc-arrow">→</div>
+      </a>
+
+      <a href="/tools/business-qa" class="biz-tool-card">
+        <div class="btc-icon btc-icon-ai">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+          </svg>
+        </div>
+        <div class="btc-content">
+          <div class="btc-badge btc-badge-ai">Powered by Claude AI</div>
+          <h3 class="btc-title">Business Diagnostic</h3>
+          <p class="btc-desc">Answer 10 questions about your business. Get an honest AI analysis: real strengths, critical challenges, quick wins, and your 90-day focus.</p>
+          <div class="btc-tags">
+            <span>Strengths &amp; Challenges</span>
+            <span>Quick Wins</span>
+            <span>90-Day Priority</span>
+            <span>Strategy</span>
+          </div>
+        </div>
+        <div class="btc-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="assess-divider">
+    <span>Personal &amp; HR Assessments</span>
+  </div>
 
   <div id="root" class="antialiased" data-lang={lang}></div>
 

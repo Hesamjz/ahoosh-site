@@ -1,0 +1,463 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Free Website SEO & Performance Audit — AHoosh.ai"
+  description="Paste your URL and get an instant SEO analysis: performance scores, Core Web Vitals, missing meta tags, and actionable fixes. Free tool by AHoosh.ai."
+  locale="en"
+>
+  <section class="tool-page">
+    <div class="tool-header">
+      <span class="tool-badge">Free Tool</span>
+      <h1>Website SEO &amp; Performance Audit</h1>
+      <p class="tool-subtitle">Paste any URL — get instant scores, Core Web Vitals, and the top issues holding your site back.</p>
+    </div>
+
+    <div class="audit-input-box">
+      <div class="input-row">
+        <input
+          type="url"
+          id="audit-url"
+          placeholder="https://yourwebsite.com"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="audit-btn" class="btn-gold">Analyze</button>
+      </div>
+      <p class="input-note">Analysis takes ~10–15 seconds. Powered by Google PageSpeed Insights.</p>
+    </div>
+
+    <div id="audit-loading" class="hidden">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Running full audit… this takes 10–15 seconds</p>
+    </div>
+
+    <div id="audit-error" class="hidden error-box"></div>
+
+    <div id="audit-results" class="hidden">
+      <div class="results-url-bar">
+        <span class="results-label">Analyzed:</span>
+        <span id="results-url-display"></span>
+        <span id="results-time" class="results-time"></span>
+      </div>
+
+      <!-- Score circles -->
+      <div class="scores-grid">
+        <div class="score-card">
+          <svg class="score-ring" viewBox="0 0 100 100">
+            <circle class="ring-bg" cx="50" cy="50" r="42"/>
+            <circle class="ring-fill" id="ring-perf" cx="50" cy="50" r="42"/>
+          </svg>
+          <div class="score-value" id="score-perf">–</div>
+          <div class="score-label">Performance</div>
+        </div>
+        <div class="score-card">
+          <svg class="score-ring" viewBox="0 0 100 100">
+            <circle class="ring-bg" cx="50" cy="50" r="42"/>
+            <circle class="ring-fill" id="ring-seo" cx="50" cy="50" r="42"/>
+          </svg>
+          <div class="score-value" id="score-seo">–</div>
+          <div class="score-label">SEO</div>
+        </div>
+        <div class="score-card">
+          <svg class="score-ring" viewBox="0 0 100 100">
+            <circle class="ring-bg" cx="50" cy="50" r="42"/>
+            <circle class="ring-fill" id="ring-a11y" cx="50" cy="50" r="42"/>
+          </svg>
+          <div class="score-value" id="score-a11y">–</div>
+          <div class="score-label">Accessibility</div>
+        </div>
+        <div class="score-card">
+          <svg class="score-ring" viewBox="0 0 100 100">
+            <circle class="ring-bg" cx="50" cy="50" r="42"/>
+            <circle class="ring-fill" id="ring-bp" cx="50" cy="50" r="42"/>
+          </svg>
+          <div class="score-value" id="score-bp">–</div>
+          <div class="score-label">Best Practices</div>
+        </div>
+      </div>
+
+      <!-- Core Web Vitals -->
+      <div class="section-block">
+        <h2 class="section-title">Core Web Vitals</h2>
+        <div class="vitals-grid" id="vitals-grid"></div>
+      </div>
+
+      <!-- Meta checks -->
+      <div class="section-block">
+        <h2 class="section-title">Basic SEO Checks</h2>
+        <div class="meta-grid" id="meta-grid"></div>
+      </div>
+
+      <!-- SEO Issues -->
+      <div class="section-block" id="seo-issues-section">
+        <h2 class="section-title">SEO Issues Found</h2>
+        <div id="seo-issues-list"></div>
+      </div>
+
+      <!-- Performance opportunities -->
+      <div class="section-block" id="perf-ops-section">
+        <h2 class="section-title">Performance Opportunities</h2>
+        <div id="perf-ops-list"></div>
+      </div>
+
+      <!-- CTA -->
+      <div class="audit-cta">
+        <p>Need help fixing these issues?</p>
+        <a href="/consulting" class="btn-gold">Talk to AHoosh.ai →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+const scoreColor = s => s >= 90 ? '#0cce6b' : s >= 50 ? '#ffa400' : '#ff4e42';
+const CIRC = 2 * Math.PI * 42; // circumference
+
+function setRing(ringId, valueId, score) {
+  const ring = document.getElementById(ringId);
+  const val = document.getElementById(valueId);
+  if (!ring || !val) return;
+  const color = scoreColor(score);
+  ring.style.stroke = color;
+  ring.style.strokeDasharray = CIRC;
+  ring.style.strokeDashoffset = CIRC - (score / 100) * CIRC;
+  val.textContent = score;
+  val.style.color = color;
+}
+
+function vitalColor(score) {
+  if (score >= 90) return '#0cce6b';
+  if (score >= 50) return '#ffa400';
+  return '#ff4e42';
+}
+
+async function runAudit() {
+  const urlInput = document.getElementById('audit-url').value.trim();
+  if (!urlInput) return;
+
+  document.getElementById('audit-loading').classList.remove('hidden');
+  document.getElementById('audit-results').classList.add('hidden');
+  document.getElementById('audit-error').classList.add('hidden');
+
+  try {
+    const res = await fetch('/api/seo-audit?url=' + encodeURIComponent(urlInput));
+    const data = await res.json();
+
+    document.getElementById('audit-loading').classList.add('hidden');
+
+    if (data.error) {
+      const errBox = document.getElementById('audit-error');
+      errBox.textContent = data.error;
+      errBox.classList.remove('hidden');
+      return;
+    }
+
+    // URL bar
+    document.getElementById('results-url-display').textContent = data.url;
+    document.getElementById('results-time').textContent = new Date(data.analyzedAt).toLocaleTimeString();
+
+    // Scores
+    setRing('ring-perf', 'score-perf', data.scores.performance);
+    setRing('ring-seo', 'score-seo', data.scores.seo);
+    setRing('ring-a11y', 'score-a11y', data.scores.accessibility);
+    setRing('ring-bp', 'score-bp', data.scores.bestPractices);
+
+    // Vitals
+    const vitalsData = [
+      { label: 'LCP', value: data.vitals.lcp, score: data.vitals.lcp_score, tip: 'Largest Contentful Paint — how fast the biggest element loads' },
+      { label: 'CLS', value: data.vitals.cls, score: data.vitals.cls_score, tip: 'Cumulative Layout Shift — how stable the page layout is' },
+      { label: 'FCP', value: data.vitals.fcp, score: data.vitals.fcp_score, tip: 'First Contentful Paint — when first content appears' },
+      { label: 'TBT', value: data.vitals.tbt, score: data.vitals.tbt_score, tip: 'Total Blocking Time — how long main thread is blocked' },
+      { label: 'Speed Index', value: data.vitals.si, score: null, tip: 'How quickly content is visually displayed' },
+      { label: 'TTFB', value: data.vitals.ttfb, score: null, tip: 'Time To First Byte — server response speed' },
+    ];
+    const vitalsGrid = document.getElementById('vitals-grid');
+    vitalsGrid.innerHTML = vitalsData.map(v => {
+      const color = v.score !== null ? vitalColor(v.score) : '#aaa';
+      return `<div class="vital-item" title="${v.tip}">
+        <div class="vital-value" style="color:${color}">${v.value}</div>
+        <div class="vital-label">${v.label}</div>
+      </div>`;
+    }).join('');
+
+    // Meta
+    const metaItems = [
+      { label: 'HTTPS', value: data.meta.https },
+      { label: 'Meta Description', value: data.meta.description },
+      { label: 'Viewport', value: data.meta.viewport },
+      { label: 'robots.txt', value: data.meta.robots },
+    ];
+    document.getElementById('meta-grid').innerHTML = metaItems.map(m => {
+      const ok = m.value.startsWith('✓');
+      return `<div class="meta-item ${ok ? 'meta-ok' : 'meta-fail'}">
+        <span class="meta-icon">${ok ? '✓' : '✗'}</span>
+        <span class="meta-label">${m.label}</span>
+        <span class="meta-value">${m.value.replace(/^[✓✗] /, '')}</span>
+      </div>`;
+    }).join('');
+
+    // SEO issues
+    const seoSection = document.getElementById('seo-issues-section');
+    const seoList = document.getElementById('seo-issues-list');
+    if (data.seoIssues && data.seoIssues.length > 0) {
+      seoList.innerHTML = data.seoIssues.map(i => `
+        <div class="issue-item">
+          <div class="issue-title">${i.title}</div>
+          ${i.desc ? `<div class="issue-desc">${i.desc}</div>` : ''}
+        </div>`).join('');
+      seoSection.classList.remove('hidden');
+    } else {
+      seoList.innerHTML = '<p class="all-good">✓ No SEO issues found — well done!</p>';
+      seoSection.classList.remove('hidden');
+    }
+
+    // Perf opportunities
+    const perfSection = document.getElementById('perf-ops-section');
+    const perfList = document.getElementById('perf-ops-list');
+    if (data.perfOps && data.perfOps.length > 0) {
+      perfList.innerHTML = data.perfOps.map(p => `
+        <div class="issue-item">
+          <div class="issue-title">${p.title}${p.savings ? ` <span class="savings-badge">~${p.savings} savings</span>` : ''}</div>
+        </div>`).join('');
+      perfSection.classList.remove('hidden');
+    } else {
+      perfSection.classList.add('hidden');
+    }
+
+    document.getElementById('audit-results').classList.remove('hidden');
+    document.getElementById('audit-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    document.getElementById('audit-loading').classList.add('hidden');
+    const errBox = document.getElementById('audit-error');
+    errBox.textContent = 'Network error. Please check your connection and try again.';
+    errBox.classList.remove('hidden');
+  }
+}
+
+document.getElementById('audit-btn').addEventListener('click', runAudit);
+document.getElementById('audit-url').addEventListener('keydown', e => { if (e.key === 'Enter') runAudit(); });
+</script>
+
+<style>
+.tool-page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+.tool-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.tool-badge {
+  display: inline-block;
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  border: 1px solid rgba(215,161,61,0.3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+.tool-header h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  color: var(--color-text);
+  margin: 0 0 0.75rem;
+}
+.tool-subtitle {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+}
+.audit-input-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+.input-row {
+  display: flex;
+  gap: 0.75rem;
+}
+.input-row input {
+  flex: 1;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-row input:focus { border-color: #D7A13D; }
+.input-row input::placeholder { color: var(--color-text-muted); }
+.input-note {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 0.75rem 0 0;
+}
+.btn-gold {
+  background: #D7A13D;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-gold:hover { background: #e5b040; }
+.btn-gold:active { transform: scale(0.98); }
+.hidden { display: none !important; }
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid rgba(215,161,61,0.2);
+  border-top-color: #D7A13D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 2rem auto 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { text-align: center; color: var(--color-text-muted); }
+.error-box {
+  background: rgba(255,78,66,0.1);
+  border: 1px solid rgba(255,78,66,0.3);
+  color: #ff6b5a;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.results-url-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.results-label { color: var(--color-text-muted); }
+#results-url-display { color: #D7A13D; word-break: break-all; }
+.results-time { color: var(--color-text-muted); margin-left: auto; font-size: 0.78rem; }
+/* Scores */
+.scores-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+@media (max-width: 600px) { .scores-grid { grid-template-columns: repeat(2, 1fr); } }
+.score-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem 0.75rem;
+  text-align: center;
+  position: relative;
+}
+.score-ring {
+  width: 80px; height: 80px;
+  transform: rotate(-90deg);
+  display: block;
+  margin: 0 auto 0.5rem;
+}
+.ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+.ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+.score-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  position: absolute;
+  top: 1.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+}
+.score-label { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.25rem; }
+/* Vitals */
+.section-block { margin-bottom: 2rem; }
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+@media (max-width: 500px) { .vitals-grid { grid-template-columns: repeat(2, 1fr); } }
+.vital-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  cursor: help;
+}
+.vital-value { font-size: 1.2rem; font-weight: 700; }
+.vital-label { font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem; }
+/* Meta */
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+@media (max-width: 500px) { .meta-grid { grid-template-columns: 1fr; } }
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.88rem;
+}
+.meta-ok .meta-icon { color: #0cce6b; }
+.meta-fail .meta-icon { color: #ff4e42; }
+.meta-label { color: var(--color-text-muted); flex: 1; }
+.meta-value { font-weight: 600; }
+/* Issues */
+.issue-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid #ffa400;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+}
+.issue-title { font-size: 0.9rem; font-weight: 600; color: var(--color-text); }
+.issue-desc { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.25rem; }
+.savings-badge {
+  display: inline-block;
+  background: rgba(12,206,107,0.15);
+  color: #0cce6b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  margin-left: 0.4rem;
+}
+.all-good { color: #0cce6b; font-size: 0.9rem; padding: 0.5rem 0; }
+/* CTA */
+.audit-cta {
+  text-align: center;
+  padding: 2.5rem;
+  background: var(--color-surface);
+  border: 1px solid rgba(215,161,61,0.2);
+  border-radius: 14px;
+  margin-top: 2rem;
+}
+.audit-cta p { color: var(--color-text-muted); margin: 0 0 1rem; }
+</style>
