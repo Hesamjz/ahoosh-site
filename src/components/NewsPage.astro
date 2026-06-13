@@ -29,9 +29,9 @@ const ownArticles = allPosts
   </div>
 </section>
 
-<!-- ══ WORLD CLOCKS ══════════════════════════════════════════════════════════ -->
-<div style="background:rgba(1,10,24,0.97);border-bottom:1px solid rgba(215,161,61,0.1);padding:8px 24px;overflow-x:auto;">
-  <div style="display:inline-flex;gap:0;align-items:stretch;min-width:max-content;" id="clocks-strip">
+<!-- ══ WORLD CLOCKS — Analog ══════════════════════════════════════════════ -->
+<div style="background:rgba(1,10,24,0.97);border-bottom:1px solid rgba(215,161,61,0.1);padding:14px 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+  <div style="display:inline-flex;gap:24px;align-items:flex-end;min-width:max-content;" id="clocks-strip">
     <!-- populated by JS -->
   </div>
 </div>
@@ -120,16 +120,18 @@ const ownArticles = allPosts
 </div>
 
 <style is:global>
-  /* ── World clocks ─────────────────────────────────────────────────────── */
-  .clock-city {
-    display:inline-flex;flex-direction:column;align-items:center;
-    padding:6px 18px;border-right:1px solid rgba(215,161,61,0.08);
+  /* ── Analog clocks ────────────────────────────────────────────────────── */
+  .clock-wrap {
+    display:inline-flex;flex-direction:column;align-items:center;gap:6px;
   }
-  .clock-city:first-child { padding-left:0; }
-  .clock-city:last-child  { border-right:none; }
-  .clock-city .city-name { font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver-muted);margin-bottom:1px; }
-  .clock-city .city-time { font-size:17px;font-weight:700;font-family:var(--font-head);color:var(--silver);letter-spacing:0.02em;line-height:1.1; }
-  .clock-city .city-date { font-size:9px;color:var(--gold);opacity:0.65;margin-top:1px; }
+  .clock-wrap .city-name {
+    font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--silver-muted);
+  }
+  .clock-wrap .city-date {
+    font-size:9px;color:var(--gold);opacity:0.7;
+  }
+  .analog-clock { flex-shrink:0; }
 
   /* ── 2-column grid ────────────────────────────────────────────────────── */
   .live-grid { display:grid;grid-template-columns:290px 1fr;gap:20px;align-items:start; }
@@ -246,8 +248,8 @@ const ownArticles = allPosts
   }
   @media(max-width:500px) {
     .mkt-rows { grid-template-columns:1fr; }
-    .clock-city { padding:5px 12px; }
-    .clock-city .city-time { font-size:14px; }
+    .clock-wrap { gap:4px; }
+    .clock-wrap .city-name { font-size:8px; }
   }
 
   /* ── Clocks scroll hint ──────────────────────────────────────────────── */
@@ -419,7 +421,7 @@ function langRank(l) { var i = langOrder.indexOf(l); return i < 0 ? 99 : i; }
 var SORTED = CHANNELS_ALL.slice().sort(function(a,b){ return langRank(a.lang)-langRank(b.lang); });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// WORLD CLOCKS
+// WORLD CLOCKS — SVG Analog (Rolex-style)
 // ─────────────────────────────────────────────────────────────────────────────
 var CLOCKS = [
   { key:'tehran',    tz:'Asia/Tehran',      name:(t.cityNames&&t.cityNames.tehran)    ||'Tehran'    },
@@ -431,34 +433,104 @@ var CLOCKS = [
   { key:'singapore', tz:'Asia/Singapore',   name:(t.cityNames&&t.cityNames.singapore) ||'Singapore' },
 ];
 
-var clockEls = [];
-var strip = document.getElementById('clocks-strip');
-CLOCKS.forEach(function(c, i) {
-  var el = document.createElement('div');
-  el.className = 'clock-city';
-  el.innerHTML =
-    '<div class="city-name">' + c.name + '</div>' +
-    '<div class="city-time" id="ct-' + i + '">--:--:--</div>' +
-    '<div class="city-date" id="cd-' + i + '">---</div>';
-  strip.appendChild(el);
-  clockEls.push({ i: i, tz: c.tz });
-});
+// SVG sizes
+var R = 44; // dial radius (SVG units, viewBox 0 0 100 100, centre at 50,50)
 
-var _timeFmt = CLOCKS.map(function(c) {
-  return new Intl.DateTimeFormat('en-GB', { timeZone:c.tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+function makeDial(id) {
+  // Returns the static SVG string (no hands) — hands are <line> elements updated by JS
+  var markers = '';
+  for (var h = 0; h < 12; h++) {
+    var angle = h * 30; // degrees
+    var rad   = (angle - 90) * Math.PI / 180;
+    var isMain = (h % 3 === 0); // 12,3,6,9
+    var r1 = isMain ? R - 6 : R - 4;
+    var r2 = isMain ? R - 1 : R - 2;
+    var x1 = 50 + r1 * Math.cos(rad);
+    var y1 = 50 + r1 * Math.sin(rad);
+    var x2 = 50 + r2 * Math.cos(rad);
+    var y2 = 50 + r2 * Math.sin(rad);
+    var sw = isMain ? '2' : '1.2';
+    markers += '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#D7A13D" stroke-width="'+sw+'" stroke-linecap="round"/>';
+  }
+  return '<svg class="analog-clock" id="svgclock-'+id+'" viewBox="0 0 100 100" width="82" height="82" xmlns="http://www.w3.org/2000/svg">'
+    // outer bezel ring
+    + '<circle cx="50" cy="50" r="49" fill="#1a1206" stroke="#D7A13D" stroke-width="2"/>'
+    // inner bezel ring
+    + '<circle cx="50" cy="50" r="46" fill="none" stroke="#8a6520" stroke-width="0.5"/>'
+    // dial face
+    + '<circle cx="50" cy="50" r="'+R+'" fill="#03142E"/>'
+    // markers
+    + markers
+    // hour hand (will be updated)
+    + '<line id="hhand-'+id+'" x1="50" y1="50" x2="50" y2="22" stroke="#D7A13D" stroke-width="3.5" stroke-linecap="round"/>'
+    // minute hand
+    + '<line id="mhand-'+id+'" x1="50" y1="50" x2="50" y2="14" stroke="#C8C8C8" stroke-width="2.5" stroke-linecap="round"/>'
+    // second hand
+    + '<line id="shand-'+id+'" x1="50" y1="54" x2="50" y2="12" stroke="#C0392B" stroke-width="1.2" stroke-linecap="round"/>'
+    // centre dot
+    + '<circle cx="50" cy="50" r="2.5" fill="#D7A13D"/>'
+    + '</svg>';
+}
+
+function handCoords(cx, cy, angle_deg, length) {
+  var rad = (angle_deg - 90) * Math.PI / 180;
+  return { x: cx + length * Math.cos(rad), y: cy + length * Math.sin(rad) };
+}
+
+var _tzFmt = CLOCKS.map(function(c) {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: c.tz,
+    hour:'numeric', minute:'numeric', second:'numeric', hour12:false
+  });
 });
 var _dateFmt = CLOCKS.map(function(c) {
   return new Intl.DateTimeFormat('en-GB', { timeZone:c.tz, weekday:'short', month:'short', day:'numeric' });
 });
 
+// Build DOM
+var strip = document.getElementById('clocks-strip');
+CLOCKS.forEach(function(c, i) {
+  var wrap = document.createElement('div');
+  wrap.className = 'clock-wrap';
+  wrap.innerHTML =
+    '<div class="city-name">' + c.name + '</div>' +
+    makeDial(i) +
+    '<div class="city-date" id="cd-' + i + '">---</div>';
+  strip.appendChild(wrap);
+});
+
 function tickClocks() {
   var now = new Date();
-  clockEls.forEach(function(c) {
-    var te = document.getElementById('ct-' + c.i);
-    var de = document.getElementById('cd-' + c.i);
-    if (!te) return;
-    te.textContent = _timeFmt[c.i].format(now);
-    de.textContent = _dateFmt[c.i].format(now);
+  CLOCKS.forEach(function(c, i) {
+    // parse time in timezone
+    var parts = _tzFmt[i].formatToParts(now);
+    var H = 0, M = 0, S = 0;
+    parts.forEach(function(p) {
+      if (p.type === 'hour')   H = parseInt(p.value, 10);
+      if (p.type === 'minute') M = parseInt(p.value, 10);
+      if (p.type === 'second') S = parseInt(p.value, 10);
+    });
+
+    var hAngle = (H % 12) * 30 + M * 0.5 + S * (0.5/60);
+    var mAngle = M * 6 + S * 0.1;
+    var sAngle = S * 6;
+
+    var hPt = handCoords(50, 50, hAngle, 22);
+    var mPt = handCoords(50, 50, mAngle, 30);
+    var sPt = handCoords(50, 50, sAngle, 32);
+    var sTail = handCoords(50, 50, sAngle + 180, 6);
+
+    var hEl = document.getElementById('hhand-'+i);
+    var mEl = document.getElementById('mhand-'+i);
+    var sEl = document.getElementById('shand-'+i);
+    if (!hEl) return;
+    hEl.setAttribute('x2', hPt.x); hEl.setAttribute('y2', hPt.y);
+    mEl.setAttribute('x2', mPt.x); mEl.setAttribute('y2', mPt.y);
+    sEl.setAttribute('x1', sTail.x); sEl.setAttribute('y1', sTail.y);
+    sEl.setAttribute('x2', sPt.x);  sEl.setAttribute('y2', sPt.y);
+
+    var de = document.getElementById('cd-'+i);
+    if (de) de.textContent = _dateFmt[i].format(now);
   });
 }
 tickClocks();

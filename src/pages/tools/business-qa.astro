@@ -1,0 +1,415 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Free Business Diagnostic — AHoosh.ai"
+  description="Answer 10 questions about your business and get an instant AI-powered strategy analysis: strengths, challenges, quick wins, and your 90-day priority."
+  locale="en"
+>
+  <section class="tool-page">
+    <div class="tool-header">
+      <span class="tool-badge">AI-Powered · Free</span>
+      <h1>Business Diagnostic</h1>
+      <p class="tool-subtitle">Answer 10 questions. Get an instant, honest strategy analysis — strengths, real challenges, quick wins, and your 90-day priority.</p>
+    </div>
+
+    <!-- Questions form -->
+    <div id="qa-form-section">
+      <form id="qa-form">
+        <div class="questions-list" id="questions-list"></div>
+        <div class="form-footer">
+          <p class="form-note">Answer at least 5 questions. All answers are private — not stored.</p>
+          <button type="submit" class="btn-gold btn-lg">Analyze My Business →</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Loading -->
+    <div id="qa-loading" class="hidden">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Analyzing your business… usually 10–15 seconds</p>
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- Error -->
+    <div id="qa-error" class="hidden error-box"></div>
+
+    <!-- Results -->
+    <div id="qa-results" class="hidden">
+      <div class="results-header">
+        <span class="archetype-badge" id="res-archetype">–</span>
+        <h2 class="results-title">Your Business Analysis</h2>
+      </div>
+
+      <div class="result-card summary-card">
+        <h3>Situation Assessment</h3>
+        <p id="res-summary"></p>
+      </div>
+
+      <div class="two-col">
+        <div class="result-card">
+          <h3>✓ Strengths</h3>
+          <ul id="res-strengths"></ul>
+        </div>
+        <div class="result-card">
+          <h3>⚠ Challenges</h3>
+          <ul id="res-challenges"></ul>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h3>Quick Wins — Start This Week</h3>
+        <div id="res-quickwins"></div>
+      </div>
+
+      <div class="result-card priority-card">
+        <h3>90-Day Priority</h3>
+        <p id="res-priority" class="priority-text"></p>
+      </div>
+
+      <div class="result-card ahoosh-card">
+        <h3>How AHoosh.ai Can Help</h3>
+        <p id="res-ahoosh"></p>
+        <a href="/consulting" class="btn-gold" style="margin-top:1rem;display:inline-block">Book a Free Strategy Call →</a>
+      </div>
+
+      <button id="restart-btn" class="btn-outline">← Run Another Analysis</button>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+const QUESTIONS = [
+  { id: 1, label: 'What industry or business sector are you in?', placeholder: 'e.g. E-commerce, SaaS, consulting, hospitality…' },
+  { id: 2, label: 'Who are your target customers?', placeholder: 'e.g. B2B mid-size companies in Germany, or local consumers aged 25–45' },
+  { id: 3, label: 'What is your main product or service?', placeholder: 'Be specific — what exactly do you sell or do?' },
+  { id: 4, label: 'What is your biggest business challenge right now?', placeholder: 'The thing keeping you up at night' },
+  { id: 5, label: 'How do you currently acquire new customers?', placeholder: 'e.g. referrals, ads, cold outreach, SEO, social media…' },
+  { id: 6, label: 'What is your approximate monthly revenue?', placeholder: 'e.g. under €1k, €1k–€5k, €5k–€20k, €20k+' },
+  { id: 7, label: 'How many people are on your team?', placeholder: 'e.g. solo, 2–5, 5–20, 20+' },
+  { id: 8, label: 'What makes you different from competitors?', placeholder: 'What is your actual differentiator — not marketing speak' },
+  { id: 9, label: 'What are your main goals for the next 12 months?', placeholder: 'Revenue targets, expansion, new product, exit…' },
+  { id: 10, label: 'What is the #1 thing you wish you could fix in your business?', placeholder: 'Be honest — this shapes the whole analysis' },
+];
+
+// Build form
+const list = document.getElementById('questions-list');
+list.innerHTML = QUESTIONS.map(q => `
+  <div class="question-block">
+    <label class="question-label" for="q${q.id}">
+      <span class="q-num">${q.id}</span>
+      ${q.label}
+    </label>
+    <textarea
+      id="q${q.id}"
+      name="q${q.id}"
+      placeholder="${q.placeholder}"
+      rows="2"
+      class="q-input"
+    ></textarea>
+  </div>
+`).join('');
+
+document.getElementById('qa-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const answers = {};
+  let filled = 0;
+  QUESTIONS.forEach(q => {
+    const val = document.getElementById('q' + q.id)?.value?.trim() || '';
+    answers[q.id] = val;
+    if (val.length > 2) filled++;
+  });
+
+  if (filled < 5) {
+    const errBox = document.getElementById('qa-error');
+    errBox.textContent = 'Please answer at least 5 questions before submitting.';
+    errBox.classList.remove('hidden');
+    errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  document.getElementById('qa-error').classList.add('hidden');
+  document.getElementById('qa-form-section').classList.add('hidden');
+  document.getElementById('qa-loading').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  try {
+    const res = await fetch('/api/business-qa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers }),
+    });
+    const data = await res.json();
+
+    document.getElementById('qa-loading').classList.add('hidden');
+
+    if (data.error) {
+      const errBox = document.getElementById('qa-error');
+      errBox.textContent = data.error;
+      errBox.classList.remove('hidden');
+      document.getElementById('qa-form-section').classList.remove('hidden');
+      return;
+    }
+
+    const a = data.analysis;
+
+    document.getElementById('res-archetype').textContent = a.archetype || 'Business Analysis';
+    document.getElementById('res-summary').textContent = a.summary || '';
+
+    const ul = (items) => (items || []).map(i => `<li>${i}</li>`).join('');
+    document.getElementById('res-strengths').innerHTML = ul(a.strengths);
+    document.getElementById('res-challenges').innerHTML = ul(a.challenges);
+
+    document.getElementById('res-quickwins').innerHTML = (a.quickWins || []).map((w, i) => `
+      <div class="quickwin-item">
+        <div class="qw-num">${i + 1}</div>
+        <div class="qw-content">
+          <div class="qw-action">${w.action}</div>
+          <div class="qw-meta">
+            <span class="qw-impact">${w.impact}</span>
+            <span class="qw-time">${w.timeframe}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('res-priority').textContent = a.priority90days || '';
+    document.getElementById('res-ahoosh').textContent = a.ahooshFit || '';
+
+    document.getElementById('qa-results').classList.remove('hidden');
+    document.getElementById('qa-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    document.getElementById('qa-loading').classList.add('hidden');
+    const errBox = document.getElementById('qa-error');
+    errBox.textContent = 'Network error. Please check your connection and try again.';
+    errBox.classList.remove('hidden');
+    document.getElementById('qa-form-section').classList.remove('hidden');
+  }
+});
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  document.getElementById('qa-results').classList.add('hidden');
+  document.getElementById('qa-form-section').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+<style>
+.tool-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+.tool-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.tool-badge {
+  display: inline-block;
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  border: 1px solid rgba(215,161,61,0.3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+.tool-header h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  color: var(--color-text);
+  margin: 0 0 0.75rem;
+}
+.tool-subtitle { color: var(--color-text-muted); font-size: 1rem; }
+/* Questions */
+.question-block { margin-bottom: 1.5rem; }
+.question-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+.q-num {
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  font-weight: 800;
+  font-size: 0.78rem;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.q-input {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.q-input:focus { border-color: #D7A13D; }
+.q-input::placeholder { color: var(--color-text-muted); }
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.form-note { font-size: 0.82rem; color: var(--color-text-muted); margin: 0; }
+.btn-gold {
+  background: #D7A13D;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-gold:hover { background: #e5b040; }
+.btn-lg { padding: 0.9rem 2rem; font-size: 1rem; }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 8px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: #D7A13D; color: #D7A13D; }
+.hidden { display: none !important; }
+.loading-spinner {
+  width: 52px; height: 52px;
+  border: 3px solid rgba(215,161,61,0.2);
+  border-top-color: #D7A13D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 3rem auto 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { text-align: center; color: var(--color-text-muted); }
+.loading-dots { display: flex; justify-content: center; gap: 0.4rem; margin-top: 1rem; }
+.loading-dots span {
+  width: 8px; height: 8px;
+  background: #D7A13D;
+  border-radius: 50%;
+  animation: dots 1.4s infinite ease-in-out both;
+}
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes dots { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+.error-box {
+  background: rgba(255,78,66,0.1);
+  border: 1px solid rgba(255,78,66,0.3);
+  color: #ff6b5a;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+/* Results */
+.results-header { text-align: center; margin-bottom: 2rem; }
+.archetype-badge {
+  display: inline-block;
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  border: 1px solid rgba(215,161,61,0.4);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  margin-bottom: 0.75rem;
+}
+.results-title { font-size: 1.5rem; color: var(--color-text); margin: 0; }
+.result-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.result-card h3 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+}
+.result-card p { color: var(--color-text); line-height: 1.7; margin: 0; }
+.result-card ul { list-style: none; padding: 0; margin: 0; }
+.result-card ul li {
+  color: var(--color-text);
+  padding: 0.35rem 0;
+  padding-left: 1.2rem;
+  position: relative;
+  font-size: 0.95rem;
+}
+.result-card ul li::before { content: '→'; position: absolute; left: 0; color: #D7A13D; }
+.summary-card { border-left: 3px solid #D7A13D; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+/* Quick wins */
+.quickwin-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.quickwin-item:last-child { border-bottom: none; padding-bottom: 0; }
+.qw-num {
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  font-weight: 800;
+  font-size: 0.82rem;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.qw-action { font-weight: 600; font-size: 0.95rem; color: var(--color-text); margin-bottom: 0.3rem; }
+.qw-meta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.qw-impact { font-size: 0.82rem; color: var(--color-text-muted); }
+.qw-time {
+  font-size: 0.78rem;
+  background: rgba(12,206,107,0.12);
+  color: #0cce6b;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.priority-card { border-left: 3px solid #0cce6b; }
+.priority-text { font-size: 1.05rem; font-weight: 600; color: var(--color-text); line-height: 1.6; }
+.ahoosh-card { border-left: 3px solid #D7A13D; }
+</style>
