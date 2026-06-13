@@ -5,6 +5,32 @@
 const TTL = 300;
 const MAX_PER = 3; // max articles per source
 
+// Topic blocklist — titles containing these words are dropped across ALL sources.
+// Covers: sports, entertainment, health/lifestyle, domestic religion topics.
+const BLOCKLIST = [
+  // Sports (Persian)
+  'فوتبال','بسکتبال','والیبال','تنیس','المپیک','جام جهانی','جام‌جهانی',
+  'سامورایی','لیگ برتر','لیگ قهرمانان','بازی‌های آسیایی','مسابقات',
+  // Health/lifestyle/religion (Persian)
+  'تشنج','حجاب','آشپزی','رژیم غذایی','پوست و مو','زیبایی','ازدواج',
+  // Sports (English)
+  'shark attack','world cup','super bowl',' nba ',' nfl ','premier league',
+  'champions league','formula 1','grand prix','olympic games','match result',
+  'transfer window','goal scored',
+  // Entertainment (English)
+  'box office','album release','celebrity','red carpet',
+  // Health fluff (English)
+  'weight loss','diet tips','beauty tips','skincare',
+];
+
+function isBlocked(title) {
+  var t = (title || '').toLowerCase();
+  for (var i = 0; i < BLOCKLIST.length; i++) {
+    if (t.includes(BLOCKLIST[i].toLowerCase())) return true;
+  }
+  return false;
+}
+
 const SOURCES = [
   // ── Persian-language ───────────────────────────────────────────────
   { url: 'https://feeds.bbci.co.uk/persian/rss.xml',                   name: 'BBC Persian',         lang: 'fa' },
@@ -96,6 +122,7 @@ function parseRSS(xml, srcName, srcLang) {
     const block = match[1];
     const title = extractTag(block, 'title');
     if (!title || title.length < 5) continue;
+    if (isBlocked(title)) continue;
     // link: prefer <link>, fallback to guid
     let link = extractTag(block, 'link');
     if (!link) link = extractTag(block, 'guid');

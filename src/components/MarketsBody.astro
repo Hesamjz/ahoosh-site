@@ -476,13 +476,19 @@ const GROUP_LABELS = {
     articles.slice(0, 9).forEach(function(a) {
       const card = document.createElement('a');
       card.className = 'news-card';
-      card.href = a.link || '#';
-      card.target = '_blank';
-      card.rel = 'noopener noreferrer';
+      if (a.isOwn) {
+        card.href = '/articles/' + a.slug;
+        card.style.borderColor = 'rgba(215,161,61,0.4)';
+      } else {
+        card.href = a.link || '#';
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+      }
       const isRtl = a.lang === 'fa' || a.lang === 'ar';
-      card.innerHTML =
-        '<div class="src-badge">' + a.source + '</div>' +
-        '<div class="headline"' + (isRtl ? ' dir="rtl"' : '') + '>' + a.title + '</div>';
+      const badge = a.isOwn
+        ? '<div class="src-badge" style="background:rgba(215,161,61,0.2);color:var(--gold);">★ AHOOSH</div>'
+        : '<div class="src-badge">' + a.source + '</div>';
+      card.innerHTML = badge + '<div class="headline"' + (isRtl ? ' dir="rtl"' : '') + '>' + a.title + '</div>';
       container.appendChild(card);
     });
   }
@@ -490,11 +496,15 @@ const GROUP_LABELS = {
   async function fetchNews() {
     if (newsLoaded) return;
     try {
-      const r = await fetch('/api/news', { signal: AbortSignal.timeout(20000) }).catch(function(){ return null; });
-      if (r && r.ok) {
-        const d = await r.json();
-        if (d.articles && d.articles.length) { renderNews(d.articles); newsLoaded = true; }
-      }
+      const [ownResp, rssResp] = await Promise.all([
+        fetch('/api/own-articles.json', {signal: AbortSignal.timeout(8000)}).catch(function(){return null;}),
+        fetch('/api/news', {signal: AbortSignal.timeout(20000)}).catch(function(){return null;}),
+      ]);
+      const ownRaw = (ownResp && ownResp.ok) ? await ownResp.json() : [];
+      const ownArts = ownRaw.map(function(a){ return Object.assign({}, a, {isOwn:true}); });
+      const rssArts = (rssResp && rssResp.ok) ? ((await rssResp.json()).articles || []) : [];
+      const all = ownArts.concat(rssArts);
+      if (all.length) { renderNews(all); newsLoaded = true; }
     } catch (e) {}
   }
 
