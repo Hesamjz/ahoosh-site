@@ -1,145 +1,510 @@
 ---
-// NewsPage.astro — shared live TV + news feed component
+// NewsPage.astro — unified live page: world clocks + TV + markets + news
 // Each locale page passes `locale` and `t` (translated strings)
+import { getCollection } from 'astro:content';
 const { locale, t } = Astro.props;
+
+// AHoosh own articles — server-side, static, zero API cost
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const ownArticles = allPosts
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+  .slice(0, 24)
+  .map(p => ({
+    title: p.data.title,
+    description: p.data.description || '',
+    pubDate: p.data.pubDate instanceof Date ? p.data.pubDate.toISOString() : String(p.data.pubDate),
+    slug: p.id.replace(/\.(md|mdx)$/, ''),
+    lang: p.data.lang || 'en',
+  }));
 ---
 
 <!-- Hero -->
-<section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:32px 24px 24px;border-bottom:1px solid rgba(215,161,61,0.1);">
-  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+<section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:28px 24px 18px;border-bottom:1px solid rgba(215,161,61,0.1);">
+  <div style="max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
     <div>
       <div class="section-eyebrow" style="margin-bottom:6px;">{t.eyebrow}</div>
-      <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--silver);margin:0;">{t.heading}</h1>
-      <p style="font-size:13px;color:var(--silver-dim);margin-top:6px;" set:html={t.subheading}></p>
+      <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(18px,3.5vw,26px);color:var(--silver);margin:0;">{t.heading}</h1>
+      <p style="font-size:12px;color:var(--silver-dim);margin-top:4px;" set:html={t.subheading}></p>
     </div>
-    <div id="news-updated" style="font-size:11px;color:var(--silver-muted);"></div>
   </div>
 </section>
 
-<div style="max-width:1100px;margin:0 auto;padding:24px 24px 64px;">
+<!-- ══ WORLD CLOCKS ══════════════════════════════════════════════════════════ -->
+<div style="background:rgba(1,10,24,0.97);border-bottom:1px solid rgba(215,161,61,0.1);padding:8px 24px;overflow-x:auto;">
+  <div style="display:inline-flex;gap:0;align-items:stretch;min-width:max-content;" id="clocks-strip">
+    <!-- populated by JS -->
+  </div>
+</div>
 
-  <!-- ══ LIVE TV ══════════════════════════════════════════════════════ -->
-  <section style="margin-bottom:40px;">
-    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">
-      {t.liveTVLabel}
+<div style="max-width:1240px;margin:0 auto;padding:20px 20px 64px;">
+
+  <!-- ══ LIVE TV ════════════════════════════════════════════════════════════ -->
+  <section style="margin-bottom:28px;">
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.liveTVLabel}</div>
+    <!-- Channel picker: two clean dropdowns (all screen sizes) -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+      <select id="ch-lang-sel" class="ch-sel" aria-label="Channel category" style="flex:0 0 auto;min-width:140px;"></select>
+      <select id="ch-name-sel" class="ch-sel" aria-label="Channel" style="flex:1;min-width:180px;max-width:320px;"></select>
     </div>
-
-    <!-- Language filter row for channels -->
-    <div id="ch-lang-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
-
-    <!-- Channel picker -->
-    <div id="channel-btns" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
-
-    <!-- Player -->
-    <div style="position:relative;width:100%;max-width:800px;background:#000;border-radius:8px;overflow:hidden;border:1px solid rgba(215,161,61,0.2);">
+    <div style="position:relative;width:100%;max-width:760px;background:#000;border-radius:8px;overflow:hidden;border:1px solid rgba(215,161,61,0.2);">
       <video id="live-video" controls muted playsinline style="width:100%;display:block;aspect-ratio:16/9;background:#000;"></video>
       <iframe id="live-iframe" style="width:100%;aspect-ratio:16/9;border:none;display:none;" allow="autoplay; encrypted-media"></iframe>
     </div>
-    <div id="channel-info" style="margin-top:10px;font-size:12px;color:var(--silver-muted);"></div>
+    <div style="margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div id="channel-info" style="font-size:11px;color:var(--silver-muted);"></div>
+      <span id="src-badge" style="display:none;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);border-radius:4px;padding:2px 8px;">⚡ Source 1 / 1</span>
+      <button id="next-src-btn" onclick="tryNextSource()" style="display:none;font-size:10px;background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:3px 10px;color:var(--silver-dim);cursor:pointer;font-family:var(--font-body);">↻ Try next source</button>
+    </div>
   </section>
 
-  <!-- ══ NEWS FEED ════════════════════════════════════════════════════ -->
-  <section>
-    <div style="margin-bottom:14px;">
-      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">
-        {t.latestNewsLabel}
+  <!-- ══ 2-COLUMN: MARKETS + NEWS ══════════════════════════════════════════ -->
+  <div class="live-grid">
+
+    <!-- ── LEFT: Markets Sidebar ──────────────────────────────────────────── -->
+    <aside class="mkt-sidebar">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">{t.marketsLabel || '📊 Markets'}</div>
+
+      <div class="mkt-head">FX</div>
+      <div id="mkt-fx" class="mkt-rows">
+        <div class="mkt-skel"></div><div class="mkt-skel"></div><div class="mkt-skel"></div>
       </div>
+
+      <div class="mkt-head" style="margin-top:12px;">Commodities</div>
+      <div id="mkt-comm" class="mkt-rows">
+        <div class="mkt-skel"></div><div class="mkt-skel"></div>
+      </div>
+
+      <div class="mkt-head" style="margin-top:12px;">
+        Indices
+        <span style="font-weight:400;opacity:0.45;font-size:9px;margin-left:4px;">~15min delay</span>
+      </div>
+      <div id="mkt-indices" class="mkt-rows">
+        <div class="mkt-skel"></div><div class="mkt-skel"></div>
+        <div class="mkt-skel"></div><div class="mkt-skel"></div>
+      </div>
+
+      <div class="mkt-head" style="margin-top:12px;">Crypto</div>
+      <div id="mkt-crypto" class="mkt-rows">
+        <div class="mkt-skel"></div><div class="mkt-skel"></div><div class="mkt-skel"></div>
+      </div>
+
+      <div id="mkt-updated" style="font-size:10px;color:var(--silver-muted);margin-top:10px;text-align:right;"></div>
+    </aside>
+
+    <!-- ── RIGHT: News Column ─────────────────────────────────────────────── -->
+    <div class="news-col" dir={t.rtl ? 'rtl' : 'ltr'}>
+
+      <!-- Title News: RSS headlines, auto-refresh 5 min -->
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">{t.titleNewsLabel || '📰 Title News'}</div>
+          <div id="rss-updated" style="font-size:10px;color:var(--silver-muted);"></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;">
+          <input id="news-search" type="text" placeholder={t.searchPlaceholder}
+            style="flex:1;min-width:160px;max-width:280px;background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);border-radius:6px;padding:6px 10px;color:var(--silver);font-size:12px;font-family:var(--font-body);outline:none;" />
+          <div id="rss-lang-row" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+        </div>
+        <div id="rss-list" style="display:flex;flex-direction:column;"></div>
+        <div id="news-meta" style="margin-top:8px;font-size:10px;color:var(--silver-muted);"></div>
+      </div>
+
+      <!-- Detail News: AHoosh own articles — static, zero cost -->
+      <div>
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.detailNewsLabel || '✍️ Our Articles'}</div>
+        <div id="detail-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;"></div>
+      </div>
+
     </div>
-    <input id="news-search" type="text" placeholder={t.searchPlaceholder} style="width:100%;max-width:360px;display:block;margin-bottom:14px;background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);border-radius:6px;padding:8px 12px;color:var(--silver);font-size:13px;font-family:var(--font-body);outline:none;" />
-    <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;"></div>
-    <div style="margin-top:16px;text-align:center;font-size:11px;color:var(--silver-muted);" id="news-meta"></div>
-  </section>
+  </div>
 </div>
 
 <style is:global>
+  /* ── World clocks ─────────────────────────────────────────────────────── */
+  .clock-city {
+    display:inline-flex;flex-direction:column;align-items:center;
+    padding:6px 18px;border-right:1px solid rgba(215,161,61,0.08);
+  }
+  .clock-city:first-child { padding-left:0; }
+  .clock-city:last-child  { border-right:none; }
+  .clock-city .city-name { font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver-muted);margin-bottom:1px; }
+  .clock-city .city-time { font-size:17px;font-weight:700;font-family:var(--font-head);color:var(--silver);letter-spacing:0.02em;line-height:1.1; }
+  .clock-city .city-date { font-size:9px;color:var(--gold);opacity:0.65;margin-top:1px; }
+
+  /* ── 2-column grid ────────────────────────────────────────────────────── */
+  .live-grid { display:grid;grid-template-columns:290px 1fr;gap:20px;align-items:start; }
+  @media(max-width:880px) { .live-grid { grid-template-columns:1fr; } }
+
+  /* ── Markets sidebar ──────────────────────────────────────────────────── */
+  .mkt-sidebar {
+    background:rgba(3,20,46,0.65);border:1px solid rgba(215,161,61,0.12);
+    border-radius:8px;padding:14px;position:sticky;top:16px;
+  }
+  .mkt-head {
+    font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--silver-muted);border-bottom:1px solid rgba(215,161,61,0.08);
+    padding-bottom:4px;margin-bottom:6px;
+  }
+  .mkt-rows { display:flex;flex-direction:column;gap:3px; }
+  .mkt-row {
+    display:flex;align-items:center;justify-content:space-between;
+    padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.025);
+  }
+  .mkt-row .mkt-name { font-size:11px;color:var(--silver-dim);flex:1;min-width:0; }
+  .mkt-row .mkt-price { font-size:11px;font-weight:700;color:var(--silver);font-family:var(--font-head);margin:0 6px; }
+  .mkt-row .mkt-chg { font-size:10px;padding:1px 4px;border-radius:3px;font-weight:700;min-width:44px;text-align:right;flex-shrink:0; }
+  .mkt-chg.pos { color:#22c55e;background:rgba(34,197,94,0.1); }
+  .mkt-chg.neg { color:#ef4444;background:rgba(239,68,68,0.1); }
+  .mkt-chg.neu { color:var(--silver-muted);background:rgba(255,255,255,0.04); }
+  .mkt-skel {
+    height:20px;border-radius:3px;margin-bottom:3px;
+    background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.06) 50%,rgba(255,255,255,0.03) 75%);
+    background-size:200% 100%;animation:shimmer 1.4s infinite;
+  }
+
+  /* ── News column ──────────────────────────────────────────────────────── */
+  .news-col {}
+
+  /* RSS headline rows */
+  .rss-row {
+    display:flex;align-items:flex-start;gap:7px;
+    padding:6px 0;border-bottom:1px solid rgba(215,161,61,0.06);
+    text-decoration:none;
+  }
+  .rss-row:hover .rss-title { color:var(--gold); }
+  .rss-src {
+    flex-shrink:0;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--gold);background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.18);
+    border-radius:3px;padding:2px 5px;white-space:nowrap;margin-top:1px;
+  }
+  .rss-title { font-size:12px;color:var(--silver);line-height:1.5;flex:1;min-width:0; }
+  .rss-time { flex-shrink:0;font-size:10px;color:var(--silver-muted);white-space:nowrap;margin-top:1px; }
+
+  /* AHoosh article cards */
+  .news-card-full {
+    background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.15);
+    border-radius:6px;padding:12px;cursor:pointer;
+    transition:border-color 150ms ease;text-decoration:none;display:block;
+  }
+  .news-card-full:hover { border-color:rgba(215,161,61,0.45); }
+  .news-card-full .src-badge {
+    display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);
+    border-radius:3px;padding:2px 6px;margin-bottom:6px;
+  }
+  .news-card-full .headline {
+    font-size:12px;color:var(--silver);line-height:1.55;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .news-card-full .date { font-size:10px;color:var(--silver-muted);margin-top:5px; }
+
+  /* Channel buttons */
+  .ch-btn {
+    background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);
+    border-radius:6px;padding:5px 10px;font-size:11px;color:var(--silver-dim);
+    cursor:pointer;font-family:var(--font-body);transition:all 150ms ease;
+  }
+  .ch-btn:hover,.ch-btn.active {
+    background:rgba(215,161,61,0.15);border-color:rgba(215,161,61,0.5);color:var(--gold);
+  }
+  .ch-lang-btn {
+    background:rgba(10,30,60,0.5);border:1px solid rgba(215,161,61,0.12);
+    border-radius:4px;padding:3px 9px;font-size:11px;color:var(--silver-muted);
+    cursor:pointer;font-family:var(--font-body);transition:all 150ms ease;
+  }
+  .ch-lang-btn:hover,.ch-lang-btn.active {
+    background:rgba(215,161,61,0.12);border-color:rgba(215,161,61,0.4);color:var(--gold);
+  }
+  .lang-tab {
+    background:rgba(10,30,60,0.6);border:1px solid rgba(215,161,61,0.15);
+    border-radius:4px;padding:3px 9px;font-size:11px;color:var(--silver-muted);
+    cursor:pointer;font-family:var(--font-body);transition:all 150ms ease;
+  }
+  .lang-tab:hover,.lang-tab.active {
+    background:rgba(215,161,61,0.12);border-color:rgba(215,161,61,0.4);color:var(--gold);
+  }
+
+  /* ── Mobile channel picker ───────────────────────────────────────────── */
+  .mobile-ch-picker { display:none;flex-direction:column;gap:8px;margin-bottom:12px; }
+  .desktop-ch-picker { display:block; }
+  .ch-sel {
+    width:100%;background:rgba(5,20,50,0.95);
+    border:1px solid rgba(215,161,61,0.3);border-radius:8px;
+    padding:10px 14px;color:var(--silver);font-size:14px;
+    font-family:var(--font-body);outline:none;cursor:pointer;
+    appearance:auto;
+  }
+  @media(max-width:640px) {
+    .mobile-ch-picker { display:flex; }
+    .desktop-ch-picker { display:none; }
+  }
+
+  /* ── Markets mobile: 2-col grid ──────────────────────────────────────── */
+  @media(max-width:880px) {
+    .mkt-sidebar { position:static; }
+    .mkt-rows { display:grid;grid-template-columns:1fr 1fr;gap:6px; }
+    .mkt-skel { height:22px; }
+  }
+  @media(max-width:500px) {
+    .mkt-rows { grid-template-columns:1fr; }
+    .clock-city { padding:5px 12px; }
+    .clock-city .city-time { font-size:14px; }
+  }
+
+  /* ── Clocks scroll hint ──────────────────────────────────────────────── */
+  #clocks-strip { scroll-behavior:smooth; }
+
+  /* Skeleton */
   .news-skeleton {
     height:90px;
     background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.07) 50%,rgba(255,255,255,0.04) 75%);
     background-size:200% 100%;animation:shimmer 1.4s infinite;
     border-radius:6px;border:1px solid rgba(215,161,61,0.08);
   }
-  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-  .news-card-full{background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.15);border-radius:6px;padding:14px;cursor:pointer;transition:border-color 150ms ease;text-decoration:none;display:block;}
-  .news-card-full:hover{border-color:rgba(215,161,61,0.45);}
-  .news-card-full .src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);border-radius:3px;padding:2px 6px;margin-bottom:7px;}
-  .news-card-full .headline{font-size:13px;color:var(--silver);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-  .news-card-full .date{font-size:10px;color:var(--silver-muted);margin-top:6px;}
-  .ch-btn{background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--silver-dim);cursor:pointer;font-family:var(--font-body);transition:all 150ms ease;}
-  .ch-btn:hover,.ch-btn.active{background:rgba(215,161,61,0.15);border-color:rgba(215,161,61,0.5);color:var(--gold);}
-  .ch-lang-btn{background:rgba(10,30,60,0.5);border:1px solid rgba(215,161,61,0.12);border-radius:4px;padding:3px 10px;font-size:11px;color:var(--silver-muted);cursor:pointer;font-family:var(--font-body);transition:all 150ms ease;}
-  .ch-lang-btn:hover,.ch-lang-btn.active{background:rgba(215,161,61,0.12);border-color:rgba(215,161,61,0.4);color:var(--gold);}
-  .lang-tab{background:rgba(10,30,60,0.6);border:1px solid rgba(215,161,61,0.15);border-radius:4px;padding:4px 10px;font-size:11px;color:var(--silver-muted);cursor:pointer;font-family:var(--font-body);transition:all 150ms ease;}
-  .lang-tab:hover,.lang-tab.active{background:rgba(215,161,61,0.12);border-color:rgba(215,161,61,0.4);color:var(--gold);}
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 </style>
 
-<script is:inline define:vars={{ locale, t }}>
+<script is:inline define:vars={{ locale, t, ownArticles }}>
 (function(){
 
-// ── ALL CHANNELS — verified live stream IDs ─────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// ALL CHANNELS — verified live stream IDs
 // No Iranian state media (no Tasnim, Mehr, Fars, IRIB, Press TV)
-// All IDs verified via YouTube /live endpoint, June 2026
+// Sport & Tech channels use `sources` array for intelligent auto-fallback
+// ─────────────────────────────────────────────────────────────────────────────
 const CHANNELS_ALL = [
   // English
   { id:'france24-en', name:'France 24',    lang:'en', type:'youtube', vid:'HvZt-nh9sGg' },
-  { id:'aljazeera',   name:'Al Jazeera',   lang:'en', type:'youtube', vid:'LkfNJ6EFkwM' },
-  { id:'bbc-world',   name:'BBC World',    lang:'en', type:'youtube', vid:'PatB45tYFtc'  },
-  { id:'sky',         name:'Sky News',     lang:'en', type:'youtube', vid:'9Auq9mYxFEE'  },
-  { id:'cnn',         name:'CNN',          lang:'en', type:'youtube', vid:'aB-6_-GboaM'  },
-  { id:'cnn-i',       name:'CNN Intl',     lang:'en', type:'youtube', vid:'Z-nKTmdGpz0'  },
-  { id:'dw-en',       name:'DW News',      lang:'en', type:'youtube', vid:'LuKwFajn37U'  },
-  { id:'trt',         name:'TRT World',    lang:'en', type:'youtube', vid:'oNUi_iXNPeo'  },
-  { id:'euronews-en', name:'Euronews EN',  lang:'en', type:'youtube', vid:'pykpO5kQJ98'  },
-  { id:'reuters',     name:'Reuters',      lang:'en', type:'youtube', vid:'R02egjcxpUw'  },
-  { id:'abc',         name:'ABC News',     lang:'en', type:'youtube', vid:'exIvC0l8x-Y'  },
-  { id:'cbs',         name:'CBS News',     lang:'en', type:'youtube', vid:'khdVidn7AfQ'  },
-  { id:'fox',         name:'Fox News',     lang:'en', type:'youtube', vid:'qEHza_8UL-k'  },
-  { id:'wion',        name:'WION',         lang:'en', type:'youtube', vid:'X5yAyEpwxU0'  },
-  { id:'gbnews',      name:'GB News',      lang:'en', type:'youtube', vid:'4fzMTueenHs'  },
-  // Markets
-  { id:'bloomberg',   name:'Bloomberg TV', lang:'market', type:'youtube', vid:'dp8PhLsUcFE' },
-  { id:'cnbc',        name:'CNBC',         lang:'market', type:'youtube', vid:'9NyxcX3rhQs' },
+  { id:'aljazeera',   name:'Al Jazeera',   lang:'en', type:'hls',     src:'https://live-hls-web-aje-gcp.thehlive.com/AJE/index.m3u8' },
+  { id:'bbc-world',   name:'BBC World',    lang:'en', type:'hls',     src:'https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8' },
+  { id:'sky',         name:'Sky News',     lang:'en', type:'youtube', vid:'YDvsBbKfLPA' },
+  { id:'cnn',         name:'CNN',          lang:'en', type:'youtube', vid:'aB-6_-GboaM' },
+  { id:'cnn-i',       name:'CNN Intl',     lang:'en', type:'youtube', vid:'Z-nKTmdGpz0' },
+  { id:'dw-en',       name:'DW News',      lang:'en', type:'youtube', vid:'LuKwFajn37U' },
+  { id:'trt',         name:'TRT World',    lang:'en', type:'youtube', vid:'oNUi_iXNPeo' },
+  { id:'euronews-en', name:'Euronews EN',  lang:'en', type:'youtube', vid:'pykpO5kQJ98' },
+  { id:'reuters',     name:'Reuters',      lang:'en', type:'youtube', vid:'R02egjcxpUw' },
+  { id:'abc',         name:'ABC News',     lang:'en', type:'youtube', vid:'exIvC0l8x-Y' },
+  { id:'cbs',         name:'CBS News',     lang:'en', type:'youtube', vid:'khdVidn7AfQ' },
+  { id:'fox',         name:'Fox News',     lang:'en', type:'youtube', vid:'qEHza_8UL-k' },
+  { id:'wion',        name:'WION',         lang:'en', type:'youtube', vid:'X5yAyEpwxU0' },
+  { id:'gbnews',      name:'GB News',      lang:'en', type:'youtube', vid:'4fzMTueenHs' },
+  // Finance channels (grouped with English)
+  { id:'bloomberg',   name:'Bloomberg TV', lang:'en', type:'hls',     src:'https://liveproduseast.global.ssl.fastly.net/us/index.m3u8' },
+  { id:'cnbc',        name:'CNBC',         lang:'en', type:'youtube', vid:'9NyxcX3rhQs' },
   // Persian — diaspora only (no Iranian state media)
-  { id:'bbc-fa',      name:'BBC Persian',  lang:'fa', type:'youtube', vid:'XRHV-9m_WO4'  },
-  { id:'iranintl',    name:'Iran Intl',    lang:'fa', type:'youtube', vid:'5JDxjsAVaGk'  },
-  { id:'manoto',      name:'Manoto',       lang:'fa', type:'youtube', vid:'bQJFCVV8hCg'  },
-  { id:'voa-fa',      name:'VOA Farsi',    lang:'fa', type:'youtube', vid:'nkwyi4gDpxs'  },
+  {
+    id:'shabakeh3', name:'90', lang:'fa',
+    sources:[
+      { type:'hls', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/manifest/video.m3u8' },
+      { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/iframe' },
+    ]
+  },
+  { id:'bbc-fa',      name:'BBC Persian',  lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
+  { id:'iranintl',    name:'Iran Intl',    lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
+  { id:'manoto',      name:'Manoto',       lang:'fa', type:'youtube', vid:'bQJFCVV8hCg' },
+  { id:'voa-fa',      name:'VOA Farsi',    lang:'fa', type:'youtube', vid:'nkwyi4gDpxs' },
   { id:'rfarda',      name:'Radio Farda',  lang:'fa', type:'hls', src:'https://rferl-ingest.akamaized.net/hls/live/2121768/tvmc01/playlist.m3u8' },
   { id:'iranfarda',   name:'Irane Farda',  lang:'fa', type:'hls', src:'https://hls.iranfarda.live/hls/stream.m3u8' },
   // German
-  { id:'welt',        name:'WELT',         lang:'de', type:'youtube', vid:'RRr0687ik44'  },
-  { id:'euronews-de', name:'Euronews DE',  lang:'de', type:'youtube', vid:'CQ3KsEbsYHs'  },
-  { id:'arte',        name:'ARTE',         lang:'de', type:'youtube', vid:'3gjNL03uYWc'  },
+  { id:'welt',        name:'WELT',         lang:'de', type:'youtube', vid:'RRr0687ik44' },
+  { id:'euronews-de', name:'Euronews DE',  lang:'de', type:'youtube', vid:'CQ3KsEbsYHs' },
+  { id:'arte',        name:'ARTE',         lang:'de', type:'youtube', vid:'3gjNL03uYWc' },
   // French
-  { id:'france24-fr', name:'France 24 FR', lang:'fr', type:'youtube', vid:'a47ckXKZjxI'  },
-  { id:'euronews-fr', name:'Euronews FR',  lang:'fr', type:'youtube', vid:'NiRIbKwAejk'  },
+  { id:'france24-fr', name:'France 24 FR', lang:'fr', type:'youtube', vid:'a47ckXKZjxI' },
+  { id:'euronews-fr', name:'Euronews FR',  lang:'fr', type:'youtube', vid:'NiRIbKwAejk' },
   // Spanish
-  { id:'dw-es',       name:'DW Español',   lang:'es', type:'youtube', vid:'yZh3xsFqCt8'  },
+  { id:'dw-es',       name:'DW Español',   lang:'es', type:'youtube', vid:'yZh3xsFqCt8' },
   // Serbian / Balkan
-  { id:'rts1',        name:'RTS 1',        lang:'sr', type:'youtube', vid:'8jrBwSYdZEQ'  },
-  { id:'hrt',         name:'HRT',          lang:'sr', type:'youtube', vid:'lbAeay4EVZ0'  },
+  { id:'rts1',        name:'RTS 1',        lang:'sr', type:'youtube', vid:'8jrBwSYdZEQ' },
+  { id:'hrt',         name:'HRT',          lang:'sr', type:'youtube', vid:'lbAeay4EVZ0' },
   // Arabic
   { id:'aljazeera-ar',name:'Al Jazeera عر',lang:'ar', type:'youtube', vid:'N8xxOD0nT1Y' },
-  { id:'alarabiya',   name:'Al Arabiya',   lang:'ar', type:'youtube', vid:'n7eQejkXbnM'  },
-  { id:'bbc-ar',      name:'BBC Arabic',   lang:'ar', type:'youtube', vid:'O1pGmVtj2Y8'  },
-  { id:'indep-ar',    name:'Indep. Arabic',lang:'ar', type:'youtube', vid:'WKryGkxaPn4'  },
-  { id:'dw-ar',       name:'DW Arabic',    lang:'ar', type:'youtube', vid:'AGkp2AL8e7o'  },
-  { id:'alhadath',    name:'Al Hadath',    lang:'ar', type:'youtube', vid:'SPvxA_UuoYY'  },
-  { id:'sky-ar',      name:'Sky Arabia',   lang:'ar', type:'youtube', vid:'ymYr5ze2XeA'  },
-  { id:'cnn-ar',      name:'CNN Arabic',   lang:'ar', type:'youtube', vid:'n8osICWftpU'  },
+  { id:'alarabiya',   name:'Al Arabiya',   lang:'ar', type:'youtube', vid:'n7eQejkXbnM' },
+  { id:'bbc-ar',      name:'BBC Arabic',   lang:'ar', type:'youtube', vid:'O1pGmVtj2Y8' },
+  { id:'indep-ar',    name:'Indep. Arabic',lang:'ar', type:'youtube', vid:'WKryGkxaPn4' },
+  { id:'dw-ar',       name:'DW Arabic',    lang:'ar', type:'youtube', vid:'AGkp2AL8e7o' },
+  { id:'alhadath',    name:'Al Hadath',    lang:'ar', type:'youtube', vid:'SPvxA_UuoYY' },
+  { id:'sky-ar',      name:'Sky Arabia',   lang:'ar', type:'youtube', vid:'ymYr5ze2XeA' },
+  { id:'cnn-ar',      name:'CNN Arabic',   lang:'ar', type:'youtube', vid:'n8osICWftpU' },
+  // ── Sport ── verified HLS (re-engineered from parsatv.com, June 2026)
+  {
+    id:'fifa-plus', name:'FIFA+', lang:'sport',
+    sources:[
+      { type:'hls', src:'https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8' },
+    ]
+  },
+  {
+    id:'fifa-tv', name:'FIFA TV', lang:'sport',
+    sources:[
+      { type:'hls', src:'https://d2w9q46ikgrcwx.cloudfront.net/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8' },
+    ]
+  },
+  {
+    id:'redbull-tv', name:'Red Bull TV', lang:'sport',
+    sources:[
+      { type:'hls',     src:'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8' },
+      { type:'youtube', vid:'BgfBvF8XExc' },
+    ]
+  },
+  {
+    id:'bein-xtra', name:'beIN Sports Xtra', lang:'sport',
+    sources:[
+      { type:'hls',     src:'https://bein-beinxtrasports-firetv.amagi.tv/playlist.m3u8' },
+      { type:'youtube', vid:'HfKs7aAoPAM' },
+    ]
+  },
+  {
+    id:'pro-sport', name:'Pro Sport TV', lang:'sport',
+    sources:[
+      { type:'hls', src:'https://proshls.wns.live/hls/stream.m3u8' },
+    ]
+  },
+  {
+    id:'cbs-sport', name:'CBS Sports', lang:'sport',
+    sources:[
+      { type:'hls',     src:'https://dai.google.com/linear/hls/event/GxrCGmwST0ixsrc_QgB6qw/master.m3u8' },
+      { type:'youtube', vid:'6GiC9TzYzh4' },
+    ]
+  },
+  {
+    id:'top-gear', name:'BBC Top Gear', lang:'sport',
+    sources:[
+      { type:'hls', src:'https://amg00793-amg00793c5-xumo-us-2664.playouts.now.amagi.tv/bbcstudios-bbctopgear8min-all/playlist.m3u8' },
+    ]
+  },
+  // ── Tech / Science / Documentary ── (re-engineered from parsatv.com, June 2026)
+  {
+    id:'nasa-tv', name:'NASA TV', lang:'tech',
+    sources:[
+      { type:'youtube', vid:'FuuC4dpSQ1M' },
+      { type:'youtube', vid:'uwXgcTc8oY8' },
+    ]
+  },
+  {
+    id:'bbc-earth', name:'BBC Earth', lang:'tech',
+    sources:[
+      { type:'hls', src:'https://amg00793-amg00793c6-firetv-us-4067.playouts.now.amagi.tv/playlist.m3u8' },
+    ]
+  },
+  {
+    id:'natgeo', name:'Nat Geo', lang:'tech',
+    sources:[
+      { type:'youtube', vid:'wVd836vHl6s' },
+    ]
+  },
+  {
+    id:'natgeo-wild', name:'Nat Geo Wild', lang:'tech',
+    sources:[
+      { type:'hls',     src:'https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8' },
+      { type:'youtube', vid:'wVd836vHl6s' },
+    ]
+  },
+  {
+    id:'cgtn-doc', name:'CGTN Doc', lang:'tech',
+    sources:[
+      { type:'hls', src:'https://english-livetx.cgtn.com/hls/yypdjlctzb_hd.m3u8' },
+    ]
+  },
+  {
+    id:'earth-tv', name:'Earth TV', lang:'tech',
+    sources:[
+      { type:'youtube', vid:'HfgIFGbdGJ0' },
+    ]
+  },
 ];
 
-// ── Lang order: locale first, then EN, then rest ──
-var langOrder = [locale, 'en', 'market', 'de', 'fr', 'fa', 'ar', 'sr', 'es'];
-function langRank(l) {
-  var i = langOrder.indexOf(l);
-  return i < 0 ? 99 : i;
-}
+// ── Lang order ──
+var langOrder = [locale, 'en', 'sport', 'tech', 'de', 'fr', 'fa', 'ar', 'sr', 'es'];
+function langRank(l) { var i = langOrder.indexOf(l); return i < 0 ? 99 : i; }
 var SORTED = CHANNELS_ALL.slice().sort(function(a,b){ return langRank(a.lang)-langRank(b.lang); });
 
-// ── Player state ─────────────────────────────────────────────────────────────
-var currentCh = null;
+// ─────────────────────────────────────────────────────────────────────────────
+// WORLD CLOCKS
+// ─────────────────────────────────────────────────────────────────────────────
+var CLOCKS = [
+  { key:'tehran',    tz:'Asia/Tehran',      name:(t.cityNames&&t.cityNames.tehran)    ||'Tehran'    },
+  { key:'belgrade',  tz:'Europe/Belgrade',  name:(t.cityNames&&t.cityNames.belgrade)  ||'Belgrade'  },
+  { key:'london',    tz:'Europe/London',    name:(t.cityNames&&t.cityNames.london)    ||'London'    },
+  { key:'newYork',   tz:'America/New_York', name:(t.cityNames&&t.cityNames.newYork)   ||'New York'  },
+  { key:'dubai',     tz:'Asia/Dubai',       name:(t.cityNames&&t.cityNames.dubai)     ||'Dubai'     },
+  { key:'tokyo',     tz:'Asia/Tokyo',       name:(t.cityNames&&t.cityNames.tokyo)     ||'Tokyo'     },
+  { key:'singapore', tz:'Asia/Singapore',   name:(t.cityNames&&t.cityNames.singapore) ||'Singapore' },
+];
+
+var clockEls = [];
+var strip = document.getElementById('clocks-strip');
+CLOCKS.forEach(function(c, i) {
+  var el = document.createElement('div');
+  el.className = 'clock-city';
+  el.innerHTML =
+    '<div class="city-name">' + c.name + '</div>' +
+    '<div class="city-time" id="ct-' + i + '">--:--:--</div>' +
+    '<div class="city-date" id="cd-' + i + '">---</div>';
+  strip.appendChild(el);
+  clockEls.push({ i: i, tz: c.tz });
+});
+
+var _timeFmt = CLOCKS.map(function(c) {
+  return new Intl.DateTimeFormat('en-GB', { timeZone:c.tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+});
+var _dateFmt = CLOCKS.map(function(c) {
+  return new Intl.DateTimeFormat('en-GB', { timeZone:c.tz, weekday:'short', month:'short', day:'numeric' });
+});
+
+function tickClocks() {
+  var now = new Date();
+  clockEls.forEach(function(c) {
+    var te = document.getElementById('ct-' + c.i);
+    var de = document.getElementById('cd-' + c.i);
+    if (!te) return;
+    te.textContent = _timeFmt[c.i].format(now);
+    de.textContent = _dateFmt[c.i].format(now);
+  });
+}
+tickClocks();
+setInterval(tickClocks, 1000);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PLAYER STATE + LOGIC
+// ─────────────────────────────────────────────────────────────────────────────
+var currentCh   = null;
 var hlsInstance = null;
-var hlsReady = false;
+var hlsReady    = false;
+var activeSrcIdx  = 0;
+var activeSrcList = [];
+
+function updateSourceBadge() {
+  var badge = document.getElementById('src-badge');
+  var nxt   = document.getElementById('next-src-btn');
+  if (!badge) return;
+  if (activeSrcList.length <= 1) { badge.style.display='none'; if(nxt) nxt.style.display='none'; return; }
+  badge.style.display = 'inline-flex';
+  badge.textContent = '⚡ Source ' + (activeSrcIdx+1) + ' / ' + activeSrcList.length;
+  if (nxt) nxt.style.display = (activeSrcIdx+1 < activeSrcList.length) ? 'inline-block' : 'none';
+}
+
+function tryNextSource() {
+  if (activeSrcIdx + 1 >= activeSrcList.length) return;
+  activeSrcIdx++;
+  playSrc(activeSrcList[activeSrcIdx]);
+  updateSourceBadge();
+}
+
+function playSrc(src) {
+  if (src.type === 'youtube') { loadYoutube(src.vid); }
+  else if (src.type === 'iframe') { loadIframe(src.src); }
+  else { loadHls(src.src); }
+}
+
+function loadIframe(src) {
+  var v = document.getElementById('live-video');
+  var i = document.getElementById('live-iframe');
+  v.style.display = 'none';
+  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+  i.src = src;
+  i.style.display = 'block';
+}
 
 function loadYoutube(vid) {
   var v = document.getElementById('live-video');
@@ -158,10 +523,18 @@ function loadHls(src) {
   function go() {
     if (window.Hls && Hls.isSupported()) {
       if (hlsInstance) hlsInstance.destroy();
-      hlsInstance = new Hls({ enableWorker: true, lowLatencyMode: true });
+      hlsInstance = new Hls({ enableWorker:true, lowLatencyMode:true });
       hlsInstance.loadSource(src);
       hlsInstance.attachMedia(v);
       hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(){ v.play().catch(function(){}); });
+      hlsInstance.on(Hls.Events.ERROR, function(ev, data) {
+        if (data.fatal && activeSrcIdx + 1 < activeSrcList.length) {
+          hlsInstance.destroy(); hlsInstance = null;
+          activeSrcIdx++;
+          updateSourceBadge();
+          playSrc(activeSrcList[activeSrcIdx]);
+        }
+      });
     } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
       v.src = src; v.play().catch(function(){});
     }
@@ -175,29 +548,48 @@ function loadHls(src) {
   }
 }
 
+// YouTube postMessage fallback
+window.addEventListener('message', function(e) {
+  if (!e.data) return;
+  try {
+    var d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+    if (d.event === 'infoDelivery' && d.info && d.info.playerError) {
+      if (activeSrcIdx + 1 < activeSrcList.length) {
+        activeSrcIdx++; updateSourceBadge(); playSrc(activeSrcList[activeSrcIdx]);
+      }
+    }
+  } catch(ex){}
+});
+
 function loadChannel(ch) {
   currentCh = ch.id;
   document.querySelectorAll('.ch-btn').forEach(function(b){
     b.classList.toggle('active', b.dataset.id === ch.id);
   });
   document.getElementById('channel-info').textContent = '▶ ' + ch.name + ' — ' + t.liveSuffix;
-  if (ch.type === 'youtube') { loadYoutube(ch.vid); }
-  else { loadHls(ch.src); }
+  if (ch.sources && ch.sources.length) {
+    activeSrcList = ch.sources;
+  } else if (ch.type === 'youtube') {
+    activeSrcList = [{ type:'youtube', vid:ch.vid }];
+  } else {
+    activeSrcList = [{ type:'hls', src:ch.src }];
+  }
+  activeSrcIdx = 0;
+  updateSourceBadge();
+  playSrc(activeSrcList[0]);
 }
 
-// ── Build language filter tabs (for channels) ────────────────────────────────
+// ── Channel lang filter tabs ──
 var activeLangFilter = locale;
 var chLangRow = document.getElementById('ch-lang-row');
 var seenLangs = [];
 CHANNELS_ALL.forEach(function(c){ if (seenLangs.indexOf(c.lang) < 0) seenLangs.push(c.lang); });
 
-// "All" button
 var allChBtn = document.createElement('button');
 allChBtn.className = 'ch-lang-btn';
 allChBtn.textContent = t.allChannels;
 allChBtn.addEventListener('click', function(){
-  activeLangFilter = 'all';
-  renderChannelBtns();
+  activeLangFilter = 'all'; renderChannelBtns();
   document.querySelectorAll('.ch-lang-btn').forEach(function(b){ b.classList.remove('active'); });
   allChBtn.classList.add('active');
 });
@@ -209,8 +601,7 @@ seenLangs.forEach(function(l){
   b.dataset.lang = l;
   b.textContent = t.langNames[l] || l;
   b.addEventListener('click', function(){
-    activeLangFilter = l;
-    renderChannelBtns();
+    activeLangFilter = l; renderChannelBtns();
     document.querySelectorAll('.ch-lang-btn').forEach(function(x){ x.classList.remove('active'); });
     b.classList.add('active');
   });
@@ -233,15 +624,139 @@ function renderChannelBtns() {
   });
 }
 
-// Initial render: show locale channels
 renderChannelBtns();
 
-// Auto-load first channel of current locale
+// ── Mobile channel selects ──
+var langSel = document.getElementById('ch-lang-sel');
+var nameSel = document.getElementById('ch-name-sel');
+if (langSel && nameSel) {
+  // Populate lang options
+  var allLangsOpt = document.createElement('option');
+  allLangsOpt.value = '__all__';
+  allLangsOpt.textContent = t.allChannels;
+  langSel.appendChild(allLangsOpt);
+  seenLangs.forEach(function(l) {
+    var o = document.createElement('option');
+    o.value = l;
+    o.textContent = t.langNames[l] || l;
+    if (l === locale) o.selected = true;
+    langSel.appendChild(o);
+  });
+
+  function populateMobileCh(lang) {
+    nameSel.innerHTML = '';
+    var list = lang === '__all__' ? SORTED : CHANNELS_ALL.filter(function(c){ return c.lang === lang; });
+    list.forEach(function(ch) {
+      var o = document.createElement('option');
+      o.value = ch.id;
+      o.textContent = ch.name;
+      nameSel.appendChild(o);
+    });
+    if (list.length) loadChannel(list[0]);
+  }
+
+  langSel.addEventListener('change', function() { populateMobileCh(this.value); });
+  nameSel.addEventListener('change', function() {
+    var ch = CHANNELS_ALL.find(function(c){ return c.id === nameSel.value; });
+    if (ch) loadChannel(ch);
+  });
+
+  populateMobileCh(locale);
+}
+
 var firstCh = CHANNELS_ALL.find(function(c){ return c.lang === locale; }) || SORTED[0];
 loadChannel(firstCh);
 
-// ── News Feed ─────────────────────────────────────────────────────────────────
-var allArticles = [], activeLang = 'all', searchTerm = '';
+// ─────────────────────────────────────────────────────────────────────────────
+// MARKETS SIDEBAR
+// ─────────────────────────────────────────────────────────────────────────────
+function fmtNum(n, dec) {
+  if (n == null || !isFinite(n)) return '—';
+  return n.toLocaleString('en-US', { minimumFractionDigits: dec||0, maximumFractionDigits: dec||0 });
+}
+
+function chgHtml(c) {
+  if (c == null || !isFinite(c)) return '<span class="mkt-chg neu">—</span>';
+  var cls = c > 0 ? 'pos' : (c < 0 ? 'neg' : 'neu');
+  var arrow = c > 0 ? '▲' : (c < 0 ? '▼' : '');
+  return '<span class="mkt-chg ' + cls + '">' + arrow + Math.abs(c).toFixed(2) + '%</span>';
+}
+
+function mktRow(name, price, change) {
+  return '<div class="mkt-row">' +
+    '<span class="mkt-name">' + name + '</span>' +
+    '<span class="mkt-price">' + price + '</span>' +
+    chgHtml(change) +
+    '</div>';
+}
+
+function fetchMarkets() {
+  Promise.all([
+    fetch('/api/markets').then(function(r){ return r.json(); }),
+    fetch('/api/crypto').then(function(r){ return r.json(); }),
+  ]).then(function(results) {
+    var mkt = results[0];
+    var crypto = results[1];
+
+    // FX
+    var fxHtml = '';
+    if (mkt.irr) {
+      if (mkt.irr.usd) fxHtml += mktRow('USD / Toman', fmtNum(mkt.irr.usd.price, 0)+' T', mkt.irr.usd.change);
+      if (mkt.irr.eur) fxHtml += mktRow('EUR / Toman', fmtNum(mkt.irr.eur.price, 0)+' T', mkt.irr.eur.change);
+    }
+    if (mkt.eur_rsd) fxHtml += mktRow('EUR / RSD', fmtNum(mkt.eur_rsd.price, 2), mkt.eur_rsd.change);
+    document.getElementById('mkt-fx').innerHTML = fxHtml ||
+      '<div style="font-size:11px;color:var(--silver-muted);padding:4px 0;">—</div>';
+
+    // Commodities
+    var commHtml = '';
+    if (mkt.commodities) {
+      if (mkt.commodities.gold)  commHtml += mktRow('Gold (oz)',  '$'+fmtNum(mkt.commodities.gold.price, 0),  mkt.commodities.gold.change);
+      if (mkt.commodities.brent) commHtml += mktRow('Brent (bbl)','$'+fmtNum(mkt.commodities.brent.price, 2), mkt.commodities.brent.change);
+    }
+    document.getElementById('mkt-comm').innerHTML = commHtml ||
+      '<div style="font-size:11px;color:var(--silver-muted);padding:4px 0;">—</div>';
+
+    // Indices (5 key ones)
+    var WANT = ['SPX','NDX','DAX','NI225','HSI'];
+    var idxHtml = '';
+    (mkt.indices||[]).forEach(function(idx) {
+      if (WANT.indexOf(idx.short) >= 0) {
+        idxHtml += mktRow(idx.name, fmtNum(idx.price, 0), idx.change);
+      }
+    });
+    document.getElementById('mkt-indices').innerHTML = idxHtml ||
+      '<div style="font-size:11px;color:var(--silver-muted);padding:4px 0;">—</div>';
+
+    // Crypto top 5
+    var cryptoHtml = '';
+    var coins = Array.isArray(crypto) ? crypto.slice(0, 5) : [];
+    coins.forEach(function(c) {
+      var sym = (c.symbol||'').toUpperCase();
+      var px  = c.current_price;
+      var dec = px >= 1000 ? 0 : (px >= 1 ? 2 : 4);
+      var chg = c.price_change_percentage_24h_in_currency || c.price_change_percentage_24h || null;
+      cryptoHtml += mktRow(sym, '$'+fmtNum(px, dec), chg);
+    });
+    document.getElementById('mkt-crypto').innerHTML = cryptoHtml ||
+      '<div style="font-size:11px;color:var(--silver-muted);padding:4px 0;">—</div>';
+
+    // Timestamp
+    var upd = document.getElementById('mkt-updated');
+    if (upd && mkt.updated) {
+      var d = new Date(mkt.updated);
+      upd.textContent = '↻ ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+    }
+  }).catch(function(e){ console.warn('Markets fetch error', e); });
+}
+
+fetchMarkets();
+setInterval(fetchMarkets, 300000); // 5 min
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TITLE NEWS — RSS feed, auto-refresh every 5 min
+// ─────────────────────────────────────────────────────────────────────────────
+var rssArticles = [], rssLangFilter = 'all', searchTerm = '';
 
 function timeAgo(p) {
   if (!p) return '';
@@ -251,54 +766,120 @@ function timeAgo(p) {
     if (f < 60)   return Math.round(f) + t.timeAgo.min;
     if (f < 1440) return Math.round(f/60) + t.timeAgo.hr;
     return Math.round(f/1440) + t.timeAgo.days;
-  } catch(e){ return p; }
+  } catch(e){ return ''; }
 }
 
-function renderNewsGrid() {
-  var g = document.getElementById('news-grid');
-  if (!g) return;
-  var f = allArticles.filter(function(a){
-    if (searchTerm) { var q=searchTerm.toLowerCase(); return (a.title||'').toLowerCase().includes(q); }
+function renderRssList() {
+  var list = document.getElementById('rss-list');
+  if (!list) return;
+  var q = searchTerm.toLowerCase();
+  var filtered = rssArticles.filter(function(a) {
+    if (rssLangFilter !== 'all' && a.lang !== rssLangFilter) return false;
+    if (q) return (a.title||'').toLowerCase().indexOf(q) >= 0;
     return true;
   });
-  if (!f.length) { g.innerHTML='<div style="color:var(--silver-muted);font-size:13px;padding:24px 0;grid-column:1/-1;text-align:center;">'+t.noResults+'</div>'; return; }
-  g.innerHTML='';
-  f.slice(0,60).forEach(function(a){
-    var c=document.createElement('a'); c.className='news-card-full';
-    c.href='/articles/'+a.slug;
-    c.style.borderColor='rgba(215,161,61,0.3)';
-    var badge='<div class="src-badge" style="background:rgba(215,161,61,0.2);color:var(--gold);">★ AHOOSH</div>';
-    c.innerHTML=badge+'<div class="headline">'+a.title+'</div><div class="date">'+timeAgo(a.pubDate)+'</div>';
-    g.appendChild(c);
+  if (!filtered.length) {
+    list.innerHTML = '<div style="color:var(--silver-muted);font-size:12px;padding:16px 0;">' + (t.noResults||'No results.') + '</div>';
+    return;
+  }
+  list.innerHTML = '';
+  filtered.slice(0, 50).forEach(function(a) {
+    var row = document.createElement('a');
+    row.className = 'rss-row';
+    row.href = a.link || '#';
+    row.target = '_blank';
+    row.rel = 'noopener noreferrer';
+    row.innerHTML =
+      '<span class="rss-src">' + escHtml(a.source||'') + '</span>' +
+      '<span class="rss-title">' + escHtml(a.title||'') + '</span>' +
+      '<span class="rss-time">' + timeAgo(a.pubDate) + '</span>';
+    list.appendChild(row);
+  });
+  var meta = document.getElementById('news-meta');
+  if (meta) meta.textContent = (t.metaSources||'{n} articles').replace('{n}', rssArticles.length);
+}
+
+function buildRssLangTabs(articles) {
+  var langs = {};
+  articles.forEach(function(a){ langs[a.lang] = (langs[a.lang]||0)+1; });
+  var row = document.getElementById('rss-lang-row');
+  if (!row) return;
+  row.innerHTML = '';
+  var allBtn = document.createElement('button');
+  allBtn.className = 'lang-tab active';
+  allBtn.textContent = t.allNews;
+  allBtn.addEventListener('click', function() {
+    rssLangFilter = 'all';
+    document.querySelectorAll('#rss-lang-row .lang-tab').forEach(function(x){ x.classList.remove('active'); });
+    allBtn.classList.add('active'); renderRssList();
+  });
+  row.appendChild(allBtn);
+  Object.keys(langs).sort().forEach(function(l) {
+    var tab = document.createElement('button');
+    tab.className = 'lang-tab';
+    tab.textContent = (t.langNames[l]||l) + ' ('+langs[l]+')';
+    tab.addEventListener('click', function() {
+      rssLangFilter = l;
+      document.querySelectorAll('#rss-lang-row .lang-tab').forEach(function(x){ x.classList.remove('active'); });
+      tab.classList.add('active'); renderRssList();
+    });
+    row.appendChild(tab);
   });
 }
 
-function buildLangTabs(arts) {
-  var langs={};
-  arts.forEach(function(a){ langs[a.lang]=(langs[a.lang]||0)+1; });
-  var tabs=document.getElementById('lang-tabs'); if (!tabs) return;
-  tabs.innerHTML='';
-  var all=document.createElement('button'); all.className='lang-tab active'; all.textContent=t.allNews;
-  all.addEventListener('click',function(){ activeLang='all'; document.querySelectorAll('.lang-tab').forEach(function(x){x.classList.remove('active');}); all.classList.add('active'); renderNewsGrid(); });
-  tabs.appendChild(all);
-  Object.keys(langs).sort().forEach(function(l){
-    var tab=document.createElement('button'); tab.className='lang-tab'; tab.textContent=(t.langNames[l]||l)+' ('+langs[l]+')';
-    tab.addEventListener('click',function(){ activeLang=l; document.querySelectorAll('.lang-tab').forEach(function(x){x.classList.remove('active');}); tab.classList.add('active'); renderNewsGrid(); });
-    tabs.appendChild(tab);
+function fetchTitleNews() {
+  var updEl = document.getElementById('rss-updated');
+  if (updEl) updEl.textContent = '↻…';
+  fetch('/api/news').then(function(r){ return r.json(); }).then(function(data) {
+    rssArticles = data.articles || [];
+    buildRssLangTabs(rssArticles);
+    renderRssList();
+    if (updEl) updEl.textContent = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  }).catch(function(e) {
+    var list = document.getElementById('rss-list');
+    if (list) list.innerHTML = '<div style="color:var(--silver-muted);font-size:12px;padding:16px 0;">' + (t.failedLoad||'Failed to load.') + '</div>';
   });
 }
 
-var se=document.getElementById('news-search');
-if(se) se.addEventListener('input',function(){ searchTerm=this.value.trim(); renderNewsGrid(); });
+fetchTitleNews();
+setInterval(fetchTitleNews, 300000); // 5 min
 
-function fetchNews() {
-  // News feed is reserved for AHoosh-produced news articles.
-  // When the team publishes rewritten news, it will appear here automatically.
-  var g=document.getElementById('news-grid');
-  if(g) g.innerHTML='<div style="color:var(--silver-muted);font-size:13px;padding:32px 0;grid-column:1/-1;text-align:center;line-height:1.8;">Our editorial team is working on the first batch of original news articles.<br>Check back soon.</div>';
+var se = document.getElementById('news-search');
+if (se) se.addEventListener('input', function(){ searchTerm = this.value.trim(); renderRssList(); });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DETAIL NEWS — AHoosh own articles, static from content collection
+// ─────────────────────────────────────────────────────────────────────────────
+function renderDetailNews() {
+  var grid = document.getElementById('detail-grid');
+  if (!grid) return;
+  if (!ownArticles || !ownArticles.length) {
+    grid.innerHTML = '<div style="color:var(--silver-muted);font-size:12px;padding:16px 0;grid-column:1/-1;">Our editorial team is working on the first articles.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  ownArticles.forEach(function(a) {
+    var card = document.createElement('a');
+    card.className = 'news-card-full';
+    card.href = '/articles/' + a.slug;
+    card.innerHTML =
+      '<div class="src-badge" style="background:rgba(215,161,61,0.2);color:var(--gold);">★ AHoosh</div>' +
+      '<div class="headline">' + escHtml(a.title) + '</div>' +
+      '<div class="date">' + timeAgo(a.pubDate) + '</div>';
+    grid.appendChild(card);
+  });
 }
 
-fetchNews();
+renderDetailNews();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 })();
 </script>
