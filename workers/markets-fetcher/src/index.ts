@@ -1,8 +1,7 @@
 import { fetchIrr, fetchMajors, fetchRsd, fetchGold, fetchCrypto, type QuoteMap } from "./sources";
-import { writeSnapshots, reconcileFailures, latestPerAsset, EXPECTED_ASSETS, type Env } from "./store";
+import { writeSnapshots, reconcileFailures, latestPerAsset, buildLatestPayload, EXPECTED_ASSETS, type Env } from "./store";
 import { alertFailures } from "./alerts";
-
-const KV_LATEST = "markets:latest";
+// KV removed — all data served from D1 (no KV write/read operations)
 
 type Family = { assets: string[]; fn: () => Promise<QuoteMap> };
 
@@ -48,51 +47,11 @@ async function runCycle(env: Env): Promise<Record<string, unknown>> {
   const newlyAlerting = await reconcileFailures(env, quotes, errors);
   if (newlyAlerting.length) await alertFailures(env, newlyAlerting);
 
-  // Build the payload from the freshest stored value per asset, so a transient
-  // source blip shows last-known-good (with its real timestamp) instead of a gap.
-  const latest = await latestPerAsset(env);
-  const updated = new Date().toISOString();
-  const assets: Record<string, unknown> = {};
-  for (const asset of EXPECTED_ASSETS) {
-    const fresh = quotes[asset];
-    const stored = latest.get(asset);
-    if (fresh) {
-      assets[asset] = {
-        value: fresh.value,
-        change: fresh.change,
-        source: fresh.source,
-        source_url: fresh.source_url,
-        as_of: stored?.fetched_at ?? updated, // D1 timestamp of this cycle's row
-        fresh: true,
-      };
-    } else if (stored) {
-      assets[asset] = {
-        value: stored.value,
-        change: null,
-        source: hostOf(stored.source_url),
-        source_url: stored.source_url,
-        as_of: stored.fetched_at,
-        fresh: false, // last-known-good — not refreshed this cycle
-      };
-    }
-    // asset with no fresh quote AND no stored history is simply omitted
-  }
   const failedThisCycle = EXPECTED_ASSETS.filter((a) => !quotes[a]);
-
-  const payload = {
-    updated,
-    assets,
-    shown_count: Object.keys(assets).length,
-    fresh_count: Object.keys(quotes).length,
-    stale_count: Object.keys(assets).length - Object.keys(quotes).length,
-    failed_this_cycle: failedThisCycle,
-  };
-  await env.MARKETS_KV.put(KV_LATEST, JSON.stringify(payload));
-
   return {
     updated,
-    fresh_count: payload.fresh_count,
-    stale_count: payload.stale_count,
+    fresh_count: Object.keys(quotes).length,
+    stale_count: EXPECTED_ASSETS.length - Object.keys(quotes).length,
     failed_this_cycle: failedThisCycle,
     alerted: newlyAlerting,
   };
@@ -128,9 +87,9 @@ export default {
     const path = url.pathname;
 
     if (path === "/api/markets/latest") {
-      const cached = await env.MARKETS_KV.get(KV_LATEST);
-      if (!cached) return json({ error: "no snapshot yet" }, 503);
-      return json(JSON.parse(cached));
+      const payload = await buildLatestPayload(env);
+      if (!payload.shown_count) return json({ error: "no snapshot yet" }, 503);
+      return json(payload);
     }
 
     if (path === "/api/markets/history") {

@@ -11,7 +11,6 @@ export const EXPECTED_ASSETS = [
 
 export interface Env {
   DB: D1Database;
-  MARKETS_KV: KVNamespace;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_HESAM_CHAT_ID?: string;
 }
@@ -80,4 +79,56 @@ export async function latestPerAsset(env: Env): Promise<Map<string, LastKnown>> 
   const m = new Map<string, LastKnown>();
   for (const r of rows.results ?? []) m.set(r.asset, { value: r.value, source_url: r.source_url, fetched_at: r.fetched_at });
   return m;
+}
+
+// Build the full /api/markets/latest payload directly from D1.
+// Returns the same shape as the old KV payload — no KV reads needed.
+export type AssetEntry = {
+  value: number; change: number | null; source: string;
+  source_url: string; as_of: string; fresh: boolean;
+};
+
+export async function buildLatestPayload(env: Env): Promise<{
+  updated: string;
+  assets: Record<string, AssetEntry>;
+  shown_count: number;
+}> {
+  // Two most recent rows per asset (to compute change vs previous cycle)
+  const rows = await env.DB.prepare(
+    "SELECT asset, value, source_url, fetched_at FROM markets_snapshots " +
+    "WHERE id IN (" +
+    "  SELECT id FROM markets_snapshots s2 " +
+    "  WHERE s2.asset = markets_snapshots.asset " +
+    "  ORDER BY id DESC LIMIT 2" +
+    ") ORDER BY asset, id DESC"
+  ).all<{ asset: string; value: number; source_url: string; fetched_at: string }>();
+
+  // Group by asset — first row = latest, second = previous
+  const byAsset = new Map<string, { latest: typeof rows.results[0]; prev?: typeof rows.results[0] }>();
+  for (const r of rows.results ?? []) {
+    const ex = byAsset.get(r.asset);
+    if (!ex) { byAsset.set(r.asset, { latest: r }); }
+    else if (!ex.prev) { ex.prev = r; }
+  }
+
+  const updated = new Date().toISOString();
+  const assets: Record<string, AssetEntry> = {};
+  for (const asset of EXPECTED_ASSETS) {
+    const d = byAsset.get(asset);
+    if (!d) continue;
+    const change = (d.prev && d.prev.value > 0)
+      ? Math.round(((d.latest.value - d.prev.value) / d.prev.value) * 10000) / 100
+      : null;
+    try {
+      assets[asset] = {
+        value: d.latest.value,
+        change,
+        source: new URL(d.latest.source_url).hostname.replace(/^www\./, ""),
+        source_url: d.latest.source_url,
+        as_of: d.latest.fetched_at,
+        fresh: true,
+      };
+    } catch { /* skip malformed source_url */ }
+  }
+  return { updated, assets, shown_count: Object.keys(assets).length };
 }

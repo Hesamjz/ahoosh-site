@@ -3,23 +3,18 @@ main = "src/index.ts"
 compatibility_date = "2026-06-08"
 workers_dev = true
 
-# Pipeline 1 — Markets. Cron every 2 minutes — stays under Workers KV free tier (1000 PUT/day).
-# Changed from `* * * * *` (1440/day) to `*/2 * * * *` (720/day) on 2026-06-13 after KV cap hit.
-# TGJU itself only refreshes ~5 min, so 2-min cadence loses no real freshness.
-# If we ever move to Workers Paid ($5/mo for 1M writes), this can go back to 1 min.
+# Pipeline 1 — Markets. Cron every 5 minutes.
+# KV removed 2026-06-13 — all data served from D1 (zero KV operations).
+# D1 free tier: 100k row reads/day, far more generous than KV's 1000 writes/day.
+# TGJU refreshes ~5 min, so 5-min cadence loses no real freshness.
 [triggers]
-crons = ["*/2 * * * *"]
+crons = ["*/5 * * * *"]
 
 # D1 — historical snapshots + per-source failure state.
 [[d1_databases]]
 binding = "DB"
 database_name = "ahoosh-markets"
 database_id = "a81f8ee0-c741-4873-b1bd-401d10fd9dbb"
-
-# KV — latest assembled snapshot as one JSON blob (sub-10ms reads for the page).
-[[kv_namespaces]]
-binding = "MARKETS_KV"
-id = "8266445bbdbd40458094160d7f8db09b"
 
 [observability]
 enabled = true
