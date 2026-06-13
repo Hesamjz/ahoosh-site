@@ -38,22 +38,40 @@ const ownArticles = allPosts
 
 <div style="max-width:1240px;margin:0 auto;padding:20px 20px 64px;">
 
-  <!-- ══ LIVE TV ════════════════════════════════════════════════════════════ -->
+  <!-- ══ LIVE TV — 3-col desktop: calendar | video | weather ══════════════ -->
   <section style="margin-bottom:28px;">
-    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.liveTVLabel}</div>
-    <!-- Channel picker: two compact dropdowns -->
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
-      <select id="ch-lang-sel" class="ch-sel" aria-label="Channel category"></select>
-      <select id="ch-name-sel" class="ch-sel" aria-label="Channel" style="min-width:160px;"></select>
-    </div>
-    <div style="position:relative;width:100%;max-width:760px;background:#000;border-radius:8px;overflow:hidden;border:1px solid rgba(215,161,61,0.2);">
-      <video id="live-video" controls muted playsinline style="width:100%;display:block;aspect-ratio:16/9;background:#000;"></video>
-      <iframe id="live-iframe" style="width:100%;aspect-ratio:16/9;border:none;display:none;" allow="autoplay; encrypted-media"></iframe>
-    </div>
-    <div style="margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <div id="channel-info" style="font-size:11px;color:var(--silver-muted);"></div>
-      <span id="src-badge" style="display:none;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);border-radius:4px;padding:2px 8px;">⚡ Source 1 / 1</span>
-      <button id="next-src-btn" onclick="tryNextSource()" style="display:none;font-size:10px;background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:3px 10px;color:var(--silver-dim);cursor:pointer;font-family:var(--font-body);">↻ Try next source</button>
+    <div class="tv-3col">
+
+      <!-- ── LEFT: Calendar ──────────────────────────────────────────────── -->
+      <div class="tv-side">
+        <div class="side-label">📅 Calendar</div>
+        <div id="cal-widget"></div>
+      </div>
+
+      <!-- ── CENTER: Video ───────────────────────────────────────────────── -->
+      <div class="tv-center">
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.liveTVLabel}</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+          <select id="ch-lang-sel" class="ch-sel" aria-label="Channel category"></select>
+          <select id="ch-name-sel" class="ch-sel" aria-label="Channel" style="min-width:160px;"></select>
+        </div>
+        <div style="position:relative;width:100%;background:#000;border-radius:8px;overflow:hidden;border:1px solid rgba(215,161,61,0.2);">
+          <video id="live-video" controls muted playsinline style="width:100%;display:block;aspect-ratio:16/9;background:#000;"></video>
+          <iframe id="live-iframe" style="width:100%;aspect-ratio:16/9;border:none;display:none;" allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div style="margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div id="channel-info" style="font-size:11px;color:var(--silver-muted);"></div>
+          <span id="src-badge" style="display:none;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);border-radius:4px;padding:2px 8px;">⚡ Source 1 / 1</span>
+          <button id="next-src-btn" onclick="tryNextSource()" style="display:none;font-size:10px;background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:3px 10px;color:var(--silver-dim);cursor:pointer;font-family:var(--font-body);">↻ Try next source</button>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Weather ──────────────────────────────────────────────── -->
+      <div class="tv-side">
+        <div class="side-label">🌤 Weather</div>
+        <div id="weather-widget"><div class="side-loading">Loading…</div></div>
+      </div>
+
     </div>
   </section>
 
@@ -167,20 +185,62 @@ const ownArticles = allPosts
   /* ── News column ──────────────────────────────────────────────────────── */
   .news-col {}
 
+  /* ── 3-col TV layout ────────────────────────────────────────────────────── */
+  .tv-3col {
+    display:grid;
+    grid-template-columns:180px 1fr 180px;
+    gap:16px;
+    align-items:start;
+  }
+  .tv-side {
+    background:rgba(1,10,24,0.7);border:1px solid rgba(215,161,61,0.12);
+    border-radius:8px;padding:12px;min-height:260px;
+  }
+  .side-label {
+    font-family:var(--font-head);font-size:10px;font-weight:700;
+    letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);
+    margin-bottom:10px;
+  }
+  .side-loading { font-size:11px;color:var(--silver-muted);padding:8px 0; }
+  /* Calendar */
+  .cal-month { font-size:11px;font-weight:700;color:var(--silver);text-align:center;margin-bottom:8px; }
+  .cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:2px; }
+  .cal-dh { font-size:8px;color:var(--silver-muted);text-align:center;padding:2px 0;font-weight:700; }
+  .cal-d {
+    font-size:10px;color:var(--silver-dim);text-align:center;padding:3px 1px;
+    border-radius:3px;cursor:default;
+  }
+  .cal-d.today { background:var(--gold);color:#03142E;font-weight:700; }
+  .cal-d.empty { opacity:0; }
+  /* Weather */
+  .wx-temp { font-size:32px;font-weight:700;color:var(--silver);font-family:var(--font-head);line-height:1; }
+  .wx-icon { font-size:28px;margin-bottom:4px; }
+  .wx-desc { font-size:11px;color:var(--silver-dim);margin-top:4px; }
+  .wx-row { font-size:10px;color:var(--silver-muted);margin-top:4px; }
+  .wx-city { font-size:10px;color:var(--gold);margin-bottom:8px; }
+  .wx-forecast { margin-top:10px;display:flex;flex-direction:column;gap:4px; }
+  .wx-day { display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--silver-muted);border-top:1px solid rgba(215,161,61,0.06);padding-top:4px; }
+  .wx-day .wx-day-temp { color:var(--silver);font-weight:700; }
+
+  @media(max-width:900px) {
+    .tv-3col { grid-template-columns:1fr; }
+    .tv-side { display:none; }
+  }
+
   /* RSS headline rows */
   .rss-row {
     display:flex;align-items:flex-start;gap:7px;
-    padding:6px 0;border-bottom:1px solid rgba(215,161,61,0.06);
-    text-decoration:none;
+    padding:7px 0;border-bottom:1px solid rgba(215,161,61,0.06);
+    cursor:default;
   }
   .rss-row:hover .rss-title { color:var(--gold); }
   .rss-src {
     flex-shrink:0;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
     color:var(--gold);background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.18);
-    border-radius:3px;padding:2px 5px;white-space:nowrap;margin-top:1px;
+    border-radius:3px;padding:2px 5px;white-space:nowrap;margin-top:2px;
   }
-  .rss-title { font-size:12px;color:var(--silver);line-height:1.5;flex:1;min-width:0; }
-  .rss-time { flex-shrink:0;font-size:10px;color:var(--silver-muted);white-space:nowrap;margin-top:1px; }
+  .rss-title { font-size:14px;color:var(--silver);line-height:1.5;flex:1;min-width:0; }
+  .rss-time { flex-shrink:0;font-size:10px;color:var(--silver-muted);white-space:nowrap;margin-top:4px; }
 
   /* AHoosh article cards */
   .news-card-full {
@@ -734,8 +794,10 @@ function fetchMarkets() {
     // Commodities
     var commHtml = '';
     if (mkt.commodities) {
-      if (mkt.commodities.gold)  commHtml += mktRow('Gold (oz)',  '$'+fmtNum(mkt.commodities.gold.price, 0),  mkt.commodities.gold.change);
-      if (mkt.commodities.brent) commHtml += mktRow('Brent (bbl)','$'+fmtNum(mkt.commodities.brent.price, 2), mkt.commodities.brent.change);
+      if (mkt.commodities.gold)   commHtml += mktRow('Gold (oz)',   '$'+fmtNum(mkt.commodities.gold.price,   0), mkt.commodities.gold.change);
+      if (mkt.commodities.silver) commHtml += mktRow('Silver (oz)', '$'+fmtNum(mkt.commodities.silver.price, 2), mkt.commodities.silver.change);
+      if (mkt.commodities.brent)  commHtml += mktRow('Brent (bbl)', '$'+fmtNum(mkt.commodities.brent.price,  2), mkt.commodities.brent.change);
+      if (mkt.commodities.wti)    commHtml += mktRow('WTI (bbl)',   '$'+fmtNum(mkt.commodities.wti.price,    2), mkt.commodities.wti.change);
     }
     document.getElementById('mkt-comm').innerHTML = commHtml ||
       '<div style="font-size:11px;color:var(--silver-muted);padding:4px 0;">—</div>';
@@ -807,14 +869,11 @@ function renderRssList() {
   }
   list.innerHTML = '';
   filtered.slice(0, 50).forEach(function(a) {
-    var row = document.createElement('a');
+    var row = document.createElement('div');
     row.className = 'rss-row';
-    row.href = a.link || '#';
-    row.target = '_blank';
-    row.rel = 'noopener noreferrer';
     row.innerHTML =
       '<span class="rss-src">' + escHtml(a.source||'') + '</span>' +
-      '<span class="rss-title">' + escHtml(a.title||'') + '</span>' +
+      '<span class="rss-title">' + decodeEntities(a.title||'') + '</span>' +
       '<span class="rss-time">' + timeAgo(a.pubDate) + '</span>';
     list.appendChild(row);
   });
@@ -903,6 +962,103 @@ function escHtml(s) {
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+
+var _decodeEl = document.createElement('textarea');
+function decodeEntities(s) {
+  _decodeEl.innerHTML = String(s);
+  return _decodeEl.value;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CALENDAR WIDGET
+// ─────────────────────────────────────────────────────────────────────────────
+function renderCalendar() {
+  var el = document.getElementById('cal-widget');
+  if (!el) return;
+  var now = new Date();
+  var y = now.getFullYear(), m = now.getMonth(), tod = now.getDate();
+  var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var firstDay = new Date(y, m, 1).getDay(); // 0=Sun
+  var days = new Date(y, m + 1, 0).getDate();
+  var dayLabels = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var html = '<div class="cal-month">' + monthNames[m] + ' ' + y + '</div><div class="cal-grid">';
+  dayLabels.forEach(function(d){ html += '<div class="cal-dh">'+d+'</div>'; });
+  for (var i = 0; i < firstDay; i++) html += '<div class="cal-d empty"></div>';
+  for (var d = 1; d <= days; d++) {
+    html += '<div class="cal-d' + (d === tod ? ' today' : '') + '">' + d + '</div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+renderCalendar();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WEATHER WIDGET (Open-Meteo, free, no key)
+// ─────────────────────────────────────────────────────────────────────────────
+var WMO_ICONS = {
+  0:'☀️', 1:'🌤', 2:'⛅', 3:'☁️',
+  45:'🌫', 48:'🌫',
+  51:'🌦', 53:'🌦', 55:'🌧',
+  61:'🌧', 63:'🌧', 65:'🌧',
+  71:'🌨', 73:'🌨', 75:'❄️',
+  80:'🌦', 81:'🌧', 82:'⛈',
+  95:'⛈', 96:'⛈', 99:'⛈'
+};
+var WMO_DESC = {
+  0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
+  45:'Foggy', 48:'Foggy',
+  51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
+  61:'Light rain', 63:'Rain', 65:'Heavy rain',
+  71:'Light snow', 73:'Snow', 75:'Heavy snow',
+  80:'Rain showers', 81:'Showers', 82:'Heavy showers',
+  95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm'
+};
+function loadWeather(lat, lon, city) {
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4')
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      var el = document.getElementById('weather-widget');
+      if (!el) return;
+      var cw = data.current_weather;
+      var code = cw.weathercode;
+      var icon = WMO_ICONS[code] || '🌡';
+      var desc = WMO_DESC[code] || 'Unknown';
+      var daily = data.daily || {};
+      var forecastHtml = '';
+      if (daily.time) {
+        var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        for (var i = 1; i < Math.min(4, daily.time.length); i++) {
+          var dt = new Date(daily.time[i]+'T12:00:00');
+          var maxT = Math.round(daily.temperature_2m_max[i]);
+          var minT = Math.round(daily.temperature_2m_min[i]);
+          var dc = daily.weathercode[i];
+          forecastHtml += '<div class="wx-day"><span>' + dayNames[dt.getDay()] + ' ' + (WMO_ICONS[dc]||'🌡') + '</span><span class="wx-day-temp">' + maxT + '° / ' + minT + '°</span></div>';
+        }
+      }
+      el.innerHTML =
+        '<div class="wx-city">📍 ' + city + '</div>' +
+        '<div class="wx-icon">' + icon + '</div>' +
+        '<div class="wx-temp">' + Math.round(cw.temperature) + '°C</div>' +
+        '<div class="wx-desc">' + desc + '</div>' +
+        '<div class="wx-row">💨 ' + Math.round(cw.windspeed) + ' km/h</div>' +
+        (forecastHtml ? '<div class="wx-forecast">' + forecastHtml + '</div>' : '');
+    })
+    .catch(function(){
+      var el = document.getElementById('weather-widget');
+      if (el) el.innerHTML = '<div class="side-loading">Unavailable</div>';
+    });
+}
+(function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(pos) { loadWeather(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4), 'Your Location'); },
+      function()    { loadWeather(44.8, 20.5, 'Belgrade'); },
+      { timeout: 5000 }
+    );
+  } else {
+    loadWeather(44.8, 20.5, 'Belgrade');
+  }
+})();
 
 })();
 </script>
