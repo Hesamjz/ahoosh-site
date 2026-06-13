@@ -40,11 +40,10 @@ const { locale, t } = Astro.props;
 
   <!-- ══ NEWS FEED ════════════════════════════════════════════════════ -->
   <section>
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+    <div style="margin-bottom:14px;">
       <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">
         {t.latestNewsLabel}
       </div>
-      <div id="lang-tabs" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
     </div>
     <input id="news-search" type="text" placeholder={t.searchPlaceholder} style="width:100%;max-width:360px;display:block;margin-bottom:14px;background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);border-radius:6px;padding:8px 12px;color:var(--silver);font-size:13px;font-family:var(--font-body);outline:none;" />
     <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">
@@ -263,23 +262,17 @@ function renderNewsGrid() {
   var g = document.getElementById('news-grid');
   if (!g) return;
   var f = allArticles.filter(function(a){
-    if (activeLang !== 'all' && a.lang !== activeLang) return false;
-    if (searchTerm) { var q=searchTerm.toLowerCase(); return (a.title||'').toLowerCase().includes(q)||(a.source||'').toLowerCase().includes(q); }
+    if (searchTerm) { var q=searchTerm.toLowerCase(); return (a.title||'').toLowerCase().includes(q); }
     return true;
   });
   if (!f.length) { g.innerHTML='<div style="color:var(--silver-muted);font-size:13px;padding:24px 0;grid-column:1/-1;text-align:center;">'+t.noResults+'</div>'; return; }
   g.innerHTML='';
   f.slice(0,60).forEach(function(a){
     var c=document.createElement('a'); c.className='news-card-full';
-    if (a.isOwn) {
-      c.href='/articles/'+a.slug;
-      c.style.borderColor='rgba(215,161,61,0.4)';
-    } else {
-      c.href=a.link||'#'; c.target='_blank'; c.rel='noopener noreferrer';
-    }
-    var rtl=(a.lang==='fa'||a.lang==='ar');
-    var badge = a.isOwn ? '<div class="src-badge" style="background:rgba(215,161,61,0.2);color:var(--gold);">★ AHOOSH</div>' : '<div class="src-badge">'+a.source+'</div>';
-    c.innerHTML=badge+'<div class="headline"'+(rtl?' dir="rtl" style="text-align:right"':'')+'>'+a.title+'</div><div class="date">'+timeAgo(a.pubDate)+'</div>';
+    c.href='/articles/'+a.slug;
+    c.style.borderColor='rgba(215,161,61,0.3)';
+    var badge='<div class="src-badge" style="background:rgba(215,161,61,0.2);color:var(--gold);">★ AHOOSH</div>';
+    c.innerHTML=badge+'<div class="headline">'+a.title+'</div><div class="date">'+timeAgo(a.pubDate)+'</div>';
     g.appendChild(c);
   });
 }
@@ -304,18 +297,12 @@ if(se) se.addEventListener('input',function(){ searchTerm=this.value.trim(); ren
 
 async function fetchNews() {
   try {
-    var [ownResp, rssResp] = await Promise.all([
-      fetch('/api/own-articles.json', {signal:AbortSignal.timeout(8000)}).catch(function(){return null;}),
-      fetch('/api/news', {signal:AbortSignal.timeout(20000)}).catch(function(){return null;}),
-    ]);
-    var ownRaw = (ownResp && ownResp.ok) ? await ownResp.json() : [];
-    var ownArts = ownRaw.map(function(a){ return Object.assign({}, a, {isOwn:true, link:'/articles/'+a.slug}); });
-    var d = (rssResp && rssResp.ok) ? await rssResp.json() : {articles:[], sources:0};
-    allArticles = ownArts.concat(d.articles||[]);
-    buildLangTabs(allArticles);
+    var resp = await fetch('/api/own-articles.json', {signal:AbortSignal.timeout(8000)}).catch(function(){return null;});
+    var ownRaw = (resp && resp.ok) ? await resp.json() : [];
+    allArticles = ownRaw.map(function(a){ return Object.assign({}, a); });
     renderNewsGrid();
     var m=document.getElementById('news-meta');
-    if(m) m.textContent=allArticles.length+' '+t.metaSources.replace('{n}',d.sources||0)+' · '+t.updatedAt+': '+new Date().toLocaleTimeString(t.localeCode);
+    if(m) m.textContent=allArticles.length+' '+t.updatedAt+': '+new Date().toLocaleTimeString(t.localeCode);
     var u=document.getElementById('news-updated');
     if(u) u.textContent=t.updatedAt+': '+new Date().toLocaleTimeString(t.localeCode);
   } catch(e) {
