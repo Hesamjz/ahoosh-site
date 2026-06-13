@@ -36,20 +36,56 @@ const ownArticles = allPosts
   </div>
 </div>
 
-<div style="max-width:1240px;margin:0 auto;padding:20px 20px 64px;">
+<div style="max-width:1440px;margin:0 auto;padding:20px 20px 64px;">
+  <div class="page-3col">
 
-  <!-- ══ LIVE TV — 3-col desktop: calendar | video | weather ══════════════ -->
-  <section style="margin-bottom:28px;">
-    <div class="tv-3col">
+    <!-- ══ LEFT: Calendar + Markets (sticky) ════════════════════════════════ -->
+    <div class="left-col">
 
-      <!-- ── LEFT: Calendar ──────────────────────────────────────────────── -->
-      <div class="tv-side">
+      <!-- Calendar card -->
+      <div class="side-card">
         <div class="side-label">📅 Calendar</div>
         <div id="cal-widget"></div>
       </div>
 
-      <!-- ── CENTER: Video ───────────────────────────────────────────────── -->
-      <div class="tv-center">
+      <!-- Markets card -->
+      <div class="side-card" style="margin-top:14px;">
+        <div class="side-label">{t.marketsLabel || '📊 Markets'}</div>
+
+        <div class="mkt-head">FX</div>
+        <div id="mkt-fx" class="mkt-rows">
+          <div class="mkt-skel"></div><div class="mkt-skel"></div><div class="mkt-skel"></div>
+        </div>
+
+        <div class="mkt-head" style="margin-top:10px;">Commodities</div>
+        <div id="mkt-comm" class="mkt-rows">
+          <div class="mkt-skel"></div><div class="mkt-skel"></div>
+        </div>
+
+        <div class="mkt-head" style="margin-top:10px;">
+          Indices
+          <span style="font-weight:400;opacity:0.45;font-size:9px;margin-left:4px;">~15min delay</span>
+        </div>
+        <div id="mkt-indices" class="mkt-rows">
+          <div class="mkt-skel"></div><div class="mkt-skel"></div>
+          <div class="mkt-skel"></div><div class="mkt-skel"></div>
+        </div>
+
+        <div class="mkt-head" style="margin-top:10px;">Crypto</div>
+        <div id="mkt-crypto" class="mkt-rows">
+          <div class="mkt-skel"></div><div class="mkt-skel"></div><div class="mkt-skel"></div>
+        </div>
+
+        <div id="mkt-updated" style="font-size:10px;color:var(--silver-muted);margin-top:10px;text-align:right;"></div>
+      </div>
+
+    </div>
+
+    <!-- ══ CENTER: Video + News ══════════════════════════════════════════════ -->
+    <div class="center-col">
+
+      <!-- TV section -->
+      <section style="margin-bottom:28px;">
         <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.liveTVLabel}</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
           <select id="ch-lang-sel" class="ch-sel" aria-label="Channel category"></select>
@@ -64,76 +100,45 @@ const ownArticles = allPosts
           <span id="src-badge" style="display:none;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.25);border-radius:4px;padding:2px 8px;">⚡ Source 1 / 1</span>
           <button id="next-src-btn" onclick="tryNextSource()" style="display:none;font-size:10px;background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:3px 10px;color:var(--silver-dim);cursor:pointer;font-family:var(--font-body);">↻ Try next source</button>
         </div>
-      </div>
+      </section>
 
-      <!-- ── RIGHT: Weather ──────────────────────────────────────────────── -->
-      <div class="tv-side">
+      <!-- News -->
+      <div dir={t.rtl ? 'rtl' : 'ltr'}>
+
+        <!-- Title News -->
+        <div style="margin-bottom:28px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+            <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">{t.titleNewsLabel || '📰 Title News'}</div>
+            <div id="rss-updated" style="font-size:10px;color:var(--silver-muted);"></div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;">
+            <input id="news-search" type="text" placeholder={t.searchPlaceholder}
+              style="flex:1;min-width:160px;max-width:280px;background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);border-radius:6px;padding:6px 10px;color:var(--silver);font-size:12px;font-family:var(--font-body);outline:none;" />
+            <div id="rss-lang-row" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+          </div>
+          <div id="rss-list" style="display:flex;flex-direction:column;"></div>
+          <div id="news-meta" style="margin-top:8px;font-size:10px;color:var(--silver-muted);"></div>
+        </div>
+
+        <!-- Detail News -->
+        <div>
+          <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.detailNewsLabel || '✍️ Our Articles'}</div>
+          <div id="detail-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ RIGHT: Weather (sticky) ═══════════════════════════════════════════ -->
+    <div class="right-col">
+      <div class="side-card">
         <div class="side-label">🌤 Weather</div>
-        <div id="weather-widget"><div class="side-loading">Loading…</div></div>
+        <input id="wx-city-input" class="side-input" type="text" placeholder="Search city…" autocomplete="off" />
+        <div id="wx-suggestions"></div>
+        <div id="weather-widget"><div class="side-loading">Detecting location…</div></div>
       </div>
-
     </div>
-  </section>
 
-  <!-- ══ 2-COLUMN: MARKETS + NEWS ══════════════════════════════════════════ -->
-  <div class="live-grid">
-
-    <!-- ── LEFT: Markets Sidebar ──────────────────────────────────────────── -->
-    <aside class="mkt-sidebar">
-      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">{t.marketsLabel || '📊 Markets'}</div>
-
-      <div class="mkt-head">FX</div>
-      <div id="mkt-fx" class="mkt-rows">
-        <div class="mkt-skel"></div><div class="mkt-skel"></div><div class="mkt-skel"></div>
-      </div>
-
-      <div class="mkt-head" style="margin-top:12px;">Commodities</div>
-      <div id="mkt-comm" class="mkt-rows">
-        <div class="mkt-skel"></div><div class="mkt-skel"></div>
-      </div>
-
-      <div class="mkt-head" style="margin-top:12px;">
-        Indices
-        <span style="font-weight:400;opacity:0.45;font-size:9px;margin-left:4px;">~15min delay</span>
-      </div>
-      <div id="mkt-indices" class="mkt-rows">
-        <div class="mkt-skel"></div><div class="mkt-skel"></div>
-        <div class="mkt-skel"></div><div class="mkt-skel"></div>
-      </div>
-
-      <div class="mkt-head" style="margin-top:12px;">Crypto</div>
-      <div id="mkt-crypto" class="mkt-rows">
-        <div class="mkt-skel"></div><div class="mkt-skel"></div><div class="mkt-skel"></div>
-      </div>
-
-      <div id="mkt-updated" style="font-size:10px;color:var(--silver-muted);margin-top:10px;text-align:right;"></div>
-    </aside>
-
-    <!-- ── RIGHT: News Column ─────────────────────────────────────────────── -->
-    <div class="news-col" dir={t.rtl ? 'rtl' : 'ltr'}>
-
-      <!-- Title News: RSS headlines, auto-refresh 5 min -->
-      <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">{t.titleNewsLabel || '📰 Title News'}</div>
-          <div id="rss-updated" style="font-size:10px;color:var(--silver-muted);"></div>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;">
-          <input id="news-search" type="text" placeholder={t.searchPlaceholder}
-            style="flex:1;min-width:160px;max-width:280px;background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);border-radius:6px;padding:6px 10px;color:var(--silver);font-size:12px;font-family:var(--font-body);outline:none;" />
-          <div id="rss-lang-row" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
-        </div>
-        <div id="rss-list" style="display:flex;flex-direction:column;"></div>
-        <div id="news-meta" style="margin-top:8px;font-size:10px;color:var(--silver-muted);"></div>
-      </div>
-
-      <!-- Detail News: AHoosh own articles — static, zero cost -->
-      <div>
-        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.detailNewsLabel || '✍️ Our Articles'}</div>
-        <div id="detail-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;"></div>
-      </div>
-
-    </div>
   </div>
 </div>
 
@@ -186,45 +191,90 @@ const ownArticles = allPosts
   .news-col {}
 
   /* ── 3-col TV layout ────────────────────────────────────────────────────── */
-  .tv-3col {
+  /* ── Main 3-col page layout ─────────────────────────────────────────────── */
+  .page-3col {
     display:grid;
-    grid-template-columns:180px 1fr 180px;
-    gap:16px;
+    grid-template-columns:240px 1fr 240px;
+    gap:20px;
     align-items:start;
   }
-  .tv-side {
+  .left-col {
+    position:sticky;
+    top:148px;
+    max-height:calc(100vh - 158px);
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(215,161,61,0.2) transparent;
+  }
+  .left-col::-webkit-scrollbar { width:4px; }
+  .left-col::-webkit-scrollbar-thumb { background:rgba(215,161,61,0.2);border-radius:2px; }
+  .right-col {
+    position:sticky;
+    top:148px;
+  }
+  .center-col { min-width:0; }
+  .side-card {
     background:rgba(1,10,24,0.7);border:1px solid rgba(215,161,61,0.12);
-    border-radius:8px;padding:12px;min-height:260px;
+    border-radius:8px;padding:14px;
   }
   .side-label {
     font-family:var(--font-head);font-size:10px;font-weight:700;
     letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);
     margin-bottom:10px;
   }
-  .side-loading { font-size:11px;color:var(--silver-muted);padding:8px 0; }
-  /* Calendar */
-  .cal-month { font-size:11px;font-weight:700;color:var(--silver);text-align:center;margin-bottom:8px; }
-  .cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:2px; }
-  .cal-dh { font-size:8px;color:var(--silver-muted);text-align:center;padding:2px 0;font-weight:700; }
-  .cal-d {
-    font-size:10px;color:var(--silver-dim);text-align:center;padding:3px 1px;
-    border-radius:3px;cursor:default;
+  .side-loading { font-size:12px;color:var(--silver-muted);padding:8px 0; }
+  .side-input {
+    width:100%;box-sizing:border-box;
+    background:rgba(5,20,50,0.9);border:1px solid rgba(215,161,61,0.25);
+    border-radius:5px;padding:5px 8px;color:var(--silver);font-size:12px;
+    font-family:var(--font-body);outline:none;margin-bottom:6px;
   }
+  /* Calendar */
+  .cal-nav { display:flex;justify-content:space-between;align-items:center;margin-bottom:8px; }
+  .cal-nav-btn {
+    background:rgba(215,161,61,0.1);border:1px solid rgba(215,161,61,0.2);
+    color:var(--gold);border-radius:4px;padding:2px 8px;font-size:14px;cursor:pointer;
+    font-family:var(--font-body);line-height:1.4;
+  }
+  .cal-nav-btn:hover { background:rgba(215,161,61,0.25); }
+  .cal-month { font-size:12px;font-weight:700;color:var(--silver); }
+  .cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:4px; }
+  .cal-dh { font-size:9px;color:var(--silver-muted);text-align:center;padding:3px 0;font-weight:700; }
+  .cal-d {
+    font-size:11px;color:var(--silver-dim);text-align:center;padding:4px 1px;
+    border-radius:3px;cursor:pointer;
+  }
+  .cal-d:hover:not(.empty):not(.today) { background:rgba(215,161,61,0.1); }
   .cal-d.today { background:var(--gold);color:#03142E;font-weight:700; }
-  .cal-d.empty { opacity:0; }
+  .cal-d.selected { background:rgba(215,161,61,0.22);color:var(--silver);font-weight:700; }
+  .cal-d.empty { opacity:0;pointer-events:none; }
   /* Weather */
-  .wx-temp { font-size:32px;font-weight:700;color:var(--silver);font-family:var(--font-head);line-height:1; }
-  .wx-icon { font-size:28px;margin-bottom:4px; }
-  .wx-desc { font-size:11px;color:var(--silver-dim);margin-top:4px; }
-  .wx-row { font-size:10px;color:var(--silver-muted);margin-top:4px; }
-  .wx-city { font-size:10px;color:var(--gold);margin-bottom:8px; }
-  .wx-forecast { margin-top:10px;display:flex;flex-direction:column;gap:4px; }
-  .wx-day { display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--silver-muted);border-top:1px solid rgba(215,161,61,0.06);padding-top:4px; }
+  #wx-suggestions {
+    background:rgba(3,20,46,0.98);border:1px solid rgba(215,161,61,0.2);
+    border-radius:5px;margin-bottom:6px;overflow:hidden;display:none;
+  }
+  .wx-sug-item {
+    padding:7px 8px;font-size:11px;color:var(--silver-dim);cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .wx-sug-item:last-child { border-bottom:none; }
+  .wx-sug-item:hover { background:rgba(215,161,61,0.12);color:var(--silver); }
+  .wx-temp { font-size:38px;font-weight:700;color:var(--silver);font-family:var(--font-head);line-height:1; }
+  .wx-icon { font-size:34px;margin-bottom:4px; }
+  .wx-desc { font-size:12px;color:var(--silver-dim);margin-top:4px; }
+  .wx-row { font-size:11px;color:var(--silver-muted);margin-top:5px; }
+  .wx-city { font-size:11px;color:var(--gold);margin-bottom:8px;font-weight:600; }
+  .wx-forecast { margin-top:12px;display:flex;flex-direction:column;gap:5px; }
+  .wx-day { display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--silver-muted);border-top:1px solid rgba(215,161,61,0.06);padding-top:5px; }
   .wx-day .wx-day-temp { color:var(--silver);font-weight:700; }
 
+  @media(max-width:1100px) {
+    .page-3col { grid-template-columns:200px 1fr 200px; }
+  }
   @media(max-width:900px) {
-    .tv-3col { grid-template-columns:1fr; }
-    .tv-side { display:none; }
+    .page-3col { grid-template-columns:1fr; }
+    .left-col, .right-col { position:static;max-height:none; }
+    .right-col { display:none; }
   }
 
   /* RSS headline rows */
@@ -239,7 +289,7 @@ const ownArticles = allPosts
     color:var(--gold);background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.18);
     border-radius:3px;padding:2px 5px;white-space:nowrap;margin-top:2px;
   }
-  .rss-title { font-size:14px;color:var(--silver);line-height:1.5;flex:1;min-width:0; }
+  .rss-title { font-size:15px;color:var(--silver);line-height:1.55;flex:1;min-width:0; }
   .rss-time { flex-shrink:0;font-size:10px;color:var(--silver-muted);white-space:nowrap;margin-top:4px; }
 
   /* AHoosh article cards */
@@ -724,7 +774,7 @@ if (langSel && nameSel) {
   seenLangs.forEach(function(l) {
     var o = document.createElement('option');
     o.value = l;
-    o.textContent = t.langNames[l] || l;
+    o.textContent = t.langNames[l] || (l.charAt(0).toUpperCase() + l.slice(1));
     if (l === locale) o.selected = true;
     langSel.appendChild(o);
   });
@@ -802,20 +852,17 @@ function fetchMarkets() {
     document.getElementById('mkt-comm').innerHTML = commHtml ||
       '<div style="font-size:11px;color:var(--silver-muted);padding:4px 0;">—</div>';
 
-    // Indices (5 key ones)
-    var WANT = ['SPX','NDX','DAX','NI225','HSI'];
+    // Indices — show all available
     var idxHtml = '';
     (mkt.indices||[]).forEach(function(idx) {
-      if (WANT.indexOf(idx.short) >= 0) {
-        idxHtml += mktRow(idx.name, fmtNum(idx.price, 0), idx.change);
-      }
+      idxHtml += mktRow(idx.name || idx.short, fmtNum(idx.price, 0), idx.change);
     });
     document.getElementById('mkt-indices').innerHTML = idxHtml ||
       '<div style="font-size:11px;color:var(--silver-muted);padding:4px 0;">—</div>';
 
-    // Crypto top 5
+    // Crypto top 10
     var cryptoHtml = '';
-    var coins = Array.isArray(crypto) ? crypto.slice(0, 5) : [];
+    var coins = Array.isArray(crypto) ? crypto.slice(0, 10) : [];
     coins.forEach(function(c) {
       var sym = (c.symbol||'').toUpperCase();
       var px  = c.current_price;
@@ -972,93 +1019,125 @@ function decodeEntities(s) {
 // ─────────────────────────────────────────────────────────────────────────────
 // CALENDAR WIDGET
 // ─────────────────────────────────────────────────────────────────────────────
+// ─── INTERACTIVE CALENDAR ────────────────────────────────────────────────────
+var _now = new Date();
+var calY = _now.getFullYear(), calM = _now.getMonth(), calSel = null;
+var CAL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var CAL_DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+window.calPrev = function() { calM--; if (calM < 0) { calM = 11; calY--; } renderCalendar(); };
+window.calNext = function() { calM++; if (calM > 11) { calM = 0; calY++; } renderCalendar(); };
+window.calSelect = function(d) { calSel = d + '-' + calM + '-' + calY; renderCalendar(); };
+
 function renderCalendar() {
   var el = document.getElementById('cal-widget');
   if (!el) return;
-  var now = new Date();
-  var y = now.getFullYear(), m = now.getMonth(), tod = now.getDate();
-  var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var firstDay = new Date(y, m, 1).getDay(); // 0=Sun
-  var days = new Date(y, m + 1, 0).getDate();
-  var dayLabels = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-  var html = '<div class="cal-month">' + monthNames[m] + ' ' + y + '</div><div class="cal-grid">';
-  dayLabels.forEach(function(d){ html += '<div class="cal-dh">'+d+'</div>'; });
+  var todY = _now.getFullYear(), todM = _now.getMonth(), todD = _now.getDate();
+  var firstDay = new Date(calY, calM, 1).getDay();
+  var days = new Date(calY, calM + 1, 0).getDate();
+  var html = '<div class="cal-nav">'
+    + '<button class="cal-nav-btn" onclick="calPrev()">‹</button>'
+    + '<span class="cal-month">' + CAL_MONTHS[calM] + ' ' + calY + '</span>'
+    + '<button class="cal-nav-btn" onclick="calNext()">›</button>'
+    + '</div><div class="cal-grid">';
+  CAL_DAYS.forEach(function(d){ html += '<div class="cal-dh">'+d+'</div>'; });
   for (var i = 0; i < firstDay; i++) html += '<div class="cal-d empty"></div>';
   for (var d = 1; d <= days; d++) {
-    html += '<div class="cal-d' + (d === tod ? ' today' : '') + '">' + d + '</div>';
+    var isToday = (d === todD && calM === todM && calY === todY);
+    var isSel   = (calSel === d + '-' + calM + '-' + calY);
+    var cls = 'cal-d' + (isToday ? ' today' : '') + (isSel && !isToday ? ' selected' : '');
+    html += '<div class="' + cls + '" onclick="calSelect(' + d + ')">' + d + '</div>';
   }
   html += '</div>';
   el.innerHTML = html;
 }
 renderCalendar();
 
-// ─────────────────────────────────────────────────────────────────────────────
-// WEATHER WIDGET (Open-Meteo, free, no key)
-// ─────────────────────────────────────────────────────────────────────────────
-var WMO_ICONS = {
-  0:'☀️', 1:'🌤', 2:'⛅', 3:'☁️',
-  45:'🌫', 48:'🌫',
-  51:'🌦', 53:'🌦', 55:'🌧',
-  61:'🌧', 63:'🌧', 65:'🌧',
-  71:'🌨', 73:'🌨', 75:'❄️',
-  80:'🌦', 81:'🌧', 82:'⛈',
-  95:'⛈', 96:'⛈', 99:'⛈'
-};
-var WMO_DESC = {
-  0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
-  45:'Foggy', 48:'Foggy',
-  51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
-  61:'Light rain', 63:'Rain', 65:'Heavy rain',
-  71:'Light snow', 73:'Snow', 75:'Heavy snow',
-  80:'Rain showers', 81:'Showers', 82:'Heavy showers',
-  95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm'
-};
+// ─── WEATHER WIDGET — Open-Meteo (free, no key) + geocoding city search ──────
+var WMO_ICONS = { 0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈' };
+var WMO_DESC  = { 0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Foggy',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Showers',82:'Heavy showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm' };
+var DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
 function loadWeather(lat, lon, city) {
-  fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4')
+  var el = document.getElementById('weather-widget');
+  if (el) el.innerHTML = '<div class="side-loading">Loading…</div>';
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=6')
     .then(function(r){ return r.json(); })
     .then(function(data) {
-      var el = document.getElementById('weather-widget');
-      if (!el) return;
+      var el2 = document.getElementById('weather-widget');
+      if (!el2) return;
       var cw = data.current_weather;
       var code = cw.weathercode;
-      var icon = WMO_ICONS[code] || '🌡';
-      var desc = WMO_DESC[code] || 'Unknown';
       var daily = data.daily || {};
-      var forecastHtml = '';
+      var fHtml = '';
       if (daily.time) {
-        var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        for (var i = 1; i < Math.min(4, daily.time.length); i++) {
+        for (var i = 1; i < Math.min(6, daily.time.length); i++) {
           var dt = new Date(daily.time[i]+'T12:00:00');
-          var maxT = Math.round(daily.temperature_2m_max[i]);
-          var minT = Math.round(daily.temperature_2m_min[i]);
-          var dc = daily.weathercode[i];
-          forecastHtml += '<div class="wx-day"><span>' + dayNames[dt.getDay()] + ' ' + (WMO_ICONS[dc]||'🌡') + '</span><span class="wx-day-temp">' + maxT + '° / ' + minT + '°</span></div>';
+          fHtml += '<div class="wx-day"><span>' + DAY_NAMES[dt.getDay()] + ' ' + (WMO_ICONS[daily.weathercode[i]]||'🌡') + '</span>'
+                 + '<span class="wx-day-temp">' + Math.round(daily.temperature_2m_max[i]) + '° / ' + Math.round(daily.temperature_2m_min[i]) + '°</span></div>';
         }
       }
-      el.innerHTML =
-        '<div class="wx-city">📍 ' + city + '</div>' +
-        '<div class="wx-icon">' + icon + '</div>' +
+      el2.innerHTML =
+        '<div class="wx-city">📍 ' + escHtml(city) + '</div>' +
+        '<div class="wx-icon">' + (WMO_ICONS[code]||'🌡') + '</div>' +
         '<div class="wx-temp">' + Math.round(cw.temperature) + '°C</div>' +
-        '<div class="wx-desc">' + desc + '</div>' +
+        '<div class="wx-desc">' + (WMO_DESC[code]||'') + '</div>' +
         '<div class="wx-row">💨 ' + Math.round(cw.windspeed) + ' km/h</div>' +
-        (forecastHtml ? '<div class="wx-forecast">' + forecastHtml + '</div>' : '');
+        (fHtml ? '<div class="wx-forecast">' + fHtml + '</div>' : '');
     })
     .catch(function(){
-      var el = document.getElementById('weather-widget');
-      if (el) el.innerHTML = '<div class="side-loading">Unavailable</div>';
+      var el3 = document.getElementById('weather-widget');
+      if (el3) el3.innerHTML = '<div class="side-loading">Unavailable</div>';
     });
 }
-(function() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function(pos) { loadWeather(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4), 'Your Location'); },
-      function()    { loadWeather(44.8, 20.5, 'Belgrade'); },
-      { timeout: 5000 }
-    );
-  } else {
-    loadWeather(44.8, 20.5, 'Belgrade');
-  }
-})();
+
+// City search via Open-Meteo geocoding
+var _wxTimer = null;
+var wxInput = document.getElementById('wx-city-input');
+var wxSug   = document.getElementById('wx-suggestions');
+if (wxInput && wxSug) {
+  wxInput.addEventListener('input', function() {
+    clearTimeout(_wxTimer);
+    var q = this.value.trim();
+    if (q.length < 2) { wxSug.style.display='none'; return; }
+    _wxTimer = setTimeout(function() {
+      fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=6&language=en&format=json')
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+          var results = data.results || [];
+          if (!results.length) { wxSug.style.display='none'; return; }
+          wxSug.innerHTML = '';
+          results.forEach(function(r) {
+            var label = r.name + (r.admin1 ? ', '+r.admin1 : '') + ', ' + r.country;
+            var item = document.createElement('div');
+            item.className = 'wx-sug-item';
+            item.textContent = label;
+            item.addEventListener('click', function() {
+              wxInput.value = r.name + ', ' + r.country;
+              wxSug.style.display = 'none';
+              loadWeather(r.latitude, r.longitude, r.name + ', ' + r.country);
+            });
+            wxSug.appendChild(item);
+          });
+          wxSug.style.display = 'block';
+        })
+        .catch(function(){ wxSug.style.display='none'; });
+    }, 350);
+  });
+  document.addEventListener('click', function(e) {
+    if (!wxSug.contains(e.target) && e.target !== wxInput) wxSug.style.display='none';
+  });
+}
+
+// Initial load: geolocation → Belgrade fallback
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function(pos) { loadWeather(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4), 'Your Location'); },
+    function()    { loadWeather(44.8, 20.5, 'Belgrade'); },
+    { timeout: 5000 }
+  );
+} else {
+  loadWeather(44.8, 20.5, 'Belgrade');
+}
 
 })();
 </script>
