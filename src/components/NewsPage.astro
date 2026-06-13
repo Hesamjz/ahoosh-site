@@ -169,8 +169,12 @@ const ownArticles = allPosts
     font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
     color:var(--silver-muted);border-bottom:1px solid rgba(215,161,61,0.08);
     padding-bottom:4px;margin-bottom:6px;
+    cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;
   }
+  .mkt-head:hover { color:var(--gold); }
+  .mkt-arrow { font-size:11px;transition:transform 0.18s;display:inline-block;opacity:0.6; }
   .mkt-rows { display:flex;flex-direction:column;gap:3px; }
+  .mkt-rows-hidden { display:none; }
   .mkt-row {
     display:flex;align-items:center;justify-content:space-between;
     padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.025);
@@ -404,9 +408,10 @@ const CHANNELS_ALL = [
   { id:'fox',         name:'Fox News',     lang:'en', type:'youtube', vid:'qEHza_8UL-k' },
   { id:'wion',        name:'WION',         lang:'en', type:'youtube', vid:'X5yAyEpwxU0' },
   { id:'gbnews',      name:'GB News',      lang:'en', type:'youtube', vid:'4fzMTueenHs' },
-  // Finance channels (grouped with English)
-  { id:'bloomberg',   name:'Bloomberg TV', lang:'en', type:'hls',     src:'https://liveproduseast.global.ssl.fastly.net/us/index.m3u8' },
-  { id:'cnbc',        name:'CNBC',         lang:'en', type:'youtube', vid:'9NyxcX3rhQs' },
+  // Finance / Markets (English)
+  { id:'bloomberg',     name:'Bloomberg TV',   lang:'en', type:'hls',     src:'https://liveproduseast.global.ssl.fastly.net/us/index.m3u8' },
+  { id:'cnbc',          name:'CNBC',           lang:'en', type:'youtube', vid:'9NyxcX3rhQs' },
+  { id:'yahoo-finance', name:'Yahoo Finance',  lang:'en', type:'youtube', vid:'sSn4OeE38rY' },
   // Persian — diaspora only (no Iranian state media)
   {
     id:'shabakeh3', name:'90', lang:'sport',
@@ -415,25 +420,42 @@ const CHANNELS_ALL = [
       { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/iframe' },
     ]
   },
-  { id:'bbc-fa',      name:'BBC Persian',  lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
-  { id:'iranintl',    name:'Iran Intl',    lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
-  { id:'manoto',      name:'Manoto',       lang:'fa', type:'youtube', vid:'bQJFCVV8hCg' },
-  { id:'voa-fa',      name:'VOA Farsi',    lang:'fa', type:'youtube', vid:'nkwyi4gDpxs' },
-  { id:'rfarda',      name:'Radio Farda',  lang:'fa', type:'hls', src:'https://rferl-ingest.akamaized.net/hls/live/2121768/tvmc01/playlist.m3u8' },
-  { id:'iranfarda',   name:'Irane Farda',  lang:'fa', type:'hls', src:'https://hls.iranfarda.live/hls/stream.m3u8' },
-  // German
+  // Persian — News
+  { id:'bbc-fa',      name:'BBC Persian',     lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
+  { id:'iranintl',    name:'Iran Intl',        lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
+  { id:'manoto',      name:'Manoto',           lang:'fa', type:'youtube', vid:'bQJFCVV8hCg' },
+  { id:'voa-fa',      name:'VOA Farsi',        lang:'fa', type:'youtube', vid:'nkwyi4gDpxs' },
+  { id:'euronews-fa', name:'Euronews Persian', lang:'fa', type:'youtube', vid:'0GRLL6sA0oE' },
+  { id:'rfarda',      name:'Radio Farda',      lang:'fa', type:'hls', src:'https://rferl-ingest.akamaized.net/hls/live/2121768/tvmc01/playlist.m3u8' },
+  { id:'iranfarda',   name:'Irane Farda',      lang:'fa', type:'hls', src:'https://hls.iranfarda.live/hls/stream.m3u8' },
+  // German — News
   { id:'welt',        name:'WELT',         lang:'de', type:'youtube', vid:'RRr0687ik44' },
+  { id:'tagesschau',  name:'Tagesschau',   lang:'de', type:'youtube', vid:'P02w1OLz6sQ' },
+  { id:'phoenix-de',  name:'Phoenix',      lang:'de', type:'youtube', vid:'VI30oGmvn90' },
+  { id:'ntv-de',      name:'n-tv',         lang:'de', type:'youtube', vid:'eJlI_K09elU' },
   { id:'euronews-de', name:'Euronews DE',  lang:'de', type:'youtube', vid:'CQ3KsEbsYHs' },
   { id:'arte',        name:'ARTE',         lang:'de', type:'youtube', vid:'3gjNL03uYWc' },
-  // French
+  // German — Sport
+  { id:'sky-sport-de',  name:'Sky Sport DE',  lang:'de', sources:[{ type:'youtube', chanId:'UC_VsQmcsFWUhGn3DTwiO8bg' }] },
+  { id:'eurosport-de',  name:'Eurosport DE',  lang:'de', type:'youtube', vid:'7azI9NqBXTE' },
+  // French — News
   { id:'france24-fr', name:'France 24 FR', lang:'fr', type:'youtube', vid:'a47ckXKZjxI' },
+  { id:'bfmtv',       name:'BFM TV',       lang:'fr', sources:[{ type:'youtube', chanId:'UCUsBMOIUl_ad6JUOC16DpmQ' }] },
+  { id:'lci',         name:'LCI',          lang:'fr', type:'youtube', vid:'yVwws2eGJEI' },
+  { id:'franceinfo',  name:'France Info',  lang:'fr', type:'youtube', vid:'NG7ZX42nZKc' },
   { id:'euronews-fr', name:'Euronews FR',  lang:'fr', type:'youtube', vid:'NiRIbKwAejk' },
-  // Spanish
+  // Spanish — News
+  { id:'france24-es', name:'France 24 ES', lang:'es', sources:[{ type:'youtube', chanId:'UCCCPCZNChQdGa9EkATeye4g' }] },
+  { id:'tve24',       name:'TVE 24h',      lang:'es', type:'youtube', vid:'3GyDq846U08' },
+  { id:'euronews-es', name:'Euronews ES',  lang:'es', type:'youtube', vid:'O9mOtdZ-nSk' },
   { id:'dw-es',       name:'DW Español',   lang:'es', type:'youtube', vid:'yZh3xsFqCt8' },
-  // Serbian / Balkan
+  // Serbian / Balkan — News
   { id:'rts1',        name:'RTS 1',        lang:'sr', type:'youtube', vid:'8jrBwSYdZEQ' },
   { id:'hrt',         name:'HRT',          lang:'sr', type:'youtube', vid:'lbAeay4EVZ0' },
-  // Arabic
+  { id:'nova-s',        name:'Nova S',          lang:'sr', type:'youtube', vid:'sczAI-GB8Z0' },
+  { id:'n1-sr',         name:'N1 Srbija',       lang:'sr', type:'youtube', vid:'kduO0HKuqIY' },
+  { id:'euronews-sr',   name:'Euronews Serbia', lang:'sr', sources:[{ type:'youtube', chanId:'UCcEeLmoKP0B8DZvReDOmafw' }] },
+  // Arabic — News
   { id:'aljazeera-ar',name:'Al Jazeera عر',lang:'ar', type:'youtube', vid:'N8xxOD0nT1Y' },
   { id:'alarabiya',   name:'Al Arabiya',   lang:'ar', type:'youtube', vid:'n7eQejkXbnM' },
   { id:'bbc-ar',      name:'BBC Arabic',   lang:'ar', type:'youtube', vid:'O1pGmVtj2Y8' },
@@ -442,6 +464,9 @@ const CHANNELS_ALL = [
   { id:'alhadath',    name:'Al Hadath',    lang:'ar', type:'youtube', vid:'SPvxA_UuoYY' },
   { id:'sky-ar',      name:'Sky Arabia',   lang:'ar', type:'youtube', vid:'ymYr5ze2XeA' },
   { id:'cnn-ar',      name:'CNN Arabic',   lang:'ar', type:'youtube', vid:'n8osICWftpU' },
+  // Arabic — Sport + Euronews Arabic
+  { id:'euronews-ar', name:'Euronews عربية',lang:'ar', type:'youtube', vid:'xncZ2Vw3EyA' },
+  { id:'mbc-sport',   name:'MBC Sport',    lang:'ar', sources:[{ type:'youtube', chanId:'UCy2CIDKYZqqbeJ0NHNcJ9sQ' }] },
   // ── Sport ── verified HLS (re-engineered from parsatv.com, June 2026)
   {
     id:'fifa-plus', name:'FIFA+', lang:'sport',
@@ -479,6 +504,10 @@ const CHANNELS_ALL = [
     sources:[
       { type:'youtube', chanId:'UCcw05gGzjLIs5dnxGkQHMvw' },
     ]
+  },
+  {
+    id:'dw-kickoff', name:'DW Kick-off!', lang:'sport',
+    sources:[{ type:'youtube', chanId:'UCb72Gn5LXaLEcsOuPKGfQOg' }]
   },
   {
     id:'top-gear', name:'BBC Top Gear', lang:'sport',
@@ -524,6 +553,10 @@ const CHANNELS_ALL = [
     sources:[
       { type:'youtube', vid:'HfgIFGbdGJ0' },
     ]
+  },
+  {
+    id:'dw-doc', name:'DW Documentary', lang:'tech',
+    sources:[{ type:'youtube', chanId:'UCQ1GpKa15ulyoQuxz7H4rng' }]
   },
 ];
 
@@ -900,6 +933,30 @@ function fetchMarkets() {
 
 fetchMarkets();
 setInterval(fetchMarkets, 300000); // 5 min
+
+// ── Collapsible market sections (MetaTrader style) ────────────────────────
+(function() {
+  function wireMarketHeads() {
+    document.querySelectorAll('.mkt-head').forEach(function(hd) {
+      if (hd.dataset.wired) return;
+      hd.dataset.wired = '1';
+      var arrow = document.createElement('span');
+      arrow.className = 'mkt-arrow';
+      arrow.textContent = '▾';
+      hd.appendChild(arrow);
+      hd.addEventListener('click', function() {
+        var rows = hd.nextElementSibling;
+        while (rows && !rows.classList.contains('mkt-rows')) rows = rows.nextElementSibling;
+        if (!rows) return;
+        var collapsed = rows.classList.toggle('mkt-rows-hidden');
+        arrow.style.transform = collapsed ? 'rotate(-90deg)' : '';
+      });
+    });
+  }
+  // Wire immediately (headers are in HTML), and again after first markets fetch
+  wireMarketHeads();
+  document.addEventListener('marketsRendered', wireMarketHeads);
+})();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TITLE NEWS — RSS feed, auto-refresh every 5 min
