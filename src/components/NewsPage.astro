@@ -30,7 +30,7 @@ const ownArticles = allPosts
 </section>
 
 <!-- ══ WORLD CLOCKS — Analog ══════════════════════════════════════════════ -->
-<div style="background:rgba(1,10,24,0.97);border-bottom:1px solid rgba(215,161,61,0.1);padding:14px 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+<div style="background:rgba(1,10,24,0.97);border-bottom:1px solid rgba(215,161,61,0.1);padding:14px 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:0;z-index:100;">
   <div style="display:inline-flex;gap:24px;align-items:flex-end;min-width:max-content;" id="clocks-strip">
     <!-- populated by JS -->
   </div>
@@ -295,7 +295,7 @@ const CHANNELS_ALL = [
   { id:'cnbc',        name:'CNBC',         lang:'en', type:'youtube', vid:'9NyxcX3rhQs' },
   // Persian — diaspora only (no Iranian state media)
   {
-    id:'shabakeh3', name:'90', lang:'fa',
+    id:'shabakeh3', name:'90', lang:'sport',
     sources:[
       { type:'hls', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/manifest/video.m3u8' },
       { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/iframe' },
