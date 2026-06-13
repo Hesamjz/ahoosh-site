@@ -82,7 +82,7 @@ function notificationHtml({ name, email, company, message, typeLabel }) {
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
   <tr>
     <td style="background:#0A1628;border-radius:8px 8px 0 0;padding:24px 32px;text-align:center;">
-      <img src="https://ahoosh.ai/assets/logo-dark.png" alt="AHoosh" width="64" style="display:block;margin:0 auto 12px;">
+      <img src="https://ahoosh.ai/assets/logo.png" alt="AHoosh" width="110" style="display:block;margin:0 auto 12px;">
       <p style="color:#D4AF37;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin:0;">New Contact Form Submission</p>
     </td>
   </tr>
@@ -126,7 +126,7 @@ function thankYouHtml(name) {
   <!-- Header -->
   <tr>
     <td style="background:#0A1628;border-radius:8px 8px 0 0;padding:36px 40px;text-align:center;">
-      <img src="https://ahoosh.ai/assets/logo-dark.png" alt="AHoosh" width="80" style="display:block;margin:0 auto 20px;">
+      <img src="https://ahoosh.ai/assets/logo.png" alt="AHoosh" width="120" style="display:block;margin:0 auto 20px;">
       <div style="width:48px;height:2px;background:#D4AF37;margin:0 auto;"></div>
     </td>
   </tr>
