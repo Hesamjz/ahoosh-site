@@ -3,9 +3,12 @@ main = "src/index.ts"
 compatibility_date = "2026-06-08"
 workers_dev = true
 
-# Pipeline 1 — Markets. Cron every 1 minute (sources_of_truth_v2.md polling = 1 min).
+# Pipeline 1 — Markets. Cron every 2 minutes — stays under Workers KV free tier (1000 PUT/day).
+# Changed from `* * * * *` (1440/day) to `*/2 * * * *` (720/day) on 2026-06-13 after KV cap hit.
+# TGJU itself only refreshes ~5 min, so 2-min cadence loses no real freshness.
+# If we ever move to Workers Paid ($5/mo for 1M writes), this can go back to 1 min.
 [triggers]
-crons = ["* * * * *"]
+crons = ["*/2 * * * *"]
 
 # D1 — historical snapshots + per-source failure state.
 [[d1_databases]]
