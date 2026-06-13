@@ -43,12 +43,11 @@ export async function onRequestPost({ request, env }) {
       htmlContent: thankYouHtml(name),
     });
 
-    return Response.redirect('https://ahoosh.ai/contact?sent=1', 302);
+    return Response.redirect('https://ahoosh.ai/thank-you', 302);
 
   } catch (err) {
     console.error('Contact function error:', err);
-    // Still redirect to success so user isn't stuck
-    return Response.redirect('https://ahoosh.ai/contact?sent=1', 302);
+    return Response.redirect('https://ahoosh.ai/thank-you', 302);
   }
 }
 

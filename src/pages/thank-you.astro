@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Thank You — AHoosh"
+  description="Thank you for reaching out to AHoosh."
+>
+
+  <section style="min-height:80vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px;text-align:center;">
+    <div style="max-width:520px;width:100%;">
+
+      <!-- Icon -->
+      <div style="width:72px;height:72px;border-radius:50%;background:rgba(212,175,55,0.12);border:1.5px solid rgba(212,175,55,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:28px;">✓</div>
+
+      <!-- Heading -->
+      <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(26px,6vw,38px);color:var(--silver);letter-spacing:-0.01em;margin:0 0 16px;line-height:1.2;">
+        Message received.
+      </h1>
+
+      <!-- Body -->
+      <p style="font-size:15px;color:var(--silver-dim);line-height:1.75;margin:0 0 10px;">
+        Thank you for reaching out. I read every message personally and will get back to you within 1–2 business days.
+      </p>
+      <p style="font-size:15px;color:var(--silver-dim);line-height:1.75;margin:0 0 36px;">
+        If your matter is urgent, reply directly to the confirmation email or write to
+        <a href="mailto:contact@ahoosh.ai" style="color:var(--gold);text-decoration:none;">contact@ahoosh.ai</a>.
+      </p>
+
+      <!-- Divider -->
+      <div style="width:48px;height:2px;background:var(--gold);margin:0 auto 36px;opacity:0.6;"></div>
+
+      <!-- Signature -->
+      <p style="font-size:13px;color:var(--silver-muted);margin:0 0 4px;">Hesam Jafarzadeh</p>
+      <p style="font-size:12px;color:var(--silver-muted);opacity:0.6;margin:0 0 36px;">Founder & AI Consultant · AHoosh</p>
+
+      <!-- CTA -->
+      <a href="/" style="display:inline-block;border:1px solid rgba(212,175,55,0.4);color:var(--gold);font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;padding:12px 32px;border-radius:4px;transition:all 150ms ease;">
+        Back to AHoosh
+      </a>
+
+    </div>
+  </section>
+
+</BaseLayout>

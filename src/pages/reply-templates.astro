@@ -1,0 +1,488 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const templates = [
+  {
+    id: 'general',
+    label: 'General — First Response',
+    subject: 'Re: Your message to AHoosh',
+    body: `Hi [Name],
+
+Thanks for reaching out.
+
+I read through what you shared — it makes sense that you're looking at [brief reflection of their situation]. This is exactly the kind of work AHoosh is built for.
+
+Before I put together any thoughts or proposal, it would help to have a short conversation — 20–30 minutes — to understand your situation properly. That way whatever I send back is actually relevant rather than generic.
+
+Are you free for a call this week or early next? Here's my calendar: [Calendly link]
+
+Looking forward to speaking.
+
+Hesam
+Founder · AHoosh
+contact@ahoosh.ai · ahoosh.ai`,
+  },
+  {
+    id: 'branding',
+    label: 'Branding Inquiry',
+    subject: 'Re: Branding for [Company]',
+    body: `Hi [Name],
+
+Good to hear from you. Branding work is something I'm particular about — it's easy to produce something that looks nice but doesn't hold up under business pressure or across channels.
+
+From what you described, it sounds like you need [brand identity from scratch / a refresh / positioning clarity]. The right starting point is usually a half-day positioning session before any visual work begins. That conversation almost always surfaces things the brief doesn't say, and it changes what we end up building.
+
+I'd like to understand more about where you are and what you've tried before. Can we set up a call?
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'website',
+    label: 'Website Design & Build',
+    subject: 'Re: Website for [Project]',
+    body: `Hi [Name],
+
+Thanks for the message.
+
+Website projects tend to go sideways when the brief skips the strategy layer — when the focus jumps straight to design before the goal, audience, and conversion logic are clear. I try not to work that way.
+
+What I'd want to understand first: what does this site actually need to do? Is this a credibility anchor, a lead generation machine, an e-commerce build, or something else? The answer changes everything about how it should be built.
+
+Can we talk through it? A 30-minute call would let me give you a much clearer picture of what makes sense — timeline, budget range, and approach.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'marketing',
+    label: 'Digital Marketing / Ads',
+    subject: 'Re: Digital Marketing',
+    body: `Hi [Name],
+
+Thanks for getting in touch.
+
+Running ads without a clear conversion funnel is an expensive way to learn what doesn't work. Before I look at channels or budgets, I want to understand what's happening at each step between a stranger seeing your name and becoming a customer — and where that chain currently breaks.
+
+Do you have existing campaigns running? If so, I'd want to look at the data before recommending anything.
+
+Let's talk — even 20 minutes would let me tell you honestly whether we're a good fit and what the right approach looks like.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'ai',
+    label: 'AI Automation / Agent Setup',
+    subject: 'Re: AI Setup',
+    body: `Hi [Name],
+
+Thanks for reaching out.
+
+This area moves fast and there's a lot of noise around it — most people either underestimate what's actually possible or overbuild things that break immediately. I try to find the middle: what can be automated usefully right now, with what you actually have, without creating new problems.
+
+A few questions to think about before we talk:
+- What does the workflow or process look like today?
+- Where is the bottleneck — speed, consistency, volume, cost?
+- What tools or systems are already in place?
+
+30 minutes on a call is usually enough to map out whether there's a clean opportunity here and what it would take to act on it.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'seo',
+    label: 'SEO & Content',
+    subject: 'Re: SEO / Content',
+    body: `Hi [Name],
+
+Good to hear from you.
+
+SEO without a content strategy is just guessing at keywords. Content without SEO is writing for an empty room. The two have to work together — and both have to connect to what you're actually trying to sell or communicate.
+
+Before I say anything useful, I'd want to see where you currently stand: what's ranking, what content exists, and what the commercial goal behind the traffic is.
+
+Can you share your domain? I'll take a quick look before our call.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'social',
+    label: 'Social Media Management',
+    subject: 'Re: Social Media',
+    body: `Hi [Name],
+
+Thanks for the message.
+
+Social media is one of those areas where being busy and being effective look exactly the same from the outside. The question I always start with: what should social media actually do for this business? Generate leads, build authority, support sales conversations, something else?
+
+The answer changes the platform, the content format, the posting cadence — everything.
+
+Let's talk through it. If we're a good fit, I can outline a realistic plan for what consistent output looks like and what it costs.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'video',
+    label: 'Video Production',
+    subject: 'Re: Video Production',
+    body: `Hi [Name],
+
+Thanks for reaching out.
+
+Before we talk about production — format, length, style — I'd want to understand where this video lives and what it needs to do. A brand film, a product explainer, a talking-head series, and a social ad are four completely different briefs with completely different production approaches.
+
+What are you trying to communicate, and to whom?
+
+If you have examples of videos you like — even outside your industry — send them over. It saves a lot of conversation.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'pricing',
+    label: 'Pricing / Quote Request',
+    subject: 'Re: Pricing',
+    body: `Hi [Name],
+
+Thanks for asking directly — I'll be equally direct.
+
+I don't publish fixed prices because the scope varies too much. A positioning project for a two-person startup looks nothing like the same brief for a 50-person company, and I'd rather give you a number that's right for your situation.
+
+What I can say: most engagements start in the €1,500–€4,000 range depending on depth and deliverables. Strategy retainers start from €800/month. Website builds range from €2,500 for a clean informational site to €8,000+ for complex builds.
+
+To give you a proper quote, I need to understand what you actually need. Can we do a quick call?
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'startup',
+    label: 'Startup / Early Stage',
+    subject: 'Re: [their subject]',
+    body: `Hi [Name],
+
+Thanks for writing. Building something from scratch is a specific kind of situation — the priorities are different from a company that's already running, and the budget constraints are usually real.
+
+The most valuable thing I can do at your stage isn't necessarily the biggest scope — it's making sure the foundations are right. That means positioning, messaging, and whatever one or two channels you're going to own before you spread thin.
+
+Let's talk about where you are and what the next 90 days should actually look like.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'enterprise',
+    label: 'Established Company',
+    subject: 'Re: [their subject]',
+    body: `Hi [Name],
+
+Thanks for the message.
+
+For an organization of your size, the main challenge is usually not a lack of marketing activity — it's that the pieces aren't working together, or there's no clear picture of what's actually driving results versus what's just keeping everyone busy.
+
+I'd want to start by understanding what's already in place before suggesting anything. Could you share a brief overview of your current setup — channels, team, tools — before our call?
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'decline',
+    label: 'Polite Decline',
+    subject: 'Re: [their subject]',
+    body: `Hi [Name],
+
+Thanks for reaching out and for taking the time to write.
+
+After reading through what you shared, I don't think I'm the right fit for this particular project — [brief honest reason: e.g., outside the areas where I work / better suited to a larger agency / the timing doesn't work].
+
+I wanted to be straightforward rather than drag out a conversation that wouldn't go anywhere useful.
+
+If things change or a different kind of project comes up, feel free to write again.
+
+Best,
+Hesam`,
+  },
+  {
+    id: 'after-call',
+    label: 'After Discovery Call',
+    subject: 'Good speaking with you — next steps',
+    body: `Hi [Name],
+
+Thanks for the time today. Here's a quick summary of what we covered:
+
+Situation: [one or two sentences on their current state]
+Goal: [what they're trying to achieve]
+Agreed next step: [proposal / brief / pilot project]
+
+I'll have [the proposal / a detailed breakdown] to you by [date]. If anything changes on your side in the meantime, just let me know.
+
+Hesam`,
+  },
+  {
+    id: 'proposal',
+    label: 'Sending a Proposal',
+    subject: 'AHoosh Proposal — [Project Name]',
+    body: `Hi [Name],
+
+Attached is the proposal we discussed.
+
+It covers [brief 2-line summary]. I've kept it as concrete as possible — scope, deliverables, timeline, and investment are all in there.
+
+A couple of things worth noting:
+- [Key assumption from your call]
+- [Optional add-on or phase 2]
+
+Take a look and let me know if anything needs adjusting. If it looks right, we can move forward with [e-signature / a 50% deposit / a kickoff call].
+
+Happy to answer questions on a quick call if that's easier than email.
+
+Hesam`,
+  },
+  {
+    id: 'followup',
+    label: 'Follow-up (No Response)',
+    subject: 'Following up — [original subject]',
+    body: `Hi [Name],
+
+Just following up on my earlier message — I know things get buried.
+
+Still happy to connect if the timing is right. If the situation has changed or you've gone a different direction, no problem at all — just let me know and I'll close this out.
+
+Hesam`,
+  },
+  {
+    id: 'urgent',
+    label: 'Urgent Project',
+    subject: 'Re: [Urgent project]',
+    body: `Hi [Name],
+
+Got your message. Understood on the timeline.
+
+A few quick questions before I say whether I can take this on:
+- What's the actual hard deadline?
+- What exists already that I'd be working with?
+- What does "done" look like — what's the output?
+
+Send those over and I'll tell you within a few hours whether this is feasible and what it would cost on a rush basis.
+
+Hesam`,
+  },
+  {
+    id: 'referral',
+    label: 'Referral from Existing Client',
+    subject: 'Re: [their subject]',
+    body: `Hi [Name],
+
+Great to hear from you — and thanks to [referrer's name] for the introduction.
+
+A referral like this means [referrer] thought there was a real reason for us to talk, so I'll make sure we use the time well.
+
+Can you tell me a bit more about what you're working on? Even a few lines on the situation and what you're trying to figure out would help me come prepared.
+
+[Calendly link]
+
+Hesam`,
+  },
+  {
+    id: 'onboarding',
+    label: 'Ready to Start',
+    subject: 'Let\'s get started — [Project Name]',
+    body: `Hi [Name],
+
+Glad we're moving forward on this.
+
+Here's what the next few days look like:
+
+1. [Today/Tomorrow] — I'll send the [contract / brief / invoice] for you to sign/approve
+2. [Day X] — Once confirmed, I'll send the onboarding questionnaire
+3. [Day Y] — Kickoff call (calendar invite coming)
+
+If you have any existing assets — logos, brand guidelines, old briefs, analytics access — start pulling those together. The more context I have going in, the faster we move.
+
+Looking forward to it.
+
+Hesam`,
+  },
+  {
+    id: 'farsi',
+    label: 'Farsi Reply',
+    subject: 'پاسخ: [موضوع پیام اصلی]',
+    body: `[Name] عزیز،
+
+ممنون که وقت گذاشتید و پیام دادید.
+
+آنچه نوشتید را خواندم. [یک جمله درباره وضعیت آن‌ها]. این دقیقاً نوع کاری‌ست که در AHoosh رویش تمرکز داریم.
+
+قبل از اینکه پیشنهادی بفرستم، ترجیح می‌دم یه مکالمه کوتاه داشته باشیم — ۲۰ تا ۳۰ دقیقه — تا وضعیت رو درست بفهمم.
+
+آیا این هفته یا اوایل هفته بعد برای یه تماس فرصت دارید؟
+
+[Calendly link]
+
+با احترام،
+حسام جعفرزاده
+AHoosh · contact@ahoosh.ai`,
+  },
+  {
+    id: 'partnership',
+    label: 'Partnership Proposal',
+    subject: 'Re: Partnership',
+    body: `Hi [Name],
+
+Thanks for the note.
+
+Interesting to hear about [their project/company]. I'm generally open to conversations about collaboration when there's a real fit — meaning the work genuinely benefits from both sides being involved rather than one party subcontracting to the other.
+
+Tell me a bit more about what you had in mind specifically. What would the collaboration actually look like in practice?
+
+Hesam`,
+  },
+];
+---
+
+<BaseLayout title="Reply Templates — AHoosh" description="Internal reply templates for AHoosh contact form responses.">
+
+<section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:36px 24px 28px;border-bottom:1px solid rgba(215,161,61,0.1);">
+  <div style="max-width:860px;margin:0 auto;">
+    <div class="section-eyebrow">Internal</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(20px,5vw,30px);color:var(--silver);margin:8px 0 8px;letter-spacing:-0.01em;">Reply Templates</h1>
+    <p style="font-size:13px;color:var(--silver-muted);margin:0;">{templates.length} templates · Click any template to copy</p>
+  </div>
+</section>
+
+<section style="padding:32px 24px 64px;max-width:860px;margin:0 auto;">
+
+  <!-- Filter pills -->
+  <div id="filter-bar" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+    <button class="pill active" data-filter="all" onclick="filterTemplates('all')">All</button>
+    <button class="pill" data-filter="general" onclick="filterTemplates('general')">General</button>
+    <button class="pill" data-filter="services" onclick="filterTemplates('services')">Services</button>
+    <button class="pill" data-filter="process" onclick="filterTemplates('process')">Process</button>
+    <button class="pill" data-filter="other" onclick="filterTemplates('other')">Other</button>
+  </div>
+
+  <!-- Templates grid -->
+  <div id="templates-grid" style="display:flex;flex-direction:column;gap:16px;">
+
+    {templates.map((t) => (
+      <div class="template-card" data-id={t.id} style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:8px;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(215,161,61,0.08);cursor:pointer;" onclick={`toggleTemplate('${t.id}')`}>
+          <div>
+            <span style="font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--silver);">{t.label}</span>
+            <span style="font-size:11px;color:var(--silver-muted);margin-left:12px;">Subj: {t.subject}</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button
+              onclick={`copyTemplate(event, '${t.id}')`}
+              class="copy-btn"
+              data-id={t.id}
+              style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gold);background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);border-radius:4px;padding:5px 12px;cursor:pointer;white-space:nowrap;"
+            >Copy</button>
+            <span class="toggle-arrow" id={`arrow-${t.id}`} style="color:var(--silver-muted);font-size:12px;">▼</span>
+          </div>
+        </div>
+        <div class="template-body" id={`body-${t.id}`} style="display:none;padding:16px 18px;">
+          <pre style="font-family:var(--font-body);font-size:13px;color:var(--silver-dim);line-height:1.75;white-space:pre-wrap;margin:0;">{t.body}</pre>
+        </div>
+      </div>
+    ))}
+
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" style="position:fixed;bottom:28px;right:28px;background:#1a2e1a;border:1px solid rgba(52,211,153,0.4);border-radius:6px;padding:12px 20px;font-size:13px;font-weight:600;color:#34d399;opacity:0;transition:opacity 200ms ease;pointer-events:none;z-index:999;">
+    ✓ Copied to clipboard
+  </div>
+
+</section>
+
+</BaseLayout>
+
+<style>
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(215, 161, 61, 0.2);
+    background: transparent;
+    color: var(--silver-muted);
+    cursor: pointer;
+    transition: all 150ms ease;
+  }
+  .pill.active, .pill:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.4);
+    color: var(--gold);
+  }
+  .copy-btn:hover {
+    background: rgba(212, 175, 55, 0.18) !important;
+  }
+</style>
+
+<script>
+  const serviceIds = ['branding', 'website', 'marketing', 'ai', 'seo', 'social', 'video', 'pricing'];
+  const processIds = ['after-call', 'proposal', 'followup', 'urgent', 'onboarding'];
+  const generalIds = ['general', 'startup', 'enterprise'];
+  const otherIds   = ['decline', 'referral', 'farsi', 'partnership'];
+
+  function filterTemplates(filter) {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+
+    document.querySelectorAll('.template-card').forEach(card => {
+      const id = card.dataset.id;
+      let show = true;
+      if (filter === 'services') show = serviceIds.includes(id);
+      else if (filter === 'process') show = processIds.includes(id);
+      else if (filter === 'general') show = generalIds.includes(id);
+      else if (filter === 'other')   show = otherIds.includes(id);
+      card.style.display = show ? '' : 'none';
+    });
+  }
+
+  function toggleTemplate(id) {
+    const body  = document.getElementById(`body-${id}`);
+    const arrow = document.getElementById(`arrow-${id}`);
+    const open  = body.style.display !== 'none';
+    body.style.display  = open ? 'none' : 'block';
+    arrow.textContent   = open ? '▼' : '▲';
+  }
+
+  function copyTemplate(event, id) {
+    event.stopPropagation();
+    const pre = document.querySelector(`#body-${id} pre`);
+    // Temporarily show body to read text if collapsed
+    const body = document.getElementById(`body-${id}`);
+    const wasHidden = body.style.display === 'none';
+    if (wasHidden) body.style.display = 'block';
+    const text = pre.textContent;
+    if (wasHidden) body.style.display = 'none';
+
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector(`.copy-btn[data-id="${id}"]`);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1800);
+
+      const toast = document.getElementById('toast');
+      toast.style.opacity = '1';
+      setTimeout(() => toast.style.opacity = '0', 2000);
+    });
+  }
+</script>
