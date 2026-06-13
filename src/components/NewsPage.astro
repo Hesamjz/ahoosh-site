@@ -46,11 +46,7 @@ const { locale, t } = Astro.props;
       </div>
     </div>
     <input id="news-search" type="text" placeholder={t.searchPlaceholder} style="width:100%;max-width:360px;display:block;margin-bottom:14px;background:rgba(10,30,60,0.8);border:1px solid rgba(215,161,61,0.2);border-radius:6px;padding:8px 12px;color:var(--silver);font-size:13px;font-family:var(--font-body);outline:none;" />
-    <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">
-      <div class="news-skeleton"></div><div class="news-skeleton"></div>
-      <div class="news-skeleton"></div><div class="news-skeleton"></div>
-      <div class="news-skeleton"></div><div class="news-skeleton"></div>
-    </div>
+    <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;"></div>
     <div style="margin-top:16px;text-align:center;font-size:11px;color:var(--silver-muted);" id="news-meta"></div>
   </section>
 </div>
@@ -295,24 +291,14 @@ function buildLangTabs(arts) {
 var se=document.getElementById('news-search');
 if(se) se.addEventListener('input',function(){ searchTerm=this.value.trim(); renderNewsGrid(); });
 
-async function fetchNews() {
-  try {
-    var resp = await fetch('/api/own-articles.json', {signal:AbortSignal.timeout(8000)}).catch(function(){return null;});
-    var ownRaw = (resp && resp.ok) ? await resp.json() : [];
-    allArticles = ownRaw.map(function(a){ return Object.assign({}, a); });
-    renderNewsGrid();
-    var m=document.getElementById('news-meta');
-    if(m) m.textContent=allArticles.length+' '+t.updatedAt+': '+new Date().toLocaleTimeString(t.localeCode);
-    var u=document.getElementById('news-updated');
-    if(u) u.textContent=t.updatedAt+': '+new Date().toLocaleTimeString(t.localeCode);
-  } catch(e) {
-    var g=document.getElementById('news-grid');
-    if(g) g.innerHTML='<div style="color:var(--silver-muted);font-size:13px;padding:24px 0;grid-column:1/-1;">'+t.failedLoad+'</div>';
-  }
+function fetchNews() {
+  // News feed is reserved for AHoosh-produced news articles.
+  // When the team publishes rewritten news, it will appear here automatically.
+  var g=document.getElementById('news-grid');
+  if(g) g.innerHTML='<div style="color:var(--silver-muted);font-size:13px;padding:32px 0;grid-column:1/-1;text-align:center;line-height:1.8;">Our editorial team is working on the first batch of original news articles.<br>Check back soon.</div>';
 }
 
 fetchNews();
-setInterval(fetchNews, 300000);
 
 })();
 </script>
