@@ -1,11 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+const sent = Astro.url.searchParams.get('sent') === '1';
 ---
 
 <BaseLayout
   title="Contact"
   description="Contact AHoosh — AI strategy, market research, consulting, data structure, content, and decision support."
 >
+
+  {sent && (
+    <div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-radius:6px;padding:16px 24px;margin:24px auto;max-width:680px;text-align:center;">
+      <p style="color:#34d399;font-size:14px;font-weight:600;margin:0;">✓ Message sent — I'll get back to you shortly.</p>
+    </div>
+  )}
 
   <!-- Hero -->
   <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
@@ -19,11 +26,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- Form -->
   <section style="padding:32px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
-    <form method="POST" action="https://formsubmit.co/hesamjafarzadeh@gmail.com" style="display:flex;flex-direction:column;gap:0;">
-      <input type="hidden" name="_subject" value="New contact from ahoosh.ai" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="hidden" name="_template" value="table" />
-      <input type="text" name="_honey" style="display:none" />
+    <form method="POST" action="/api/contact" style="display:flex;flex-direction:column;gap:0;">
+      <input type="text" name="_honey" style="display:none;position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
 
       <div style="margin-bottom:16px;">
         <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:6px;">Your Name</label>
