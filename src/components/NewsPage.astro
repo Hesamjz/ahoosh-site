@@ -851,7 +851,7 @@ function buildRssLangTabs(articles) {
 function fetchTitleNews() {
   var updEl = document.getElementById('rss-updated');
   if (updEl) updEl.textContent = '↻…';
-  fetch('/api/news').then(function(r){ return r.json(); }).then(function(data) {
+  fetch('/api/news', { cache: 'no-cache' }).then(function(r){ return r.json(); }).then(function(data) {
     rssArticles = data.articles || [];
     buildRssLangTabs(rssArticles);
     renderRssList();
