@@ -279,18 +279,19 @@ const ownArticles = allPosts
 
   /* RSS headline rows */
   .rss-row {
-    display:flex;align-items:flex-start;gap:7px;
-    padding:7px 0;border-bottom:1px solid rgba(215,161,61,0.06);
-    cursor:default;
+    display:flex;flex-direction:column;gap:5px;
+    padding:10px 0;border-bottom:1px solid rgba(215,161,61,0.06);
+    cursor:pointer;
   }
   .rss-row:hover .rss-title { color:var(--gold); }
+  .rss-row-top { display:flex;align-items:center;justify-content:space-between;gap:8px; }
   .rss-src {
-    flex-shrink:0;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+    font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
     color:var(--gold);background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.18);
-    border-radius:3px;padding:2px 5px;white-space:nowrap;margin-top:2px;
+    border-radius:3px;padding:2px 5px;white-space:nowrap;flex-shrink:0;
   }
-  .rss-title { font-size:15px;color:var(--silver);line-height:1.55;flex:1;min-width:0; }
-  .rss-time { flex-shrink:0;font-size:10px;color:var(--silver-muted);white-space:nowrap;margin-top:4px; }
+  .rss-title { font-size:17px;color:var(--silver);line-height:1.5; }
+  .rss-time { flex-shrink:0;font-size:10px;color:var(--silver-muted);white-space:nowrap; }
 
   /* AHoosh article cards */
   .news-card-full {
@@ -462,23 +463,21 @@ const CHANNELS_ALL = [
     ]
   },
   {
-    id:'bein-xtra', name:'beIN Sports Xtra', lang:'sport',
+    id:'bein-sports', name:'beIN Sports', lang:'sport',
     sources:[
-      { type:'hls',     src:'https://bein-beinxtrasports-firetv.amagi.tv/playlist.m3u8' },
-      { type:'youtube', vid:'HfKs7aAoPAM' },
+      { type:'youtube', chanId:'UCJUCcJUeh0Cz2xyKwkw5Q1w' },
     ]
   },
   {
-    id:'pro-sport', name:'Pro Sport TV', lang:'sport',
+    id:'espn-live', name:'ESPN', lang:'sport',
     sources:[
-      { type:'hls', src:'https://proshls.wns.live/hls/stream.m3u8' },
+      { type:'youtube', chanId:'UCiWLfSweyRNmLpgEHekhoAg' },
     ]
   },
   {
-    id:'cbs-sport', name:'CBS Sports', lang:'sport',
+    id:'sky-sports-news', name:'Sky Sports News', lang:'sport',
     sources:[
-      { type:'hls',     src:'https://dai.google.com/linear/hls/event/GxrCGmwST0ixsrc_QgB6qw/master.m3u8' },
-      { type:'youtube', vid:'6GiC9TzYzh4' },
+      { type:'youtube', chanId:'UCcw05gGzjLIs5dnxGkQHMvw' },
     ]
   },
   {
@@ -675,7 +674,7 @@ function tryNextSource() {
 }
 
 function playSrc(src) {
-  if (src.type === 'youtube') { loadYoutube(src.vid); }
+  if (src.type === 'youtube') { loadYoutube(src.vid, src.chanId); }
   else if (src.type === 'iframe') { loadIframe(src.src); }
   else { loadHls(src.src); }
 }
@@ -689,12 +688,15 @@ function loadIframe(src) {
   i.style.display = 'block';
 }
 
-function loadYoutube(vid) {
+function loadYoutube(vid, chanId) {
   var v = document.getElementById('live-video');
   var i = document.getElementById('live-iframe');
   v.style.display = 'none';
   if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-  i.src = 'https://www.yout-ube.com/embed/' + vid + '?autoplay=1&rel=0&playsinline=1&fs=0';
+  var base = chanId
+    ? 'https://www.youtube.com/embed/live_stream?channel=' + chanId + '&autoplay=1&rel=0&playsinline=1'
+    : 'https://www.yout-ube.com/embed/' + vid + '?autoplay=1&rel=0&playsinline=1&fs=0';
+  i.src = base;
   i.style.display = 'block';
 }
 
@@ -709,7 +711,7 @@ function loadHls(src) {
       hlsInstance = new Hls({ enableWorker:true, lowLatencyMode:true });
       hlsInstance.loadSource(src);
       hlsInstance.attachMedia(v);
-      hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(){ v.play().catch(function(){}); });
+      hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(){ v.muted=true; v.play().catch(function(){}); });
       hlsInstance.on(Hls.Events.ERROR, function(ev, data) {
         if (data.fatal && activeSrcIdx + 1 < activeSrcList.length) {
           hlsInstance.destroy(); hlsInstance = null;
@@ -770,13 +772,24 @@ var langSel = document.getElementById('ch-lang-sel');
 var nameSel = document.getElementById('ch-name-sel');
 
 if (langSel && nameSel) {
-  // Populate category dropdown
-  seenLangs.forEach(function(l) {
-    var o = document.createElement('option');
-    o.value = l;
-    o.textContent = t.langNames[l] || (l.charAt(0).toUpperCase() + l.slice(1));
-    if (l === locale) o.selected = true;
-    langSel.appendChild(o);
+  // Populate category dropdown — grouped by Languages / Topics
+  var CHAN_GROUPS = [
+    { label: '🌐 Languages', keys: ['en','fa','de','fr','es','sr','ar'] },
+    { label: '📺 Topics',    keys: ['sport','tech'] },
+  ];
+  CHAN_GROUPS.forEach(function(group) {
+    var groupLangs = group.keys.filter(function(l){ return seenLangs.indexOf(l) >= 0; });
+    if (!groupLangs.length) return;
+    var grpEl = document.createElement('optgroup');
+    grpEl.label = group.label;
+    groupLangs.forEach(function(l) {
+      var o = document.createElement('option');
+      o.value = l;
+      o.textContent = t.langNames[l] || (l.charAt(0).toUpperCase() + l.slice(1));
+      if (l === locale) o.selected = true;
+      grpEl.appendChild(o);
+    });
+    langSel.appendChild(grpEl);
   });
 
   function populateChannels(lang) {
@@ -788,7 +801,10 @@ if (langSel && nameSel) {
       o.textContent = ch.name;
       nameSel.appendChild(o);
     });
-    if (list.length) loadChannel(list[0]);
+    // Defaults per category
+    var preferred = { en:'euronews-en', sport:'shabakeh3' };
+    var defCh = (preferred[lang] && list.find(function(c){ return c.id === preferred[lang]; })) || list[0];
+    if (defCh) { nameSel.value = defCh.id; loadChannel(defCh); }
   }
 
   langSel.addEventListener('change', function() { populateChannels(this.value); });
@@ -918,10 +934,17 @@ function renderRssList() {
   filtered.slice(0, 50).forEach(function(a) {
     var row = document.createElement('div');
     row.className = 'rss-row';
+    if (a.lang === 'fa' || a.lang === 'ar') row.setAttribute('dir', 'rtl');
+    if (a.link) {
+      row.dataset.url = a.link;
+      row.onclick = function() { window.open(this.dataset.url, '_blank', 'noopener,noreferrer'); };
+    }
     row.innerHTML =
-      '<span class="rss-src">' + escHtml(a.source||'') + '</span>' +
-      '<span class="rss-title">' + decodeEntities(a.title||'') + '</span>' +
-      '<span class="rss-time">' + timeAgo(a.pubDate) + '</span>';
+      '<div class="rss-row-top">' +
+        '<span class="rss-src">' + escHtml(a.source||'') + '</span>' +
+        '<span class="rss-time">' + timeAgo(a.pubDate) + '</span>' +
+      '</div>' +
+      '<div class="rss-title">' + decodeEntities(a.title||'') + '</div>';
     list.appendChild(row);
   });
   var meta = document.getElementById('news-meta');

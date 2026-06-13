@@ -72,7 +72,10 @@
       "Bash(git commit -q -m 'feat\\(content\\): Max-burn Day1 batch 1 — articles T-001..T-010 EN + T-001..T-005 ×FA/DE/SR *)",
       "Bash(git pull *)",
       "Bash(git commit *)",
-      "Bash(curl -sL \"https://ahoosh.ai/api/markets/latest\")"
+      "Bash(curl -sL \"https://ahoosh.ai/api/markets/latest\")",
+      "Bash(curl -sL \"https://ahoosh.ai/api/news/latest\")",
+      "Bash(curl -sL \"https://ahoosh.ai/api/news\")",
+      "Bash(curl -sL \"https://ahoosh.ai/news\")"
     ],
     "ask": [
       "Bash(rm *)",
