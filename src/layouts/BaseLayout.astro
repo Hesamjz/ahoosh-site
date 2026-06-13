@@ -86,15 +86,6 @@ const alternates = isLocalized
       </style>
     )}
     <slot name="head" />
-
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1X8JHR84R"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-Z1X8JHR84R');
-    </script>
   </head>
   <body>
     <!-- Sticky Nav -->
@@ -249,19 +240,6 @@ const alternates = isLocalized
       </div>
     </footer>
 
-    <!-- Tawk.to Live Chat -->
-    <script type="text/javascript" is:inline>
-      var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-      (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/6a2db79d6b50091d3f043170/1jr19agc2';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-      })();
-    </script>
-
     <style>
       /* Desktop nav breakpoint */
       @media (min-width: 900px) {
@@ -280,63 +258,6 @@ const alternates = isLocalized
         menu!.style.display = 'flex';
         document.body.style.overflow = 'hidden';
       });
-
-      // ── GA4 Custom Event Tracking ──────────────────────────────────────
-      function gtagEvent(eventName: string, params: Record<string, string | number>) {
-        if (typeof (window as any).gtag === 'function') {
-          (window as any).gtag('event', eventName, params);
-        }
-      }
-
-      // CTA clicks — "Book Discovery Call" / "Contact" buttons
-      document.addEventListener('click', (e) => {
-        const el = (e.target as HTMLElement).closest('a, button');
-        if (!el) return;
-        const href = (el as HTMLAnchorElement).href || '';
-        const text = el.textContent?.trim() || '';
-
-        // Primary CTA — book call / contact
-        if (href.includes('/contact') || href.includes('/تماس') || text.toLowerCase().includes('book') || text.toLowerCase().includes('discovery')) {
-          gtagEvent('generate_lead', { event_category: 'CTA', event_label: text.slice(0, 50), page: window.location.pathname });
-        }
-
-        // Assess CTA
-        if (href.includes('/assess') || text.toLowerCase().includes('assess')) {
-          gtagEvent('assess_start', { event_category: 'Assess', event_label: 'cta_click', page: window.location.pathname });
-        }
-
-        // Language switch
-        if (el.closest('#desktop-nav div, #mobile-lang') && (el as HTMLAnchorElement).href) {
-          const lang = (el as HTMLAnchorElement).href.match(/\/(fa|de|sr|en)\//)?.[1] || 'en';
-          gtagEvent('language_switch', { event_category: 'Navigation', event_label: lang });
-        }
-
-        // Article card clicks
-        if (el.closest('.article-card') || href.includes('/articles/')) {
-          gtagEvent('article_read', { event_category: 'Content', event_label: text.slice(0, 80) || href });
-        }
-
-        // Markets page
-        if (href.includes('/markets')) {
-          gtagEvent('markets_view', { event_category: 'Navigation', event_label: 'markets_click' });
-        }
-      });
-
-      // Article scroll depth — fire at 50% and 90%
-      if (window.location.pathname.includes('/articles/')) {
-        let fired50 = false, fired90 = false;
-        window.addEventListener('scroll', () => {
-          const pct = (window.scrollY + window.innerHeight) / document.body.scrollHeight;
-          if (!fired50 && pct >= 0.5) { fired50 = true; gtagEvent('article_scroll', { event_category: 'Engagement', event_label: '50pct', page: window.location.pathname }); }
-          if (!fired90 && pct >= 0.9) { fired90 = true; gtagEvent('article_scroll', { event_category: 'Engagement', event_label: '90pct', page: window.location.pathname }); }
-        }, { passive: true });
-      }
-
-      // Contact form submission
-      document.querySelector('form')?.addEventListener('submit', () => {
-        gtagEvent('form_submit', { event_category: 'Lead', event_label: 'contact_form', page: window.location.pathname });
-      });
-      // ──────────────────────────────────────────────────────────────────
 
       closeBtn?.addEventListener('click', () => {
         menu!.style.display = 'none';

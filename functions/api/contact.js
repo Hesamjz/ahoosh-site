@@ -1,6 +1,6 @@
 // Cloudflare Pages Function — handles AHoosh contact form
 // Env vars required (set in Cloudflare Pages → Settings → Environment variables):
-//   BREVO_API_KEY  — your Brevo (Sendinblue) transactional API key
+//   RESEND_API_KEY  — your Resend transactional API key
 
 export async function onRequestPost({ request, env }) {
   try {
@@ -15,7 +15,7 @@ export async function onRequestPost({ request, env }) {
       return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
     }
 
-    const brevoKey = env.BREVO_API_KEY;
+    const resendKey = env.RESEND_API_KEY;
     const labelMap = {
       consulting:      'Consulting',
       market_research: 'Market Research',
@@ -27,20 +27,20 @@ export async function onRequestPost({ request, env }) {
     const typeLabel = labelMap[requestType] || requestType || '—';
 
     // ── 1. Notify Hesam ──────────────────────────────────────────────────────
-    await brevoSend(brevoKey, {
-      sender:    { name: 'AHoosh Contact Form', email: 'contact@ahoosh.ai' },
-      to:        [{ email: 'hesamjafarzadeh@gmail.com', name: 'Hesam Jafarzadeh' }],
-      replyTo:   { email, name },
-      subject:   `New contact: ${name}${company ? ' · ' + company : ''}`,
-      htmlContent: notificationHtml({ name, email, company, message, typeLabel }),
+    await resendSend(resendKey, {
+      from:    'AHoosh Contact Form <contact@ahoosh.ai>',
+      to:      ['hesamjafarzadeh@gmail.com'],
+      reply_to: email,
+      subject: `New contact: ${name}${company ? ' · ' + company : ''}`,
+      html:    notificationHtml({ name, email, company, message, typeLabel }),
     });
 
     // ── 2. Auto-reply to submitter ───────────────────────────────────────────
-    await brevoSend(brevoKey, {
-      sender:    { name: 'Hesam Jafarzadeh · AHoosh', email: 'contact@ahoosh.ai' },
-      to:        [{ email, name }],
-      subject:   'Thank you for reaching out to AHoosh',
-      htmlContent: thankYouHtml(name),
+    await resendSend(resendKey, {
+      from:    'Hesam Jafarzadeh · AHoosh <contact@ahoosh.ai>',
+      to:      [email],
+      subject: 'Thank you for reaching out to AHoosh',
+      html:    thankYouHtml(name),
     });
 
     return Response.redirect('https://ahoosh.ai/thank-you', 302);
@@ -51,16 +51,16 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
-// ── Brevo helper ─────────────────────────────────────────────────────────────
-async function brevoSend(apiKey, payload) {
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+// ── Resend helper ─────────────────────────────────────────────────────────────
+async function resendSend(apiKey, payload) {
+  const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
-    headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
+    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Brevo error ${res.status}: ${text}`);
+    throw new Error(`Resend error ${res.status}: ${text}`);
   }
   return res.json();
 }
