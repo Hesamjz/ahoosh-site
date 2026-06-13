@@ -41,10 +41,10 @@ const ownArticles = allPosts
   <!-- ══ LIVE TV ════════════════════════════════════════════════════════════ -->
   <section style="margin-bottom:28px;">
     <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.liveTVLabel}</div>
-    <!-- Channel picker: two clean dropdowns (all screen sizes) -->
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-      <select id="ch-lang-sel" class="ch-sel" aria-label="Channel category" style="flex:0 0 auto;min-width:140px;"></select>
-      <select id="ch-name-sel" class="ch-sel" aria-label="Channel" style="flex:1;min-width:180px;max-width:320px;"></select>
+    <!-- Channel picker: two compact dropdowns -->
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+      <select id="ch-lang-sel" class="ch-sel" aria-label="Channel category"></select>
+      <select id="ch-name-sel" class="ch-sel" aria-label="Channel" style="min-width:160px;"></select>
     </div>
     <div style="position:relative;width:100%;max-width:760px;background:#000;border-radius:8px;overflow:hidden;border:1px solid rgba(215,161,61,0.2);">
       <video id="live-video" controls muted playsinline style="width:100%;display:block;aspect-ratio:16/9;background:#000;"></video>
@@ -228,11 +228,10 @@ const ownArticles = allPosts
   .mobile-ch-picker { display:none;flex-direction:column;gap:8px;margin-bottom:12px; }
   .desktop-ch-picker { display:block; }
   .ch-sel {
-    width:100%;background:rgba(5,20,50,0.95);
-    border:1px solid rgba(215,161,61,0.3);border-radius:8px;
-    padding:10px 14px;color:var(--silver);font-size:14px;
+    background:rgba(5,20,50,0.95);
+    border:1px solid rgba(215,161,61,0.3);border-radius:6px;
+    padding:8px 12px;color:var(--silver);font-size:13px;
     font-family:var(--font-body);outline:none;cursor:pointer;
-    appearance:auto;
   }
   @media(max-width:640px) {
     .mobile-ch-picker { display:flex; }
@@ -579,62 +578,15 @@ function loadChannel(ch) {
   playSrc(activeSrcList[0]);
 }
 
-// ── Channel lang filter tabs ──
-var activeLangFilter = locale;
-var chLangRow = document.getElementById('ch-lang-row');
+// ── Channel picker — two dropdowns ────────────────────────────────────────
 var seenLangs = [];
 CHANNELS_ALL.forEach(function(c){ if (seenLangs.indexOf(c.lang) < 0) seenLangs.push(c.lang); });
 
-var allChBtn = document.createElement('button');
-allChBtn.className = 'ch-lang-btn';
-allChBtn.textContent = t.allChannels;
-allChBtn.addEventListener('click', function(){
-  activeLangFilter = 'all'; renderChannelBtns();
-  document.querySelectorAll('.ch-lang-btn').forEach(function(b){ b.classList.remove('active'); });
-  allChBtn.classList.add('active');
-});
-chLangRow.appendChild(allChBtn);
-
-seenLangs.forEach(function(l){
-  var b = document.createElement('button');
-  b.className = 'ch-lang-btn' + (l === locale ? ' active' : '');
-  b.dataset.lang = l;
-  b.textContent = t.langNames[l] || l;
-  b.addEventListener('click', function(){
-    activeLangFilter = l; renderChannelBtns();
-    document.querySelectorAll('.ch-lang-btn').forEach(function(x){ x.classList.remove('active'); });
-    b.classList.add('active');
-  });
-  chLangRow.appendChild(b);
-});
-
-function renderChannelBtns() {
-  var bc = document.getElementById('channel-btns');
-  bc.innerHTML = '';
-  var list = activeLangFilter === 'all'
-    ? SORTED
-    : CHANNELS_ALL.filter(function(c){ return c.lang === activeLangFilter; });
-  list.forEach(function(ch){
-    var btn = document.createElement('button');
-    btn.className = 'ch-btn' + (currentCh === ch.id ? ' active' : '');
-    btn.dataset.id = ch.id;
-    btn.textContent = ch.name;
-    btn.addEventListener('click', function(){ loadChannel(ch); });
-    bc.appendChild(btn);
-  });
-}
-
-renderChannelBtns();
-
-// ── Mobile channel selects ──
 var langSel = document.getElementById('ch-lang-sel');
 var nameSel = document.getElementById('ch-name-sel');
+
 if (langSel && nameSel) {
-  // Populate lang options
-  var allLangsOpt = document.createElement('option');
-  allLangsOpt.value = '__all__';
-  allLangsOpt.textContent = t.allChannels;
-  langSel.appendChild(allLangsOpt);
+  // Populate category dropdown
   seenLangs.forEach(function(l) {
     var o = document.createElement('option');
     o.value = l;
@@ -643,9 +595,9 @@ if (langSel && nameSel) {
     langSel.appendChild(o);
   });
 
-  function populateMobileCh(lang) {
+  function populateChannels(lang) {
     nameSel.innerHTML = '';
-    var list = lang === '__all__' ? SORTED : CHANNELS_ALL.filter(function(c){ return c.lang === lang; });
+    var list = CHANNELS_ALL.filter(function(c){ return c.lang === lang; });
     list.forEach(function(ch) {
       var o = document.createElement('option');
       o.value = ch.id;
@@ -655,17 +607,14 @@ if (langSel && nameSel) {
     if (list.length) loadChannel(list[0]);
   }
 
-  langSel.addEventListener('change', function() { populateMobileCh(this.value); });
+  langSel.addEventListener('change', function() { populateChannels(this.value); });
   nameSel.addEventListener('change', function() {
-    var ch = CHANNELS_ALL.find(function(c){ return c.id === nameSel.value; });
+    var ch = CHANNELS_ALL.find(function(c){ return c.id === this.value; }, this);
     if (ch) loadChannel(ch);
   });
 
-  populateMobileCh(locale);
+  populateChannels(locale);
 }
-
-var firstCh = CHANNELS_ALL.find(function(c){ return c.lang === locale; }) || SORTED[0];
-loadChannel(firstCh);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MARKETS SIDEBAR
