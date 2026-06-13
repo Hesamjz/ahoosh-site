@@ -30,8 +30,8 @@ const ownArticles = allPosts
 </section>
 
 <!-- ══ WORLD CLOCKS — Analog ══════════════════════════════════════════════ -->
-<div style="background:rgba(1,10,24,0.97);border-bottom:1px solid rgba(215,161,61,0.1);padding:14px 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:0;z-index:100;">
-  <div style="display:inline-flex;gap:24px;align-items:flex-end;min-width:max-content;" id="clocks-strip">
+<div style="background:rgba(1,10,24,0.97);border-bottom:1px solid rgba(215,161,61,0.1);padding:14px 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:0;z-index:100;display:flex;justify-content:center;">
+  <div style="display:inline-flex;gap:24px;align-items:flex-end;" id="clocks-strip">
     <!-- populated by JS -->
   </div>
 </div>
@@ -246,6 +246,9 @@ const ownArticles = allPosts
     .mkt-rows { display:grid;grid-template-columns:1fr 1fr;gap:6px; }
     .mkt-skel { height:22px; }
   }
+  @media(max-width:768px) {
+    .clock-mobile-hide { display:none; }
+  }
   @media(max-width:500px) {
     .mkt-rows { grid-template-columns:1fr; }
     .clock-wrap { gap:4px; }
@@ -424,13 +427,12 @@ var SORTED = CHANNELS_ALL.slice().sort(function(a,b){ return langRank(a.lang)-la
 // WORLD CLOCKS — SVG Analog (Rolex-style)
 // ─────────────────────────────────────────────────────────────────────────────
 var CLOCKS = [
-  { key:'tehran',    tz:'Asia/Tehran',      name:(t.cityNames&&t.cityNames.tehran)    ||'Tehran'    },
-  { key:'belgrade',  tz:'Europe/Belgrade',  name:(t.cityNames&&t.cityNames.belgrade)  ||'Belgrade'  },
-  { key:'london',    tz:'Europe/London',    name:(t.cityNames&&t.cityNames.london)    ||'London'    },
-  { key:'newYork',   tz:'America/New_York', name:(t.cityNames&&t.cityNames.newYork)   ||'New York'  },
-  { key:'dubai',     tz:'Asia/Dubai',       name:(t.cityNames&&t.cityNames.dubai)     ||'Dubai'     },
-  { key:'tokyo',     tz:'Asia/Tokyo',       name:(t.cityNames&&t.cityNames.tokyo)     ||'Tokyo'     },
-  { key:'singapore', tz:'Asia/Singapore',   name:(t.cityNames&&t.cityNames.singapore) ||'Singapore' },
+  { key:'tehran',   tz:'Asia/Tehran',       name:(t.cityNames&&t.cityNames.tehran)   ||'Tehran',    mobileHide:true },
+  { key:'london',   tz:'Europe/London',     name:(t.cityNames&&t.cityNames.london)   ||'London'    },
+  { key:'newYork',  tz:'America/New_York',  name:(t.cityNames&&t.cityNames.newYork)  ||'New York'  },
+  { key:'dubai',    tz:'Asia/Dubai',        name:(t.cityNames&&t.cityNames.dubai)    ||'Dubai',     mobileHide:true },
+  { key:'tokyo',    tz:'Asia/Tokyo',        name:(t.cityNames&&t.cityNames.tokyo)    ||'Tokyo'     },
+  { key:'sydney',   tz:'Australia/Sydney',  name:'Sydney'                                          },
 ];
 
 // SVG sizes
@@ -491,7 +493,7 @@ var _dateFmt = CLOCKS.map(function(c) {
 var strip = document.getElementById('clocks-strip');
 CLOCKS.forEach(function(c, i) {
   var wrap = document.createElement('div');
-  wrap.className = 'clock-wrap';
+  wrap.className = 'clock-wrap' + (c.mobileHide ? ' clock-mobile-hide' : '');
   wrap.innerHTML =
     '<div class="city-name">' + c.name + '</div>' +
     makeDial(i) +
