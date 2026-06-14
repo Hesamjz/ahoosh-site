@@ -121,7 +121,7 @@ async function runCycle(env: Env): Promise<Record<string, unknown>> {
 
 // ── Pipeline B — AHoosh-owned take (AI-written, business focus, 4-lang) ────────
 const OWNED_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
-const MAX_OWNED = 2; // per hourly run (relevance-gated by the business pool)
+const MAX_OWNED = 1; // 1 per run × 2 runs/day (08:00 & 16:00 UTC) = 2 original articles/day
 
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "item";
@@ -208,8 +208,8 @@ const json = (b: unknown, status = 200) =>
 
 export default {
   async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
-    // */5 → Pipeline A (aggregate+translate); hourly → Pipeline B (owned takes)
-    const job = event.cron === "0 * * * *" ? runOwned(env) : runCycle(env);
+    // */5 → Pipeline A (aggregate+translate); 08:00 & 16:00 → Pipeline B (owned articles, 2/day)
+    const job = event.cron === "0 8,16 * * *" ? runOwned(env) : runCycle(env);
     ctx.waitUntil(job.then((s) => console.log("[news]", event.cron, JSON.stringify(s))));
   },
   async fetch(req: Request, env: Env): Promise<Response> {
