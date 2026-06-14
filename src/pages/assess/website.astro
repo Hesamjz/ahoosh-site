@@ -13,7 +13,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .wrap { max-width:760px; margin:0 auto; padding:40px 20px 80px; }
   h1   { font-size:clamp(22px,4vw,32px); color:#e8eaf0; margin:0 0 8px; }
   .sub { color:#7a8b9e; font-size:15px; margin:0 0 36px; }
-  .url-row { display:flex; gap:10px; flex-wrap:wrap; }
+
+  /* Step headers */
+  .step-header {
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 20px;
+  }
+  .step-num {
+    width:28px; height:28px; border-radius:50%;
+    background:rgba(215,161,61,0.15); border:1px solid rgba(215,161,61,0.4);
+    color:var(--gold); font-size:13px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .step-title { font-size:16px; font-weight:600; color:#e8eaf0; }
+  .step-desc  { font-size:13px; color:#7a8b9e; margin:0 0 24px 40px; }
+
+  /* URL row */
+  .url-row { display:flex; gap:10px; flex-wrap:wrap; margin-left:40px; }
   .url-row input {
     flex:1; min-width:220px; padding:13px 16px;
     background:rgba(255,255,255,0.06); border:1px solid rgba(215,161,61,0.3);
@@ -27,8 +43,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     cursor:pointer; white-space:nowrap;
   }
   .btn-audit:disabled { opacity:0.5; cursor:not-allowed; }
-  .status { margin:20px 0; font-size:14px; color:#7a8b9e; min-height:20px; }
-  .scores { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin:32px 0; }
+
+  /* Status */
+  .status { margin:12px 0 0 40px; font-size:14px; color:#7a8b9e; min-height:20px; }
+
+  /* Score cards */
+  .scores { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin:32px 0 20px; }
   .score-card {
     background:var(--card-bg); border:1px solid rgba(215,161,61,0.15);
     border-radius:12px; padding:20px; text-align:center;
@@ -38,16 +58,60 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .score-green  { color:#34d399; }
   .score-orange { color:#fbbf24; }
   .score-red    { color:#f87171; }
-  .vitals { background:var(--card-bg); border:1px solid rgba(215,161,61,0.15); border-radius:12px; padding:20px; margin-bottom:20px; }
-  .vitals h3 { margin:0 0 16px; font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); }
+
+  /* Vitals & opps */
+  .vitals, .opps {
+    background:var(--card-bg); border:1px solid rgba(215,161,61,0.15);
+    border-radius:12px; padding:20px; margin-bottom:16px;
+  }
+  .vitals h3, .opps h3 {
+    margin:0 0 16px; font-size:13px;
+    text-transform:uppercase; letter-spacing:0.1em; color:var(--gold);
+  }
   .vital-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; }
   .vital-row:last-child { border-bottom:none; }
   .vital-val { color:#e8eaf0; font-weight:600; }
-  .opps { background:var(--card-bg); border:1px solid rgba(215,161,61,0.15); border-radius:12px; padding:20px; margin-bottom:28px; }
-  .opps h3 { margin:0 0 16px; font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); }
   .opp { padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; color:#8a9bb0; }
   .opp:last-child { border-bottom:none; }
   .opp strong { color:#e8eaf0; display:block; margin-bottom:2px; font-size:14px; }
+
+  /* Divider */
+  .section-divider { border:none; border-top:1px solid rgba(255,255,255,0.07); margin:40px 0; }
+
+  /* Social checklist */
+  .checklist { display:flex; flex-direction:column; gap:12px; margin-left:40px; margin-bottom:24px; }
+  .check-item {
+    background:var(--card-bg); border:1px solid rgba(255,255,255,0.07);
+    border-radius:10px; padding:14px 16px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .check-item.answered { border-color:rgba(215,161,61,0.2); }
+  .check-q { font-size:14px; color:#c8d4e0; line-height:1.4; flex:1; }
+  .check-btns { display:flex; gap:6px; flex-shrink:0; }
+  .chk {
+    padding:5px 12px; border-radius:6px; font-size:12px; font-weight:600;
+    border:1px solid rgba(255,255,255,0.12); background:transparent;
+    color:#7a8b9e; cursor:pointer; transition:all .15s;
+  }
+  .chk:hover { border-color:rgba(215,161,61,0.4); color:#c8d4e0; }
+  .chk.sel-yes  { background:rgba(52,211,153,0.15); border-color:#34d399; color:#34d399; }
+  .chk.sel-part { background:rgba(251,191,36,0.12); border-color:#fbbf24; color:#fbbf24; }
+  .chk.sel-no   { background:rgba(248,113,113,0.12); border-color:#f87171; color:#f87171; }
+
+  /* Social save row */
+  .social-actions { display:flex; align-items:center; gap:16px; margin-left:40px; margin-bottom:8px; }
+  .btn-social-save {
+    padding:10px 24px; background:rgba(215,161,61,0.12);
+    border:1px solid rgba(215,161,61,0.4); color:var(--gold);
+    font-size:14px; font-weight:700; border-radius:8px; cursor:pointer;
+    transition:all .2s;
+  }
+  .btn-social-save:hover { background:rgba(215,161,61,0.22); }
+  .social-saved-msg { font-size:13px; color:#34d399; display:none; }
+  .social-score-row { font-size:13px; color:#7a8b9e; margin-left:40px; margin-bottom:32px; }
+  .social-score-row span { color:var(--gold); font-weight:700; }
+
+  /* Report button */
   .btn-report {
     display:block; width:100%; padding:16px;
     background:rgba(215,161,61,0.12); border:1px solid rgba(215,161,61,0.4);
@@ -62,12 +126,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </style>
 
 <div class="wrap">
-  <div style="margin-bottom:24px;">
+  <div style="margin-bottom:28px;">
     <a href="/assess" style="color:#7a8b9e;font-size:13px;text-decoration:none;">← Back to Assess Hub</a>
   </div>
 
-  <h1>Website Audit</h1>
-  <p class="sub">Enter your website URL — we'll check performance, SEO, and accessibility.</p>
+  <h1>Website &amp; Digital Presence Audit</h1>
+  <p class="sub">Two parts: an automated website scan + a quick self-report on your social and content presence.</p>
+
+  <!-- ── STEP 1: Automated Scan ── -->
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div class="step-title">Automated Website Scan</div>
+  </div>
+  <p class="step-desc">Enter your URL — we'll check performance, Core Web Vitals, and top fix opportunities.</p>
 
   <div class="url-row">
     <input type="url" id="url-input" placeholder="https://yourwebsite.com" autocomplete="off" />
@@ -85,16 +156,148 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <h3>Top Opportunities</h3>
       <div id="opps-list"></div>
     </div>
-    <a class="btn-report" href="/assess/report" id="btn-report">
-      Generate AI Report →
-    </a>
   </div>
+
+  <hr class="section-divider" />
+
+  <!-- ── STEP 2: Social & Content Self-Report ── -->
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div class="step-title">Social &amp; Content Presence</div>
+  </div>
+  <p class="step-desc">12 quick questions about your digital footprint beyond the website. Answer Yes / Partial / No.</p>
+
+  <div class="checklist" id="checklist">
+
+    <div class="check-item" data-id="1">
+      <span class="check-q">You publish new content (blog, articles, or resources) at least once a month</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="2">
+      <span class="check-q">Your website has a dedicated blog, insights, or resources section</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="3">
+      <span class="check-q">Your website content (pages, copy) has been updated in the last 6 months</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="4">
+      <span class="check-q">Your homepage has a clear, single call-to-action (contact, book, buy, etc.)</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="5">
+      <span class="check-q">You are active on at least one social media platform (posting 3+ times per week)</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="6">
+      <span class="check-q">Your social media profiles link back to your website</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="7">
+      <span class="check-q">You produce video content (YouTube, Reels, TikTok, or similar)</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="8">
+      <span class="check-q">Your Google Business Profile is complete, verified, and regularly updated</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="9">
+      <span class="check-q">You actively collect customer reviews and respond to them</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="10">
+      <span class="check-q">You have an email newsletter or actively collect email subscribers</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="11">
+      <span class="check-q">You track website analytics and review them at least monthly (GA4, Plausible, etc.)</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+    <div class="check-item" data-id="12">
+      <span class="check-q">You run paid digital advertising (Google Ads, Meta Ads, or other channels)</span>
+      <div class="check-btns">
+        <button class="chk" data-v="2">Yes</button>
+        <button class="chk" data-v="1">Partial</button>
+        <button class="chk" data-v="0">No</button>
+      </div>
+    </div>
+
+  </div><!-- /checklist -->
+
+  <div class="social-actions">
+    <button class="btn-social-save" id="btn-social-save">Save Answers</button>
+    <span class="social-saved-msg" id="social-saved-msg">✓ Saved</span>
+  </div>
+  <div class="social-score-row" id="social-score-row" style="display:none;">
+    Social &amp; Content score: <span id="social-score-val">—</span> / 100
+  </div>
+
+  <!-- ── Generate Report ── -->
+  <a class="btn-report" href="/assess/report" id="btn-report">
+    Generate AI Report →
+  </a>
 </div>
 
 <script>
-  const input  = document.getElementById('url-input');
-  const btn    = document.getElementById('btn-audit');
-  const status = document.getElementById('status');
+  /* ── PageSpeed audit ── */
+  const input   = document.getElementById('url-input');
+  const btn     = document.getElementById('btn-audit');
+  const status  = document.getElementById('status');
   const results = document.getElementById('results');
 
   function scoreColor(n) {
@@ -130,7 +333,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   btn.addEventListener('click', async () => {
     const url = input.value.trim();
     if (!url) { status.textContent = 'Enter a URL first.'; return; }
-
     try { new URL(url); } catch { status.textContent = 'Invalid URL — include https://'; return; }
 
     btn.disabled = true;
@@ -138,7 +340,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     results.classList.remove('visible');
 
     try {
-      const res = await fetch(`/api/pagespeed?url=${encodeURIComponent(url)}`);
+      const res  = await fetch(`/api/pagespeed?url=${encodeURIComponent(url)}`);
       const data = await res.json();
 
       if (!data.ok) {
@@ -147,23 +349,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         return;
       }
 
-      // Save to localStorage for report page
-      const websiteAssessment = {
+      localStorage.setItem('ahoosh_assess_website', JSON.stringify({
         url: data.url,
         strategy: data.strategy,
         scores: data.scores,
         vitals: data.vitals,
         opportunities: data.opportunities,
         audited_at: data.fetched_at,
-      };
-      localStorage.setItem('ahoosh_assess_website', JSON.stringify(websiteAssessment));
+      }));
 
       renderScores(data.scores);
       renderVitals(data.vitals);
       renderOpps(data.opportunities || []);
-
       results.classList.add('visible');
-      status.textContent = '✓ Audit complete. Review your scores below.';
+      status.textContent = '✓ Audit complete. Review your scores below, then fill Step 2.';
     } catch (e) {
       status.textContent = 'Network error — please try again.';
     } finally {
@@ -171,13 +370,94 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
   });
 
-  // Pre-fill if localStorage has a URL from a previous session
-  const prev = localStorage.getItem('ahoosh_assess_website');
+  /* Pre-fill URL from previous session */
+  var prev = localStorage.getItem('ahoosh_assess_website');
   if (prev) {
+    try { var p = JSON.parse(prev); if (p.url) input.value = p.url; } catch {}
+  }
+
+  /* ── Social checklist ── */
+  var answers = {}; // { qId: value 0|1|2 }
+
+  /* Load saved answers */
+  var savedSocial = localStorage.getItem('ahoosh_assess_social');
+  if (savedSocial) {
     try {
-      const p = JSON.parse(prev);
-      if (p.url) input.value = p.url;
+      var ss = JSON.parse(savedSocial);
+      if (ss.answers) answers = ss.answers;
     } catch {}
   }
+
+  /* Render saved state on load */
+  function applyAnswers() {
+    document.querySelectorAll('.check-item').forEach(function(item) {
+      var id = item.getAttribute('data-id');
+      var val = answers[id];
+      if (val === undefined || val === null) return;
+      item.classList.add('answered');
+      item.querySelectorAll('.chk').forEach(function(btn) {
+        btn.classList.remove('sel-yes','sel-part','sel-no');
+        if (parseInt(btn.getAttribute('data-v')) === parseInt(val)) {
+          if (val == 2) btn.classList.add('sel-yes');
+          else if (val == 1) btn.classList.add('sel-part');
+          else btn.classList.add('sel-no');
+        }
+      });
+    });
+    updateScoreDisplay();
+  }
+
+  function updateScoreDisplay() {
+    var keys = Object.keys(answers);
+    if (keys.length === 0) return;
+    var total = keys.reduce(function(acc, k) { return acc + parseInt(answers[k]); }, 0);
+    var pct = Math.round(total / 24 * 100);
+    var scoreRow = document.getElementById('social-score-row');
+    document.getElementById('social-score-val').textContent = pct;
+    scoreRow.style.display = 'block';
+  }
+
+  /* Button click handling */
+  document.getElementById('checklist').addEventListener('click', function(e) {
+    var btn = e.target.closest('.chk');
+    if (!btn) return;
+    var item = btn.closest('.check-item');
+    var id   = item.getAttribute('data-id');
+    var val  = parseInt(btn.getAttribute('data-v'));
+
+    answers[id] = val;
+    item.classList.add('answered');
+
+    item.querySelectorAll('.chk').forEach(function(b) {
+      b.classList.remove('sel-yes','sel-part','sel-no');
+    });
+    if (val === 2) btn.classList.add('sel-yes');
+    else if (val === 1) btn.classList.add('sel-part');
+    else btn.classList.add('sel-no');
+
+    updateScoreDisplay();
+  });
+
+  /* Save button */
+  document.getElementById('btn-social-save').addEventListener('click', function() {
+    var keys = Object.keys(answers);
+    var total = keys.reduce(function(acc, k) { return acc + parseInt(answers[k]); }, 0);
+    var pct   = Math.round(total / 24 * 100);
+    var payload = {
+      answers: answers,
+      score: pct,
+      answered: keys.length,
+      completed_at: new Date().toISOString(),
+    };
+    try {
+      localStorage.setItem('ahoosh_assess_social', JSON.stringify(payload));
+      var msg = document.getElementById('social-saved-msg');
+      msg.style.display = 'inline';
+      setTimeout(function() { msg.style.display = 'none'; }, 2000);
+    } catch(e) {}
+    updateScoreDisplay();
+  });
+
+  applyAnswers();
 </script>
 </BaseLayout>
