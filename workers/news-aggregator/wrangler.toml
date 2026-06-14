@@ -19,5 +19,6 @@ binding = "AI"
 [observability]
 enabled = true
 
-# Public route added after the staging smoke test:
-#   [[routes]]  pattern = "ahoosh.ai/api/news/latest"  zone_name = "ahoosh.ai"
+[[routes]]
+pattern = "ahoosh.ai/api/news*"
+zone_name = "ahoosh.ai"

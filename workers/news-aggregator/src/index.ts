@@ -100,6 +100,21 @@ export default {
       ).all();
       return json({ updated: new Date().toISOString(), lang: L, total: (rows.results ?? []).length, items: rows.results ?? [] });
     }
+    // /api/news — backward-compat alias used by NewsPage.astro
+    // Returns old {articles:[{title,link,lang,source,pubDate,desc}]} shape
+    if (url.pathname === "/api/news") {
+      const rows = await env.DB.prepare(
+        `SELECT url AS link, source, src_lang AS lang, category,
+                published_at AS pubDate, title_en AS title, summary_en AS desc
+         FROM news_items ORDER BY ingested_at DESC LIMIT 150`
+      ).all();
+      return json({
+        updated: new Date().toISOString(),
+        total: (rows.results ?? []).length,
+        sources: SOURCES.length,
+        articles: rows.results ?? [],
+      });
+    }
     if (url.pathname === "/run") return json({ ran: true, ...(await runCycle(env)) });
     if (url.pathname === "/health" || url.pathname === "/") return json({ ok: true, worker: "news-aggregator" });
     return json({ error: "not found" }, 404);
