@@ -1,14 +1,120 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import AssessBody from '../../components/AssessBody.astro';
-import AssessHead from '../../components/AssessHead.astro';
 ---
-
 <BaseLayout
-  title="Tests"
-  description="Wissenschaftlich validierte Arbeitsplatz-Assessments — der Big-Five-Persönlichkeitstest (IPIP) und die Rosenberg-Skala zum Selbstwertgefühl. Kostenlos, sofortige Ergebnisse."
+  title="Analyse-Zentrum — AHoosh.ai"
+  description="Drei Analysen. Fünfzehn Minuten. Ein KI-Bericht, der Ihnen genau sagt, worauf Sie sich fokussieren sollen — und was zuerst behoben werden muss."
   locale="de"
 >
-  <Fragment slot="head"><AssessHead /></Fragment>
-  <AssessBody lang="de" />
+<style>
+  :root { --gold:#D7A13D; --navy:#010A18; --card:#0B1A32; }
+  body  { background:var(--navy); color:#c8d4e0; }
+  .wrap { max-width:860px; margin:0 auto; padding:0 20px 100px; }
+  .hero { padding:72px 0 56px; text-align:center; }
+  .hero-eyebrow { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:18px; }
+  .hero h1 { font-size:clamp(28px,5vw,44px); font-weight:800; color:#e8eaf0; line-height:1.18; margin:0 0 16px; }
+  .hero p  { font-size:clamp(15px,2vw,18px); color:#7a8b9e; max-width:540px; margin:0 auto; line-height:1.65; }
+  .tracks-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#4a5a6e; margin-bottom:20px; }
+  .tracks { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-bottom:56px; }
+  .track-card { background:var(--card); border:1px solid rgba(215,161,61,0.12); border-radius:16px; padding:28px 24px; text-decoration:none; display:block; transition:all .2s; position:relative; }
+  .track-card:hover { border-color:rgba(215,161,61,0.45); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,.5); }
+  .track-icon { font-size:28px; margin-bottom:14px; }
+  .track-card h3 { font-size:17px; font-weight:700; color:#e8eaf0; margin:0 0 6px; }
+  .track-card p  { font-size:13px; color:#7a8b9e; line-height:1.6; margin:0 0 18px; }
+  .track-cta { font-size:13px; font-weight:700; color:var(--gold); }
+  .track-done { position:absolute; top:16px; right:16px; width:22px; height:22px; background:rgba(52,211,153,0.15); border:1.5px solid #34d399; border-radius:50%; display:none; align-items:center; justify-content:center; font-size:11px; color:#34d399; }
+  .track-done.visible { display:flex; }
+  .how { background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:36px 32px; margin-bottom:48px; }
+  .how h2 { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin:0 0 28px; }
+  .steps { display:flex; gap:24px; flex-wrap:wrap; }
+  .step { flex:1; min-width:160px; }
+  .step-num { width:30px; height:30px; border-radius:50%; border:1.5px solid rgba(215,161,61,0.4); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:12px; }
+  .step h4 { font-size:14px; font-weight:700; color:#e8eaf0; margin:0 0 6px; }
+  .step p  { font-size:13px; color:#7a8b9e; line-height:1.55; margin:0; }
+  .report-cta { text-align:center; padding:48px 32px; background:rgba(215,161,61,0.06); border:1px solid rgba(215,161,61,0.2); border-radius:16px; }
+  .report-cta h3 { font-size:20px; font-weight:700; color:#e8eaf0; margin:0 0 10px; }
+  .report-cta p  { font-size:14px; color:#7a8b9e; margin:0 0 24px; }
+  .report-cta a  { display:inline-block; padding:14px 40px; background:var(--gold); color:var(--navy); font-weight:700; border-radius:10px; text-decoration:none; font-size:15px; transition:opacity .15s; }
+  .report-cta a:hover { opacity:0.88; }
+  .report-cta a.locked { opacity:0.35; pointer-events:none; }
+  .locked-note { font-size:12px; color:#4a5a6e; margin-top:12px; display:none; }
+  .locked-note.visible { display:block; }
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-eyebrow">AHoosh Analyse-Zentrum</div>
+    <h1>Erfahren Sie, was Ihr Unternehmen zurückhält</h1>
+    <p>Drei Analysen. Fünfzehn Minuten. Ein KI-Bericht, der Ihnen genau sagt, worauf Sie sich fokussieren sollen — und was zuerst behoben werden muss.</p>
+  </div>
+
+  <div class="tracks-label">Wählen Sie, wo Sie beginnen möchten</div>
+
+  <div class="tracks">
+    <a href="/assess/personality" class="track-card">
+      <div class="track-done" id="done-personality">✓</div>
+      <div class="track-icon">🧠</div>
+      <h3>Persönlichkeit &amp; Führung</h3>
+      <p>Verstehen Sie, wie Sie Entscheidungen treffen, Teams führen und wo sich Ihre Muster im Unternehmen widerspiegeln.</p>
+      <div class="track-cta">Assessment starten →</div>
+    </a>
+
+    <a href="/assess/business" class="track-card">
+      <div class="track-done" id="done-business">✓</div>
+      <div class="track-icon">📊</div>
+      <h3>Unternehmensdiagnostik</h3>
+      <p>Kartieren Sie Stärken, Schwächen und Marktposition. Klären Sie Ihr Wertversprechen und Ihren Idealkunden.</p>
+      <div class="track-cta">Assessment starten →</div>
+    </a>
+
+    <a href="/assess/website" class="track-card">
+      <div class="track-done" id="done-website">✓</div>
+      <div class="track-icon">🌐</div>
+      <h3>Website &amp; Digitale Präsenz</h3>
+      <p>Seitenladezeiten, SEO-Lücken und die Probleme, die Ihre Website wirklich zurückhalten — direkt von Ihrer URL abgerufen.</p>
+      <div class="track-cta">Assessment starten →</div>
+    </a>
+  </div>
+
+  <div class="how">
+    <h2>So funktioniert es</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Assessments abschließen</h4>
+        <p>Jeder Bereich dauert 5–8 Minuten. In beliebiger Reihenfolge. Fortschritt wird im Browser gespeichert — kein Konto erforderlich.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>KI liest das Gesamtbild</h4>
+        <p>Claude analysiert alle Ihre Ergebnisse gemeinsam und identifiziert die drei wirkungsvollsten Probleme in Ihrem Unternehmen.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Beratungsbericht erhalten</h4>
+        <p>Executive Summary, spezifische Empfehlungen und ein Quick Win, den Sie noch diese Woche umsetzen können.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-cta">
+    <h3>Bereit für Ihren Bericht?</h3>
+    <p id="cta-sub">Schließen Sie mindestens ein Assessment ab, um Ihren KI-Bericht zu erstellen.</p>
+    <a href="/assess/report" id="report-btn" class="locked">Meinen Bericht anzeigen</a>
+    <div class="locked-note" id="locked-note">Bitte schließen Sie zuerst mindestens ein Assessment oben ab.</div>
+  </div>
+</div>
+
+<script is:inline>
+(function(){
+  var checks=[['done-personality','ahoosh_assess_personality'],['done-business','ahoosh_assess_business'],['done-website','ahoosh_assess_website']];
+  var done=0;
+  checks.forEach(function(c){try{if(localStorage.getItem(c[1])){var el=document.getElementById(c[0]);if(el)el.classList.add('visible');done++;}}catch(e){}});
+  var btn=document.getElementById('report-btn');
+  var sub=document.getElementById('cta-sub');
+  var note=document.getElementById('locked-note');
+  if(done>0){if(btn)btn.classList.remove('locked');if(sub)sub.textContent=done+' von 3 Assessments abgeschlossen. Ihr Bericht ist bereit.';}
+  else{if(note)note.classList.add('visible');}
+})();
+</script>
 </BaseLayout>

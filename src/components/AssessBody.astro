@@ -286,6 +286,8 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     N:{color:'#EF4444',bg:'#FEE2E2'},
     O:{color:'#8B5CF6',bg:'#EDE9FE'},
   };
+  const DISC_STYLE={D:{color:'#EF4444',bg:'#FEE2E2'},I:{color:'#F59E0B',bg:'#FEF3C7'},S:{color:'#10B981',bg:'#D1FAE5'},C:{color:'#3B82F6',bg:'#DBEAFE'}};
+  const GDMS_STYLE={R:{color:'#3B82F6',bg:'#DBEAFE'},I:{color:'#8B5CF6',bg:'#EDE9FE'},D:{color:'#10B981',bg:'#D1FAE5'},A:{color:'#EF4444',bg:'#FEE2E2'},S:{color:'#F59E0B',bg:'#FEF3C7'}};
 
   // ─── SCORING (reads keying from META; identical math across locales) ───
   function scoreBig5(ans){const s={E:0,A:0,C:0,N:0,O:0};for(const q of BIG5_META){const r=ans[q.id];if(!r)continue;s[q.t]+=q.r?6-r:r;}const res={};for(const[t,raw]of Object.entries(s)){const d=t==='N'?60-raw:raw;const pct=Math.max(0,Math.min(100,Math.round((d-10)/40*100)));res[t]={raw,pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
@@ -296,6 +298,23 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
   // Optimism (LOT-R): 5-point scale (v1-5 → 0-4); items 2,5,6,8 are fillers (f) and not scored; 3,7,9 reverse-keyed
   const LOT_META=[{id:1,r:false,f:false},{id:2,f:true},{id:3,r:true,f:false},{id:4,r:false,f:false},{id:5,f:true},{id:6,f:true},{id:7,r:true,f:false},{id:8,f:true},{id:9,r:true,f:false},{id:10,r:false,f:false}];
   function scoreOptimism(ans){let total=0;for(const q of LOT_META){if(q.f)continue;const v=ans[q.id];if(!v)continue;const s=v-1;total+=q.r?4-s:s;}const pct=Math.max(0,Math.min(100,Math.round(total/24*100)));let level;if(pct>=67)level='high';else if(pct>=34)level='medium';else level='low';return{total,pct,level};}
+  // DISC: 24 items, 4 dims (D/I/S/C), 5-pt Likert, all positively keyed
+  const DISC_META=[
+    {id:1,dim:'D'},{id:2,dim:'D'},{id:3,dim:'D'},{id:4,dim:'D'},{id:5,dim:'D'},{id:6,dim:'D'},
+    {id:7,dim:'I'},{id:8,dim:'I'},{id:9,dim:'I'},{id:10,dim:'I'},{id:11,dim:'I'},{id:12,dim:'I'},
+    {id:13,dim:'S'},{id:14,dim:'S'},{id:15,dim:'S'},{id:16,dim:'S'},{id:17,dim:'S'},{id:18,dim:'S'},
+    {id:19,dim:'C'},{id:20,dim:'C'},{id:21,dim:'C'},{id:22,dim:'C'},{id:23,dim:'C'},{id:24,dim:'C'},
+  ];
+  function scoreDisc(ans){const s={D:0,I:0,S:0,C:0};for(const q of DISC_META){const r=ans[q.id];if(!r)continue;s[q.dim]+=r;}const res={};for(const[dim,raw]of Object.entries(s)){const pct=Math.max(0,Math.min(100,Math.round((raw-6)/24*100)));res[dim]={raw,pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
+  // GDMS: 25 items, 5 styles (R/I/D/A/S), 5-pt Likert, all positively keyed
+  const GDMS_META=[
+    {id:1,dim:'R'},{id:2,dim:'R'},{id:3,dim:'R'},{id:4,dim:'R'},{id:5,dim:'R'},
+    {id:6,dim:'I'},{id:7,dim:'I'},{id:8,dim:'I'},{id:9,dim:'I'},{id:10,dim:'I'},
+    {id:11,dim:'D'},{id:12,dim:'D'},{id:13,dim:'D'},{id:14,dim:'D'},{id:15,dim:'D'},
+    {id:16,dim:'A'},{id:17,dim:'A'},{id:18,dim:'A'},{id:19,dim:'A'},{id:20,dim:'A'},
+    {id:21,dim:'S'},{id:22,dim:'S'},{id:23,dim:'S'},{id:24,dim:'S'},{id:25,dim:'S'},
+  ];
+  function scoreGdms(ans){const s={R:0,I:0,D:0,A:0,S:0};for(const q of GDMS_META){const r=ans[q.id];if(!r)continue;s[q.dim]+=r;}const res={};for(const[dim,raw]of Object.entries(s)){const pct=Math.max(0,Math.min(100,Math.round((raw-5)/20*100)));res[dim]={raw,pct,level:pct>=65?'high':pct>=35?'medium':'low'};}return res;}
 
   // ─── TRANSLATABLE CONTENT ─────────────────────────────
   const DATA={
@@ -366,6 +385,33 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
         },
         questions:["In uncertain times, I usually expect the best.","It's easy for me to relax.","If something can go wrong for me, it will.","I'm always optimistic about my future.","I enjoy my friends a lot.","It's important for me to keep busy.","I hardly ever expect things to go my way.","I don't get upset too easily.","I rarely count on good things happening to me.","Overall, I expect more good things to happen to me than bad."],
       },
+      disc:{
+        title:'DISC Profile',subtitle:'IDRlabs · 24 questions · ~5 min',
+        desc:'Identifies your dominant behavioral style across four dimensions: Dominance, Influence, Steadiness, and Conscientiousness. Widely used in leadership and team dynamics.',
+        tagline:'Personality',footer:'Based on the public-domain DISC methodology. For informational purposes only.',
+        labels:["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"],
+        traits:{
+          D:{name:'Dominance',high:'You are direct, decisive, and results-driven. You take charge readily, push for outcomes, and are comfortable with competitive situations. A natural strength in leadership roles.',medium:'You can be assertive and direct when the situation calls for it, but also adapt your approach when collaboration is more effective.',low:'You prefer collaborative, consensus-based approaches. You may avoid confrontation and prefer to support rather than direct.'},
+          I:{name:'Influence',high:'You are enthusiastic, persuasive, and people-focused. You excel at motivating others, enjoy social interaction, and bring energy to group settings.',medium:'You can be sociable and persuasive when needed, while also appreciating quieter, task-focused work.',low:'You tend to be more reserved and task-focused. You prefer facts over social persuasion and work well independently.'},
+          S:{name:'Steadiness',high:'You are patient, loyal, and a stabilizing force in teams. You value consistency, listen well, and prefer a steady, predictable environment.',medium:'You balance stability with adaptability, comfortable with both routine and reasonable change.',low:'You are comfortable with change and variety. You may prefer fast-paced environments over highly routine work.'},
+          C:{name:'Conscientiousness',high:'You are analytical, precise, and quality-focused. You research thoroughly, follow established processes, and hold yourself to high standards.',medium:'You balance attention to detail with pragmatism, applying rigor where it matters most.',low:'You prefer speed and flexibility over thoroughness. You make decisions quickly and are comfortable with "good enough."'},
+        },
+        questions:["I prefer to take charge and lead rather than follow.","I am direct and get to the point quickly.","I push hard to achieve results.","I prefer to lead rather than be led.","I make quick decisions, even under pressure.","I am competitive and enjoy winning.","I enjoy meeting new people and making connections.","I am enthusiastic and expressive.","I motivate and inspire the people around me.","I prefer working with a group over working alone.","I focus on what's positive rather than what might go wrong.","I find it easy to strike up conversations with strangers.","I prefer a stable, predictable environment.","I am patient, even when others are not.","I value loyalty and long-term relationships.","I listen more than I talk in most conversations.","I avoid conflict and try to maintain harmony.","I prefer a steady, methodical pace over rushing.","I pay close attention to details and accuracy.","I follow rules and established procedures carefully.","I research thoroughly before making decisions.","I like to have clear expectations and defined roles.","I work in a systematic, step-by-step way.","I check my work carefully before submitting it."],
+      },
+      gdms:{
+        title:'Decision-Making Style',subtitle:'GDMS · 25 questions · ~5 min',
+        desc:'Identifies how you prefer to make decisions across five styles: Rational, Intuitive, Dependent, Avoidant, and Spontaneous. Based on Scott & Bruce (1995).',
+        tagline:'Personality',footer:'Based on the General Decision Making Style scale (Scott & Bruce, 1995, public domain). For informational purposes only.',
+        labels:["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"],
+        traits:{
+          R:{name:'Rational',high:'You approach decisions logically and systematically. You gather information, weigh pros and cons carefully, and rely on structured analysis before committing.',medium:'You generally prefer a logical approach but can adapt to intuition or speed when needed.',low:'You rely less on systematic analysis, preferring quicker or more intuitive approaches to decisions.'},
+          I:{name:'Intuitive',high:'You trust your gut feelings and instincts when making decisions. You rely on feelings and hunches, which often lead you to sound conclusions.',medium:'You draw on intuition alongside analysis, switching between the two depending on context.',low:'You are sceptical of gut feelings and prefer evidence-based reasoning over intuition.'},
+          D:{name:'Dependent',high:'You prefer to consult others and seek guidance before deciding. You value input from trusted people and rarely decide alone on important matters.',medium:'You selectively seek advice on significant decisions while handling routine choices independently.',low:'You are confident deciding independently and rarely feel the need to consult others before acting.'},
+          A:{name:'Avoidant',high:'You tend to avoid making decisions when possible, delay choices, and feel uncomfortable when forced to decide quickly.',medium:'You occasionally delay decisions, particularly on high-stakes or complex matters, but can act when necessary.',low:'You are comfortable making decisions promptly and do not tend to avoid or delay choices.'},
+          S:{name:'Spontaneous',high:'You make decisions quickly and impulsively, often acting on the first idea that comes to mind without extensive deliberation.',medium:'You can be spontaneous when the situation calls for speed, but also deliberate when stakes are higher.',low:'You are deliberate and measured. You avoid impulsive choices and prefer thoughtful decision-making.'},
+        },
+        questions:["I make decisions in a logical and systematic way.","When making decisions, I consider the situation methodically.","I weigh the pros and cons carefully before deciding.","My decision-making is well thought-out.","I think carefully before I make a final decision.","When I make a decision, it feels right to me even if I can't explain why.","My decisions are made based on gut feelings.","I trust my inner feelings and reactions when making choices.","I make decisions based on intuition.","My feelings help determine the importance of a decision for me.","I rely on other people's advice when making important decisions.","I need assistance from others when making important decisions.","I rarely make decisions without consulting other people.","I like to get the approval of others before proceeding.","I use advice from others to help make decisions.","I avoid making important decisions until I absolutely must.","I put off making decisions as long as possible.","I delay making decisions until it is too late.","I avoid making decisions whenever I can.","I postpone decisions whenever possible.","I often make snap decisions.","I am generally impulsive when making decisions.","I make decisions quickly without thinking much about them.","I often make fast decisions.","I make decisions on the spur of the moment."],
+      },
     },
     de:{
       ui:{
@@ -433,6 +479,33 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
           low:{label:'Vorsichtige Sicht',desc:'Sie neigen dazu, Schwierigkeiten zu erwarten und sich auf das Schlimmste einzustellen. Diese Vorsicht kann vor Enttäuschung schützen, aber mehr Optimismus ist mit besserer Bewältigung und Wohlbefinden verbunden.'},
         },
         questions:["In unsicheren Zeiten erwarte ich meist das Beste.","Es fällt mir leicht, mich zu entspannen.","Wenn bei mir etwas schiefgehen kann, dann tut es das auch.","Ich blicke immer optimistisch in meine Zukunft.","Ich genieße die Zeit mit meinen Freunden sehr.","Es ist mir wichtig, beschäftigt zu sein.","Ich erwarte so gut wie nie, dass die Dinge nach meinem Willen laufen.","Ich rege mich nicht so leicht auf.","Ich rechne selten damit, dass mir Gutes widerfährt.","Insgesamt erwarte ich, dass mir mehr Gutes als Schlechtes widerfährt."],
+      },
+      disc:{
+        title:'DISC-Profil',subtitle:'IDRlabs · 24 Fragen · ~5 Min.',
+        desc:'Identifiziert Ihren dominanten Verhaltensstil in vier Dimensionen: Dominanz, Einfluss, Beständigkeit und Gewissenhaftigkeit. Weit verbreitet in Führung und Teamdynamik.',
+        tagline:'Persönlichkeit',footer:'Basierend auf der gemeinfreien DISC-Methodik. Nur zu Informationszwecken.',
+        labels:["Stimme gar nicht zu","Stimme nicht zu","Neutral","Stimme zu","Stimme voll zu"],
+        traits:{
+          D:{name:'Dominanz',high:'Sie sind direkt, entschlossen und ergebnisorientiert. Sie übernehmen gerne die Initiative, drängen auf Resultate und sind wettbewerbsorientiert. Eine natürliche Stärke in Führungsrollen.',medium:'Sie können bei Bedarf durchsetzungsfähig und direkt sein, passen Ihren Ansatz aber auch an, wenn Zusammenarbeit effektiver ist.',low:'Sie bevorzugen kooperative, konsensbasierte Ansätze. Sie vermeiden Konfrontation und unterstützen lieber, als zu dirigieren.'},
+          I:{name:'Einfluss',high:'Sie sind enthusiastisch, überzeugend und menschenorientiert. Sie motivieren andere, genießen soziale Interaktion und bringen Energie in Gruppenumgebungen.',medium:'Sie können bei Bedarf gesellig und überzeugend sein, schätzen aber auch ruhigere, aufgabenorientierte Arbeit.',low:'Sie sind eher zurückhaltend und aufgabenorientiert. Sie bevorzugen Fakten gegenüber sozialer Überzeugung und arbeiten gerne selbstständig.'},
+          S:{name:'Beständigkeit',high:'Sie sind geduldig, loyal und eine stabilisierende Kraft in Teams. Sie schätzen Konsistenz, hören gut zu und bevorzugen ein stabiles, berechenbares Umfeld.',medium:'Sie balancieren Stabilität mit Anpassungsfähigkeit und sind sowohl mit Routine als auch mit vernünftigen Veränderungen zufrieden.',low:'Sie sind mit Veränderungen und Abwechslung vertraut. Sie bevorzugen möglicherweise schnelllebige Umgebungen gegenüber sehr routinemäßiger Arbeit.'},
+          C:{name:'Gewissenhaftigkeit',high:'Sie sind analytisch, präzise und qualitätsorientiert. Sie recherchieren gründlich, befolgen etablierte Prozesse und halten sich an hohe Standards.',medium:'Sie balancieren Detailgenauigkeit mit Pragmatismus und wenden Strenge dort an, wo sie am meisten zählt.',low:'Sie bevorzugen Geschwindigkeit und Flexibilität gegenüber Gründlichkeit. Sie treffen Entscheidungen schnell und sind mit "gut genug" einverstanden.'},
+        },
+        questions:["Ich bevorzuge es, die Führung zu übernehmen, anstatt zu folgen.","Ich bin direkt und komme schnell auf den Punkt.","Ich setze mich stark für die Erzielung von Ergebnissen ein.","Ich führe lieber, als geführt zu werden.","Ich treffe schnelle Entscheidungen, auch unter Druck.","Ich bin wettbewerbsorientiert und gewinne gerne.","Ich genieße es, neue Menschen kennenzulernen und Kontakte zu knüpfen.","Ich bin enthusiastisch und ausdrucksstark.","Ich motiviere und inspiriere die Menschen um mich herum.","Ich arbeite lieber in einer Gruppe als allein.","Ich konzentriere mich eher auf das Positive als auf das, was schiefgehen könnte.","Es fällt mir leicht, Gespräche mit Fremden zu beginnen.","Ich bevorzuge ein stabiles, berechenbares Umfeld.","Ich bin geduldig, auch wenn andere es nicht sind.","Ich schätze Loyalität und langfristige Beziehungen.","In den meisten Gesprächen höre ich mehr zu als ich rede.","Ich vermeide Konflikte und versuche, Harmonie zu bewahren.","Ich bevorzuge ein gleichmäßiges, methodisches Tempo gegenüber der Eile.","Ich achte sehr auf Details und Genauigkeit.","Ich befolge Regeln und etablierte Verfahren sorgfältig.","Ich recherchiere gründlich, bevor ich Entscheidungen treffe.","Ich habe gerne klare Erwartungen und definierte Rollen.","Ich arbeite auf systematische, schrittweise Weise.","Ich überprüfe meine Arbeit sorgfältig, bevor ich sie abgebe."],
+      },
+      gdms:{
+        title:'Entscheidungsstil',subtitle:'GDMS · 25 Fragen · ~5 Min.',
+        desc:'Identifiziert Ihren bevorzugten Entscheidungsstil in fünf Dimensionen: Rational, Intuitiv, Abhängig, Vermeidend und Spontan. Basierend auf Scott & Bruce (1995).',
+        tagline:'Persönlichkeit',footer:'Basierend auf der Allgemeinen Entscheidungsstil-Skala (Scott & Bruce, 1995, gemeinfrei). Nur zu Informationszwecken.',
+        labels:["Stimme gar nicht zu","Stimme nicht zu","Neutral","Stimme zu","Stimme voll zu"],
+        traits:{
+          R:{name:'Rational',high:'Sie gehen Entscheidungen logisch und systematisch an. Sie sammeln Informationen, wägen Vor- und Nachteile sorgfältig ab und verlassen sich auf strukturierte Analysen.',medium:'Sie bevorzugen generell einen logischen Ansatz, können sich aber bei Bedarf an Intuition oder Tempo anpassen.',low:'Sie verlassen sich weniger auf systematische Analysen und bevorzugen schnellere oder intuitivere Entscheidungsansätze.'},
+          I:{name:'Intuitiv',high:'Sie vertrauen Ihrer Intuition und Ihren Instinkten bei Entscheidungen. Sie verlassen sich auf Gefühle und Ahnungen, die Sie oft zu soliden Schlussfolgerungen führen.',medium:'Sie nutzen Intuition neben der Analyse und wechseln je nach Kontext zwischen beiden.',low:'Sie stehen Bauchgefühlen skeptisch gegenüber und bevorzugen evidenzbasiertes Denken gegenüber Intuition.'},
+          D:{name:'Abhängig',high:'Sie ziehen es vor, andere zu konsultieren und Orientierung zu suchen, bevor Sie entscheiden. Sie schätzen Beiträge von vertrauenswürdigen Personen.',medium:'Sie holen selektiv Rat bei wichtigen Entscheidungen ein, während Sie Routineentscheidungen selbstständig treffen.',low:'Sie sind zuversichtlich, selbstständig zu entscheiden, und haben selten das Bedürfnis, andere zu konsultieren.'},
+          A:{name:'Vermeidend',high:'Sie neigen dazu, Entscheidungen zu vermeiden, Entscheidungen zu verzögern und fühlen sich unwohl, wenn Sie gezwungen sind, schnell zu entscheiden.',medium:'Sie verzögern gelegentlich Entscheidungen, besonders bei wichtigen oder komplexen Angelegenheiten, können aber bei Bedarf handeln.',low:'Sie treffen Entscheidungen gerne zügig und neigen nicht dazu, Entscheidungen zu vermeiden oder zu verzögern.'},
+          S:{name:'Spontan',high:'Sie treffen Entscheidungen schnell und impulsiv, oft basierend auf dem ersten Gedanken ohne ausgiebige Überlegung.',medium:'Sie können spontan sein, wenn die Situation Schnelligkeit erfordert, aber auch überlegt vorgehen, wenn die Einsätze höher sind.',low:'Sie sind bedächtig und besonnen. Sie vermeiden impulsive Entscheidungen und bevorzugen durchdachtes Vorgehen.'},
+        },
+        questions:["Ich treffe Entscheidungen auf eine logische und systematische Weise.","Bei Entscheidungen gehe ich die Situation methodisch an.","Ich wäge sorgfältig Vor- und Nachteile ab, bevor ich entscheide.","Meine Entscheidungsfindung ist wohl durchdacht.","Ich denke sorgfältig nach, bevor ich eine endgültige Entscheidung treffe.","Wenn ich eine Entscheidung treffe, fühlt sie sich richtig an, auch wenn ich nicht erklären kann warum.","Meine Entscheidungen basieren auf Bauchgefühl.","Ich vertraue meinen inneren Gefühlen und Reaktionen bei Entscheidungen.","Ich treffe Entscheidungen basierend auf Intuition.","Meine Gefühle helfen mir, die Wichtigkeit einer Entscheidung zu bestimmen.","Bei wichtigen Entscheidungen verlasse ich mich auf den Rat anderer.","Ich brauche die Hilfe anderer bei wichtigen Entscheidungen.","Ich treffe selten Entscheidungen, ohne andere zu konsultieren.","Ich möchte die Zustimmung anderer erhalten, bevor ich fortfahre.","Ich nutze den Rat anderer, um Entscheidungen zu treffen.","Ich vermeide wichtige Entscheidungen, bis ich absolut muss.","Ich zögere Entscheidungen so lange wie möglich hinaus.","Ich verzögere Entscheidungen, bis es zu spät ist.","Ich vermeide Entscheidungen, wann immer ich kann.","Ich schiebe Entscheidungen wann immer möglich auf.","Ich treffe oft schnelle Entscheidungen.","Ich bin generell impulsiv bei Entscheidungen.","Ich treffe Entscheidungen schnell, ohne viel darüber nachzudenken.","Ich treffe oft rasche Entscheidungen.","Ich treffe Entscheidungen auf der Grundlage des Augenblicks."],
       },
     },
     fa:{
@@ -502,6 +575,33 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
         },
         questions:["در زمان‌های نامطمئن، معمولاً انتظار بهترین‌ها را دارم.","به‌راحتی می‌توانم آرام بگیرم.","اگر قرار باشد چیزی برایم بد پیش برود، همان می‌شود.","همیشه نسبت به آینده‌ام خوش‌بین هستم.","از بودن با دوستانم بسیار لذت می‌برم.","مشغول بودن برایم مهم است.","به‌ندرت انتظار دارم کارها بر وفق مرادم پیش برود.","به‌راحتی ناراحت نمی‌شوم.","به‌ندرت روی رخ دادن اتفاق‌های خوب حساب می‌کنم.","روی‌هم‌رفته انتظار دارم بیشتر اتفاق‌های خوب برایم رخ دهد تا بد."],
       },
+      disc:{
+        title:'پروفایل DISC',subtitle:'IDRlabs · ۲۴ پرسش · حدود ۵ دقیقه',
+        desc:'سبک رفتاری غالب شما را در چهار بُعد شناسایی می‌کند: سلطه، تأثیرگذاری، ثبات و وجدان‌گرایی. به‌طور گسترده در رهبری و پویایی تیم استفاده می‌شود.',
+        tagline:'شخصیت',footer:'بر پایه روش‌شناسی DISC (مالکیت عمومی). صرفاً برای اطلاع‌رسانی.',
+        labels:["کاملاً مخالفم","مخالفم","بی‌نظر","موافقم","کاملاً موافقم"],
+        traits:{
+          D:{name:'سلطه',high:'مستقیم، قاطع و نتیجه‌محور هستید. به‌راحتی ابتکار عمل را به دست می‌گیرید، برای دستیابی به نتایج تلاش می‌کنید و با موقعیت‌های رقابتی راحت هستید.',medium:'می‌توانید در صورت نیاز قاطع و مستقیم باشید، اما رویکرد خود را نیز زمانی که همکاری مؤثرتر است تطبیق می‌دهید.',low:'رویکردهای مشارکتی و اجماع‌محور را ترجیح می‌دهید. ممکن است از رویارویی اجتناب کنید و ترجیح دهید حمایت کنید تا هدایت.'},
+          I:{name:'تأثیرگذاری',high:'پرشور، متقاعدکننده و مردم‌محور هستید. در انگیزه‌دادن به دیگران مهارت دارید، از تعاملات اجتماعی لذت می‌برید و در محیط‌های گروهی انرژی می‌آورید.',medium:'می‌توانید در صورت نیاز اجتماعی و متقاعدکننده باشید، در حالی که کار آرام‌تر و وظیفه‌محور را نیز می‌پسندید.',low:'بیشتر خجالتی و وظیفه‌محور هستید. حقایق را به متقاعدسازی اجتماعی ترجیح می‌دهید.'},
+          S:{name:'ثبات',high:'صبور، وفادار و نیروی ثبات‌بخش در تیم‌ها هستید. ثبات را ارزش می‌گذارید، خوب گوش می‌دهید و محیطی پایدار را ترجیح می‌دهید.',medium:'ثبات و انطباق‌پذیری را متعادل می‌کنید.',low:'با تغییر و تنوع راحت هستید. محیط‌های پرسرعت را ترجیح می‌دهید.'},
+          C:{name:'وجدان‌گرایی',high:'تحلیلی، دقیق و کیفیت‌محور هستید. به‌طور کامل تحقیق می‌کنید، از فرآیندهای تعیین‌شده پیروی می‌کنید و استانداردهای بالایی را رعایت می‌کنید.',medium:'دقت را با عمل‌گرایی متعادل می‌کنید.',low:'سرعت و انعطاف را به دقت ترجیح می‌دهید. تصمیم‌ها را سریع می‌گیرید.'},
+        },
+        questions:["ترجیح می‌دهم رهبری کنم تا پیروی.","مستقیم هستم و سریع به اصل موضوع می‌رسم.","برای دستیابی به نتایج سخت تلاش می‌کنم.","ترجیح می‌دهم رهبری کنم تا هدایت شوم.","حتی زیر فشار، تصمیم‌های سریع می‌گیرم.","رقابتی هستم و دوست دارم پیروز شوم.","از آشنا شدن با افراد جدید و ایجاد ارتباط لذت می‌برم.","پرشور و بیانگر هستم.","افراد اطرافم را انگیزه می‌دهم و الهام می‌بخشم.","کار در گروه را به کار فردی ترجیح می‌دهم.","روی جنبه مثبت تمرکز می‌کنم تا روی آنچه ممکن است اشتباه پیش برود.","شروع مکالمه با غریبه‌ها برایم آسان است.","محیطی پایدار و قابل پیش‌بینی را ترجیح می‌دهم.","صبور هستم، حتی زمانی که دیگران نیستند.","به وفاداری و روابط بلندمدت اهمیت می‌دهم.","در بیشتر مکالمات بیشتر گوش می‌دهم تا صحبت می‌کنم.","از تعارض دوری می‌کنم و سعی می‌کنم هماهنگی را حفظ کنم.","یک سرعت منظم و روش‌مند را به شتاب ترجیح می‌دهم.","به جزئیات و دقت توجه زیادی می‌کنم.","قوانین و رویه‌های تعیین‌شده را با دقت دنبال می‌کنم.","قبل از تصمیم‌گیری به‌طور کامل تحقیق می‌کنم.","دوست دارم انتظارات واضح و نقش‌های تعریف‌شده داشته باشم.","به شیوه‌ای سیستماتیک و گام‌به‌گام کار می‌کنم.","کارم را قبل از ارسال به‌دقت بررسی می‌کنم."],
+      },
+      gdms:{
+        title:'سبک تصمیم‌گیری',subtitle:'GDMS · ۲۵ پرسش · حدود ۵ دقیقه',
+        desc:'نحوه تصمیم‌گیری شما را در پنج سبک شناسایی می‌کند: عقلایی، شهودی، وابسته، اجتنابی و خودانگیخته. بر پایه اسکات و بروس (۱۹۹۵).',
+        tagline:'شخصیت',footer:'بر پایه مقیاس سبک تصمیم‌گیری عمومی (اسکات و بروس، ۱۹۹۵، مالکیت عمومی). صرفاً برای اطلاع‌رسانی.',
+        labels:["کاملاً مخالفم","مخالفم","بی‌نظر","موافقم","کاملاً موافقم"],
+        traits:{
+          R:{name:'عقلایی',high:'به‌صورت منطقی و سیستماتیک به تصمیم‌ها نزدیک می‌شوید. اطلاعات جمع‌آوری می‌کنید، مزایا و معایب را با دقت ارزیابی می‌کنید.',medium:'رویکرد منطقی را ترجیح می‌دهید اما در صورت نیاز می‌توانید با شهود یا سرعت تطبیق یابید.',low:'کمتر به تحلیل سیستماتیک متکی هستید و رویکردهای سریع‌تر یا شهودی را ترجیح می‌دهید.'},
+          I:{name:'شهودی',high:'هنگام تصمیم‌گیری به احساسات و غریزه خود اعتماد می‌کنید. به احساسات و پیش‌بینی‌ها تکیه می‌کنید.',medium:'کنار تحلیل از شهود هم بهره می‌برید.',low:'نسبت به احساسات درونی شکاک هستید و استدلال مبتنی بر شواهد را ترجیح می‌دهید.'},
+          D:{name:'وابسته',high:'ترجیح می‌دهید قبل از تصمیم‌گیری با دیگران مشورت کنید. ورودی از افراد مورد اعتماد را ارزش می‌گذارید.',medium:'به‌طور انتخابی برای تصمیم‌های مهم مشاوره می‌گیرید.',low:'با اطمینان مستقلانه تصمیم می‌گیرید.'},
+          A:{name:'اجتنابی',high:'تمایل دارید از تصمیم‌گیری اجتناب کنید، انتخاب‌ها را به تأخیر بیندازید.',medium:'گاهی تصمیم‌ها را به تأخیر می‌اندازید، اما در صورت نیاز می‌توانید اقدام کنید.',low:'با اتخاذ سریع تصمیم‌ها راحت هستید و تمایلی به اجتناب ندارید.'},
+          S:{name:'خودانگیخته',high:'تصمیم‌ها را سریع و بدون تأمل زیاد می‌گیرید.',medium:'می‌توانید زمانی که موقعیت سرعت را می‌طلبد خودانگیخته باشید.',low:'سنجیده و اندیشمند هستید. از انتخاب‌های تکانشی اجتناب می‌کنید.'},
+        },
+        questions:["تصمیم‌ها را به روشی منطقی و سیستماتیک می‌گیرم.","هنگام تصمیم‌گیری، موقعیت را به‌صورت روش‌مند بررسی می‌کنم.","قبل از تصمیم‌گیری، مزایا و معایب را با دقت ارزیابی می‌کنم.","تصمیم‌گیری‌ام کاملاً سنجیده است.","قبل از تصمیم نهایی، با دقت فکر می‌کنم.","وقتی تصمیم می‌گیرم، حتی اگر نتوانم توضیح دهم، احساس درستی به من دست می‌دهد.","تصمیم‌هایم بر اساس احساس درونی است.","در انتخاب‌هایم به احساسات و واکنش‌های درونی‌ام اعتماد می‌کنم.","تصمیم‌ها را بر اساس شهود می‌گیرم.","احساساتم به من کمک می‌کند اهمیت یک تصمیم را تشخیص دهم.","برای تصمیم‌های مهم به توصیه دیگران متکی هستم.","برای تصمیم‌های مهم به کمک دیگران نیاز دارم.","به‌ندرت بدون مشورت با دیگران تصمیم می‌گیرم.","دوست دارم تأیید دیگران را قبل از ادامه داشته باشم.","از توصیه‌های دیگران برای تصمیم‌گیری استفاده می‌کنم.","از تصمیم‌گیری‌های مهم تا زمانی که مطلقاً مجبور نشوم اجتناب می‌کنم.","تصمیم‌ها را تا جایی که ممکن است به تأخیر می‌اندازم.","تصمیم‌ها را تا وقتی که دیگر خیلی دیر نشده به تعویق می‌اندازم.","هروقت بتوانم از تصمیم‌گیری اجتناب می‌کنم.","تصمیم‌ها را تا جایی که ممکن است به تعویق می‌اندازم.","اغلب تصمیم‌های سریع می‌گیرم.","معمولاً در تصمیم‌گیری تکانشی هستم.","تصمیم‌ها را سریع و بدون فکر زیاد می‌گیرم.","اغلب تصمیم‌های سریع می‌گیرم.","تصمیم‌ها را بر اساس لحظه می‌گیرم."],
+      },
     },
     sr:{
       ui:{
@@ -570,6 +670,33 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
         },
         questions:["U neizvesnim vremenima obično očekujem najbolje.","Lako mi je da se opustim.","Ako nešto može da krene naopako po mene, hoće.","Uvek sam optimističan u pogledu svoje budućnosti.","Veoma uživam u društvu svojih prijatelja.","Važno mi je da budem zauzet.","Gotovo nikada ne očekujem da će stvari ići onako kako želim.","Ne uznemirim se previše lako.","Retko računam na to da će mi se desiti dobre stvari.","Sve u svemu, očekujem da će mi se desiti više dobrih nego loših stvari."],
       },
+      disc:{
+        title:'DISC profil',subtitle:'IDRlabs · 24 pitanja · ~5 min',
+        desc:'Identifikuje vaš dominantni stil ponašanja u četiri dimenzije: Dominantnost, Uticaj, Stabilnost i Savesnost. Široko se koristi u liderstvu i timskoj dinamici.',
+        tagline:'Ličnost',footer:'Zasnovano na javno dostupnoj DISC metodologiji. Samo u informativne svrhe.',
+        labels:["Uopšte se ne slažem","Ne slažem se","Neutralno","Slažem se","Potpuno se slažem"],
+        traits:{
+          D:{name:'Dominantnost',high:'Direktni ste, odlučni i usmereni ka rezultatima. Lako preuzimate inicijativu, težite ka ishodima i imate dobre rezultate u liderskim ulogama.',medium:'Možete biti asertivni i direktni kada situacija to zahteva, ali prilagođavate pristup kada je saradnja efikasnija.',low:'Preferirate saradničke, konsenzusne pristupe. Možda izbegavate konfrontaciju i radije podržavate nego što rukovodite.'},
+          I:{name:'Uticaj',high:'Entuzijastični ste, ubedljivi i orijentisani na ljude. Motivišete druge, uživate u društvenoj interakciji i donosite energiju u grupna okruženja.',medium:'Možete biti društveni i ubedljivi kada je potrebno, ali cenite i tiši, zadatak-orijentisan rad.',low:'Skloniji ste rezervisanosti i fokusu na zadatke. Preferirate činjenice nad društvenim ubeđivanjem.',},
+          S:{name:'Stabilnost',high:'Strpljivi ste, lojalni i stabilizirajuća sila u timovima. Cenite doslednost, dobro slušate i preferirate stabilno okruženje.',medium:'Balansirate stabilnost sa prilagodljivošću.',low:'Ugodni ste sa promenama i raznolikošću. Preferirate brža okruženja.'},
+          C:{name:'Savesnost',high:'Analitični ste, precizni i fokusirani na kvalitet. Temeljno istražujete, pratite uspostavljene procese i držite se visokih standarda.',medium:'Balansirate pažnju na detalje sa pragmatizmom.',low:'Preferirate brzinu i fleksibilnost nad temeljitošću. Brzo donosite odluke.'},
+        },
+        questions:["Preferiram da vodim, a ne da sledim.","Direktan sam i brzo dolazim do poente.","Snažno se zauzimam za postizanje rezultata.","Preferiram da vodim, a ne da budem vođen.","Donosim brze odluke, čak i pod pritiskom.","Kompetitivan sam i volim da pobedim.","Uživam u upoznavanju novih ljudi i uspostavljanju veza.","Entuzijastičan sam i izražajan.","Motivišem i inspirišem ljude oko sebe.","Preferiram rad u grupi nad radom sam.","Fokusiram se na pozitivno, a ne na ono što bi moglo poći naopako.","Lako mi je da upustim u razgovor sa strancima.","Preferiram stabilno, predvidljivo okruženje.","Strpljiv sam, čak i kada drugi nisu.","Cenim lojalnost i dugoročne odnose.","U većini razgovora više slušam nego što govorim.","Izbegavam konflikt i trudim se da očuvam harmoniju.","Preferiram ujednačen, metodičan tempo nad žurbom.","Obraćam veliku pažnju na detalje i tačnost.","Pažljivo pratim pravila i uspostavljene procedure.","Temeljito istražujem pre donošenja odluka.","Volim da imam jasna očekivanja i definisane uloge.","Radim na sistematičan, korak-po-korak način.","Pažljivo proveravam rad pre predaje."],
+      },
+      gdms:{
+        title:'Stil donošenja odluka',subtitle:'GDMS · 25 pitanja · ~5 min',
+        desc:'Identifikuje kako preferirate donošenje odluka u pet stilova: Racionalni, Intuitivni, Zavisni, Izbegavajući i Spontani. Zasnovano na Scott & Bruce (1995).',
+        tagline:'Ličnost',footer:'Zasnovano na Skali opšteg stila donošenja odluka (Scott & Bruce, 1995, javno vlasništvo). Samo u informativne svrhe.',
+        labels:["Uopšte se ne slažem","Ne slažem se","Neutralno","Slažem se","Potpuno se slažem"],
+        traits:{
+          R:{name:'Racionalni',high:'Odlukama pristupate logično i sistematično. Prikupljate informacije, pažljivo odmerate prednosti i nedostatke pre nego što se obavežete.',medium:'Generalno preferirate logičan pristup, ali možete da se prilagodite intuiciji ili brzini kada je potrebno.',low:'Manje se oslanjate na sistematičnu analizu i preferirate brže ili intuitivnije pristupe odlukama.'},
+          I:{name:'Intuitivni',high:'Verujete svom instinktu i osećanjima pri donošenju odluka. Oslanjate se na predosećaje koji vas često vode ka ispravnim zaključcima.',medium:'Koristite intuiciju pored analize, prelazeći između njih zavisno od konteksta.',low:'Skeptični ste prema osećajima i preferirate rasuđivanje zasnovano na dokazima.'},
+          D:{name:'Zavisni',high:'Preferirate da se konsultujete sa drugima i tražite smernice pre odlučivanja. Cenite input od pouzdanih osoba.',medium:'Selektivno tražite savet za važne odluke.',low:'Samouverereno donosite odluke nezavisno.'},
+          A:{name:'Izbegavajući',high:'Skloni ste izbegavanju donošenja odluka, odlaganju izbora i osećate se neprijatno kada ste primorani da brzo odlučite.',medium:'Ponekad odlažete odluke, ali možete da delujete kada je potrebno.',low:'Ugodni ste sa brzim donošenjem odluka i ne skloni odlaganju.'},
+          S:{name:'Spontani',high:'Brzo i impulzivno donosite odluke, često na osnovu prve ideje bez opsežnog razmišljanja.',medium:'Možete biti spontani kada situacija zahteva brzinu, ali i promišljeni kada su ulozi viši.',low:'Promišljeni ste i odmerni. Izbegavate impulzivne izbore i preferirate promišljeno odlučivanje.'},
+        },
+        questions:["Donosim odluke na logičan i sistematičan način.","Pri donošenju odluka, metodično pristupam situaciji.","Pažljivo odmeravam prednosti i nedostatke pre odlučivanja.","Moje donošenje odluka je dobro promišljeno.","Pažljivo razmišljam pre konačne odluke.","Kada donesem odluku, to mi se čini ispravnim, čak i kada ne mogu da objasnim zašto.","Moje odluke se baziraju na osećaju iz stomaka.","Verujem svojim unutrašnjim osećanjima i reakcijama pri donošenju izbora.","Donosim odluke na osnovu intuicije.","Moja osećanja mi pomažu da odredim važnost odluke.","Za važne odluke oslanjam se na savet drugih.","Treba mi pomoć od drugih pri donošenju važnih odluka.","Retko donosim odluke bez konsultovanja sa drugima.","Volim da dobijem odobrenje od drugih pre nego što nastavim.","Koristim savete od drugih za donošenje odluka.","Izbegavam važne odluke dok apsolutno ne moram.","Odlažem donošenje odluka što je duže moguće.","Odlažem odluke dok ne bude kasno.","Izbegavam donošenje odluka kad god mogu.","Odlažem odluke kad god je moguće.","Često donosim brze odluke.","Generalno sam impulzivan pri donošenju odluka.","Donosim odluke brzo bez mnogo razmišljanja.","Često donosim brze odluke.","Donosim odluke na osnovu trenutnog impulsa."],
+      },
     },
   };
   const T = DATA[LANG] || DATA.en;
@@ -583,15 +710,23 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
   function selfEffLabelObjs(){return T.selfeff.labels.map(function(s,i){return{v:i+1,s:s};});}
   function buildOptimismQuestions(){return LOT_META.map(function(m,i){return{id:m.id,text:T.optimism.questions[i]};});}
   function optimismLabelObjs(){return T.optimism.labels.map(function(s,i){return{v:i+1,s:s};});}
+  function buildDiscQuestions(){const d=T.disc||DATA.en.disc;return DISC_META.map(function(m,i){return{id:m.id,dim:m.dim,text:d.questions[i]};});}
+  function discLabelObjs(){const d=T.disc||DATA.en.disc;return d.labels.map(function(s,i){return{v:i+1,s:s};});}
+  function buildGdmsQuestions(){const d=T.gdms||DATA.en.gdms;return GDMS_META.map(function(m,i){return{id:m.id,dim:m.dim,text:d.questions[i]};});}
+  function gdmsLabelObjs(){const d=T.gdms||DATA.en.gdms;return d.labels.map(function(s,i){return{v:i+1,s:s};});}
 
   // Compose trait objects (name + interpretations from T, color/bg from TRAIT_STYLE)
   function big5Traits(){const out={};for(const k of ['E','A','C','N','O']){out[k]=Object.assign({},T.big5.traits[k],TRAIT_STYLE[k]);}return out;}
+  function discTraits(){const d=T.disc||DATA.en.disc;const out={};for(const k of ['D','I','S','C']){out[k]=Object.assign({},d.traits[k],DISC_STYLE[k]);}return out;}
+  function gdmsTraits(){const d=T.gdms||DATA.en.gdms;const out={};for(const k of ['R','I','D','A','S']){out[k]=Object.assign({},d.traits[k],GDMS_STYLE[k]);}return out;}
 
   const TESTS=[
     {id:'big5',title:T.big5.title,subtitle:T.big5.subtitle,icon:'🧠',color:'#7C3AED',desc:T.big5.desc,questions:buildBig5Questions(),labels:big5LabelObjs(),score:scoreBig5,resultType:'big5',traits:big5Traits(),traitOrder:['E','A','C','N','O'],tagline:T.big5.tagline,footer:T.big5.footer},
     {id:'selfesteem',title:T.selfesteem.title,subtitle:T.selfesteem.subtitle,icon:'🌟',color:'#0891B2',desc:T.selfesteem.desc,questions:buildSEQuestions(),labels:seLabelObjs(),score:scoreSE,resultType:'single',levels:T.selfesteem.levels,scaleName:T.selfesteem.scaleName,tagline:T.selfesteem.tagline,footer:T.selfesteem.footer},
     {id:'selfeff',title:T.selfeff.title,subtitle:T.selfeff.subtitle,icon:'💪',color:'#0D9488',desc:T.selfeff.desc,questions:buildSelfEffQuestions(),labels:selfEffLabelObjs(),score:scoreSelfEff,resultType:'single',levels:T.selfeff.levels,scaleName:T.selfeff.scaleName,tagline:T.selfeff.tagline,footer:T.selfeff.footer},
     {id:'optimism',title:T.optimism.title,subtitle:T.optimism.subtitle,icon:'🌅',color:'#F59E0B',desc:T.optimism.desc,questions:buildOptimismQuestions(),labels:optimismLabelObjs(),score:scoreOptimism,resultType:'single',levels:T.optimism.levels,scaleName:T.optimism.scaleName,tagline:T.optimism.tagline,footer:T.optimism.footer},
+    (function(){const d=T.disc||DATA.en.disc;return{id:'disc',title:d.title,subtitle:d.subtitle,icon:'🎯',color:'#EF4444',desc:d.desc,questions:buildDiscQuestions(),labels:discLabelObjs(),score:scoreDisc,resultType:'big5',traits:discTraits(),traitOrder:['D','I','S','C'],tagline:d.tagline,footer:d.footer};}()),
+    (function(){const d=T.gdms||DATA.en.gdms;return{id:'gdms',title:d.title,subtitle:d.subtitle,icon:'⚡',color:'#8B5CF6',desc:d.desc,questions:buildGdmsQuestions(),labels:gdmsLabelObjs(),score:scoreGdms,resultType:'big5',traits:gdmsTraits(),traitOrder:['R','I','D','A','S'],tagline:d.tagline,footer:d.footer};}()),
   ];
 
   function levelLabel(level){return level==='high'?T.ui.high:level==='low'?T.ui.low:T.ui.medium;}
@@ -796,8 +931,9 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
       setScores(scored);
       setScreen('results');
       window.scrollTo(0,0);
-      if(ASSESS_HUB && test.id==='big5'){
-        try{localStorage.setItem('ahoosh_assess_personality',JSON.stringify({traits:scored,completed_at:new Date().toISOString(),test_id:'big5'}));}catch(e){}
+      if(ASSESS_HUB){
+        var _lsMap={big5:'ahoosh_assess_personality',disc:'ahoosh_assess_disc',gdms:'ahoosh_assess_gdms'};
+        if(_lsMap[test.id]){try{localStorage.setItem(_lsMap[test.id],JSON.stringify({traits:scored,completed_at:new Date().toISOString(),test_id:test.id}));}catch(e){}}
       }
     }
     function goHome(){setScreen('home');setActive(null);setScores(null);window.scrollTo(0,0);}
