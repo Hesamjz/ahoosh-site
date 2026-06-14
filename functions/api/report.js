@@ -49,31 +49,44 @@ export async function onRequestPost(context) {
       return json({ error: "AI service not configured" }, 503);
     }
 
-    // Call Claude Haiku
-    const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 1024,
-        system: SYSTEM_PROMPT,
-        messages: [
-          {
-            role: "user",
-            content: `Assessment data:\n${JSON.stringify(assessments, null, 2)}`,
-          },
-        ],
-      }),
-    });
+    // Call Claude Haiku (25s timeout — Cloudflare kills Worker at 30s)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+    let claudeRes;
+    try {
+      claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": env.ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 1024,
+          system: SYSTEM_PROMPT,
+          messages: [
+            {
+              role: "user",
+              content: `Assessment data:\n${JSON.stringify(assessments, null, 2)}`,
+            },
+          ],
+        }),
+      });
+    } catch (fetchErr) {
+      clearTimeout(timeoutId);
+      const msg = fetchErr.name === "AbortError" ? "AI service timed out" : fetchErr.message;
+      console.error("[report] fetch error:", msg);
+      return json({ error: msg }, 422);
+    }
+    clearTimeout(timeoutId);
 
     if (!claudeRes.ok) {
       const err = await claudeRes.text();
-      console.error("[report] Claude API error:", err);
-      return json({ error: "AI synthesis failed" }, 502);
+      console.error("[report] Claude API error:", claudeRes.status, err);
+      return json({ error: "AI synthesis failed", detail: `${claudeRes.status}: ${err.substring(0, 300)}` }, 422);
     }
 
     const claudeData = await claudeRes.json();
@@ -85,7 +98,7 @@ export async function onRequestPost(context) {
       report = JSON.parse(match ? match[0] : raw);
     } catch {
       console.error("[report] Parse error — raw:", raw);
-      return json({ error: "Failed to parse AI response", raw }, 502);
+      return json({ error: "Failed to parse AI response", raw }, 422);
     }
 
     // Persist to D1 (fire-and-forget — never blocks response)
