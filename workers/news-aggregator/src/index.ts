@@ -5,10 +5,34 @@ import { classify } from "./relevance";
 interface Env {
   DB: D1Database;
   AI: { run: (model: string, input: Record<string, unknown>) => Promise<{ translated_text?: string }> };
+  // Optional: when set, all AI (translation + owned takes) runs on Claude Haiku.
+  // When absent, everything falls back to free Cloudflare Workers AI (no downtime).
+  ANTHROPIC_API_KEY?: string;
 }
 
 const LANGS = ["en", "fa", "de", "sr"] as const;
 type Lang = (typeof LANGS)[number];
+
+// PRIMARY engine (Hesam's decision 2026-06-14: all website AI on Claude Haiku).
+const HAIKU_MODEL = "claude-haiku-4-5-20251001";
+const LANG_FULL: Record<string, string> = { en: "English", fa: "Persian", de: "German", sr: "Serbian" };
+
+// One Claude Haiku call. Throws on any error so callers fall back to Cloudflare AI.
+async function claude(env: Env, system: string, user: string, maxTokens: number): Promise<string> {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    signal: AbortSignal.timeout(20000),
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": env.ANTHROPIC_API_KEY as string,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({ model: HAIKU_MODEL, max_tokens: maxTokens, system, messages: [{ role: "user", content: user }] }),
+  });
+  if (!res.ok) throw new Error(`anthropic ${res.status}`);
+  const data = (await res.json()) as { content?: { text?: string }[] };
+  return (data.content?.[0]?.text || "").trim();
+}
 
 // Cloudflare caps subrequests per invocation (50 free / 1000 paid). Budget:
 // FETCH_N feed fetches + (MAX_NEW × ~4 AI calls). Keep the total well under 50.
@@ -37,6 +61,19 @@ async function fetchSource(s: Source): Promise<Candidate[]> {
 // Translate title+summary in ONE call (delimiter-split) to halve AI subrequests.
 async function trPair(env: Env, title: string, summary: string, from: Lang, to: Lang): Promise<{ t: string; s: string }> {
   if (from === to) return { t: title, s: summary };
+  // PRIMARY — Claude Haiku (clean, fluent translation).
+  if (env.ANTHROPIC_API_KEY) {
+    try {
+      const sys = `You are a precise translator. Translate the given news title and summary into ${LANG_FULL[to]}. Output ONLY strict JSON: {"t":"<translated title>","s":"<translated summary>"}. Natural, fluent ${LANG_FULL[to]}. No notes, no markdown, no code fences.`;
+      const txt = await claude(env, sys, JSON.stringify({ title, summary: (summary || "").slice(0, 600) }), 700);
+      const m = txt.match(/\{[\s\S]*\}/);
+      if (m) {
+        const o = JSON.parse(m[0]);
+        if (o && (o.t || o.s)) return { t: String(o.t || title).trim(), s: String(o.s || summary).trim() };
+      }
+    } catch { /* fall through to Cloudflare */ }
+  }
+  // FALLBACK — free Cloudflare m2m100.
   try {
     const r = await env.AI.run(TR_MODEL, { text: `${title} ||| ${(summary || "").slice(0, 600)}`, source_lang: from, target_lang: to });
     const out = (r.translated_text || "").split("|||");
@@ -94,6 +131,14 @@ async function writeTake(env: Env, title: string, summary: string, source: strin
   const system =
     "You are AHoosh, an AI-augmented B2B consulting brand. Write a short, sharp operator-angle take on a business/markets news item for B2B distributors and operators. Lead with what it means for an operator. 200-300 words, plain concrete English, no hype. Never use: leverage, robust, seamless, game-changing, transform, unlock, empower, supercharge, deep dive. Do not invent facts beyond the summary.";
   const user = `Headline: ${title}\nSummary: ${summary}\nSource: ${source}\n\nWrite the take: a 1-line angle, then 2-3 short paragraphs, then one practical takeaway.`;
+  // PRIMARY — Claude Haiku (sharper operator-angle writing than Llama).
+  if (env.ANTHROPIC_API_KEY) {
+    try {
+      const t = await claude(env, system, user, 700);
+      if (t) return t;
+    } catch { /* fall through to Cloudflare */ }
+  }
+  // FALLBACK — free Cloudflare Llama.
   try {
     const r = (await env.AI.run(OWNED_MODEL, { messages: [{ role: "system", content: system }, { role: "user", content: user }], max_tokens: 600 })) as { response?: string };
     return (r.response || "").trim();
@@ -102,13 +147,21 @@ async function writeTake(env: Env, title: string, summary: string, source: strin
   }
 }
 
-const LANG_NAME: Record<string, string> = { fa: "Persian", de: "German", sr: "Serbian" };
-// Long-form translation via the multilingual LLM (m2m100 truncates long bodies).
+// Long-form translation (Claude Haiku primary; Cloudflare Llama fallback — m2m100 truncates long bodies).
 async function translateLong(env: Env, text: string, to: Lang): Promise<string> {
+  const sys = `Translate the user's text into ${LANG_FULL[to]}. Output ONLY the translation, preserving paragraph breaks. No preamble, no notes.`;
+  // PRIMARY — Claude Haiku (no truncation, fluent long-form).
+  if (env.ANTHROPIC_API_KEY) {
+    try {
+      const t = await claude(env, sys, text, 1200);
+      if (t) return t;
+    } catch { /* fall through to Cloudflare */ }
+  }
+  // FALLBACK — free Cloudflare Llama.
   try {
     const r = (await env.AI.run(OWNED_MODEL, {
       messages: [
-        { role: "system", content: `Translate the user's text into ${LANG_NAME[to]}. Output ONLY the translation, preserving paragraph breaks. No preamble, no notes.` },
+        { role: "system", content: sys },
         { role: "user", content: text },
       ],
       max_tokens: 900,

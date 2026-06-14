@@ -1,0 +1,23 @@
+name = "ahoosh-assess-report"
+main = "src/index.ts"
+compatibility_date = "2026-06-08"
+workers_dev = true
+
+# Free Cloudflare Workers AI — assessment report synthesis (Llama, no per-call cost).
+# Replaces the paid Anthropic call that used to live in the Pages Function functions/api/report.js.
+# A Worker route takes precedence over a Pages Function on the same path, so this owns /api/report.
+[ai]
+binding = "AI"
+
+# Optional fire-and-forget session log.
+[[d1_databases]]
+binding = "ASSESS_DB"
+database_name = "ahoosh-assess"
+database_id = "8f56375c-ea9e-402c-9d5e-6c9b8765872a"
+
+[observability]
+enabled = true
+
+[[routes]]
+pattern = "ahoosh.ai/api/report"
+zone_name = "ahoosh.ai"
