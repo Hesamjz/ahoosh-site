@@ -193,59 +193,63 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     }
   </style>
 
-  <!-- ── Business Tools Section ── -->
-  <div class="biz-tools-section">
-    <div class="biz-tools-header">
-      <span class="biz-tools-eyebrow">Business Tools</span>
-      <h2 class="biz-tools-title">Analyze Your Business — Free</h2>
-      <p class="biz-tools-sub">Instant, AI-powered insights. No signup required.</p>
-    </div>
-    <div class="biz-tools-grid">
-      <a href="/tools/seo-audit" class="biz-tool-card">
-        <div class="btc-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0015.803 15.803z"/>
-          </svg>
+  {!assessMode && (
+    <>
+      <!-- ── Business Tools Section ── -->
+      <div class="biz-tools-section">
+        <div class="biz-tools-header">
+          <span class="biz-tools-eyebrow">Business Tools</span>
+          <h2 class="biz-tools-title">Analyze Your Business — Free</h2>
+          <p class="biz-tools-sub">Instant, AI-powered insights. No signup required.</p>
         </div>
-        <div class="btc-content">
-          <div class="btc-badge">Powered by Google Lighthouse</div>
-          <h3 class="btc-title">SEO &amp; Performance Audit</h3>
-          <p class="btc-desc">Paste your URL — get performance scores, Core Web Vitals, SEO gaps, and the top issues holding your site back. Takes ~15 seconds.</p>
-          <div class="btc-tags">
-            <span>Performance Score</span>
-            <span>Core Web Vitals</span>
-            <span>SEO Issues</span>
-            <span>Accessibility</span>
-          </div>
-        </div>
-        <div class="btc-arrow">→</div>
-      </a>
+        <div class="biz-tools-grid">
+          <a href="/tools/seo-audit" class="biz-tool-card">
+            <div class="btc-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0015.803 15.803z"/>
+              </svg>
+            </div>
+            <div class="btc-content">
+              <div class="btc-badge">Powered by Google Lighthouse</div>
+              <h3 class="btc-title">SEO &amp; Performance Audit</h3>
+              <p class="btc-desc">Paste your URL — get performance scores, Core Web Vitals, SEO gaps, and the top issues holding your site back. Takes ~15 seconds.</p>
+              <div class="btc-tags">
+                <span>Performance Score</span>
+                <span>Core Web Vitals</span>
+                <span>SEO Issues</span>
+                <span>Accessibility</span>
+              </div>
+            </div>
+            <div class="btc-arrow">→</div>
+          </a>
 
-      <a href="/tools/business-qa" class="biz-tool-card">
-        <div class="btc-icon btc-icon-ai">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-          </svg>
+          <a href="/tools/business-qa" class="biz-tool-card">
+            <div class="btc-icon btc-icon-ai">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+              </svg>
+            </div>
+            <div class="btc-content">
+              <div class="btc-badge btc-badge-ai">Powered by Claude AI</div>
+              <h3 class="btc-title">Business Diagnostic</h3>
+              <p class="btc-desc">Answer 10 questions about your business. Get an honest AI analysis: real strengths, critical challenges, quick wins, and your 90-day focus.</p>
+              <div class="btc-tags">
+                <span>Strengths &amp; Challenges</span>
+                <span>Quick Wins</span>
+                <span>90-Day Priority</span>
+                <span>Strategy</span>
+              </div>
+            </div>
+            <div class="btc-arrow">→</div>
+          </a>
         </div>
-        <div class="btc-content">
-          <div class="btc-badge btc-badge-ai">Powered by Claude AI</div>
-          <h3 class="btc-title">Business Diagnostic</h3>
-          <p class="btc-desc">Answer 10 questions about your business. Get an honest AI analysis: real strengths, critical challenges, quick wins, and your 90-day focus.</p>
-          <div class="btc-tags">
-            <span>Strengths &amp; Challenges</span>
-            <span>Quick Wins</span>
-            <span>90-Day Priority</span>
-            <span>Strategy</span>
-          </div>
-        </div>
-        <div class="btc-arrow">→</div>
-      </a>
-    </div>
-  </div>
+      </div>
 
-  <div class="assess-divider">
-    <span>Personal &amp; HR Assessments</span>
-  </div>
+      <div class="assess-divider">
+        <span>Personal &amp; HR Assessments</span>
+      </div>
+    </>
+  )}
 
   <div id="root" class="antialiased" data-lang={lang} data-hub={assessMode ? '1' : '0'}></div>
 
