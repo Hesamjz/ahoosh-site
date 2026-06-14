@@ -437,8 +437,8 @@ const CHANNELS_ALL = [
   { id:'euronews-de', name:'Euronews DE',  lang:'de', type:'youtube', vid:'CQ3KsEbsYHs' },
   { id:'arte',        name:'ARTE',         lang:'de', type:'youtube', vid:'3gjNL03uYWc' },
   // German — Sport
-  { id:'sky-sport-de',  name:'Sky Sport DE',  lang:'de', sources:[{ type:'youtube', chanId:'UC_VsQmcsFWUhGn3DTwiO8bg' }] },
-  { id:'eurosport-de',  name:'Eurosport DE',  lang:'de', type:'youtube', vid:'7azI9NqBXTE' },
+  { id:'sky-sport-de',  name:'Sky Sport DE',  lang:'de', topic:'sport', sources:[{ type:'youtube', chanId:'UC_VsQmcsFWUhGn3DTwiO8bg' }] },
+  { id:'eurosport-de',  name:'Eurosport DE',  lang:'de', topic:'sport', type:'youtube', vid:'7azI9NqBXTE' },
   // French — News
   { id:'france24-fr', name:'France 24 FR', lang:'fr', type:'youtube', vid:'a47ckXKZjxI' },
   { id:'bfmtv',       name:'BFM TV',       lang:'fr', sources:[{ type:'youtube', chanId:'UCUsBMOIUl_ad6JUOC16DpmQ' }] },
@@ -467,7 +467,7 @@ const CHANNELS_ALL = [
   { id:'cnn-ar',      name:'CNN Arabic',   lang:'ar', type:'youtube', vid:'n8osICWftpU' },
   // Arabic — Sport + Euronews Arabic
   { id:'euronews-ar', name:'Euronews عربية',lang:'ar', type:'youtube', vid:'xncZ2Vw3EyA' },
-  { id:'mbc-sport',   name:'MBC Sport',    lang:'ar', sources:[{ type:'youtube', chanId:'UCy2CIDKYZqqbeJ0NHNcJ9sQ' }] },
+  { id:'mbc-sport',   name:'MBC Sport',    lang:'ar', topic:'sport', sources:[{ type:'youtube', chanId:'UCy2CIDKYZqqbeJ0NHNcJ9sQ' }] },
   // ── Sport ── verified HLS (re-engineered from parsatv.com, June 2026)
   {
     id:'fifa-plus', name:'FIFA+', lang:'sport',
@@ -842,12 +842,15 @@ if (langSel && topicSel && nameSel) {
     nameSel.innerHTML = '';
     var list;
     if (topic === 'sport') {
-      list = CHANNELS_ALL.filter(function(c){ return c.lang === 'sport'; });
+      // Global sport channels + language-specific sport channels
+      list = CHANNELS_ALL.filter(function(c){
+        return c.lang === 'sport' || (c.lang === lang && c.topic === 'sport');
+      });
     } else if (topic === 'tech') {
       list = CHANNELS_ALL.filter(function(c){ return c.lang === 'tech'; });
     } else {
-      // News — respect language selector
-      list = CHANNELS_ALL.filter(function(c){ return c.lang === lang; });
+      // News — language channels, excluding sport-tagged ones
+      list = CHANNELS_ALL.filter(function(c){ return c.lang === lang && !c.topic; });
     }
     list.forEach(function(ch) {
       var o = document.createElement('option');
