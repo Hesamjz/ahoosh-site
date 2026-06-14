@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Website Audit — AHoosh Assess"
+  description="Free website performance, SEO, and accessibility audit. Get your digital presence score and an AI-powered diagnosis."
+  locale="en"
+>
+<style>
+  :root { --gold:#D7A13D; --navy:#010A18; --card-bg:rgba(8,22,50,0.92); }
+  body  { background:#010A18; color:#c8d4e0; }
+  .wrap { max-width:760px; margin:0 auto; padding:40px 20px 80px; }
+  h1   { font-size:clamp(22px,4vw,32px); color:#e8eaf0; margin:0 0 8px; }
+  .sub { color:#7a8b9e; font-size:15px; margin:0 0 36px; }
+  .url-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .url-row input {
+    flex:1; min-width:220px; padding:13px 16px;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(215,161,61,0.3);
+    border-radius:8px; color:#e8eaf0; font-size:15px;
+  }
+  .url-row input::placeholder { color:#4a5a6e; }
+  .url-row input:focus { outline:none; border-color:#D7A13D; }
+  .btn-audit {
+    padding:13px 28px; background:#D7A13D; color:#010A18;
+    font-weight:700; border:none; border-radius:8px; font-size:15px;
+    cursor:pointer; white-space:nowrap;
+  }
+  .btn-audit:disabled { opacity:0.5; cursor:not-allowed; }
+  .status { margin:20px 0; font-size:14px; color:#7a8b9e; min-height:20px; }
+  .scores { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin:32px 0; }
+  .score-card {
+    background:var(--card-bg); border:1px solid rgba(215,161,61,0.15);
+    border-radius:12px; padding:20px; text-align:center;
+  }
+  .score-num { font-size:40px; font-weight:700; line-height:1; margin-bottom:6px; }
+  .score-label { font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:#7a8b9e; }
+  .score-green  { color:#34d399; }
+  .score-orange { color:#fbbf24; }
+  .score-red    { color:#f87171; }
+  .vitals { background:var(--card-bg); border:1px solid rgba(215,161,61,0.15); border-radius:12px; padding:20px; margin-bottom:20px; }
+  .vitals h3 { margin:0 0 16px; font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); }
+  .vital-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; }
+  .vital-row:last-child { border-bottom:none; }
+  .vital-val { color:#e8eaf0; font-weight:600; }
+  .opps { background:var(--card-bg); border:1px solid rgba(215,161,61,0.15); border-radius:12px; padding:20px; margin-bottom:28px; }
+  .opps h3 { margin:0 0 16px; font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); }
+  .opp { padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; color:#8a9bb0; }
+  .opp:last-child { border-bottom:none; }
+  .opp strong { color:#e8eaf0; display:block; margin-bottom:2px; font-size:14px; }
+  .btn-report {
+    display:block; width:100%; padding:16px;
+    background:rgba(215,161,61,0.12); border:1px solid rgba(215,161,61,0.4);
+    color:#D7A13D; font-size:16px; font-weight:700; border-radius:10px;
+    cursor:pointer; text-align:center; text-decoration:none;
+    transition:all .2s;
+  }
+  .btn-report:hover { background:rgba(215,161,61,0.22); }
+  .hidden { display:none; }
+  #results { display:none; }
+  #results.visible { display:block; }
+</style>
+
+<div class="wrap">
+  <div style="margin-bottom:24px;">
+    <a href="/assess" style="color:#7a8b9e;font-size:13px;text-decoration:none;">← Back to Assess Hub</a>
+  </div>
+
+  <h1>Website Audit</h1>
+  <p class="sub">Enter your website URL — we'll check performance, SEO, and accessibility.</p>
+
+  <div class="url-row">
+    <input type="url" id="url-input" placeholder="https://yourwebsite.com" autocomplete="off" />
+    <button class="btn-audit" id="btn-audit">Audit</button>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div id="results">
+    <div class="scores" id="scores-grid"></div>
+    <div class="vitals" id="vitals-box">
+      <h3>Core Web Vitals</h3>
+      <div id="vitals-list"></div>
+    </div>
+    <div class="opps" id="opps-box">
+      <h3>Top Opportunities</h3>
+      <div id="opps-list"></div>
+    </div>
+    <a class="btn-report" href="/assess/report" id="btn-report">
+      Generate AI Report →
+    </a>
+  </div>
+</div>
+
+<script>
+  const input  = document.getElementById('url-input');
+  const btn    = document.getElementById('btn-audit');
+  const status = document.getElementById('status');
+  const results = document.getElementById('results');
+
+  function scoreColor(n) {
+    if (n >= 90) return 'score-green';
+    if (n >= 50) return 'score-orange';
+    return 'score-red';
+  }
+
+  function renderScores(scores) {
+    const labels = { performance:'Performance', accessibility:'Accessibility', seo:'SEO', best_practices:'Best Practices' };
+    document.getElementById('scores-grid').innerHTML = Object.entries(scores).map(([k,v]) =>
+      `<div class="score-card">
+        <div class="score-num ${scoreColor(v)}">${v}</div>
+        <div class="score-label">${labels[k]||k}</div>
+      </div>`
+    ).join('');
+  }
+
+  function renderVitals(vitals) {
+    const labels = { lcp:'Largest Contentful Paint', cls:'Cumulative Layout Shift', fid:'Total Blocking Time', fcp:'First Contentful Paint', ttfb:'Time to First Byte', speed_index:'Speed Index' };
+    document.getElementById('vitals-list').innerHTML = Object.entries(vitals)
+      .filter(([,v]) => v)
+      .map(([k,v]) => `<div class="vital-row"><span>${labels[k]||k}</span><span class="vital-val">${v}</span></div>`)
+      .join('');
+  }
+
+  function renderOpps(opps) {
+    const el = document.getElementById('opps-list');
+    if (!opps.length) { el.innerHTML = '<p style="color:#5e6e82;font-size:13px;margin:0;">No major issues found.</p>'; return; }
+    el.innerHTML = opps.map(o => `<div class="opp"><strong>${o.title}</strong>${o.savings ? o.savings : ''}</div>`).join('');
+  }
+
+  btn.addEventListener('click', async () => {
+    const url = input.value.trim();
+    if (!url) { status.textContent = 'Enter a URL first.'; return; }
+
+    try { new URL(url); } catch { status.textContent = 'Invalid URL — include https://'; return; }
+
+    btn.disabled = true;
+    status.textContent = 'Auditing… this takes 10–20 seconds.';
+    results.classList.remove('visible');
+
+    try {
+      const res = await fetch(`/api/pagespeed?url=${encodeURIComponent(url)}`);
+      const data = await res.json();
+
+      if (!data.ok) {
+        status.textContent = 'Audit failed: ' + (data.error || 'Unknown error');
+        btn.disabled = false;
+        return;
+      }
+
+      // Save to localStorage for report page
+      const websiteAssessment = {
+        url: data.url,
+        strategy: data.strategy,
+        scores: data.scores,
+        vitals: data.vitals,
+        opportunities: data.opportunities,
+        audited_at: data.fetched_at,
+      };
+      localStorage.setItem('ahoosh_assess_website', JSON.stringify(websiteAssessment));
+
+      renderScores(data.scores);
+      renderVitals(data.vitals);
+      renderOpps(data.opportunities || []);
+
+      results.classList.add('visible');
+      status.textContent = '✓ Audit complete. Review your scores below.';
+    } catch (e) {
+      status.textContent = 'Network error — please try again.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Pre-fill if localStorage has a URL from a previous session
+  const prev = localStorage.getItem('ahoosh_assess_website');
+  if (prev) {
+    try {
+      const p = JSON.parse(prev);
+      if (p.url) input.value = p.url;
+    } catch {}
+  }
+</script>
+</BaseLayout>
