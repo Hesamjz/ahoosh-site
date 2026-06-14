@@ -1,11 +1,11 @@
 // Cloudflare Pages Function — POST /api/report
 // Receives assessment JSON → calls Claude Haiku → returns consulting report JSON
-// Persists session to Hetzner Postgres (fire-and-forget)
+// Persists session to D1 (fire-and-forget, bound as ASSESS_DB)
 //
 // Required Cloudflare env secrets (set via Cloudflare dashboard → Pages → Settings → Variables):
 //   ANTHROPIC_API_KEY  — your Anthropic API key
-//   BACKEND_URL        — Hetzner server URL, e.g. https://backend.yourdomain.com
-//   BACKEND_SECRET     — shared secret for Hetzner /api/assess/save
+// Required D1 binding (set via Cloudflare dashboard → Pages → Settings → Bindings):
+//   ASSESS_DB          — D1 database "ahoosh-assess"
 
 const SYSTEM_PROMPT = `You are a senior business consultant working at AHoosh.ai. You have received assessment results from a potential client. Produce a concise, precise consulting report.
 
@@ -88,23 +88,25 @@ export async function onRequestPost(context) {
       return json({ error: "Failed to parse AI response", raw }, 502);
     }
 
-    // Persist to Hetzner (fire-and-forget — never blocks response)
-    if (env.BACKEND_URL && env.BACKEND_SECRET) {
+    // Persist to D1 (fire-and-forget — never blocks response)
+    if (env.ASSESS_DB) {
       const sessionId = crypto.randomUUID();
+      const email = body.email || null;
+      const ip = request.headers.get("CF-Connecting-IP") || null;
       context.waitUntil(
-        fetch(`${env.BACKEND_URL}/api/assess/save`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${env.BACKEND_SECRET}`,
-          },
-          body: JSON.stringify({
-            session_id: sessionId,
-            assessments,
-            report,
-            created_at: new Date().toISOString(),
-          }),
-        }).catch((e) => console.error("[report] Hetzner persist failed:", e))
+        env.ASSESS_DB.prepare(
+          `INSERT INTO assess_sessions (id, email, assessments, report, created_at, ip) VALUES (?, ?, ?, ?, ?, ?)`
+        )
+          .bind(
+            sessionId,
+            email,
+            JSON.stringify(assessments),
+            JSON.stringify(report),
+            new Date().toISOString(),
+            ip
+          )
+          .run()
+          .catch((e) => console.error("[report] D1 persist failed:", e))
       );
     }
 
