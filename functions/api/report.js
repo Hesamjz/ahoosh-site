@@ -73,7 +73,7 @@ export async function onRequestPost(context) {
     if (!claudeRes.ok) {
       const err = await claudeRes.text();
       console.error("[report] Claude API error:", err);
-      return json({ error: "AI synthesis failed", _debug: { status: claudeRes.status, body: err } }, 502);
+      return json({ error: "AI synthesis failed" }, 502);
     }
 
     const claudeData = await claudeRes.json();
