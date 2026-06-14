@@ -2,43 +2,24 @@ import { SOURCES, type Source } from "./sources";
 import { parseFeed } from "./rss";
 import { classify } from "./relevance";
 
+// ARCHITECTURE (Hesam decision 2026-06-14): ALL AI runs on Cowork (Claude, Hesam's
+// plan), NOT on Cloudflare. This Worker does ZERO AI — it only fetches headlines,
+// keyword-classifies for business relevance, dedupes, and stores the RAW source text
+// with needs_tr=1. The Cowork scripts then translate (hourly) and write original
+// articles (2/day) with Claude, setting needs_tr=0. Read endpoints hide rows that
+// Claude hasn't translated yet, so the site never shows raw/untranslated text.
+//   - news_translate_cowork.py  → fills title_*/summary_* + needs_tr=0
+//   - news_articles_cowork.py   → writes news_articles
+
 interface Env {
   DB: D1Database;
-  AI: { run: (model: string, input: Record<string, unknown>) => Promise<{ translated_text?: string }> };
-  // Optional: when set, all AI (translation + owned takes) runs on Claude Haiku.
-  // When absent, everything falls back to free Cloudflare Workers AI (no downtime).
-  ANTHROPIC_API_KEY?: string;
 }
 
 const LANGS = ["en", "fa", "de", "sr"] as const;
 type Lang = (typeof LANGS)[number];
 
-// PRIMARY engine (Hesam's decision 2026-06-14: all website AI on Claude Haiku).
-const HAIKU_MODEL = "claude-haiku-4-5-20251001";
-const LANG_FULL: Record<string, string> = { en: "English", fa: "Persian", de: "German", sr: "Serbian" };
-
-// One Claude Haiku call. Throws on any error so callers fall back to Cloudflare AI.
-async function claude(env: Env, system: string, user: string, maxTokens: number): Promise<string> {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    signal: AbortSignal.timeout(20000),
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": env.ANTHROPIC_API_KEY as string,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({ model: HAIKU_MODEL, max_tokens: maxTokens, system, messages: [{ role: "user", content: user }] }),
-  });
-  if (!res.ok) throw new Error(`anthropic ${res.status}`);
-  const data = (await res.json()) as { content?: { text?: string }[] };
-  return (data.content?.[0]?.text || "").trim();
-}
-
-// Cloudflare caps subrequests per invocation (50 free / 1000 paid). Budget:
-// FETCH_N feed fetches + (MAX_NEW × ~4 AI calls). Keep the total well under 50.
-const FETCH_N = 18;       // rotating window of sources per 5-min run
-const MAX_NEW = 6;        // new items fully translated per run
-const TR_MODEL = "@cf/meta/m2m100-1.2b";
+const FETCH_N = 18;     // rotating window of sources per ingest run
+const MAX_NEW = 12;     // new items stored per run (Cowork translates them hourly)
 
 type Candidate = { url: string; title: string; summary: string; source: string; src_lang: Lang; published: string | null };
 
@@ -58,30 +39,8 @@ async function fetchSource(s: Source): Promise<Candidate[]> {
   } catch { return []; }
 }
 
-// Translate title+summary in ONE call (delimiter-split) to halve AI subrequests.
-async function trPair(env: Env, title: string, summary: string, from: Lang, to: Lang): Promise<{ t: string; s: string }> {
-  if (from === to) return { t: title, s: summary };
-  // PRIMARY — Claude Haiku (clean, fluent translation).
-  if (env.ANTHROPIC_API_KEY) {
-    try {
-      const sys = `You are a precise translator. Translate the given news title and summary into ${LANG_FULL[to]}. Output ONLY strict JSON: {"t":"<translated title>","s":"<translated summary>"}. Natural, fluent ${LANG_FULL[to]}. No notes, no markdown, no code fences.`;
-      const txt = await claude(env, sys, JSON.stringify({ title, summary: (summary || "").slice(0, 600) }), 700);
-      const m = txt.match(/\{[\s\S]*\}/);
-      if (m) {
-        const o = JSON.parse(m[0]);
-        if (o && (o.t || o.s)) return { t: String(o.t || title).trim(), s: String(o.s || summary).trim() };
-      }
-    } catch { /* fall through to Cloudflare */ }
-  }
-  // FALLBACK — free Cloudflare m2m100.
-  try {
-    const r = await env.AI.run(TR_MODEL, { text: `${title} ||| ${(summary || "").slice(0, 600)}`, source_lang: from, target_lang: to });
-    const out = (r.translated_text || "").split("|||");
-    return { t: out[0]?.trim() || title, s: (out[1] || "").trim() || summary };
-  } catch { return { t: title, s: summary }; } // fail-soft: keep source text
-}
-
-async function runCycle(env: Env): Promise<Record<string, unknown>> {
+// Ingest only — no AI. Store raw source text + needs_tr=1 for Cowork/Claude to translate.
+async function runIngest(env: Env): Promise<Record<string, unknown>> {
   try {
     const settled = await Promise.allSettled(pool().map(fetchSource));
     const all = settled.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
@@ -93,23 +52,27 @@ async function runCycle(env: Env): Promise<Record<string, unknown>> {
     let fresh = business;
     if (business.length) {
       const urls = business.map((x) => x.c.url);
-      const ex = await env.DB.prepare(`SELECT url FROM news_items WHERE url IN (${urls.map(() => "?").join(",")})`).bind(...urls).all<{ url: string }>();
-      const have = new Set((ex.results ?? []).map((r) => r.url));
+      const have = new Set<string>();
+      // Chunk the existence check — D1 caps bound params at ~100 per statement.
+      for (let i = 0; i < urls.length; i += 80) {
+        const chunk = urls.slice(i, i + 80);
+        const ex = await env.DB.prepare(`SELECT url FROM news_items WHERE url IN (${chunk.map(() => "?").join(",")})`).bind(...chunk).all<{ url: string }>();
+        for (const r of ex.results ?? []) have.add(r.url);
+      }
       fresh = business.filter((x) => !have.has(x.c.url));
     }
     fresh = fresh.slice(0, MAX_NEW);
 
     let inserted = 0;
     for (const { c, cat } of fresh) {
-      const en = await trPair(env, c.title, c.summary, c.src_lang, "en");           // → English canonical
-      const others = await Promise.all((["fa", "de", "sr"] as Lang[]).map((L) => trPair(env, en.t, en.s, "en", L)));
-      const [fa, de, sr] = others;
+      // Raw source text goes into title_en/summary_en as a staging buffer (NOT NULL),
+      // needs_tr=1. Cowork/Claude overwrites all language columns and clears the flag.
       try {
         await env.DB.prepare(
           `INSERT OR IGNORE INTO news_items
-           (url, source, src_lang, category, title_en, summary_en, title_fa, summary_fa, title_de, summary_de, title_sr, summary_sr, published_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
-        ).bind(c.url, c.source, c.src_lang, cat, en.t, en.s, fa.t, fa.s, de.t, de.s, sr.t, sr.s, c.published).run();
+           (url, source, src_lang, category, title_en, summary_en, published_at, needs_tr)
+           VALUES (?,?,?,?,?,?,?,1)`
+        ).bind(c.url, c.source, c.src_lang, cat, c.title, (c.summary || "").slice(0, 600), c.published).run();
         inserted++;
       } catch { /* skip */ }
     }
@@ -119,121 +82,35 @@ async function runCycle(env: Env): Promise<Record<string, unknown>> {
   }
 }
 
-// ── Pipeline B — AHoosh-owned take (AI-written, business focus, 4-lang) ────────
-const OWNED_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
-const MAX_OWNED = 1; // 1 per run × 2 runs/day (08:00 & 16:00 UTC) = 2 original articles/day
-
-function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "item";
-}
-
-async function writeTake(env: Env, title: string, summary: string, source: string): Promise<string> {
-  const system =
-    "You are AHoosh, an AI-augmented B2B consulting brand. Write a short, sharp operator-angle take on a business/markets news item for B2B distributors and operators. Lead with what it means for an operator. 200-300 words, plain concrete English, no hype. Never use: leverage, robust, seamless, game-changing, transform, unlock, empower, supercharge, deep dive. Do not invent facts beyond the summary.";
-  const user = `Headline: ${title}\nSummary: ${summary}\nSource: ${source}\n\nWrite the take: a 1-line angle, then 2-3 short paragraphs, then one practical takeaway.`;
-  // PRIMARY — Claude Haiku (sharper operator-angle writing than Llama).
-  if (env.ANTHROPIC_API_KEY) {
-    try {
-      const t = await claude(env, system, user, 700);
-      if (t) return t;
-    } catch { /* fall through to Cloudflare */ }
-  }
-  // FALLBACK — free Cloudflare Llama.
-  try {
-    const r = (await env.AI.run(OWNED_MODEL, { messages: [{ role: "system", content: system }, { role: "user", content: user }], max_tokens: 600 })) as { response?: string };
-    return (r.response || "").trim();
-  } catch {
-    return "";
-  }
-}
-
-// Long-form translation (Claude Haiku primary; Cloudflare Llama fallback — m2m100 truncates long bodies).
-async function translateLong(env: Env, text: string, to: Lang): Promise<string> {
-  const sys = `Translate the user's text into ${LANG_FULL[to]}. Output ONLY the translation, preserving paragraph breaks. No preamble, no notes.`;
-  // PRIMARY — Claude Haiku (no truncation, fluent long-form).
-  if (env.ANTHROPIC_API_KEY) {
-    try {
-      const t = await claude(env, sys, text, 1200);
-      if (t) return t;
-    } catch { /* fall through to Cloudflare */ }
-  }
-  // FALLBACK — free Cloudflare Llama.
-  try {
-    const r = (await env.AI.run(OWNED_MODEL, {
-      messages: [
-        { role: "system", content: sys },
-        { role: "user", content: text },
-      ],
-      max_tokens: 900,
-    })) as { response?: string };
-    return (r.response || "").trim() || text;
-  } catch {
-    return text;
-  }
-}
-
-async function runOwned(env: Env): Promise<Record<string, unknown>> {
-  try {
-    const sel = await env.DB.prepare(
-      "SELECT id, url, source, category, title_en, summary_en FROM news_items WHERE used_for_owned = 0 AND title_en IS NOT NULL ORDER BY ingested_at DESC LIMIT ?"
-    ).bind(MAX_OWNED).all<{ id: number; url: string; source: string; category: string; title_en: string; summary_en: string }>();
-    const items = sel.results ?? [];
-    let made = 0;
-    for (const it of items) {
-      const body_en = await writeTake(env, it.title_en, it.summary_en || "", it.source);
-      if (!body_en) continue;
-      const tr: Record<string, { t: string; s: string }> = {};
-      for (const L of ["fa", "de", "sr"] as Lang[]) {
-        const titleT = await trPair(env, it.title_en, "", "en", L); // short title via m2m100
-        const bodyT = await translateLong(env, body_en, L);          // long body via LLM
-        tr[L] = { t: titleT.t, s: bodyT };
-      }
-      const slug = `${slugify(it.title_en)}-${it.id}`;
-      await env.DB.prepare(
-        `INSERT OR IGNORE INTO news_articles
-         (slug, source_url, source_name, category, title_en, body_en, title_fa, body_fa, title_de, body_de, title_sr, body_sr)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
-      ).bind(slug, it.url, it.source, it.category, it.title_en, body_en, tr.fa.t, tr.fa.s, tr.de.t, tr.de.s, tr.sr.t, tr.sr.s).run();
-      await env.DB.prepare("UPDATE news_items SET used_for_owned = 1 WHERE id = ?").bind(it.id).run();
-      made++;
-    }
-    return { updated: new Date().toISOString(), candidates: items.length, owned_made: made };
-  } catch (e) {
-    return { error: String((e as Error)?.message ?? e) };
-  }
-}
-
 const json = (b: unknown, status = 200) =>
   new Response(JSON.stringify(b), { status, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
 
 export default {
-  async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
-    // */5 → Pipeline A (aggregate+translate); 08:00 & 16:00 → Pipeline B (owned articles, 2/day)
-    const job = event.cron === "0 8,16 * * *" ? runOwned(env) : runCycle(env);
-    ctx.waitUntil(job.then((s) => console.log("[news]", event.cron, JSON.stringify(s))));
+  async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext) {
+    // Every 5 min → fetch + store raw headlines (no AI). Cowork/Claude translates hourly.
+    ctx.waitUntil(runIngest(env).then((s) => console.log("[news] ingest", JSON.stringify(s))));
   },
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
+    // Only show rows Claude has translated (needs_tr=0) — never raw source text.
     if (url.pathname === "/api/news/latest") {
       const lang = (url.searchParams.get("lang") || "en") as Lang;
       const L = LANGS.includes(lang) ? lang : "en";
       const rows = await env.DB.prepare(
         `SELECT url, source, category, published_at, title_${L} AS title, summary_${L} AS summary
-         FROM news_items ORDER BY ingested_at DESC LIMIT 60`
+         FROM news_items WHERE needs_tr = 0 ORDER BY ingested_at DESC LIMIT 60`
       ).all();
       return json({ updated: new Date().toISOString(), lang: L, total: (rows.results ?? []).length, items: rows.results ?? [] });
     }
-    // /api/news — backward-compat alias used by NewsPage.astro.
-    // ?lang= returns title/desc in that DISPLAY language (so each locale page
-    // shows translated text). lang field stays the source language.
-    // desc trimmed to a short summary (≤180 chars).
+    // /api/news — backward-compat alias used by NewsPage.astro. ?lang= returns
+    // title/desc in that DISPLAY language; lang field stays the source language.
     if (url.pathname === "/api/news") {
       const lang = (url.searchParams.get("lang") || "en") as Lang;
       const L = LANGS.includes(lang) ? lang : "en";
       const rows = await env.DB.prepare(
         `SELECT url AS link, source, src_lang AS lang, category,
                 published_at AS pubDate, title_${L} AS title, substr(summary_${L},1,180) AS desc
-         FROM news_items ORDER BY ingested_at DESC LIMIT 150`
+         FROM news_items WHERE needs_tr = 0 ORDER BY ingested_at DESC LIMIT 150`
       ).all();
       return json({
         updated: new Date().toISOString(),
@@ -243,7 +120,7 @@ export default {
         articles: rows.results ?? [],
       });
     }
-    // Pipeline B — owned AHoosh articles
+    // Original AHoosh articles (written by Cowork/Claude into news_articles).
     if (url.pathname === "/api/news/articles") {
       const L = (LANGS.includes((url.searchParams.get("lang") || "en") as Lang) ? url.searchParams.get("lang") : "en") as Lang;
       const rows = await env.DB.prepare(
@@ -259,9 +136,9 @@ export default {
       ).bind(slug).first();
       return row ? json(row) : json({ error: "not found" }, 404);
     }
-    if (url.pathname === "/run-owned") return json({ ran: true, ...(await runOwned(env)) });
-    if (url.pathname === "/run") return json({ ran: true, ...(await runCycle(env)) });
-    if (url.pathname === "/health" || url.pathname === "/") return json({ ok: true, worker: "news-aggregator" });
+    // Manual ingest trigger (workers.dev + ahoosh.ai). No AI runs here.
+    if (url.pathname === "/run" || url.pathname === "/api/news/trigger") return json({ ran: true, ...(await runIngest(env)) });
+    if (url.pathname === "/health" || url.pathname === "/") return json({ ok: true, worker: "news-aggregator", ai: "none (cowork/Claude)" });
     return json({ error: "not found" }, 404);
   },
 };
