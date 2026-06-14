@@ -782,8 +782,8 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
   }
 
   function App(){
-    const[screen,setScreen]=useState('home');
-    const[activeId,setActive]=useState(null);
+    const[screen,setScreen]=useState(ASSESS_HUB?'survey':'home');
+    const[activeId,setActive]=useState(ASSESS_HUB?'big5':null);
     const[scores,setScores]=useState(null);
     const test=TESTS.find(function(t){return t.id===activeId;});
     function selectTest(id){setActive(id);setScreen('survey');window.scrollTo(0,0);}
