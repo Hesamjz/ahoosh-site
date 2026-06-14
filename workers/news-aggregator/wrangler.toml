@@ -1,0 +1,23 @@
+name = "ahoosh-news-aggregator"
+main = "src/index.ts"
+compatibility_date = "2026-06-08"
+workers_dev = true
+
+# Pipeline A — business news, every 5 min.
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ahoosh-news"
+database_id = "62ecf193-ffd7-4d45-8a51-ad51eb139b93"
+
+# Workers AI — translation (source → English canonical → FA/DE/SR).
+[ai]
+binding = "AI"
+
+[observability]
+enabled = true
+
+# Public route added after the staging smoke test:
+#   [[routes]]  pattern = "ahoosh.ai/api/news/latest"  zone_name = "ahoosh.ai"
