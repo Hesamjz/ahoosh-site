@@ -5,7 +5,7 @@ workers_dev = true
 
 # Pipeline A — business news, every 5 min.
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["*/5 * * * *", "0 * * * *"]
 
 [[d1_databases]]
 binding = "DB"

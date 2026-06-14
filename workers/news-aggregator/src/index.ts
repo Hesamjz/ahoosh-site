@@ -82,12 +82,82 @@ async function runCycle(env: Env): Promise<Record<string, unknown>> {
   }
 }
 
+// ── Pipeline B — AHoosh-owned take (AI-written, business focus, 4-lang) ────────
+const OWNED_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
+const MAX_OWNED = 2; // per hourly run (relevance-gated by the business pool)
+
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "item";
+}
+
+async function writeTake(env: Env, title: string, summary: string, source: string): Promise<string> {
+  const system =
+    "You are AHoosh, an AI-augmented B2B consulting brand. Write a short, sharp operator-angle take on a business/markets news item for B2B distributors and operators. Lead with what it means for an operator. 200-300 words, plain concrete English, no hype. Never use: leverage, robust, seamless, game-changing, transform, unlock, empower, supercharge, deep dive. Do not invent facts beyond the summary.";
+  const user = `Headline: ${title}\nSummary: ${summary}\nSource: ${source}\n\nWrite the take: a 1-line angle, then 2-3 short paragraphs, then one practical takeaway.`;
+  try {
+    const r = (await env.AI.run(OWNED_MODEL, { messages: [{ role: "system", content: system }, { role: "user", content: user }], max_tokens: 600 })) as { response?: string };
+    return (r.response || "").trim();
+  } catch {
+    return "";
+  }
+}
+
+const LANG_NAME: Record<string, string> = { fa: "Persian", de: "German", sr: "Serbian" };
+// Long-form translation via the multilingual LLM (m2m100 truncates long bodies).
+async function translateLong(env: Env, text: string, to: Lang): Promise<string> {
+  try {
+    const r = (await env.AI.run(OWNED_MODEL, {
+      messages: [
+        { role: "system", content: `Translate the user's text into ${LANG_NAME[to]}. Output ONLY the translation, preserving paragraph breaks. No preamble, no notes.` },
+        { role: "user", content: text },
+      ],
+      max_tokens: 900,
+    })) as { response?: string };
+    return (r.response || "").trim() || text;
+  } catch {
+    return text;
+  }
+}
+
+async function runOwned(env: Env): Promise<Record<string, unknown>> {
+  try {
+    const sel = await env.DB.prepare(
+      "SELECT id, url, source, category, title_en, summary_en FROM news_items WHERE used_for_owned = 0 AND title_en IS NOT NULL ORDER BY ingested_at DESC LIMIT ?"
+    ).bind(MAX_OWNED).all<{ id: number; url: string; source: string; category: string; title_en: string; summary_en: string }>();
+    const items = sel.results ?? [];
+    let made = 0;
+    for (const it of items) {
+      const body_en = await writeTake(env, it.title_en, it.summary_en || "", it.source);
+      if (!body_en) continue;
+      const tr: Record<string, { t: string; s: string }> = {};
+      for (const L of ["fa", "de", "sr"] as Lang[]) {
+        const titleT = await trPair(env, it.title_en, "", "en", L); // short title via m2m100
+        const bodyT = await translateLong(env, body_en, L);          // long body via LLM
+        tr[L] = { t: titleT.t, s: bodyT };
+      }
+      const slug = `${slugify(it.title_en)}-${it.id}`;
+      await env.DB.prepare(
+        `INSERT OR IGNORE INTO news_articles
+         (slug, source_url, source_name, category, title_en, body_en, title_fa, body_fa, title_de, body_de, title_sr, body_sr)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+      ).bind(slug, it.url, it.source, it.category, it.title_en, body_en, tr.fa.t, tr.fa.s, tr.de.t, tr.de.s, tr.sr.t, tr.sr.s).run();
+      await env.DB.prepare("UPDATE news_items SET used_for_owned = 1 WHERE id = ?").bind(it.id).run();
+      made++;
+    }
+    return { updated: new Date().toISOString(), candidates: items.length, owned_made: made };
+  } catch (e) {
+    return { error: String((e as Error)?.message ?? e) };
+  }
+}
+
 const json = (b: unknown, status = 200) =>
   new Response(JSON.stringify(b), { status, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
 
 export default {
-  async scheduled(_e: ScheduledController, env: Env, ctx: ExecutionContext) {
-    ctx.waitUntil(runCycle(env).then((s) => console.log("[news-aggregator]", JSON.stringify(s))));
+  async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
+    // */5 → Pipeline A (aggregate+translate); hourly → Pipeline B (owned takes)
+    const job = event.cron === "0 * * * *" ? runOwned(env) : runCycle(env);
+    ctx.waitUntil(job.then((s) => console.log("[news]", event.cron, JSON.stringify(s))));
   },
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
@@ -115,6 +185,23 @@ export default {
         articles: rows.results ?? [],
       });
     }
+    // Pipeline B — owned AHoosh articles
+    if (url.pathname === "/api/news/articles") {
+      const L = (LANGS.includes((url.searchParams.get("lang") || "en") as Lang) ? url.searchParams.get("lang") : "en") as Lang;
+      const rows = await env.DB.prepare(
+        `SELECT slug, category, source_name, source_url, published_at, title_${L} AS title FROM news_articles ORDER BY published_at DESC LIMIT 60`
+      ).all();
+      return json({ updated: new Date().toISOString(), lang: L, total: (rows.results ?? []).length, items: rows.results ?? [] });
+    }
+    if (url.pathname === "/api/news/article") {
+      const slug = url.searchParams.get("slug") || "";
+      const L = (LANGS.includes((url.searchParams.get("lang") || "en") as Lang) ? url.searchParams.get("lang") : "en") as Lang;
+      const row = await env.DB.prepare(
+        `SELECT slug, category, source_name, source_url, published_at, title_${L} AS title, body_${L} AS body FROM news_articles WHERE slug = ?`
+      ).bind(slug).first();
+      return row ? json(row) : json({ error: "not found" }, 404);
+    }
+    if (url.pathname === "/run-owned") return json({ ran: true, ...(await runOwned(env)) });
     if (url.pathname === "/run") return json({ ran: true, ...(await runCycle(env)) });
     if (url.pathname === "/health" || url.pathname === "/") return json({ ok: true, worker: "news-aggregator" });
     return json({ error: "not found" }, 404);
