@@ -38,9 +38,9 @@ async function fetchSource(s: Source): Promise<Candidate[]> {
 async function trPair(env: Env, title: string, summary: string, from: Lang, to: Lang): Promise<{ t: string; s: string }> {
   if (from === to) return { t: title, s: summary };
   try {
-    const r = await env.AI.run(TR_MODEL, { text: `${title}\n${(summary || "").slice(0, 700)}`, source_lang: from, target_lang: to });
-    const out = (r.translated_text || "").split("\n");
-    return { t: out[0]?.trim() || title, s: out.slice(1).join(" ").trim() || summary };
+    const r = await env.AI.run(TR_MODEL, { text: `${title} ||| ${(summary || "").slice(0, 600)}`, source_lang: from, target_lang: to });
+    const out = (r.translated_text || "").split("|||");
+    return { t: out[0]?.trim() || title, s: (out[1] || "").trim() || summary };
   } catch { return { t: title, s: summary }; } // fail-soft: keep source text
 }
 
@@ -170,16 +170,21 @@ export default {
       ).all();
       return json({ updated: new Date().toISOString(), lang: L, total: (rows.results ?? []).length, items: rows.results ?? [] });
     }
-    // /api/news — backward-compat alias used by NewsPage.astro
-    // Returns old {articles:[{title,link,lang,source,pubDate,desc}]} shape
+    // /api/news — backward-compat alias used by NewsPage.astro.
+    // ?lang= returns title/desc in that DISPLAY language (so each locale page
+    // shows translated text). lang field stays the source language.
+    // desc trimmed to a short summary (≤180 chars).
     if (url.pathname === "/api/news") {
+      const lang = (url.searchParams.get("lang") || "en") as Lang;
+      const L = LANGS.includes(lang) ? lang : "en";
       const rows = await env.DB.prepare(
         `SELECT url AS link, source, src_lang AS lang, category,
-                published_at AS pubDate, title_en AS title, summary_en AS desc
+                published_at AS pubDate, title_${L} AS title, substr(summary_${L},1,180) AS desc
          FROM news_items ORDER BY ingested_at DESC LIMIT 150`
       ).all();
       return json({
         updated: new Date().toISOString(),
+        lang: L,
         total: (rows.results ?? []).length,
         sources: SOURCES.length,
         articles: rows.results ?? [],
