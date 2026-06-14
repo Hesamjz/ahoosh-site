@@ -4,8 +4,8 @@
 // Locale-aware: pass `lang` (en/de/fa/sr). All questions, labels, traits,
 // interpretations and UI strings are translated. Scoring/keying is
 // language-agnostic (BIG5_META / SE_META), so every locale scores identically.
-interface Props { banner?: string; lang?: string }
-const { banner, lang = 'en' } = Astro.props;
+interface Props { banner?: string; lang?: string; assessMode?: boolean }
+const { banner, lang = 'en', assessMode = false } = Astro.props;
 ---
 
 {banner && (
@@ -247,7 +247,7 @@ const { banner, lang = 'en' } = Astro.props;
     <span>Personal &amp; HR Assessments</span>
   </div>
 
-  <div id="root" class="antialiased" data-lang={lang}></div>
+  <div id="root" class="antialiased" data-lang={lang} data-hub={assessMode ? '1' : '0'}></div>
 
   <script is:inline>
   (function(){
@@ -255,6 +255,7 @@ const { banner, lang = 'en' } = Astro.props;
   const h = React.createElement;
   const LANG = (document.getElementById('root').dataset.lang) || 'en';
   const RTL = LANG === 'fa';
+  const ASSESS_HUB = document.getElementById('root').dataset.hub === '1';
 
   // ─── LANGUAGE-AGNOSTIC METADATA (drives scoring; never translated) ───
   // Big Five (IPIP-50): {id, t∈E/A/C/N/O, r=reverse-key}
@@ -717,6 +718,7 @@ const { banner, lang = 'en' } = Astro.props;
             ORDER.map(function(k){const t=test.traits[k];const s=scores[k];return h(TraitBar,{key:k,name:t.name,pct:s.pct,level:s.level,color:t.color,bg:t.bg,interpretation:t[s.level]});})
           ),
           h('p',{className:'text-gray-400 text-xs text-center mb-4'},test.footer),
+          ASSESS_HUB && h('a',{href:'/assess/report',className:'block w-full text-center mt-2 mb-6 py-4 rounded-xl font-bold text-base no-print',style:{background:'#D7A13D',color:'#010A18',textDecoration:'none'}},'→ Get your full report'),
           backBtn
         )
       );
@@ -785,7 +787,15 @@ const { banner, lang = 'en' } = Astro.props;
     const[scores,setScores]=useState(null);
     const test=TESTS.find(function(t){return t.id===activeId;});
     function selectTest(id){setActive(id);setScreen('survey');window.scrollTo(0,0);}
-    function handleComplete(ans){setScores(test.score(ans));setScreen('results');window.scrollTo(0,0);}
+    function handleComplete(ans){
+      const scored=test.score(ans);
+      setScores(scored);
+      setScreen('results');
+      window.scrollTo(0,0);
+      if(ASSESS_HUB && test.id==='big5'){
+        try{localStorage.setItem('ahoosh_assess_personality',JSON.stringify({traits:scored,completed_at:new Date().toISOString(),test_id:'big5'}));}catch(e){}
+      }
+    }
     function goHome(){setScreen('home');setActive(null);setScores(null);window.scrollTo(0,0);}
     let content;
     if(screen==='home') content=h(Home,{onSelectTest:selectTest});

@@ -1,0 +1,394 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Business Diagnostic — AHoosh Assess"
+  description="Map your business strengths, weaknesses, value proposition, and ideal customer. Takes 8 minutes. Results feed into your AI consulting report."
+  locale="en"
+>
+<style>
+  :root { --gold:#D7A13D; --navy:#010A18; --card:rgba(8,22,50,0.92); }
+  body  { background:#010A18; color:#c8d4e0; }
+  .wrap { max-width:720px; margin:0 auto; padding:0 20px 80px; }
+
+  .assess-nav {
+    background: rgba(8,22,50,0.95); border-bottom: 1px solid rgba(215,161,61,0.15);
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; font-size: 13px;
+  }
+  .assess-nav a { color: #7a8b9e; text-decoration: none; }
+  .assess-nav a:hover { color: var(--gold); }
+  .assess-nav .track-name { color: #e8eaf0; font-weight: 700; }
+  .track-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(8,145,178,0.15); border: 1px solid rgba(8,145,178,0.3);
+    color: #38bdf8; border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700;
+  }
+
+  .page-header { padding: 40px 0 32px; }
+  .page-header h1 { font-size: clamp(22px,4vw,30px); font-weight: 800; color: #e8eaf0; margin: 0 0 8px; }
+  .page-header p  { font-size: 14px; color: #7a8b9e; margin: 0; }
+
+  /* Progress bar */
+  .progress-row { display:flex; align-items:center; gap:12px; margin-bottom:36px; }
+  .progress-bar { flex:1; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; }
+  .progress-fill { height:100%; background:var(--gold); border-radius:2px; transition:width .4s ease; }
+  .progress-label { font-size:12px; color:#4a5a6e; white-space:nowrap; }
+
+  /* Steps */
+  .step { display:none; }
+  .step.active { display:block; }
+  .step-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin-bottom:20px; }
+
+  /* Form fields */
+  .field { margin-bottom:20px; }
+  .field label { display:block; font-size:13px; font-weight:600; color:#c8d4e0; margin-bottom:8px; }
+  .field .hint  { font-size:12px; color:#4a5a6e; margin-bottom:8px; }
+  .field input, .field select, .field textarea {
+    width:100%; padding:12px 14px; background:rgba(255,255,255,0.05);
+    border:1px solid rgba(215,161,61,0.2); border-radius:10px;
+    color:#e8eaf0; font-size:14px; font-family:inherit; box-sizing:border-box;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline:none; border-color:var(--gold); background:rgba(255,255,255,0.08);
+  }
+  .field select option { background:#0B1A32; }
+  .field textarea { resize:vertical; min-height:100px; line-height:1.6; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:500px){ .field-row { grid-template-columns:1fr; } }
+
+  /* SWOT grid */
+  .swot-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:500px){ .swot-grid { grid-template-columns:1fr; } }
+  .swot-q { background:var(--card); border:1px solid rgba(215,161,61,0.12); border-radius:12px; padding:16px; }
+  .swot-q label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; display:block; }
+  .swot-q.s label { color:#34d399; }
+  .swot-q.w label { color:#f87171; }
+  .swot-q.o label { color:#60a5fa; }
+  .swot-q.t label { color:#fbbf24; }
+  .swot-q textarea { border-color:rgba(255,255,255,0.08); min-height:90px; }
+  .swot-q textarea:focus { border-color:var(--gold); }
+
+  /* Nav buttons */
+  .btn-row { display:flex; justify-content:space-between; align-items:center; margin-top:32px; }
+  .btn { padding:12px 28px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; border:none; transition:opacity .15s; }
+  .btn-back { background:rgba(255,255,255,0.06); color:#7a8b9e; }
+  .btn-back:hover { background:rgba(255,255,255,0.1); }
+  .btn-next { background:var(--gold); color:#010A18; }
+  .btn-next:hover { opacity:0.88; }
+  .btn-next:disabled { opacity:0.35; cursor:not-allowed; }
+
+  /* Completion screen */
+  .complete { text-align:center; padding:60px 20px; display:none; }
+  .complete.visible { display:block; }
+  .complete-icon { font-size:48px; margin-bottom:20px; }
+  .complete h2 { font-size:24px; font-weight:800; color:#e8eaf0; margin:0 0 12px; }
+  .complete p  { font-size:15px; color:#7a8b9e; margin:0 0 32px; line-height:1.6; }
+  .complete a  { display:inline-block; padding:14px 40px; background:var(--gold); color:#010A18; font-weight:700; border-radius:10px; text-decoration:none; font-size:15px; }
+  .complete a:hover { opacity:0.88; }
+  .complete .back-link { margin-top:16px; display:block; font-size:13px; color:#4a5a6e; text-decoration:none; }
+  .complete .back-link:hover { color:#7a8b9e; }
+</style>
+
+<div class="assess-nav no-print">
+  <a href="/assess">← Assess Hub</a>
+  <span style="color:#e8eaf0;font-weight:700;">Business Diagnostic</span>
+  <span class="track-badge">📊 Track 2 of 3</span>
+</div>
+
+<div class="wrap">
+  <div class="page-header">
+    <h1>Business Diagnostic</h1>
+    <p>Map your business in 8 minutes. Honest answers give you a more useful report.</p>
+  </div>
+
+  <div class="progress-row">
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:25%"></div></div>
+    <div class="progress-label" id="prog-label">Step 1 of 4</div>
+  </div>
+
+  <!-- Step 1: Basics -->
+  <div class="step active" id="step-1">
+    <div class="step-title">About your business</div>
+    <div class="field">
+      <label>What does your business do? <span style="color:#f87171">*</span></label>
+      <div class="hint">One sentence — what you sell and who buys it.</div>
+      <textarea id="s1-description" rows="3" placeholder="e.g. We distribute premium beverages to 400+ B2B customers across Serbia and the Balkans."></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Industry</label>
+        <select id="s1-industry">
+          <option value="">Select industry</option>
+          <option>B2B Distribution</option>
+          <option>SaaS / Software</option>
+          <option>Professional Services</option>
+          <option>E-commerce / Retail</option>
+          <option>Manufacturing</option>
+          <option>Construction / Real Estate</option>
+          <option>Healthcare</option>
+          <option>Education / Training</option>
+          <option>Marketing / Creative Agency</option>
+          <option>Food &amp; Beverage</option>
+          <option>Logistics / Supply Chain</option>
+          <option>Finance / FinTech</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Business stage</label>
+        <select id="s1-stage">
+          <option value="">Select stage</option>
+          <option>Pre-revenue (idea / prototype)</option>
+          <option>Early (0–1 year, first customers)</option>
+          <option>Growth (1–3 years, scaling)</option>
+          <option>Established (3+ years, stable)</option>
+          <option>Mature (profitable, looking to expand)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Team size</label>
+        <select id="s1-team">
+          <option value="">Select size</option>
+          <option>Solo (just me)</option>
+          <option>2–5 people</option>
+          <option>6–15 people</option>
+          <option>16–50 people</option>
+          <option>50+ people</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Monthly revenue (approximate)</label>
+        <select id="s1-revenue">
+          <option value="">Select range</option>
+          <option>Pre-revenue</option>
+          <option>Under €1,000</option>
+          <option>€1,000 – €5,000</option>
+          <option>€5,000 – €20,000</option>
+          <option>€20,000 – €100,000</option>
+          <option>Over €100,000</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Biggest challenge right now</label>
+      <div class="hint">Be specific — this shapes your report more than anything else.</div>
+      <textarea id="s1-challenge" rows="3" placeholder="e.g. We're losing deals to competitors on price but our product quality is clearly better. Not sure how to communicate the value."></textarea>
+    </div>
+    <div class="btn-row">
+      <span></span>
+      <button class="btn btn-next" onclick="goStep(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: SWOT -->
+  <div class="step" id="step-2">
+    <div class="step-title">SWOT Analysis</div>
+    <p style="font-size:13px;color:#7a8b9e;margin:0 0 20px;">Be honest — especially about weaknesses. The AI uses this to give you real diagnosis, not flattery.</p>
+    <div class="swot-grid">
+      <div class="swot-q s">
+        <label>💪 Strengths</label>
+        <textarea id="s2-strengths" placeholder="What do you do better than competitors? What do customers consistently praise?"></textarea>
+      </div>
+      <div class="swot-q w">
+        <label>⚠️ Weaknesses</label>
+        <textarea id="s2-weaknesses" placeholder="What are you not good at? What do you avoid dealing with? Where do you lose deals?"></textarea>
+      </div>
+      <div class="swot-q o">
+        <label>🎯 Opportunities</label>
+        <textarea id="s2-opportunities" placeholder="What market trends or gaps could you exploit? What are competitors missing?"></textarea>
+      </div>
+      <div class="swot-q t">
+        <label>🔥 Threats</label>
+        <textarea id="s2-threats" placeholder="What could kill this business in 12 months? New competitors, regulation, economic shifts?"></textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-next" onclick="goStep(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Value Proposition -->
+  <div class="step" id="step-3">
+    <div class="step-title">Value Proposition</div>
+    <div class="field">
+      <label>Who is your customer? <span style="color:#f87171">*</span></label>
+      <div class="hint">Describe the specific person who buys from you — role, company type, context.</div>
+      <textarea id="s3-customer" rows="2" placeholder="e.g. Operations managers at mid-size Serbian importers (10–50 employees) who buy specialty beverages for hospitality clients."></textarea>
+    </div>
+    <div class="field">
+      <label>What problem do you solve? <span style="color:#f87171">*</span></label>
+      <div class="hint">The real pain — not what you sell, but what goes wrong without you.</div>
+      <textarea id="s3-problem" rows="2" placeholder="e.g. They spend 3+ hours/week on manual reorder tracking and frequently run out of stock on their top 20 SKUs."></textarea>
+    </div>
+    <div class="field">
+      <label>What is your solution?</label>
+      <textarea id="s3-solution" rows="2" placeholder="e.g. Automated replenishment with a 24h delivery window and a dedicated account manager."></textarea>
+    </div>
+    <div class="field">
+      <label>Why are you better than the alternatives?</label>
+      <div class="hint">What does a customer lose if they go with a competitor or do nothing?</div>
+      <textarea id="s3-differentiation" rows="2" placeholder="e.g. Competitors have 48–72h delivery. We deliver next day. We're also the only distributor offering a self-service portal with real-time stock visibility."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(2)">← Back</button>
+      <button class="btn btn-next" onclick="goStep(4)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: ICP -->
+  <div class="step" id="step-4">
+    <div class="step-title">Ideal Customer Profile</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Decision-maker's job title</label>
+        <input type="text" id="s4-title" placeholder="e.g. Operations Manager, CEO" />
+      </div>
+      <div class="field">
+        <label>Their company size</label>
+        <select id="s4-size">
+          <option value="">Select size</option>
+          <option>Solopreneur / freelancer</option>
+          <option>2–10 employees</option>
+          <option>11–50 employees</option>
+          <option>51–200 employees</option>
+          <option>200+ employees</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Their main pain point (in their words)</label>
+      <div class="hint">How do they describe this problem — not how you would describe it.</div>
+      <textarea id="s4-pain" rows="2" placeholder="e.g. 'I never know what's going to be in stock next week and I'm always chasing suppliers.'"></textarea>
+    </div>
+    <div class="field">
+      <label>How do they currently solve this?</label>
+      <textarea id="s4-current" rows="2" placeholder="e.g. Manual spreadsheets + WhatsApp messages to the supplier. Or using a competitor's slower service."></textarea>
+    </div>
+    <div class="field">
+      <label>Where do you find them?</label>
+      <textarea id="s4-channel" rows="2" placeholder="e.g. LinkedIn, industry trade shows, referrals from existing clients."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(3)">← Back</button>
+      <button class="btn btn-next" onclick="saveBusiness()">Get my report →</button>
+    </div>
+  </div>
+
+  <!-- Completion -->
+  <div class="complete" id="complete">
+    <div class="complete-icon">✅</div>
+    <h2>Business diagnostic complete</h2>
+    <p>Your answers are saved. The AI report now has your business context, strengths, weaknesses, and customer profile to work with.</p>
+    <a href="/assess/report">View my report →</a>
+    <a href="/assess" class="back-link">← Back to Assess Hub</a>
+  </div>
+</div>
+
+<script is:inline>
+var currentStep = 1;
+var totalSteps = 4;
+
+function goStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  var pct = (currentStep / totalSteps * 100) + '%';
+  document.getElementById('prog').style.width = pct;
+  document.getElementById('prog-label').textContent = 'Step ' + currentStep + ' of ' + totalSteps;
+  window.scrollTo(0, 0);
+}
+
+function val(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function saveBusiness() {
+  var data = {
+    completed_at: new Date().toISOString(),
+    basics: {
+      description:  val('s1-description'),
+      industry:     val('s1-industry'),
+      stage:        val('s1-stage'),
+      team:         val('s1-team'),
+      revenue:      val('s1-revenue'),
+      challenge:    val('s1-challenge'),
+    },
+    swot: {
+      strengths:    val('s2-strengths'),
+      weaknesses:   val('s2-weaknesses'),
+      opportunities:val('s2-opportunities'),
+      threats:      val('s2-threats'),
+    },
+    value_proposition: {
+      customer:        val('s3-customer'),
+      problem:         val('s3-problem'),
+      solution:        val('s3-solution'),
+      differentiation: val('s3-differentiation'),
+    },
+    icp: {
+      title:   val('s4-title'),
+      size:    val('s4-size'),
+      pain:    val('s4-pain'),
+      current: val('s4-current'),
+      channel: val('s4-channel'),
+    }
+  };
+
+  try {
+    localStorage.setItem('ahoosh_assess_business', JSON.stringify(data));
+  } catch(e) {}
+
+  // Hide all steps, show completion
+  for (var i = 1; i <= totalSteps; i++) {
+    var s = document.getElementById('step-' + i);
+    if (s) s.classList.remove('active');
+  }
+  document.getElementById('complete').classList.add('visible');
+  document.getElementById('prog').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Complete!';
+  window.scrollTo(0, 0);
+}
+
+// Restore from localStorage if already filled
+(function(){
+  try {
+    var saved = localStorage.getItem('ahoosh_assess_business');
+    if (!saved) return;
+    var d = JSON.parse(saved);
+    function set(id, v){ var el=document.getElementById(id); if(el && v) el.value=v; }
+    if(d.basics){
+      set('s1-description', d.basics.description);
+      set('s1-industry',    d.basics.industry);
+      set('s1-stage',       d.basics.stage);
+      set('s1-team',        d.basics.team);
+      set('s1-revenue',     d.basics.revenue);
+      set('s1-challenge',   d.basics.challenge);
+    }
+    if(d.swot){
+      set('s2-strengths',    d.swot.strengths);
+      set('s2-weaknesses',   d.swot.weaknesses);
+      set('s2-opportunities',d.swot.opportunities);
+      set('s2-threats',      d.swot.threats);
+    }
+    if(d.value_proposition){
+      set('s3-customer',       d.value_proposition.customer);
+      set('s3-problem',        d.value_proposition.problem);
+      set('s3-solution',       d.value_proposition.solution);
+      set('s3-differentiation',d.value_proposition.differentiation);
+    }
+    if(d.icp){
+      set('s4-title',   d.icp.title);
+      set('s4-size',    d.icp.size);
+      set('s4-pain',    d.icp.pain);
+      set('s4-current', d.icp.current);
+      set('s4-channel', d.icp.channel);
+    }
+  } catch(e) {}
+})();
+</script>
+</BaseLayout>

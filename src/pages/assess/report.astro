@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="Your Report — AHoosh Assess"
+  title="Your Consulting Report — AHoosh Assess"
   description="Your personalized AI consulting report from AHoosh."
   locale="en"
 >
@@ -13,9 +13,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .wrap { max-width:800px; margin:0 auto; padding:40px 20px 80px; }
   h1   { font-size:clamp(22px,4vw,32px); color:#e8eaf0; margin:0 0 8px; }
   .sub { color:#7a8b9e; font-size:15px; margin:0 0 40px; }
+
+  /* Top nav */
+  .report-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+  .report-nav a { color:#7a8b9e; font-size:13px; text-decoration:none; }
+  .report-nav a:hover { color:var(--gold); }
+  .pdf-btn {
+    padding:9px 20px; background:rgba(215,161,61,0.12); border:1px solid rgba(215,161,61,0.3);
+    color:var(--gold); font-size:13px; font-weight:700; border-radius:8px; cursor:pointer;
+    transition:all .15s; display:flex; align-items:center; gap:6px;
+  }
+  .pdf-btn:hover { background:rgba(215,161,61,0.2); }
+
   #loading { text-align:center; padding:80px 0; color:#7a8b9e; }
-  #error   { display:none; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.3); border-radius:10px; padding:20px; color:#f87171; }
+  #error   { display:none; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.3); border-radius:10px; padding:20px; color:#f87171; margin-bottom:20px; }
   #report  { display:none; }
+
   .report-header { background:var(--card-bg); border:1px solid rgba(215,161,61,0.2); border-radius:14px; padding:28px; margin-bottom:24px; }
   .overall-score { display:flex; align-items:center; gap:20px; margin-bottom:20px; }
   .score-ring { width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; border:3px solid var(--gold); color:var(--gold); flex-shrink:0; }
@@ -37,12 +50,66 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .cta-btn:hover { opacity:0.9; }
   .sources-done { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
   .source-tag { padding:4px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:20px; font-size:12px; color:#7a8b9e; }
-  @media print { .cta-box, .no-print { display:none!important; } }
+
+  /* Email gate modal */
+  .modal-overlay {
+    display:none; position:fixed; inset:0; background:rgba(1,10,24,0.88);
+    z-index:1000; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal-box {
+    background:#0B1A32; border:1px solid rgba(215,161,61,0.25); border-radius:16px;
+    padding:36px 32px; max-width:420px; width:100%; text-align:center;
+  }
+  .modal-box h3 { color:#e8eaf0; font-size:20px; margin:0 0 10px; }
+  .modal-box p  { color:#7a8b9e; font-size:14px; line-height:1.6; margin:0 0 24px; }
+  .modal-box input[type=email] {
+    width:100%; padding:12px 16px; background:rgba(255,255,255,0.06);
+    border:1px solid rgba(215,161,61,0.3); border-radius:10px; color:#e8eaf0;
+    font-size:15px; box-sizing:border-box; margin-bottom:14px;
+  }
+  .modal-box input[type=email]:focus { outline:none; border-color:var(--gold); }
+  .modal-submit {
+    width:100%; padding:13px; background:var(--gold); color:#010A18;
+    font-weight:700; font-size:15px; border:none; border-radius:10px; cursor:pointer;
+  }
+  .modal-submit:hover { opacity:0.9; }
+  .modal-submit:disabled { opacity:0.4; cursor:not-allowed; }
+  .modal-skip { margin-top:12px; display:block; font-size:12px; color:#4a5a6e; cursor:pointer; background:none; border:none; }
+  .modal-skip:hover { color:#7a8b9e; }
+  .modal-status { font-size:12px; color:#4a5a6e; margin-top:8px; min-height:18px; }
+
+  /* Print styles */
+  @media print {
+    body { background:#fff !important; color:#111 !important; }
+    .no-print, .report-nav, .cta-box, .modal-overlay { display:none !important; }
+    .wrap { padding:0 !important; max-width:100% !important; }
+    .report-header, .section { background:#f8f8f8 !important; border:1px solid #ddd !important; }
+    .exec-summary, .priority-rec, .quick-win { color:#333 !important; }
+    .priority-finding, .founder-note { color:#666 !important; }
+    .score-ring { border-color:#D7A13D !important; color:#D7A13D !important; }
+    .section-label, .priority-area, .service-tag { color:#D7A13D !important; }
+    h1, .overall-score div { color:#111 !important; }
+    .source-tag { background:#f0f0f0 !important; border-color:#ccc !important; color:#555 !important; }
+  }
 </style>
 
+<!-- Email gate modal -->
+<div class="modal-overlay" id="email-modal">
+  <div class="modal-box">
+    <h3>Download your report</h3>
+    <p>Enter your email to download the PDF. We'll only contact you if your situation is a match for what we do.</p>
+    <input type="email" id="gate-email" placeholder="your@email.com" autocomplete="email" />
+    <button class="modal-submit" id="gate-submit" onclick="submitEmail()">Download PDF →</button>
+    <div class="modal-status" id="gate-status"></div>
+    <button class="modal-skip" onclick="skipEmail()">Skip and download without email</button>
+  </div>
+</div>
+
 <div class="wrap">
-  <div style="margin-bottom:24px;">
-    <a href="/assess" style="color:#7a8b9e;font-size:13px;text-decoration:none;">← Back to Assess Hub</a>
+  <div class="report-nav no-print">
+    <a href="/assess">← Assess Hub</a>
+    <button class="pdf-btn no-print" onclick="openEmailGate()">⬇ Download PDF</button>
   </div>
 
   <h1>Your Consulting Report</h1>
@@ -53,22 +120,76 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <div id="report"></div>
 </div>
 
-<script>
-  const CALENDLY_URL = 'https://calendly.com/ahoosh/strategy'; // update if needed
+<script is:inline>
+  const CALENDLY_URL = 'https://calendly.com/ahoosh/strategy';
+
+  function openEmailGate() {
+    var modal = document.getElementById('email-modal');
+    if (modal) { modal.classList.add('open'); document.getElementById('gate-email').focus(); }
+  }
+
+  function submitEmail() {
+    var emailEl = document.getElementById('gate-email');
+    var statusEl = document.getElementById('gate-status');
+    var submitEl = document.getElementById('gate-submit');
+    var email = emailEl ? emailEl.value.trim() : '';
+    if (!email || !email.includes('@')) {
+      if (statusEl) statusEl.textContent = 'Please enter a valid email.';
+      return;
+    }
+    if (submitEl) submitEl.disabled = true;
+    if (statusEl) statusEl.textContent = 'Saving…';
+
+    fetch('/api/email-gate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, source: 'assess_report_pdf' }),
+    })
+    .then(function(r){ return r.json(); })
+    .catch(function(){ return { ok: true }; })
+    .finally(function(){
+      closeModalAndPrint();
+    });
+  }
+
+  function skipEmail() {
+    closeModalAndPrint();
+  }
+
+  function closeModalAndPrint() {
+    var modal = document.getElementById('email-modal');
+    if (modal) modal.classList.remove('open');
+    setTimeout(function(){ window.print(); }, 150);
+  }
+
+  // Close modal on overlay click
+  document.getElementById('email-modal').addEventListener('click', function(e){
+    if (e.target === this) skipEmail();
+  });
+
+  // Also allow Enter in email field
+  document.getElementById('gate-email').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') submitEmail();
+  });
 
   async function buildReport() {
-    // Collect all assessment data from localStorage
     const assessments = {};
     const done = [];
 
-    const website = localStorage.getItem('ahoosh_assess_website');
-    if (website) { try { assessments.website = JSON.parse(website); done.push('Website Audit'); } catch {} }
+    try {
+      const website = localStorage.getItem('ahoosh_assess_website');
+      if (website) { assessments.website = JSON.parse(website); done.push('Website Audit'); }
+    } catch {}
 
-    const personality = localStorage.getItem('ahoosh_assess_personality');
-    if (personality) { try { assessments.personality = JSON.parse(personality); done.push('Personality'); } catch {} }
+    try {
+      const personality = localStorage.getItem('ahoosh_assess_personality');
+      if (personality) { assessments.personality = JSON.parse(personality); done.push('Personality'); }
+    } catch {}
 
-    const business = localStorage.getItem('ahoosh_assess_business');
-    if (business) { try { assessments.business = JSON.parse(business); done.push('Business'); } catch {} }
+    try {
+      const business = localStorage.getItem('ahoosh_assess_business');
+      if (business) { assessments.business = JSON.parse(business); done.push('Business'); }
+    } catch {}
 
     if (Object.keys(assessments).length === 0) {
       showError('No assessment data found. Please complete at least one assessment first.');
@@ -82,12 +203,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         body: JSON.stringify({ assessments }),
       });
       const data = await res.json();
-
       if (!data.ok || !data.report) {
         showError('Report generation failed: ' + (data.error || 'Unknown error'));
         return;
       }
-
       renderReport(data.report, done);
     } catch (e) {
       showError('Network error — please try again. (' + e.message + ')');
@@ -111,7 +230,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     el.style.display = 'block';
 
     const scoreColor = r.overall_score >= 70 ? '#34d399' : r.overall_score >= 40 ? '#fbbf24' : '#f87171';
-
     const sourceTags = done.map(d => `<span class="source-tag">${esc(d)}</span>`).join('');
 
     const priorities = (r.priorities || []).map(p => `
@@ -155,12 +273,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <div class="founder-note">${esc(r.founder_note)}</div>
       </div>` : ''}
 
-      <div class="cta-box">
+      <div class="cta-box no-print">
         <h3>Ready to act on this?</h3>
         <p>Book a 45-minute strategy session with Hesam. No pitch — just a focused look at your situation.</p>
         <a class="cta-btn" href="${CALENDLY_URL}" target="_blank" rel="noopener">Book a Session</a>
       </div>
+
+      <div style="display:none;" class="print-only" id="print-footer">
+        <p style="font-size:12px;color:#666;text-align:center;margin-top:40px;border-top:1px solid #eee;padding-top:16px;">
+          Generated by AHoosh.ai — AI-augmented B2B consulting · ahoosh.ai · hello@ahoosh.ai
+        </p>
+      </div>
     `;
+
+    // Show print footer in print mode
+    document.querySelector('#print-footer').style.display = 'none';
+    window.addEventListener('beforeprint', function(){ document.querySelector('#print-footer').style.display = 'block'; });
+    window.addEventListener('afterprint',  function(){ document.querySelector('#print-footer').style.display = 'none'; });
   }
 
   buildReport();

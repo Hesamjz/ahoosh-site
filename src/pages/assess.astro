@@ -1,14 +1,138 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import AssessBody from '../components/AssessBody.astro';
-import AssessHead from '../components/AssessHead.astro';
 ---
-
 <BaseLayout
-  title="Assess"
-  description="Scientifically validated workplace assessments — the Big Five (IPIP) personality test and the Rosenberg Self-Esteem Scale. Free, instant results."
+  title="Assess Your Business — AHoosh.ai"
+  description="Three focused assessments. One AI report. Know exactly what to fix and why — before you spend another euro on marketing or consultants."
   locale="en"
 >
-  <Fragment slot="head"><AssessHead /></Fragment>
-  <AssessBody lang="en" />
+<style>
+  :root { --gold:#D7A13D; --navy:#010A18; --card:#0B1A32; }
+  body  { background:var(--navy); color:#c8d4e0; }
+  .wrap { max-width:860px; margin:0 auto; padding:0 20px 100px; }
+
+  .hero { padding:72px 0 56px; text-align:center; }
+  .hero-eyebrow { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:18px; }
+  .hero h1 { font-size:clamp(28px,5vw,44px); font-weight:800; color:#e8eaf0; line-height:1.18; margin:0 0 16px; }
+  .hero p  { font-size:clamp(15px,2vw,18px); color:#7a8b9e; max-width:540px; margin:0 auto; line-height:1.65; }
+
+  .tracks-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#4a5a6e; margin-bottom:20px; }
+  .tracks { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-bottom:56px; }
+  .track-card {
+    background:var(--card); border:1px solid rgba(215,161,61,0.12);
+    border-radius:16px; padding:28px 24px; text-decoration:none;
+    display:block; transition:all .2s; position:relative;
+  }
+  .track-card:hover { border-color:rgba(215,161,61,0.45); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,.5); }
+  .track-icon { font-size:28px; margin-bottom:14px; }
+  .track-card h3 { font-size:17px; font-weight:700; color:#e8eaf0; margin:0 0 6px; }
+  .track-card p  { font-size:13px; color:#7a8b9e; line-height:1.6; margin:0 0 18px; }
+  .track-cta { font-size:13px; font-weight:700; color:var(--gold); }
+  .track-done { position:absolute; top:16px; right:16px; width:22px; height:22px; background:rgba(52,211,153,0.15); border:1.5px solid #34d399; border-radius:50%; display:none; align-items:center; justify-content:center; font-size:11px; color:#34d399; }
+  .track-done.visible { display:flex; }
+
+  .how { background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:36px 32px; margin-bottom:48px; }
+  .how h2 { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin:0 0 28px; }
+  .steps { display:flex; gap:24px; flex-wrap:wrap; }
+  .step { flex:1; min-width:160px; }
+  .step-num { width:30px; height:30px; border-radius:50%; border:1.5px solid rgba(215,161,61,0.4); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:12px; }
+  .step h4 { font-size:14px; font-weight:700; color:#e8eaf0; margin:0 0 6px; }
+  .step p  { font-size:13px; color:#7a8b9e; line-height:1.55; margin:0; }
+
+  .report-cta { text-align:center; padding:48px 32px; background:rgba(215,161,61,0.06); border:1px solid rgba(215,161,61,0.2); border-radius:16px; }
+  .report-cta h3 { font-size:20px; font-weight:700; color:#e8eaf0; margin:0 0 10px; }
+  .report-cta p  { font-size:14px; color:#7a8b9e; margin:0 0 24px; }
+  .report-cta a  { display:inline-block; padding:14px 40px; background:var(--gold); color:var(--navy); font-weight:700; border-radius:10px; text-decoration:none; font-size:15px; transition:opacity .15s; }
+  .report-cta a:hover { opacity:0.88; }
+  .report-cta a.locked { opacity:0.35; pointer-events:none; }
+  .locked-note { font-size:12px; color:#4a5a6e; margin-top:12px; display:none; }
+  .locked-note.visible { display:block; }
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-eyebrow">AHoosh Assess Hub</div>
+    <h1>Know what's holding your business back</h1>
+    <p>Three assessments. Fifteen minutes. One AI report that tells you exactly where to focus — and what to fix first.</p>
+  </div>
+
+  <div class="tracks-label">Choose where to start</div>
+
+  <div class="tracks">
+    <a href="/assess/personality" class="track-card">
+      <div class="track-done" id="done-personality">✓</div>
+      <div class="track-icon">🧠</div>
+      <h3>Personality &amp; Leadership</h3>
+      <p>Understand how you make decisions, lead teams, and where your patterns show up in the business.</p>
+      <div class="track-cta">Start assessment →</div>
+    </a>
+
+    <a href="/assess/business" class="track-card">
+      <div class="track-done" id="done-business">✓</div>
+      <div class="track-icon">📊</div>
+      <h3>Business Diagnostic</h3>
+      <p>Map your strengths, weaknesses, and market position. Clarify your value proposition and ideal customer.</p>
+      <div class="track-cta">Start assessment →</div>
+    </a>
+
+    <a href="/assess/website" class="track-card">
+      <div class="track-done" id="done-website">✓</div>
+      <div class="track-icon">🌐</div>
+      <h3>Website &amp; Digital Presence</h3>
+      <p>PageSpeed scores, SEO gaps, and the issues actually holding your site back — pulled live from your URL.</p>
+      <div class="track-cta">Start assessment →</div>
+    </a>
+  </div>
+
+  <div class="how">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Complete the assessments</h4>
+        <p>Each track takes 5–8 minutes. Any order. Progress saves in your browser — no account needed.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>AI reads the full picture</h4>
+        <p>Claude analyses all your results together and identifies the three highest-leverage problems in your business.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Get your consulting report</h4>
+        <p>Executive summary, specific recommendations, and one quick win you can act on this week.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-cta">
+    <h3>Ready to see your report?</h3>
+    <p id="cta-sub">Complete at least one assessment to generate your AI report.</p>
+    <a href="/assess/report" id="report-btn" class="locked">View my report</a>
+    <div class="locked-note" id="locked-note">Complete at least one assessment above first.</div>
+  </div>
+</div>
+
+<script is:inline>
+(function(){
+  var checks = [
+    ['done-personality','ahoosh_assess_personality'],
+    ['done-business','ahoosh_assess_business'],
+    ['done-website','ahoosh_assess_website'],
+  ];
+  var done = 0;
+  checks.forEach(function(c){
+    try{ if(localStorage.getItem(c[1])){ var el=document.getElementById(c[0]); if(el) el.classList.add('visible'); done++; } }catch(e){}
+  });
+  var btn = document.getElementById('report-btn');
+  var sub = document.getElementById('cta-sub');
+  var note = document.getElementById('locked-note');
+  if(done > 0){
+    if(btn) btn.classList.remove('locked');
+    if(sub) sub.textContent = done + ' of 3 assessment'+(done===1?'':'s')+' complete. Your report is ready.';
+  } else {
+    if(note) note.classList.add('visible');
+  }
+})();
+</script>
 </BaseLayout>
