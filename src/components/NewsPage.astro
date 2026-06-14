@@ -798,56 +798,69 @@ function loadChannel(ch) {
   playSrc(activeSrcList[0]);
 }
 
-// ── Channel picker — two dropdowns ────────────────────────────────────────
-var seenLangs = [];
-CHANNELS_ALL.forEach(function(c){ if (seenLangs.indexOf(c.lang) < 0) seenLangs.push(c.lang); });
+// ── Channel picker — THREE separate dropdowns ─────────────────────────────
+var langSel  = document.getElementById('ch-lang-sel');
+var topicSel = document.getElementById('ch-topic-sel');
+var nameSel  = document.getElementById('ch-name-sel');
 
-var langSel = document.getElementById('ch-lang-sel');
-var nameSel = document.getElementById('ch-name-sel');
-
-if (langSel && nameSel) {
-  // Populate category dropdown — grouped by Languages / Topics
-  var CHAN_GROUPS = [
-    { label: '🌐 Languages', keys: ['en','fa','de','fr','es','sr','ar'] },
-    { label: '📺 Topics',    keys: ['sport','tech'] },
-  ];
-  CHAN_GROUPS.forEach(function(group) {
-    var groupLangs = group.keys.filter(function(l){ return seenLangs.indexOf(l) >= 0; });
-    if (!groupLangs.length) return;
-    var grpEl = document.createElement('optgroup');
-    grpEl.label = group.label;
-    groupLangs.forEach(function(l) {
-      var o = document.createElement('option');
-      o.value = l;
-      o.textContent = t.langNames[l] || (l.charAt(0).toUpperCase() + l.slice(1));
-      if (l === locale) o.selected = true;
-      grpEl.appendChild(o);
-    });
-    langSel.appendChild(grpEl);
+if (langSel && topicSel && nameSel) {
+  // 1. Language dropdown — pure languages only, no sport/tech
+  var LANG_KEYS = ['en','fa','de','fr','es','sr','ar'];
+  LANG_KEYS.forEach(function(l) {
+    var hasCh = CHANNELS_ALL.some(function(c){ return c.lang === l; });
+    if (!hasCh) return;
+    var o = document.createElement('option');
+    o.value = l;
+    o.textContent = t.langNames[l] || l;
+    if (l === locale) o.selected = true;
+    langSel.appendChild(o);
   });
 
-  function populateChannels(lang) {
+  // 2. Topic dropdown — News / Sport / Tech & Science
+  [
+    { value:'news',  label:'📰 News'           },
+    { value:'sport', label:'⚽ Sport'           },
+    { value:'tech',  label:'🔬 Tech & Science'  },
+  ].forEach(function(item) {
+    var o = document.createElement('option');
+    o.value = item.value; o.textContent = item.label;
+    topicSel.appendChild(o);
+  });
+
+  // 3. Channel list — filtered by language + topic
+  function populateChannels() {
+    var lang  = langSel.value;
+    var topic = topicSel.value;
     nameSel.innerHTML = '';
-    var list = CHANNELS_ALL.filter(function(c){ return c.lang === lang; });
+    var list;
+    if (topic === 'sport') {
+      list = CHANNELS_ALL.filter(function(c){ return c.lang === 'sport'; });
+    } else if (topic === 'tech') {
+      list = CHANNELS_ALL.filter(function(c){ return c.lang === 'tech'; });
+    } else {
+      // News — respect language selector
+      list = CHANNELS_ALL.filter(function(c){ return c.lang === lang; });
+    }
     list.forEach(function(ch) {
       var o = document.createElement('option');
-      o.value = ch.id;
-      o.textContent = ch.name;
+      o.value = ch.id; o.textContent = ch.name;
       nameSel.appendChild(o);
     });
-    // Defaults per category
-    var preferred = { en:'euronews-en', sport:'shabakeh3' };
-    var defCh = (preferred[lang] && list.find(function(c){ return c.id === preferred[lang]; })) || list[0];
+    // Sensible defaults per topic
+    var preferred = { news: 'euronews-en', sport: 'redbull-tv', tech: 'nasa-tv' };
+    var prefId = preferred[topic];
+    var defCh = (prefId && list.find(function(c){ return c.id === prefId; })) || list[0];
     if (defCh) { nameSel.value = defCh.id; loadChannel(defCh); }
   }
 
-  langSel.addEventListener('change', function() { populateChannels(this.value); });
+  langSel.addEventListener('change',  populateChannels);
+  topicSel.addEventListener('change', populateChannels);
   nameSel.addEventListener('change', function() {
     var ch = CHANNELS_ALL.find(function(c){ return c.id === this.value; }, this);
     if (ch) loadChannel(ch);
   });
 
-  populateChannels(locale);
+  populateChannels();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
