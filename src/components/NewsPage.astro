@@ -979,9 +979,12 @@ function renderRssList() {
   var list = document.getElementById('rss-list');
   if (!list) return;
   var q = searchTerm.toLowerCase();
+  var RTL_RE = /[؀-ۿݐ-ݿ]/; // Arabic/Persian script
   var filtered = rssArticles.filter(function(a) {
     if (rssLangFilter !== 'all' && a.lang !== rssLangFilter) return false;
     if (q) return (a.title||'').toLowerCase().indexOf(q) >= 0;
+    // On LTR locales, hide articles whose title is still in RTL script (translation failed)
+    if (locale !== 'fa' && locale !== 'ar' && RTL_RE.test(a.title || '')) return false;
     return true;
   });
   // newest first by article time (don't mix); unparseable dates sink to the end
@@ -994,7 +997,7 @@ function renderRssList() {
   filtered.slice(0, 50).forEach(function(a) {
     var row = document.createElement('div');
     row.className = 'rss-row';
-    if (locale === 'fa' || locale === 'ar' || a.lang === 'fa' || a.lang === 'ar') row.setAttribute('dir', 'rtl');
+    if (locale === 'fa' || locale === 'ar') row.setAttribute('dir', 'rtl');
     if (a.link) {
       row.dataset.url = a.link;
       row.onclick = function() { window.open(this.dataset.url, '_blank', 'noopener,noreferrer'); };

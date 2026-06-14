@@ -124,11 +124,17 @@ const alternates = isLocalized
         gap: 26px;
         align-items: center;
       ">
-        <a href={`${base}/consulting`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.consulting}</a>
-        <a href={`${base}/articles`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.articles}</a>
         <a href={`${base}/news`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.news}</a>
+        <a href={`${base}/articles`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.articles}</a>
+        <!-- Consulting + Assess merged dropdown -->
+        <div class="nav-drop-wrap">
+          <button class="nav-drop-btn">{t.consulting} <span class="nav-drop-arrow">▾</span></button>
+          <div class="nav-drop-menu">
+            <a href={`${base}/consulting`} class="nav-drop-item">{t.consulting}</a>
+            <a href={`${base}/assess`} class="nav-drop-item nav-drop-gold">{t.assess}</a>
+          </div>
+        </div>
         <a href={`${base}/about`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.about}</a>
-        <a href={`${base}/assess`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--gold);letter-spacing:0.04em;transition:color 150ms ease;border:1px solid rgba(215,161,61,0.4);padding:6px 14px;border-radius:6px;">{t.assess}</a>
         <a href={`${base}/contact`} class="btn-primary" style="padding:10px 20px;font-size:12px;min-height:40px;display:inline-flex;align-items:center;">{t.bookCall}</a>
 
         <!-- Language switcher (desktop) -->
@@ -202,11 +208,11 @@ const alternates = isLocalized
         ">×</button>
       </div>
       <nav style="display:flex;flex-direction:column;gap:4px;">
-        <a href={`${base}/consulting`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.consulting}</a>
-        <a href={`${base}/articles`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.articles}</a>
         <a href={`${base}/news`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.news}</a>
+        <a href={`${base}/articles`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.articles}</a>
+        <a href={`${base}/consulting`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.consulting}</a>
+        <a href={`${base}/assess`} style="font-family:var(--font-head);font-size:20px;font-weight:600;color:var(--gold);padding:10px 0 10px 20px;border-bottom:1px solid rgba(215,161,61,0.1);">✦ {t.assess}</a>
         <a href={`${base}/about`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.about}</a>
-        <a href={`${base}/assess`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--gold);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.assess}</a>
         <a href={`${base}/contact`} style="font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--silver);padding:12px 0;border-bottom:1px solid rgba(215,161,61,0.1);">{t.contact}</a>
       </nav>
       <div style="margin-top:auto;padding-top:32px;">
@@ -282,6 +288,59 @@ const alternates = isLocalized
         #mobile-controls #nav-toggle { display: none !important; }
         #mobile-lang { display: none !important; }
       }
+      /* Consulting + Assess dropdown */
+      .nav-drop-wrap {
+        position: relative;
+      }
+      .nav-drop-btn {
+        font-family: var(--font-body);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--silver-dim);
+        letter-spacing: 0.04em;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 150ms ease;
+      }
+      .nav-drop-btn:hover { color: var(--silver); }
+      .nav-drop-arrow { font-size: 10px; opacity: 0.6; }
+      .nav-drop-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #03142E;
+        border: 1px solid rgba(215,161,61,0.2);
+        border-radius: 8px;
+        padding: 6px;
+        min-width: 190px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        z-index: 200;
+      }
+      .nav-drop-wrap:hover .nav-drop-menu,
+      .nav-drop-wrap:focus-within .nav-drop-menu {
+        display: block;
+      }
+      .nav-drop-item {
+        display: block;
+        padding: 9px 14px;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--silver-dim);
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background 120ms ease, color 120ms ease;
+      }
+      .nav-drop-item:hover { background: rgba(215,161,61,0.1); color: var(--silver); }
+      .nav-drop-gold { color: var(--gold) !important; }
+      .nav-drop-gold:hover { color: var(--gold) !important; }
     </style>
 
     <script>

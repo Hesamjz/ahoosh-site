@@ -33,48 +33,57 @@ const allTags = ['All', ...new Set(posts.flatMap((p) => p.data.tags ?? []))];
 
   <!-- Category filter pills -->
   <div id="tag-filter-row" style="
-    padding: 20px 24px 8px;
+    padding: 24px 32px 0;
     display: flex;
     gap: 8px;
     overflow-x: auto;
     scrollbar-width: none;
-    max-width: 680px;
+    max-width: 1100px;
     margin: 0 auto;
   ">
     {allTags.map((tag) => (
       <button
         data-tag={tag}
         class="tag-pill"
-        style={tag === 'All' ? "flex-shrink:0;background:var(--gold);border:1px solid var(--gold);color:var(--navy-dark);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;cursor:pointer;font-family:var(--font-body);" : "flex-shrink:0;background:transparent;border:1px solid rgba(215,161,61,0.3);color:var(--silver-dim);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;cursor:pointer;font-family:var(--font-body);"}
+        style={tag === 'All' ? "flex-shrink:0;background:var(--gold);border:1px solid var(--gold);color:var(--navy-dark);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:999px;cursor:pointer;font-family:var(--font-body);" : "flex-shrink:0;background:transparent;border:1px solid rgba(215,161,61,0.25);color:var(--silver-dim);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:999px;cursor:pointer;font-family:var(--font-body);"}
       >{tag}</button>
     ))}
   </div>
 
-  <!-- Article list -->
-  <div style="padding:16px 24px 40px;max-width:680px;margin:0 auto;">
+  <!-- Article grid -->
+  <div style="padding:24px 32px 64px;max-width:1100px;margin:0 auto;">
 
-    {posts.length > 0 ? posts.map((post) => (
+    {posts.length > 0 ? (
+      <div id="article-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
+      {posts.map((post, idx) => (
       <a href={`/articles/${post.id}`} data-tags={(post.data.tags ?? []).join(',')} class="article-card" style="display:block;text-decoration:none;">
-        <div style="
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(215,161,61,0.1);
-          border-radius: 6px;
-          padding: 20px;
-          margin-bottom: 12px;
-          transition: border-color 150ms ease;
-        ">
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">
-            {(post.data as any).tags?.[0] ?? 'Article'}
+        <div class="art-card-inner" style={`
+          background: rgba(255,255,255,0.025);
+          border: 1px solid rgba(215,161,61,0.12);
+          border-radius: 10px;
+          padding: 24px;
+          height: 100%;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          transition: border-color 180ms ease, background 180ms ease;
+          ${idx === 0 ? 'border-color:rgba(215,161,61,0.28);background:rgba(215,161,61,0.04);' : ''}
+        `}>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);padding:3px 8px;border-radius:4px;">
+              {(post.data as any).tags?.[0] ?? 'Article'}
+            </div>
+            {idx === 0 && <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);opacity:0.7;">Latest</div>}
           </div>
-          <div style="font-family:var(--font-head);font-weight:600;font-size:15px;line-height:1.4;color:var(--silver);margin-bottom:8px;">
+          <div style="font-family:var(--font-head);font-weight:700;font-size:17px;line-height:1.4;color:var(--silver);margin-bottom:10px;flex:1;">
             {post.data.title}
           </div>
           {post.data.description && (
-            <p style="font-size:13px;line-height:1.6;color:var(--silver-dim);margin-bottom:12px;">
+            <p style="font-size:13px;line-height:1.65;color:var(--silver-dim);margin-bottom:16px;">
               {post.data.description}
             </p>
           )}
-          <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px;border-top:1px solid rgba(215,161,61,0.08);">
             <span style="font-size:11px;color:var(--silver-muted);">
               {post.data.pubDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
             </span>
@@ -82,46 +91,31 @@ const allTags = ['All', ...new Set(posts.flatMap((p) => p.data.tags ?? []))];
           </div>
         </div>
       </a>
-    )) : (
-      /* Placeholder cards when no posts exist yet */
-      <>
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:20px;margin-bottom:12px;">
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">AI Operations</div>
-          <div style="font-family:var(--font-head);font-weight:600;font-size:15px;line-height:1.4;color:var(--silver);margin-bottom:8px;">Why Most AI Implementations Fail in the First 90 Days</div>
-          <p style="font-size:13px;line-height:1.6;color:var(--silver-dim);margin-bottom:12px;">The tools are not the problem. The process assumptions underneath them are.</p>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:11px;color:var(--silver-muted);">June 2026 · 6 min read</span>
-            <span style="font-size:12px;font-weight:600;color:var(--gold);letter-spacing:0.04em;">Coming soon</span>
+    ))}
+    </div>
+    ) : (
+      /* Placeholder grid when no posts exist yet */
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
+        {[
+          { tag:'AI Operations', title:'Why Most AI Implementations Fail in the First 90 Days', desc:'The tools are not the problem. The process assumptions underneath them are.', date:'June 2026' },
+          { tag:'Marketing', title:'Brevo from Zero to Automated: A Setup Guide for B2B Marketing Teams', desc:'How to configure Brevo for B2B marketing from scratch — list architecture, DKIM/SPF, five automation workflows.', date:'June 2026' },
+          { tag:'AI Operations', title:'AI Returns Management in B2B Distribution: What Is Automatable', desc:'Returns cost distributors 20–30% of margin. AI can close that gap — but only on specific steps.', date:'May 2026' },
+          { tag:'Emerging Markets', title:'Operating Between Markets: Running AHoosh from Belgrade', desc:'The systems, the surprises, and the compounding advantages of building with AI at the intersection of research and consulting.', date:'April 2026' },
+        ].map((p, idx) => (
+          <div style={`background:rgba(255,255,255,0.025);border:1px solid rgba(215,161,61,${idx===0?'0.28':'0.1'});border-radius:10px;padding:24px;display:flex;flex-direction:column;${idx===0?'background:rgba(215,161,61,0.04);':''}`}>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);background:rgba(215,161,61,0.1);padding:3px 8px;border-radius:4px;">{p.tag}</div>
+              {idx===0 && <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);opacity:0.7;">Latest</div>}
+            </div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:17px;line-height:1.4;color:var(--silver);margin-bottom:10px;flex:1;">{p.title}</div>
+            <p style="font-size:13px;line-height:1.65;color:var(--silver-dim);margin-bottom:16px;">{p.desc}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid rgba(215,161,61,0.08);">
+              <span style="font-size:11px;color:var(--silver-muted);">{p.date}</span>
+              <span style="font-size:12px;font-weight:600;color:var(--gold);opacity:0.6;letter-spacing:0.04em;">Coming soon</span>
+            </div>
           </div>
-        </div>
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:20px;margin-bottom:12px;">
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">B2B Transformation</div>
-          <div style="font-family:var(--font-head);font-weight:600;font-size:15px;line-height:1.4;color:var(--silver);margin-bottom:8px;">The Emerging Market AI Stack: What Actually Works</div>
-          <p style="font-size:13px;line-height:1.6;color:var(--silver-dim);margin-bottom:12px;">After years of implementations across different markets and industries — here is what we keep using.</p>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:11px;color:var(--silver-muted);">May 2026 · 9 min read</span>
-            <span style="font-size:12px;font-weight:600;color:var(--gold);letter-spacing:0.04em;">Coming soon</span>
-          </div>
-        </div>
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:20px;margin-bottom:12px;">
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Emerging Markets</div>
-          <div style="font-family:var(--font-head);font-weight:600;font-size:15px;line-height:1.4;color:var(--silver);margin-bottom:8px;">Operating Between Markets: A Year of Running AHoosh from Belgrade</div>
-          <p style="font-size:13px;line-height:1.6;color:var(--silver-dim);margin-bottom:12px;">The systems, the surprises, and the compounding advantages of building with AI at the intersection of research, market data, and consulting.</p>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:11px;color:var(--silver-muted);">April 2026 · 7 min read</span>
-            <span style="font-size:12px;font-weight:600;color:var(--gold);letter-spacing:0.04em;">Coming soon</span>
-          </div>
-        </div>
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(215,161,61,0.1);border-radius:6px;padding:20px;">
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">PhD Research</div>
-          <div style="font-family:var(--font-head);font-weight:600;font-size:15px;line-height:1.4;color:var(--silver);margin-bottom:8px;">What Academic Research on AI Gets Wrong About B2B Reality</div>
-          <p style="font-size:13px;line-height:1.6;color:var(--silver-dim);margin-bottom:12px;">Field notes from someone living in both worlds simultaneously.</p>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:11px;color:var(--silver-muted);">March 2026 · 5 min read</span>
-            <span style="font-size:12px;font-weight:600;color:var(--gold);letter-spacing:0.04em;">Coming soon</span>
-          </div>
-        </div>
-      </>
+        ))}
+      </div>
     )}
   </div>
 
@@ -152,5 +146,17 @@ const allTags = ['All', ...new Set(posts.flatMap((p) => p.data.tags ?? []))];
   });
 })();
 </script>
+
+<style>
+  .art-card-inner:hover {
+    border-color: rgba(215,161,61,0.4) !important;
+    background: rgba(215,161,61,0.06) !important;
+  }
+  @media (max-width: 680px) {
+    #article-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
 
 </BaseLayout>
