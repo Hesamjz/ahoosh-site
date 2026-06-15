@@ -1,0 +1,743 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Home — AHoosh"
+  description="AHoosh combines AI, market data, research, and practical consulting to help founders, companies, and decision-makers understand markets, evaluate opportunities, and act with better information."
+>
+
+<style is:inline>
+/* ═══════════════════════════════════════════
+   V2 CINEMATIC HOME — all styles scoped here
+═══════════════════════════════════════════ */
+
+/* HERO */
+.v2-hero {
+  position: relative;
+  min-height: 100vh;
+  background: #010A18;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 80px;
+  overflow: hidden;
+}
+.v2-hero-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 20%, rgba(215,161,61,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(215,161,61,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.v2-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(215,161,61,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(215,161,61,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+  pointer-events: none;
+}
+.v2-hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+.v2-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0;
+}
+.v2-headline {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: clamp(32px, 6.5vw, 56px);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  color: var(--silver);
+  margin: 0;
+}
+.v2-headline .word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.v2-headline .word-inner {
+  display: inline-block;
+  transform: translateY(110%);
+  padding-right: 0.22em;
+}
+.v2-sub {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--silver-dim);
+  max-width: 500px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.v2-hero-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.v2-scroll-cue {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+}
+.v2-scroll-cue-text {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(215,161,61,0.5);
+}
+.v2-scroll-cue-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, rgba(215,161,61,0.6), transparent);
+  animation: lineDown 2s ease-in-out infinite;
+  transform-origin: top;
+}
+@keyframes lineDown {
+  0% { transform: scaleY(0); opacity: 0; }
+  40% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+
+/* STATS */
+.v2-stats {
+  background: linear-gradient(180deg, #010A18 0%, #040E20 100%);
+  border-bottom: 1px solid rgba(215,161,61,0.08);
+  padding: 72px 24px;
+}
+.v2-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.v2-stat {
+  text-align: center;
+  padding: 28px 16px;
+  border: 1px solid rgba(215,161,61,0.1);
+  border-radius: 10px;
+  background: rgba(215,161,61,0.02);
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  position: relative;
+  overflow: hidden;
+}
+.v2-stat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 40px; height: 1px;
+  background: var(--gold);
+  opacity: 0.4;
+}
+.v2-stat-num {
+  font-family: var(--font-head);
+  font-size: clamp(38px, 6vw, 54px);
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.v2-stat-label {
+  font-size: 11px;
+  color: var(--silver-dim);
+  margin-top: 8px;
+  letter-spacing: 0.06em;
+}
+
+/* SERVICES */
+.v2-services {
+  background: #010A18;
+  border-bottom: 1px solid rgba(215,161,61,0.08);
+}
+.v2-svc-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 60px;
+  min-height: 180vh;
+}
+.v2-svc-left {
+  flex: 0 0 160px;
+  position: sticky;
+  top: 45vh;
+  height: fit-content;
+  align-self: flex-start;
+  padding-top: 80px;
+}
+.v2-svc-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 80px;
+  padding-bottom: 80px;
+  justify-content: center;
+}
+.v2-svc-card {
+  padding: 24px;
+  border: 1px solid rgba(215,161,61,0.1);
+  border-radius: 10px;
+  background: rgba(215,161,61,0.02);
+  opacity: 0;
+  transform: translateX(50px);
+  transition: border-color 0.25s ease, background 0.25s ease;
+  cursor: default;
+}
+.v2-svc-card:hover {
+  border-color: rgba(215,161,61,0.28);
+  background: rgba(215,161,61,0.05);
+}
+.v2-svc-icon { font-size: 22px; margin-bottom: 10px; }
+.v2-svc-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--silver);
+  margin-bottom: 6px;
+}
+.v2-svc-desc {
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--silver-dim);
+}
+
+/* TIMELINE */
+.v2-timeline {
+  background: linear-gradient(180deg, #040E20 0%, #010A18 100%);
+  border-bottom: 1px solid rgba(215,161,61,0.08);
+  padding: 80px 24px 100px;
+}
+.v2-tl-wrap {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.v2-tl-header {
+  text-align: center;
+  margin-bottom: 64px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.v2-tl-body {
+  position: relative;
+  padding-left: 40px;
+}
+.v2-tl-line-track {
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: rgba(215,161,61,0.1);
+}
+.v2-tl-line-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--gold), rgba(215,161,61,0.25));
+  transform-origin: top;
+  transform: scaleY(0);
+}
+.v2-tl-step {
+  position: relative;
+  margin-bottom: 52px;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+.v2-tl-step:last-child { margin-bottom: 0; }
+.v2-tl-dot {
+  position: absolute;
+  left: -37px;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(215,161,61,0.15), 0 0 10px rgba(215,161,61,0.3);
+  z-index: 1;
+}
+.v2-tl-num {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.v2-tl-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--silver);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.v2-tl-desc {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--silver-dim);
+}
+
+/* FOUNDER */
+.v2-founder {
+  background: #010A18;
+  padding: 60px 24px;
+  border-bottom: 1px solid rgba(215,161,61,0.08);
+}
+.v2-founder-card {
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* CTA */
+.v2-cta {
+  background: #010A18;
+  padding: 100px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.97);
+}
+.v2-cta-halo {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(215,161,61,0.07) 0%, transparent 65%);
+  pointer-events: none;
+  animation: haloBreath 5s ease-in-out infinite alternate;
+}
+@keyframes haloBreath {
+  from { opacity: 0.6; transform: translate(-50%, -50%) scale(0.92); }
+  to   { opacity: 1;   transform: translate(-50%, -50%) scale(1.08); }
+}
+.v2-cta-inner { max-width: 460px; margin: 0 auto; position: relative; }
+.v2-cta h2 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: clamp(22px, 4vw, 34px);
+  letter-spacing: -0.025em;
+  color: var(--silver);
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.v2-cta p {
+  font-size: 14px;
+  color: var(--silver-dim);
+  line-height: 1.85;
+  margin-bottom: 32px;
+}
+.v2-avatar {
+  width: 68px; height: 68px;
+  border-radius: 50%; overflow: hidden;
+  border: 2px solid rgba(215,161,61,0.5);
+  margin: 0 auto 24px;
+  background: rgba(215,161,61,0.08);
+  box-shadow: 0 0 32px rgba(215,161,61,0.18);
+}
+.v2-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; }
+
+/* MOBILE */
+@media (max-width: 640px) {
+  .v2-stats-grid { grid-template-columns: 1fr; }
+  .v2-svc-wrap { flex-direction: column; min-height: auto; gap: 32px; }
+  .v2-svc-left { position: static; padding-top: 48px; flex: none; }
+  .v2-svc-right { padding-top: 0; padding-bottom: 48px; }
+}
+</style>
+
+<!-- ════════ HERO ════════ -->
+<section class="v2-hero">
+  <div class="v2-hero-glow"></div>
+  <div class="v2-hero-grid"></div>
+
+  <div class="v2-hero-content">
+    <canvas id="vc2" width="280" height="210"
+      style="cursor:grab;display:block;touch-action:none;width:min(280px,72vw);aspect-ratio:280/210;filter:drop-shadow(0 0 36px rgba(215,161,61,0.22));"></canvas>
+
+    <div>
+      <div class="v2-eyebrow" id="v2-eyebrow">Founded by Hesam Jafarzadeh</div>
+      <h1 class="v2-headline" id="v2-headline">AI, Market Data, and Research for Better Decisions</h1>
+    </div>
+
+    <p class="v2-sub" id="v2-sub">
+      AHoosh helps founders, companies, and decision-makers combine AI tools,
+      market signals, and practical research to understand opportunities,
+      reduce uncertainty, and build smarter strategies.
+    </p>
+
+    <div class="v2-hero-ctas" id="v2-ctas">
+      <a href="/markets" class="btn-primary" style="width:100%;max-width:280px;">Explore Market Data</a>
+      <a href="/contact" class="btn-secondary" style="width:100%;max-width:280px;">Request Consultation</a>
+      <a href="/articles" class="link-gold" style="font-size:12px;padding:4px 0;">Read Articles →</a>
+    </div>
+  </div>
+
+  <div class="v2-scroll-cue" id="v2-scroll-cue">
+    <div class="v2-scroll-cue-text">Scroll</div>
+    <div class="v2-scroll-cue-line"></div>
+  </div>
+</section>
+
+<!-- ════════ STATS ════════ -->
+<section class="v2-stats">
+  <div class="v2-stats-grid">
+    <div class="v2-stat" data-target="15" data-suffix="+">
+      <div class="v2-stat-num" data-counter>0</div>
+      <div class="v2-stat-label">Years of Experience</div>
+    </div>
+    <div class="v2-stat" data-target="9" data-suffix="">
+      <div class="v2-stat-num" data-counter>0</div>
+      <div class="v2-stat-label">Consulting Services</div>
+    </div>
+    <div class="v2-stat" data-target="4" data-suffix="">
+      <div class="v2-stat-num" data-counter>0</div>
+      <div class="v2-stat-label">Markets Covered</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SERVICES (sticky left) ════════ -->
+<section class="v2-services">
+  <div class="v2-svc-wrap">
+    <div class="v2-svc-left">
+      <div class="section-eyebrow" style="margin-bottom:10px;">What AHoosh Does</div>
+      <h2 style="font-family:var(--font-head);font-weight:700;font-size:20px;letter-spacing:-0.02em;color:var(--silver);line-height:1.25;margin-bottom:16px;">Four Layers,<br/>One Practice</h2>
+      <a href="/consulting" class="link-gold" style="font-size:12px;">See All Services →</a>
+    </div>
+    <div class="v2-svc-right">
+      <div class="v2-svc-card">
+        <div class="v2-svc-icon">🤖</div>
+        <div class="v2-svc-title">AI-Assisted Research</div>
+        <div class="v2-svc-desc">Using AI tools to collect, organize, compare, and explain information faster than traditional methods allow.</div>
+      </div>
+      <div class="v2-svc-card">
+        <div class="v2-svc-icon">📊</div>
+        <div class="v2-svc-title">Market Intelligence</div>
+        <div class="v2-svc-desc">Tracking prices, trends, signals, and public data that affect business and investment decisions.</div>
+      </div>
+      <div class="v2-svc-card">
+        <div class="v2-svc-icon">🧩</div>
+        <div class="v2-svc-title">Consulting</div>
+        <div class="v2-svc-desc">Helping founders and companies turn unclear problems into practical decisions and action plans.</div>
+      </div>
+      <div class="v2-svc-card">
+        <div class="v2-svc-icon">📝</div>
+        <div class="v2-svc-title">Content &amp; Education</div>
+        <div class="v2-svc-desc">Publishing articles, guides, and explanations for a global audience across industries and markets.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ TIMELINE ════════ -->
+<section class="v2-timeline">
+  <div class="v2-tl-wrap">
+    <div class="v2-tl-header" id="v2-tl-header">
+      <div class="section-eyebrow" style="margin-bottom:10px;">How It Works</div>
+      <h2 class="section-title" style="font-size:clamp(22px,4vw,30px);">From Question to Action</h2>
+    </div>
+
+    <div class="v2-tl-body">
+      <div class="v2-tl-line-track">
+        <div class="v2-tl-line-fill" id="v2-tl-fill"></div>
+      </div>
+
+      <div class="v2-tl-step">
+        <div class="v2-tl-dot"></div>
+        <div class="v2-tl-num">Step 01</div>
+        <div class="v2-tl-title">Define the Real Question</div>
+        <div class="v2-tl-desc">We start with what you actually need to know — not a generic audit, but the specific uncertainty holding you back.</div>
+      </div>
+
+      <div class="v2-tl-step">
+        <div class="v2-tl-dot"></div>
+        <div class="v2-tl-num">Step 02</div>
+        <div class="v2-tl-title">Research and Signal Collection</div>
+        <div class="v2-tl-desc">AI tools, live market data, and field research run in parallel — structured and fast, not scattered.</div>
+      </div>
+
+      <div class="v2-tl-step">
+        <div class="v2-tl-dot"></div>
+        <div class="v2-tl-num">Step 03</div>
+        <div class="v2-tl-title">Analysis and Pattern Recognition</div>
+        <div class="v2-tl-desc">Raw data becomes a clear picture — what matters, what's noise, and what to watch going forward.</div>
+      </div>
+
+      <div class="v2-tl-step">
+        <div class="v2-tl-dot"></div>
+        <div class="v2-tl-num">Step 04</div>
+        <div class="v2-tl-title">Decision Support</div>
+        <div class="v2-tl-desc">You leave with a direction — not a report full of caveats, but a position you can actually act on.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ FOUNDER ════════ -->
+<section class="v2-founder">
+  <div class="v2-founder-card">
+    <div class="card-dark" style="display:flex;align-items:center;gap:20px;padding:24px;">
+      <div style="flex-shrink:0;width:70px;height:70px;border-radius:50%;overflow:hidden;border:2px solid rgba(215,161,61,0.45);background:rgba(215,161,61,0.08);box-shadow:0 0 20px rgba(215,161,61,0.14);">
+        <img src="/assets/hesam.png" alt="Hesam Jafarzadeh" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
+          onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--gold);\'>HJ</div>';" />
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--silver);line-height:1.2;">Hesam Jafarzadeh</div>
+        <div style="font-size:12px;color:var(--gold-light);font-weight:500;letter-spacing:0.04em;margin-top:4px;">Founder · Researcher · AI and Market Intelligence Consultant</div>
+        <div style="font-size:12px;color:var(--silver-muted);margin-top:4px;">15+ years across industries · PhD researcher, University of Belgrade</div>
+      </div>
+      <a href="/about" style="margin-left:auto;flex-shrink:0;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">About →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ CTA ════════ -->
+<section class="v2-cta" id="v2-cta">
+  <div class="v2-cta-halo"></div>
+  <div class="v2-cta-inner">
+    <div class="v2-avatar">
+      <img src="/assets/hesam.png" alt="Hesam" onerror="this.style.display='none';" />
+    </div>
+    <h2>Tell me what you're trying to figure out</h2>
+    <p>No pitch deck. Just a direct conversation about what you need.</p>
+    <a href="/contact" class="btn-primary" style="display:inline-block;min-width:220px;">Contact AHoosh</a>
+  </div>
+</section>
+
+<!-- ════════ SCRIPTS ════════ -->
+<script is:inline>
+(function () {
+
+/* ── 3D PARTICLE CANVAS ── */
+(function () {
+  var canvas = document.getElementById('vc2');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height, CX = W / 2, CY = H / 2 - 4;
+  var NA = 5, ND = 26, AK = [0, 1, 2, 0, 1], R = 100, FOV = 280, AE = Math.PI * 0.88, WR = 1.3;
+  var WHITE = [247, 244, 236], GOLD = [216, 166, 66], HR = 60;
+  var BASE = [];
+  for (var a = 0; a < NA; a++) {
+    for (var i = 0; i < ND; i++) {
+      var t = i / (ND - 1);
+      var alpha = 0.04 + AE * t;
+      var phi = (a / NA) * 2 * Math.PI - t * 2 * Math.PI * WR;
+      var sa = Math.sin(alpha);
+      BASE.push({ x: R * sa * Math.cos(phi), y: R * sa * Math.sin(phi), z: R * Math.cos(alpha), isW: t > 0.55 && (i + AK[a]) % 3 === 0, br: 0.15 + 6.0 * t, t: t });
+    }
+  }
+  var HX = -0.20, HY = 0.0, HZ = 0.0;
+  var rX = HX, rY = HY, rZ = HZ, velX = 0, velY = 0, drag = false, lmx = 0, lmy = 0, mx = -999, my = -999;
+  function rxf(x, y, z, a) { var c = Math.cos(a), s = Math.sin(a); return [x, y * c - z * s, y * s + z * c]; }
+  function ryf(x, y, z, a) { var c = Math.cos(a), s = Math.sin(a); return [x * c + z * s, y, -x * s + z * c]; }
+  function rzf(x, y, z, a) { var c = Math.cos(a), s = Math.sin(a); return [x * c - y * s, x * s + y * c, z]; }
+  canvas.addEventListener('mousedown', function (e) { drag = true; lmx = e.clientX; lmy = e.clientY; velX = 0; velY = 0; });
+  window.addEventListener('mousemove', function (e) {
+    var r = canvas.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
+    if (!drag) return;
+    var dx = e.clientX - lmx, dy = e.clientY - lmy;
+    velY = dx * 0.012; velX = dy * 0.012; rY += velY; rX += velX;
+    rX = Math.max(-1.2, Math.min(1.2, rX)); lmx = e.clientX; lmy = e.clientY;
+  });
+  window.addEventListener('mouseup', function () { drag = false; });
+  canvas.addEventListener('mouseleave', function () { if (!drag) { mx = -999; my = -999; } });
+  canvas.addEventListener('touchstart', function (e) { e.preventDefault(); drag = true; lmx = e.touches[0].clientX; lmy = e.touches[0].clientY; velX = 0; velY = 0; }, { passive: false });
+  canvas.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+    var dx = e.touches[0].clientX - lmx, dy = e.touches[0].clientY - lmy;
+    velY = dx * 0.012; velX = dy * 0.012; rY += velY; rX += velX;
+    rX = Math.max(-1.2, Math.min(1.2, rX)); lmx = e.touches[0].clientX; lmy = e.touches[0].clientY;
+  }, { passive: false });
+  canvas.addEventListener('touchend', function () { drag = false; });
+  function frame() {
+    if (!drag) { velX *= 0.90; velY *= 0.90; rX += velX; rY += velY; rX += (HX - rX) * 0.025; rY += (HY - rY) * 0.025; rZ += (HZ - rZ) * 0.025; }
+    ctx.clearRect(0, 0, W, H);
+    var pts = BASE.map(function (p) {
+      var xyz = rzf(p.x, p.y, p.z, rZ); xyz = ryf(xyz[0], xyz[1], xyz[2], rY); xyz = rxf(xyz[0], xyz[1], xyz[2], rX);
+      var sc = FOV / (FOV + xyz[2]), px = CX + xyz[0] * sc, py = CY - xyz[1] * sc;
+      var df = (xyz[2] + R) / (2 * R), op = Math.max(0, Math.pow(1 - df, 2.2));
+      var ddx = px - mx, ddy = py - my, hv = Math.max(0, 1 - Math.sqrt(ddx * ddx + ddy * ddy) / HR);
+      var fo = Math.min(1, op + hv * 0.9);
+      return Object.assign({}, p, { px: px, py: py, sc: sc, depth: xyz[2], fo: fo, hv: hv });
+    }).sort(function (a, b) { return a.depth - b.depth; });
+    pts.forEach(function (p) {
+      var dr = Math.max(0.3, p.br * p.sc), fo = p.fo;
+      var rgb = p.isW ? WHITE : GOLD, r = rgb[0], g = rgb[1], b = rgb[2];
+      if (p.hv > 0.1) { ctx.beginPath(); ctx.arc(p.px, p.py, dr * 1.8, 0, 6.28); ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (p.hv * 0.15).toFixed(3) + ')'; ctx.fill(); }
+      var rd = Math.max(0.4, dr);
+      var grad = ctx.createRadialGradient(p.px, p.py, 0, p.px, p.py, rd);
+      grad.addColorStop(0, 'rgba(' + Math.min(255, r + 40) + ',' + Math.min(255, g + 30) + ',' + Math.min(255, b + 20) + ',' + fo.toFixed(3) + ')');
+      grad.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',' + fo.toFixed(3) + ')');
+      ctx.beginPath(); ctx.arc(p.px, p.py, rd, 0, 6.28); ctx.fillStyle = grad; ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ── LOAD GSAP + SCROLLTRIGGER + LENIS THEN INIT ── */
+function loadScript(src, cb) {
+  var s = document.createElement('script');
+  s.src = src;
+  s.onload = cb;
+  s.onerror = function () { console.warn('Failed to load:', src); };
+  document.head.appendChild(s);
+}
+
+loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js', function () {
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js', function () {
+    loadScript('https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js', function () {
+      initV2();
+    });
+  });
+});
+
+function initV2() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ── LENIS SMOOTH SCROLL ── */
+  var lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+  gsap.ticker.lagSmoothing(0);
+
+  /* ── HERO ENTRANCE SEQUENCE ── */
+  var headline = document.getElementById('v2-headline');
+  if (headline) {
+    var raw = headline.textContent.trim().split(/\s+/);
+    headline.innerHTML = raw.map(function (w) {
+      return '<span class="word"><span class="word-inner">' + w + '</span></span>';
+    }).join(' ');
+  }
+
+  var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  tl.to('#v2-eyebrow', { opacity: 1, duration: 0.5 }, 0.3)
+    .to('.word-inner', { y: '0%', duration: 0.75, stagger: 0.055 }, 0.5)
+    .to('#v2-sub', { opacity: 1, y: 0, duration: 0.8 }, 1.3)
+    .to('#v2-ctas', { opacity: 1, y: 0, duration: 0.7 }, 1.6)
+    .to('#v2-scroll-cue', { opacity: 1, duration: 0.6 }, 2.2);
+
+  /* ── STATS: FADE UP + COUNT ── */
+  document.querySelectorAll('.v2-stat').forEach(function (card, i) {
+    ScrollTrigger.create({
+      trigger: card,
+      start: 'top 82%',
+      onEnter: function () {
+        gsap.to(card, { opacity: 1, y: 0, scale: 1, duration: 0.65, delay: i * 0.1, ease: 'power3.out' });
+        var counter = card.querySelector('[data-counter]');
+        var target = parseInt(card.dataset.target) || 0;
+        var suffix = card.dataset.suffix || '';
+        var obj = { val: 0 };
+        gsap.to(obj, {
+          val: target,
+          duration: 1.3,
+          delay: i * 0.1 + 0.25,
+          ease: 'power2.out',
+          onUpdate: function () { counter.textContent = Math.round(obj.val) + suffix; }
+        });
+      }
+    });
+  });
+
+  /* ── SERVICE CARDS: SLIDE FROM RIGHT ── */
+  document.querySelectorAll('.v2-svc-card').forEach(function (card, i) {
+    ScrollTrigger.create({
+      trigger: card,
+      start: 'top 84%',
+      onEnter: function () {
+        gsap.to(card, { opacity: 1, x: 0, duration: 0.65, delay: i * 0.07, ease: 'power3.out' });
+      }
+    });
+  });
+
+  /* ── TIMELINE LINE DRAW (scrub) ── */
+  var fill = document.getElementById('v2-tl-fill');
+  var tlSection = document.querySelector('.v2-timeline');
+  if (fill && tlSection) {
+    ScrollTrigger.create({
+      trigger: tlSection,
+      start: 'top 65%',
+      end: 'bottom 35%',
+      scrub: 0.8,
+      onUpdate: function (self) {
+        gsap.set(fill, { scaleY: self.progress });
+      }
+    });
+  }
+
+  /* ── TIMELINE HEADER ── */
+  ScrollTrigger.create({
+    trigger: '#v2-tl-header',
+    start: 'top 80%',
+    onEnter: function () {
+      gsap.to('#v2-tl-header', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' });
+    }
+  });
+
+  /* ── TIMELINE STEPS ── */
+  document.querySelectorAll('.v2-tl-step').forEach(function (step, i) {
+    ScrollTrigger.create({
+      trigger: step,
+      start: 'top 82%',
+      onEnter: function () {
+        gsap.to(step, { opacity: 1, x: 0, duration: 0.6, delay: 0.05, ease: 'power3.out' });
+      }
+    });
+  });
+
+  /* ── FOUNDER CARD ── */
+  ScrollTrigger.create({
+    trigger: '.v2-founder-card',
+    start: 'top 82%',
+    onEnter: function () {
+      gsap.to('.v2-founder-card', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' });
+    }
+  });
+
+  /* ── CTA SECTION ── */
+  ScrollTrigger.create({
+    trigger: '#v2-cta',
+    start: 'top 75%',
+    onEnter: function () {
+      gsap.to('#v2-cta', { opacity: 1, scale: 1, duration: 1.0, ease: 'power3.out' });
+    }
+  });
+}
+
+})();
+</script>
+
+</BaseLayout>

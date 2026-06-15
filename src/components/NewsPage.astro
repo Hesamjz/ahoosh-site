@@ -87,7 +87,7 @@ const ownArticles = allPosts
       <!-- TV section -->
       <section style="margin-bottom:28px;">
         <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.liveTVLabel}</div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+        <div id="ch-picker-row" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
           <select id="ch-lang-sel" class="ch-sel" aria-label="Language"></select>
           <select id="ch-topic-sel" class="ch-sel" aria-label="Topic"></select>
           <select id="ch-name-sel" class="ch-sel" aria-label="Channel" style="min-width:160px;"></select>
@@ -354,6 +354,9 @@ const ownArticles = allPosts
   @media(max-width:640px) {
     .mobile-ch-picker { display:flex; }
     .desktop-ch-picker { display:none; }
+    #ch-picker-row { display:grid!important; grid-template-columns:1fr 1fr; }
+    #ch-name-sel { grid-column:1/-1; min-width:0!important; width:100%; }
+    .ch-sel { width:100%; box-sizing:border-box; }
   }
 
   /* ── Markets mobile: 2-col grid ──────────────────────────────────────── */
@@ -415,7 +418,7 @@ const CHANNELS_ALL = [
   { id:'yahoo-finance', name:'Yahoo Finance',  lang:'en', type:'youtube', vid:'sSn4OeE38rY' },
   // Persian — diaspora only (no Iranian state media)
   {
-    id:'shabakeh3', name:'90', lang:'sport',
+    id:'shabakeh3', name:'90', lang:'fa', topic:'sport',
     sources:[
       { type:'hls', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/manifest/video.m3u8' },
       { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/iframe' },
