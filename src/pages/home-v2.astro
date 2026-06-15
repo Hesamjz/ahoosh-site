@@ -15,31 +15,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 /* HERO */
 .v2-hero {
   position: relative;
-  min-height: 100vh;
-  background: #010A18;
+  height: 100vh;
+  background: #000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 24px 80px;
+  padding: 0 24px;
   overflow: hidden;
 }
+/* Outer ambient haze — fills most of the dark screen */
 .v2-hero-glow {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 50% 20%, rgba(215,161,61,0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(215,161,61,0.04) 0%, transparent 70%);
+    radial-gradient(ellipse 90% 80% at 50% 44%, rgba(200,130,20,0.22) 0%, rgba(180,90,10,0.12) 35%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 50% 44%, rgba(230,160,40,0.16) 0%, transparent 50%);
   pointer-events: none;
+  animation: heroGlowPulse 6s ease-in-out infinite alternate;
 }
+@keyframes heroGlowPulse {
+  from { opacity: 0.8; transform: scale(0.97); }
+  to   { opacity: 1;   transform: scale(1.03); }
+}
+/* Subtle grid — tighter, more cinematic */
 .v2-hero-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(215,161,61,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(215,161,61,0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+    linear-gradient(rgba(215,161,61,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(215,161,61,0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 10%, transparent 75%);
   pointer-events: none;
 }
 .v2-hero-content {
@@ -384,8 +391,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="v2-hero-grid"></div>
 
   <div class="v2-hero-content">
-    <canvas id="vc2" width="280" height="210"
-      style="cursor:grab;display:block;touch-action:none;width:min(280px,72vw);aspect-ratio:280/210;filter:drop-shadow(0 0 36px rgba(215,161,61,0.22));"></canvas>
+    <canvas id="vc2" width="360" height="270"
+      style="cursor:grab;display:block;touch-action:none;width:min(360px,80vw);aspect-ratio:360/270;filter:drop-shadow(0 0 60px rgba(215,140,30,0.45)) drop-shadow(0 0 120px rgba(180,100,10,0.25));"></canvas>
 
     <div>
       <div class="v2-eyebrow" id="v2-eyebrow">Founded by Hesam Jafarzadeh</div>
@@ -649,6 +656,29 @@ function initV2() {
     .to('#v2-sub', { opacity: 1, y: 0, duration: 0.8 }, 1.3)
     .to('#v2-ctas', { opacity: 1, y: 0, duration: 0.7 }, 1.6)
     .to('#v2-scroll-cue', { opacity: 1, duration: 0.6 }, 2.2);
+
+  /* ── HERO SCROLL PIN — canvas stays, content fades as you scroll ── */
+  var heroSection = document.querySelector('.v2-hero');
+  if (heroSection) {
+    ScrollTrigger.create({
+      trigger: heroSection,
+      start: 'top top',
+      end: '+=80%',
+      pin: true,
+      pinSpacing: true,
+      scrub: 0.6,
+      onUpdate: function(self) {
+        var p = self.progress;
+        // Canvas: shrinks slightly + drops glow as you scroll away
+        gsap.set('#vc2', {
+          scale: 1 - p * 0.12,
+          filter: 'drop-shadow(0 0 ' + Math.round(60 - p * 30) + 'px rgba(215,140,30,' + (0.45 - p * 0.2).toFixed(2) + ')) drop-shadow(0 0 120px rgba(180,100,10,' + (0.25 - p * 0.15).toFixed(2) + '))'
+        });
+        // Hero text fades out on scroll
+        gsap.set('.v2-hero-content', { opacity: 1 - p * 0.9 });
+      }
+    });
+  }
 
   /* ── STATS: FADE UP + COUNT ── */
   document.querySelectorAll('.v2-stat').forEach(function (card, i) {
