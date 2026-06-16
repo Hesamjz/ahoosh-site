@@ -55,6 +55,7 @@ export function render(view: PlayerView, ctx: RenderCtx): void {
   renderScorebar(view, ctx);
   renderSeats(view, ctx);
   renderCenter(view, ctx);
+  renderTrickPiles(view, ctx);
   renderHand(view, ctx);
   renderActionBar(view, ctx);
 }
@@ -161,6 +162,43 @@ function renderCenter(view: PlayerView, ctx: RenderCtx): void {
     wrap.appendChild(cardEl(p.card));
     center.appendChild(wrap);
   }
+}
+
+function renderTrickPiles(view: PlayerView, ctx: RenderCtx): void {
+  const usEl   = document.getElementById("hk-tricks-us")!;
+  const themEl = document.getElementById("hk-tricks-them")!;
+
+  const inPlay = view.phase === "trick_play" || view.phase === "hand_scoring";
+  if (!inPlay || (view.trickCounts.A === 0 && view.trickCounts.B === 0)) {
+    usEl.hidden = true;
+    themEl.hidden = true;
+    return;
+  }
+
+  const myTeam   = ctx.mySeat !== null ? (ctx.mySeat % 2 === 0 ? "A" : "B") : "A";
+  const themTeam = myTeam === "A" ? "B" : "A";
+
+  function fillPile(pileEl: HTMLElement, count: number, label: string): void {
+    pileEl.innerHTML = "";
+    pileEl.hidden = count === 0;
+    if (count === 0) return;
+    // Stack of up to 5 card backs, offset so you can see the depth
+    const stack = el("div", "hk-trick-stack");
+    const show = Math.min(count, 5);
+    for (let i = 0; i < show; i++) {
+      const b = cardBack(true);
+      b.style.top  = `${(show - 1 - i) * 2}px`;
+      b.style.left = `${(show - 1 - i) * 1}px`;
+      stack.appendChild(b);
+    }
+    pileEl.appendChild(stack);
+    pileEl.appendChild(el("span", "hk-trick-count", `${count}`));
+    pileEl.appendChild(el("span", "hk-trick-label", label));
+  }
+
+  const S = ctx.strings;
+  fillPile(usEl,   view.trickCounts[myTeam],   S.teamA);
+  fillPile(themEl, view.trickCounts[themTeam], S.teamB);
 }
 
 function renderHand(view: PlayerView, ctx: RenderCtx): void {

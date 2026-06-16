@@ -30,7 +30,7 @@ export interface VoiceManager {
 }
 
 export function createVoice(
-  mySeat: Seat,
+  getSeat: () => Seat,   // getter — mySeat may not be known at creation time
   iceServers: RTCIceServer[],
   send: SendSignal,
   onSpeaking: (seat: Seat, speaking: boolean) => void,
@@ -47,6 +47,7 @@ export function createVoice(
     (audio as any).playsInline = true;
     document.body.appendChild(audio);
 
+    const mySeat = getSeat();
     const peer: Peer = {
       pc,
       polite: mySeat > seat, // higher seat yields on collision
@@ -126,7 +127,7 @@ export function createVoice(
       return started;
     },
     connectTo(seat: Seat) {
-      if (seat === mySeat) return;
+      if (seat === getSeat()) return;
       ensurePeer(seat);
     },
     drop(seat: Seat) {

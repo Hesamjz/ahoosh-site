@@ -139,10 +139,11 @@ async function joinRoom(roomId: string): Promise<void> {
   $("hk-status").textContent = S.connecting;
 
   // Pre-build the voice manager (mic only activates when the user opts in).
+  // mySeat is unknown here; we pass a getter so voice.ts always uses the
+  // current value (set when the first "state" message arrives).
   const servers = await iceServers();
   voice = createVoice(
-    // mySeat may not be known yet; voice.connectTo is gated until we are seated.
-    (mySeat ?? 0) as Seat,
+    () => mySeat ?? 0,
     servers,
     (to, kind, data) => net?.send({ t: "rtc", to, kind, data }),
     (seat, isSpeaking) => {
@@ -180,9 +181,9 @@ function handleMessage(msg: ServerMsg): void {
       toast(msg.msg, "error");
       break;
     case "rtc":
-      if (voice?.active()) {
-        voice.handleSignal(msg.from, msg.kind, msg.data);
-      }
+      // Always handle signals even if mic not active yet — needed to RECEIVE
+      // audio from players who already started their mics.
+      voice?.handleSignal(msg.from, msg.kind, msg.data);
       break;
     case "chat":
       // (chat UI is out of scope for v1; voice is the main channel)
@@ -212,7 +213,9 @@ function handleEvent(e: import("./types").GameEvent): void {
 
 function reconcileVoice(): void {
   if (!voice || !view || mySeat === null) return;
-  if (!voice.active()) return;
+  // Pre-connect peers even before mic is active so we can receive audio
+  // immediately when the other side starts speaking. Tracks are added/removed
+  // reactively inside voice.ts when start() is later called.
   for (const sv of view.seats) {
     if (sv.seat === mySeat) continue;
     if (sv.connected && sv.name) voice.connectTo(sv.seat);

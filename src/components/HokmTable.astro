@@ -14,6 +14,9 @@
     <div class="hk-seat" data-pos="right"></div>
     <div class="hk-seat" data-pos="bottom"></div>
     <div id="hk-center"></div>
+    <!-- Trick pile displays — rendered by render.ts -->
+    <div id="hk-tricks-us" class="hk-trick-pile us" hidden></div>
+    <div id="hk-tricks-them" class="hk-trick-pile them" hidden></div>
   </div>
 
   <div id="hk-actionbar"></div>
@@ -148,6 +151,47 @@
 
   /* Center trick area */
   #hk-center { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+
+  /* Won trick piles — stacked card backs with count badge */
+  .hk-trick-pile {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .hk-trick-pile.us   { bottom: 18%; right: 8%; }
+  .hk-trick-pile.them { top: 18%;    left: 8%; }
+  .hk-trick-stack {
+    position: relative;
+    width: 32px;
+    height: 44px;
+  }
+  .hk-trick-stack .hk-card.back {
+    position: absolute;
+    width: 32px;
+    height: 44px;
+    font-size: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .hk-trick-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--hk-gold);
+    background: rgba(0,0,0,0.55);
+    border: 1px solid var(--hk-gold);
+    border-radius: 10px;
+    padding: 1px 7px;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+  .hk-trick-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+  }
   .hk-played { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
   .hk-played.top    { transform: translate(-50%, -118%); }
   .hk-played.bottom { transform: translate(-50%, 18%); }
