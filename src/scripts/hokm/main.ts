@@ -292,9 +292,26 @@ function renderTable(): void {
 
 // ─── boot ────────────────────────────────────────────────────────────────────
 
+function setupSpeaker(): void {
+  const btn = $("hk-speaker") as HTMLButtonElement;
+  let speakerOn = true;
+  btn.addEventListener("click", () => {
+    speakerOn = !speakerOn;
+    btn.classList.toggle("on", speakerOn);
+    btn.setAttribute("aria-pressed", String(speakerOn));
+    if (speakerOn) {
+      // forcePlay() resumes all peer audio elements on user gesture.
+      // Critical on iOS where autoplay is blocked until explicit interaction.
+      voice?.forcePlay();
+    }
+  });
+  btn.classList.add("on");
+}
+
 export function boot(): void {
   setupMusic($("hk-music") as HTMLButtonElement);
   setupMic();
+  setupSpeaker();
   if (savedPass() && savedProfile()) {
     routeAfterAuth();
   } else {

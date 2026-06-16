@@ -27,6 +27,8 @@ export interface VoiceManager {
   handleSignal(from: Seat, kind: string, data: any): Promise<void>;
   setMuted(muted: boolean): void;
   muted(): boolean;
+  /** Call on a user-gesture to unblock iOS autoplay for all peer audio. */
+  forcePlay(): void;
 }
 
 export function createVoice(
@@ -72,6 +74,8 @@ export function createVoice(
     };
     pc.ontrack = ({ streams }) => {
       audio.srcObject = streams[0];
+      // Explicit play needed — autoplay is blocked on iOS Safari without it.
+      audio.play().catch(() => { /* will be unblocked by forcePlay() */ });
       meter(streams[0], seat);
     };
     if (localStream) {
@@ -171,6 +175,13 @@ export function createVoice(
     },
     muted() {
       return isMuted;
+    },
+    forcePlay() {
+      // iOS Safari blocks audio.play() until a user gesture. Call this from
+      // the speaker button click to resume all peer audio elements.
+      for (const { audio } of peers.values()) {
+        if (audio.paused && audio.srcObject) audio.play().catch(() => {});
+      }
     },
   };
 }

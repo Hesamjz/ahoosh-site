@@ -10,6 +10,17 @@
 import { jsonResponse, verifyRoomPass } from "./_lib.js";
 
 const STUN = { urls: "stun:stun.l.google.com:19302" };
+// Free public TURN relay — works across carrier-grade NAT (mobile data).
+// openrelay.metered.ca is a stable free-tier TURN service, no API key needed.
+const PUBLIC_TURN = {
+  urls: [
+    "turn:openrelay.metered.ca:80",
+    "turn:openrelay.metered.ca:443",
+    "turn:openrelay.metered.ca:443?transport=tcp",
+  ],
+  username: "openrelayproject",
+  credential: "openrelayproject",
+};
 const TTL_SECONDS = 12 * 60 * 60;
 
 export async function onRequest({ request, env }) {
@@ -19,7 +30,8 @@ export async function onRequest({ request, env }) {
   const pass = await verifyRoomPass(token, env.HOKM_JWT_SECRET);
   if (!pass) return jsonResponse({ error: "unauthorized" }, 401);
 
-  const iceServers = [STUN];
+  // Always include STUN + public TURN so mobile users behind CGNAT can connect.
+  const iceServers = [STUN, PUBLIC_TURN];
 
   if (env.TURN_KEY_ID && env.TURN_KEY_API_TOKEN) {
     try {
