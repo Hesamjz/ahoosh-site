@@ -1,0 +1,246 @@
+---
+// Full-screen Hokm table. Self-contained (no marketing chrome) for immersion.
+// All dynamic behaviour lives in src/scripts/hokm/*.
+---
+
+<div id="hk-app">
+  <div id="hk-bg" aria-hidden="true"></div>
+
+  <header id="hk-scorebar"></header>
+
+  <div id="hk-table">
+    <div class="hk-seat" data-pos="top"></div>
+    <div class="hk-seat" data-pos="left"></div>
+    <div class="hk-seat" data-pos="right"></div>
+    <div class="hk-seat" data-pos="bottom"></div>
+    <div id="hk-center"></div>
+  </div>
+
+  <div id="hk-actionbar"></div>
+  <div id="hk-hand"></div>
+
+  <footer id="hk-controls">
+    <button id="hk-mic" class="hk-ctrl" aria-pressed="false" title="Microphone">
+      <span class="hk-ctrl-icon">🎙️</span><span class="hk-mic-state"></span>
+    </button>
+    <button id="hk-music" class="hk-ctrl" aria-pressed="false" title="Music">
+      <span class="hk-ctrl-icon">🎵</span>
+    </button>
+    <button id="hk-share" class="hk-ctrl" hidden>Copy link</button>
+    <span id="hk-status"></span>
+  </footer>
+
+  <div id="hk-overlay"></div>
+  <div id="hk-toast"></div>
+</div>
+
+<style is:global>
+  :root {
+    --hk-gold: #d7a13d;
+    --hk-gold-soft: #e8c87a;
+    --hk-felt: #0e4d3c;
+    --hk-felt-edge: #0a3a2d;
+    --hk-room: #1a0f0a;
+    --hk-card-red: #c0392b;
+    --hk-card-black: #1a1a1a;
+    --hk-panel: #12100e;
+  }
+
+  html, body { margin: 0; height: 100%; background: #0b0805; overflow: hidden; }
+
+  #hk-app {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    font-family: 'Vazirmatn', system-ui, sans-serif;
+    color: #f3ead8;
+    user-select: none;
+  }
+
+  /* Warm Persian-home backdrop: layered radial glow + a faint geometric weave. */
+  #hk-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(120% 80% at 50% 0%, #3a241a 0%, #1a0f0a 55%, #0b0805 100%);
+  }
+  #hk-bg::after {
+    content: ""; position: absolute; inset: 0; opacity: 0.10;
+    background-image:
+      repeating-linear-gradient(45deg, var(--hk-gold) 0 1px, transparent 1px 22px),
+      repeating-linear-gradient(-45deg, var(--hk-gold) 0 1px, transparent 1px 22px);
+    mask-image: radial-gradient(80% 80% at 50% 40%, #000 30%, transparent 75%);
+  }
+
+  /* Scorebar */
+  #hk-scorebar {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 12px 18px;
+    background: rgba(0,0,0,0.35); border-bottom: 1px solid rgba(215,161,61,0.18);
+  }
+  .hk-score { display: flex; align-items: center; gap: 8px; }
+  .hk-score-num {
+    font-size: 26px; font-weight: 700; color: var(--hk-gold-soft);
+    min-width: 28px; text-align: center;
+  }
+  .hk-score-label { font-size: 13px; color: #cdbfa6; }
+  .hk-logo { font-size: 22px; font-weight: 700; color: var(--hk-gold); letter-spacing: 1px; }
+  .hk-trump { font-size: 16px; color: #cdbfa6; display: inline-flex; gap: 6px; align-items: center; }
+  .hk-suit { font-size: 22px; }
+  .hk-suit.red, .hk-card.red .hk-pip, .hk-card.red .hk-corner { color: var(--hk-card-red); }
+
+  /* Table */
+  #hk-table { position: relative; flex: 1; z-index: 1; min-height: 0; }
+  #hk-table::before {
+    content: ""; position: absolute; inset: 8% 6%;
+    border-radius: 50% / 46%;
+    background: radial-gradient(120% 120% at 50% 40%, #15604a 0%, var(--hk-felt) 55%, var(--hk-felt-edge) 100%);
+    box-shadow: 0 0 0 6px rgba(215,161,61,0.25), 0 0 0 14px rgba(0,0,0,0.35), inset 0 0 80px rgba(0,0,0,0.45);
+  }
+
+  .hk-seat {
+    position: absolute; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    width: 120px; padding: 8px; border-radius: 12px;
+    transition: box-shadow 200ms ease, background 200ms ease;
+  }
+  .hk-seat[data-pos="top"]    { top: 10px;    left: 50%; transform: translateX(-50%); }
+  .hk-seat[data-pos="bottom"] { bottom: 6px;  left: 50%; transform: translateX(-50%); }
+  .hk-seat[data-pos="left"]   { left: 10px;   top: 46%;  transform: translateY(-50%); }
+  .hk-seat[data-pos="right"]  { right: 10px;  top: 46%;  transform: translateY(-50%); }
+  .hk-seat.turn { background: rgba(215,161,61,0.14); box-shadow: 0 0 0 2px var(--hk-gold), 0 0 24px rgba(215,161,61,0.4); }
+  .hk-seat.speaking .hk-avatar { box-shadow: 0 0 0 3px #4ad07a, 0 0 16px #4ad07a; }
+
+  .hk-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: #2a1d14; border: 2px solid rgba(215,161,61,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; color: var(--hk-gold-soft); overflow: hidden;
+  }
+  .hk-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .hk-avatar.offline { filter: grayscale(1) opacity(0.5); }
+  .hk-name { font-size: 13px; color: #ece0c8; max-width: 116px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hk-empty { color: #8a7d63; }
+  .hk-badges { display: flex; gap: 4px; }
+  .hk-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: rgba(255,255,255,0.1); }
+  .hk-badge.gold { background: var(--hk-gold); color: #1a0f0a; font-weight: 700; }
+  .hk-backs { display: flex; }
+  .hk-backs .hk-card.back.sm { margin-inline-start: -16px; }
+  .hk-backs .hk-card.back.sm:first-child { margin-inline-start: 0; }
+
+  .hk-sit {
+    margin-top: 4px; padding: 6px 12px; border-radius: 8px; cursor: pointer;
+    background: var(--hk-gold); color: #1a0f0a; border: none; font-weight: 700; font-size: 13px;
+  }
+
+  /* Center trick area */
+  #hk-center { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .hk-played { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .hk-played.top    { transform: translate(-50%, -118%); }
+  .hk-played.bottom { transform: translate(-50%, 18%); }
+  .hk-played.left   { transform: translate(-118%, -50%); }
+  .hk-played.right  { transform: translate(18%, -50%); }
+
+  /* Cards */
+  .hk-card {
+    position: relative; width: 56px; height: 80px; border-radius: 7px;
+    background: #fbf6ea; color: var(--hk-card-black);
+    border: 1px solid #d8cba8; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    padding: 0; font-family: Georgia, 'Times New Roman', serif; cursor: default;
+  }
+  .hk-card.sm { width: 34px; height: 48px; border-radius: 5px; }
+  .hk-corner { position: absolute; font-size: 13px; font-weight: 700; line-height: 1; text-align: center; }
+  .hk-corner.tl { top: 4px; inset-inline-start: 5px; }
+  .hk-corner.br { bottom: 4px; inset-inline-end: 5px; transform: rotate(180deg); }
+  .hk-pip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+  .hk-card.back { background: linear-gradient(135deg, #6e1620, #3a0c12); border-color: var(--hk-gold); }
+  .hk-back-motif { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--hk-gold); font-size: 22px; opacity: 0.8; }
+  .hk-card.playable { cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease; }
+  .hk-card.playable:hover { transform: translateY(-12px); box-shadow: 0 8px 18px rgba(0,0,0,0.5), 0 0 0 2px var(--hk-gold); }
+
+  /* Your hand */
+  #hk-hand {
+    position: relative; z-index: 4;
+    display: flex; justify-content: center; align-items: flex-end;
+    padding: 4px 12px 12px; min-height: 92px; flex-wrap: wrap; gap: 2px;
+  }
+  #hk-hand .hk-card { margin-inline-start: -10px; }
+  #hk-hand .hk-card:first-child { margin-inline-start: 0; }
+
+  /* Action bar */
+  #hk-actionbar { position: relative; z-index: 4; text-align: center; min-height: 40px; padding: 4px; }
+  .hk-msg { font-size: 15px; color: #e6d9bf; }
+  .hk-msg.turn { color: var(--hk-gold-soft); font-weight: 700; }
+  .hk-msg.big { font-size: 20px; font-weight: 700; }
+  .hk-msg.gold { color: var(--hk-gold); }
+  .hk-trump-pick, .hk-result { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .hk-suit-row { display: flex; gap: 10px; }
+  .hk-suit-btn {
+    width: 52px; height: 52px; border-radius: 10px; font-size: 28px; cursor: pointer;
+    background: #fbf6ea; color: var(--hk-card-black); border: 2px solid var(--hk-gold);
+  }
+  .hk-suit-btn.red { color: var(--hk-card-red); }
+  .hk-suit-btn:hover { background: #fff; transform: translateY(-2px); }
+
+  .hk-btn {
+    padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer;
+    font-size: 15px; font-weight: 600; font-family: inherit;
+    background: rgba(255,255,255,0.12); color: #f3ead8;
+  }
+  .hk-btn.primary { background: var(--hk-gold); color: #1a0f0a; }
+  .hk-btn.big { padding: 14px 28px; font-size: 17px; }
+  .hk-btn:hover { filter: brightness(1.08); }
+
+  /* Controls */
+  #hk-controls {
+    position: relative; z-index: 5;
+    display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+    background: rgba(0,0,0,0.3); border-top: 1px solid rgba(215,161,61,0.15);
+  }
+  .hk-ctrl {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 12px; border-radius: 10px; cursor: pointer;
+    background: rgba(255,255,255,0.08); color: #f3ead8; border: 1px solid rgba(215,161,61,0.2);
+    font-family: inherit; font-size: 13px;
+  }
+  .hk-ctrl.on { background: var(--hk-gold); color: #1a0f0a; border-color: var(--hk-gold); }
+  .hk-ctrl:disabled { opacity: 0.4; cursor: not-allowed; }
+  #hk-status { margin-inline-start: auto; font-size: 13px; color: #cbbf9f; }
+
+  /* Overlay */
+  #hk-overlay {
+    position: fixed; inset: 0; z-index: 50; display: none;
+    align-items: center; justify-content: center;
+    background: rgba(8,5,3,0.82); backdrop-filter: blur(6px);
+  }
+  #hk-overlay.show { display: flex; }
+  .hk-card-panel {
+    background: var(--hk-panel); border: 1px solid rgba(215,161,61,0.3); border-radius: 18px;
+    padding: 36px 40px; text-align: center; max-width: 360px; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .hk-brand { font-size: 44px; font-weight: 700; color: var(--hk-gold); margin-bottom: 8px; }
+  .hk-sub { color: #d8cba8; margin: 0 0 20px; }
+  .hk-gbtn { display: flex; justify-content: center; min-height: 44px; }
+  .hk-err { color: #e8806a; font-size: 13px; margin-top: 14px; }
+  .hk-rules { color: #9a8d72; font-size: 12px; margin-top: 22px; line-height: 1.6; }
+
+  /* Toasts */
+  #hk-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 60; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .hk-toast-item {
+    padding: 9px 16px; border-radius: 10px; font-size: 14px; opacity: 0; transform: translateY(-8px);
+    transition: opacity 200ms ease, transform 200ms ease;
+    background: rgba(20,16,12,0.95); border: 1px solid rgba(215,161,61,0.3); color: #f3ead8;
+  }
+  .hk-toast-item.show { opacity: 1; transform: translateY(0); }
+  .hk-toast-item.error { border-color: #c0392b; color: #f3c9c0; }
+
+  @media (max-width: 560px) {
+    .hk-card { width: 44px; height: 64px; }
+    .hk-pip { font-size: 24px; }
+    .hk-seat { width: 92px; }
+  }
+</style>
+
+<script>
+  import { boot } from '../scripts/hokm/main';
+  boot();
+</script>

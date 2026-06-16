@@ -1,0 +1,17 @@
+Hokm — asset credits
+=====================
+
+Cards & table:  Drawn in CSS (no image files) — see src/components/HokmTable.astro.
+Background:     CSS gradient + geometric weave (Persian-home mood). No external art.
+
+Background music (OPTIONAL — not shipped):
+  Drop a looping instrumental track here:  public/hokm/audio/ambient.mp3
+  The Music button stays disabled until that file exists.
+
+  Royalty-free Persian instrumental sources (santur / tar / setar):
+   - Pixabay Music            https://pixabay.com/music/   (no attribution required)
+   - Free Music Archive (CC)  https://freemusicarchive.org/
+   - YouTube Audio Library    (free, in YouTube Studio)
+
+  When you add a track, list its title / author / license below:
+   - ambient.mp3 — <title> — <author> — <license/source URL>

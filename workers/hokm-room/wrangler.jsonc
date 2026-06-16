@@ -1,0 +1,33 @@
+{
+  // Hokm real-time game room. One Durable Object instance = one game table.
+  // Smoke-test on workers.dev first (workers_dev:true), then the route below
+  // pins it under ahoosh.ai/api/hokm/room/* — a deeper path than any Pages
+  // Function, so nothing is shadowed (same discipline as markets-fetcher).
+  "name": "ahoosh-hokm-room",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-08",
+  "workers_dev": true,
+
+  "durable_objects": {
+    "bindings": [
+      { "name": "HOKM_ROOM", "class_name": "HokmRoom" }
+    ]
+  },
+
+  // SQLite-backed DO storage (required for new DO classes on the free plan).
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["HokmRoom"] }
+  ],
+
+  "observability": { "enabled": true },
+
+  // GOOGLE_CLIENT_ID is public (also injected into the client build).
+  // HOKM_JWT_SECRET is a secret: npx wrangler secret put HOKM_JWT_SECRET
+  "vars": {
+    "GOOGLE_CLIENT_ID": "421074069271-qegpgjquaegm0edsi5dgkmrvqnml0iqg.apps.googleusercontent.com"
+  },
+
+  "routes": [
+    { "pattern": "ahoosh.ai/api/hokm/room/*", "zone_name": "ahoosh.ai" }
+  ]
+}

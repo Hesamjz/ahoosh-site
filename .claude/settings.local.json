@@ -75,7 +75,16 @@
       "Bash(curl -sL \"https://ahoosh.ai/api/markets/latest\")",
       "Bash(curl -sL \"https://ahoosh.ai/api/news/latest\")",
       "Bash(curl -sL \"https://ahoosh.ai/api/news\")",
-      "Bash(curl -sL \"https://ahoosh.ai/news\")"
+      "Bash(curl -sL \"https://ahoosh.ai/news\")",
+      "Bash(printf 'HOKM_JWT_SECRET=devsecret123\\\\nGOOGLE_CLIENT_ID=dev.apps.googleusercontent.com\\\\n')",
+      "Bash(echo \".dev.vars\")",
+      "Bash(npx wrangler *)",
+      "Bash(echo \"started wrangler dev, pid $!\")",
+      "Bash(curl -s http://localhost:8787/api/hokm/health)",
+      "Bash(sed -i '' 's/await wait\\(200\\);/await wait\\(500\\);/; s/await wait\\(300\\);/await wait\\(500\\);/g; s/await wait\\(400\\);/await wait\\(600\\);/g' test/ws-smoke.mjs)",
+      "Bash(node test/ws-smoke.mjs)",
+      "Bash(pkill -f \"wrangler dev\")",
+      "Bash(cd /Users/macbookair/Documents/Hesam_Workspace/ahoosh-site && cat .env.example; echo \"=== mkdir assets ===\"; mkdir -p public/hokm/audio && echo ok)"
     ],
     "ask": [
       "Bash(rm *)",
