@@ -69,13 +69,13 @@
       repeating-linear-gradient(0deg,   rgba(0,0,0,0.07) 0, rgba(0,0,0,0.07) 1px, transparent 1px, transparent 6px),
       repeating-linear-gradient(90deg,  rgba(0,0,0,0.07) 0, rgba(0,0,0,0.07) 1px, transparent 1px, transparent 6px);
   }
-  /* Atmospheric vignette — edges darken to frame the table */
+  /* Atmospheric vignette — edges darken, centre stays rich red so rug is visible */
   #hk-bg::before {
     content: ""; position: absolute; inset: 0;
-    background: radial-gradient(ellipse 110% 100% at 50% 52%,
-      rgba(80,10,10,0.15) 0%,
-      rgba(15,4,4,0.55)   55%,
-      rgba(4,0,0,0.88)    100%);
+    background: radial-gradient(ellipse 120% 110% at 50% 52%,
+      rgba(0,0,0,0.0)  0%,
+      rgba(0,0,0,0.35) 60%,
+      rgba(0,0,0,0.72) 100%);
   }
   /* Rug border frame */
   #hk-bg::after {
