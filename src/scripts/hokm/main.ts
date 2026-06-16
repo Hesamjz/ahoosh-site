@@ -1,10 +1,10 @@
-// Boots the Hokm table: Google sign-in → join/create room → live WebSocket →
+// Boots the Hokm table: name entry → join/create room → live WebSocket →
 // render + voice. Loaded from HokmTable.astro.
 
 import {
   createRoom,
   iceServers,
-  renderSignIn,
+  nameJoin,
   savedPass,
   savedProfile,
   type Profile,
@@ -60,26 +60,40 @@ function hideOverlay(): void {
   $("hk-overlay").classList.remove("show");
 }
 
-async function showSignIn(errorCode?: string): Promise<void> {
+function showNameEntry(errorMsg?: string): void {
   showOverlay(`
     <div class="hk-card-panel">
       <div class="hk-brand">${S.title}</div>
       <p class="hk-sub">${S.signInHint}</p>
-      <div id="hk-gbtn" class="hk-gbtn"></div>
-      ${errorCode === "not_allowed" ? `<p class="hk-err">${S.notAllowed}</p>` : ""}
+      <input id="hk-name-input" type="text" class="hk-input"
+        placeholder="${S.namePlaceholder}" maxlength="20" dir="auto"
+        autocomplete="nickname" spellcheck="false" />
+      ${errorMsg ? `<p class="hk-err">${errorMsg}</p>` : ""}
+      <button id="hk-name-btn" class="hk-btn primary big" style="margin-top:14px;width:100%">${S.joinGame}</button>
       <p class="hk-rules">${S.rules}</p>
     </div>`);
-  await renderSignIn(
-    $("hk-gbtn"),
-    () => routeAfterAuth(),
-    (code) => {
-      if (code === "no_client_id") {
-        toast("Set PUBLIC_GOOGLE_CLIENT_ID to enable sign-in", "error");
-      } else {
-        showSignIn(code);
-      }
-    },
-  );
+
+  const input = $("hk-name-input") as HTMLInputElement;
+  const btn = $("hk-name-btn") as HTMLButtonElement;
+  setTimeout(() => input?.focus(), 60);
+
+  async function submit() {
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    btn.disabled = true;
+    btn.textContent = "…";
+    try {
+      await nameJoin(name);
+      routeAfterAuth();
+    } catch {
+      btn.disabled = false;
+      btn.textContent = S.joinGame;
+      showNameEntry(S.joinError);
+    }
+  }
+
+  btn.addEventListener("click", submit);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
 }
 
 function showCreateRoom(profile: Profile): void {
@@ -105,7 +119,7 @@ function showCreateRoom(profile: Profile): void {
 
 function routeAfterAuth(): void {
   const profile = savedProfile();
-  if (!profile) return void showSignIn();
+  if (!profile) return void showNameEntry();
   const room = roomIdFromUrl();
   if (room) {
     hideOverlay();
@@ -119,7 +133,7 @@ function routeAfterAuth(): void {
 
 async function joinRoom(roomId: string): Promise<void> {
   const pass = savedPass();
-  if (!pass) return void showSignIn();
+  if (!pass) return void showNameEntry();
 
   const url = `${WS_BASE}/api/hokm/room/${roomId}?token=${encodeURIComponent(pass)}`;
   $("hk-status").textContent = S.connecting;
@@ -281,6 +295,6 @@ export function boot(): void {
   if (savedPass() && savedProfile()) {
     routeAfterAuth();
   } else {
-    showSignIn();
+    showNameEntry();
   }
 }

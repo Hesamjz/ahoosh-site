@@ -9,6 +9,9 @@ export interface Strings {
   signIn: string;
   signInHint: string;
   notAllowed: string;
+  namePlaceholder: string;
+  joinGame: string;
+  joinError: string;
   createRoom: string;
   creating: string;
   shareHint: string;
@@ -50,9 +53,12 @@ export interface Strings {
 
 const fa: Strings = {
   title: "حکم",
-  signIn: "ورود با گوگل",
-  signInHint: "برای نشستن سر میز، با حساب گوگل وارد شو",
-  notAllowed: "این حساب اجازه‌ی ورود ندارد. از میزبان بخواه ایمیلت را اضافه کند.",
+  signIn: "ورود",
+  signInHint: "اسمت رو بنویس تا بدونیم کیه",
+  notAllowed: "این حساب اجازه‌ی ورود ندارد.",
+  namePlaceholder: "اسمت چیه؟",
+  joinGame: "بزن بریم",
+  joinError: "مشکل در اتصال. دوباره امتحان کن.",
   createRoom: "ساخت میز جدید",
   creating: "در حال ساخت…",
   shareHint: "این لینک را برای دوستانت بفرست:",
@@ -94,9 +100,12 @@ const fa: Strings = {
 
 const en: Strings = {
   title: "Hokm",
-  signIn: "Sign in with Google",
-  signInHint: "Sign in with Google to take a seat at the table",
-  notAllowed: "This account isn't allowed. Ask the host to add your email.",
+  signIn: "Join",
+  signInHint: "Choose a name so everyone knows who you are",
+  notAllowed: "This account isn't allowed.",
+  namePlaceholder: "Your name",
+  joinGame: "Let's play",
+  joinError: "Connection error. Try again.",
   createRoom: "Create a new table",
   creating: "Creating…",
   shareHint: "Send this link to your friends:",

@@ -61,13 +61,13 @@ export class HokmRoom implements DurableObject {
     const server = pair[1];
 
     const meta: SocketMeta = {
-      userId: pass.sub,
-      name: pass.name ?? pass.email,
-      picture: pass.picture,
+      userId: pass.userId,
+      name: pass.name,
+      picture: null,
       seat: this.reclaimSeat(pass),
     };
     server.serializeAttachment(meta);
-    this.ctx.acceptWebSocket(server, [pass.sub]);
+    this.ctx.acceptWebSocket(server, [pass.userId]);
 
     // If they reclaimed a seat, mark it connected and let the table know.
     if (meta.seat !== null) {
@@ -84,7 +84,7 @@ export class HokmRoom implements DurableObject {
   // On reconnect, re-bind a user to the seat they already hold (if any).
   private reclaimSeat(pass: RoomPass): Seat | null {
     for (const s of [0, 1, 2, 3] as Seat[]) {
-      if (this.game.seats[s].userId === pass.sub) return s;
+      if (this.game.seats[s].userId === pass.userId) return s;
     }
     return null;
   }

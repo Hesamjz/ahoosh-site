@@ -1,12 +1,10 @@
 // Verify the room-pass JWT (HS256) that the Pages Function minted after a
-// successful Google sign-in. The WebSocket handshake is the real trust
-// boundary, so the Durable Object re-checks the pass here.
+// successful name entry. The WebSocket handshake is the real trust boundary,
+// so the Durable Object re-checks the pass here.
 
 export interface RoomPass {
-  sub: string; // Google subject id — the stable per-user id
-  email: string;
-  name: string | null;
-  picture: string | null;
+  userId: string; // stable hex id stored client-side in localStorage
+  name: string;
   exp: number; // unix seconds
 }
 
@@ -53,7 +51,7 @@ export async function verifyRoomPass(
     const payload = JSON.parse(
       new TextDecoder().decode(b64urlToBytes(p)),
     ) as RoomPass;
-    if (!payload.sub || !payload.exp) return null;
+    if (!payload.userId || !payload.name || !payload.exp) return null;
     if (payload.exp * 1000 < Date.now()) return null;
     return payload;
   } catch {
