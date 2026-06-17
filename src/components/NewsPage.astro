@@ -1,21 +1,7 @@
 ---
 // NewsPage.astro — unified live page: world clocks + TV + markets + news
 // Each locale page passes `locale` and `t` (translated strings)
-import { getCollection } from 'astro:content';
 const { locale, t } = Astro.props;
-
-// AHoosh own articles — server-side, static, zero API cost
-const allPosts = await getCollection('blog', ({ data }) => !data.draft);
-const ownArticles = allPosts
-  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
-  .slice(0, 24)
-  .map(p => ({
-    title: p.data.title,
-    description: p.data.description || '',
-    pubDate: p.data.pubDate instanceof Date ? p.data.pubDate.toISOString() : String(p.data.pubDate),
-    slug: p.id.replace(/\.(md|mdx)$/, ''),
-    lang: p.data.lang || 'en',
-  }));
 ---
 
 <!-- Hero -->
@@ -84,7 +70,8 @@ const ownArticles = allPosts
     <!-- ══ CENTER: Video + News ══════════════════════════════════════════════ -->
     <div class="center-col">
 
-      <!-- TV section -->
+      <!-- TV section — wrapped for mobile sticky -->
+      <div class="video-section-wrap">
       <section style="margin-bottom:28px;">
         <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.liveTVLabel}</div>
         <div id="ch-picker-row" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
@@ -102,6 +89,7 @@ const ownArticles = allPosts
           <button id="next-src-btn" onclick="tryNextSource()" style="display:none;font-size:10px;background:rgba(215,161,61,0.08);border:1px solid rgba(215,161,61,0.2);border-radius:4px;padding:3px 10px;color:var(--silver-dim);cursor:pointer;font-family:var(--font-body);">↻ Try next source</button>
         </div>
       </section>
+      </div><!-- /video-section-wrap -->
 
       <!-- News -->
       <div dir={t.rtl ? 'rtl' : 'ltr'}>
@@ -119,12 +107,6 @@ const ownArticles = allPosts
           </div>
           <div id="rss-list" style="display:flex;flex-direction:column;"></div>
           <div id="news-meta" style="margin-top:8px;font-size:10px;color:var(--silver-muted);"></div>
-        </div>
-
-        <!-- Detail News -->
-        <div>
-          <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">{t.detailNewsLabel || '✍️ Our Articles'}</div>
-          <div id="detail-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;"></div>
         </div>
 
       </div>
@@ -280,6 +262,18 @@ const ownArticles = allPosts
     .page-3col { grid-template-columns:1fr; }
     .left-col, .right-col { position:static;max-height:none; }
     .right-col { display:none; }
+    /* Center col (video + news) comes FIRST on mobile */
+    .center-col { order:-1; }
+    /* Video section sticks below the clocks strip while scrolling news */
+    .video-section-wrap {
+      position:sticky;
+      top:var(--clocks-h,0px);
+      z-index:90;
+      background:rgba(1,10,24,0.98);
+      padding-bottom:8px;
+      margin-bottom:4px;
+      border-bottom:1px solid rgba(215,161,61,0.08);
+    }
   }
 
   /* RSS headline rows */
@@ -387,7 +381,7 @@ const ownArticles = allPosts
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 </style>
 
-<script is:inline define:vars={{ locale, t, ownArticles }}>
+<script is:inline define:vars={{ locale, t }}>
 (function(){
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -692,6 +686,16 @@ function tickClocks() {
 tickClocks();
 setInterval(tickClocks, 1000);
 
+// ── Sticky video top offset — set CSS var from clocks-strip bar height ────
+function updateStickyVideoTop() {
+  var bar = document.getElementById('clocks-strip');
+  if (!bar) return;
+  var h = bar.parentElement ? bar.parentElement.offsetHeight : 0;
+  document.documentElement.style.setProperty('--clocks-h', h + 'px');
+}
+updateStickyVideoTop();
+window.addEventListener('resize', updateStickyVideoTop);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // PLAYER STATE + LOGIC
 // ─────────────────────────────────────────────────────────────────────────────
@@ -984,6 +988,19 @@ setInterval(fetchMarkets, 300000); // 5 min
   // Wire immediately (headers are in HTML), and again after first markets fetch
   wireMarketHeads();
   document.addEventListener('marketsRendered', wireMarketHeads);
+
+  // Collapse Commodities + Indices by default (less critical on mobile)
+  ['mkt-comm', 'mkt-indices'].forEach(function(id) {
+    var rows = document.getElementById(id);
+    if (!rows) return;
+    rows.classList.add('mkt-rows-hidden');
+    var prev = rows.previousElementSibling;
+    while (prev && !prev.classList.contains('mkt-head')) prev = prev.previousElementSibling;
+    if (prev) {
+      var arrow = prev.querySelector('.mkt-arrow');
+      if (arrow) arrow.style.transform = 'rotate(-90deg)';
+    }
+  });
 })();
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1088,31 +1105,6 @@ setInterval(fetchTitleNews, 300000); // 5 min
 
 var se = document.getElementById('news-search');
 if (se) se.addEventListener('input', function(){ searchTerm = this.value.trim(); renderRssList(); });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DETAIL NEWS — AHoosh own articles, static from content collection
-// ─────────────────────────────────────────────────────────────────────────────
-function renderDetailNews() {
-  var grid = document.getElementById('detail-grid');
-  if (!grid) return;
-  if (!ownArticles || !ownArticles.length) {
-    grid.innerHTML = '<div style="color:var(--silver-muted);font-size:12px;padding:16px 0;grid-column:1/-1;">Our editorial team is working on the first articles.</div>';
-    return;
-  }
-  grid.innerHTML = '';
-  ownArticles.forEach(function(a) {
-    var card = document.createElement('a');
-    card.className = 'news-card-full';
-    card.href = '/articles/' + a.slug;
-    card.innerHTML =
-      '<div class="src-badge" style="background:rgba(215,161,61,0.2);color:var(--gold);">★ AHoosh</div>' +
-      '<div class="headline">' + escHtml(a.title) + '</div>' +
-      '<div class="date">' + timeAgo(a.pubDate) + '</div>';
-    grid.appendChild(card);
-  });
-}
-
-renderDetailNews();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UTILS
