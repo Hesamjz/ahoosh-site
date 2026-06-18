@@ -264,16 +264,6 @@ const { locale, t } = Astro.props;
     .right-col { display:none; }
     /* Center col (video + news) comes FIRST on mobile */
     .center-col { order:-1; }
-    /* Video section sticks below the clocks strip while scrolling news */
-    .video-section-wrap {
-      position:sticky;
-      top:var(--clocks-h,0px);
-      z-index:90;
-      background:rgba(1,10,24,0.98);
-      padding-bottom:8px;
-      margin-bottom:4px;
-      border-bottom:1px solid rgba(215,161,61,0.08);
-    }
   }
 
   /* RSS headline rows */
@@ -685,16 +675,6 @@ function tickClocks() {
 }
 tickClocks();
 setInterval(tickClocks, 1000);
-
-// ── Sticky video top offset — set CSS var from clocks-strip bar height ────
-function updateStickyVideoTop() {
-  var bar = document.getElementById('clocks-strip');
-  if (!bar) return;
-  var h = bar.parentElement ? bar.parentElement.offsetHeight : 0;
-  document.documentElement.style.setProperty('--clocks-h', h + 'px');
-}
-updateStickyVideoTop();
-window.addEventListener('resize', updateStickyVideoTop);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PLAYER STATE + LOGIC
