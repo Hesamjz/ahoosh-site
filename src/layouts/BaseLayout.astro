@@ -1,5 +1,8 @@
 ---
 import '../styles/global.css';
+import '../styles/motion-tokens.css';
+import CustomCursor from '../components/CustomCursor.astro';
+import PageTransition from '../components/PageTransition.astro';
 import {
   CHROME,
   LOCALES,
@@ -97,6 +100,51 @@ const alternates = isLocalized
     </script>
   </head>
   <body>
+    <!--
+      ── 3D Canvas Layer (§1.3) ────────────────────────────────────────────
+      position:fixed, z-index:-1, inset:0 — sits behind all page content.
+      SceneManager mounts onto this element via client:idle Astro islands.
+      Kept transparent; page CSS handles background gradient.
+    -->
+    <canvas
+      id="canvas-3d"
+      style="position:fixed;inset:0;z-index:-1;pointer-events:none;width:100%;height:100%;opacity:1;transition:opacity 300ms ease;"
+      aria-hidden="true"
+    ></canvas>
+
+    <!-- Custom cursor (§1.4) — hidden on touch devices -->
+    <CustomCursor />
+
+    <!-- Page transition overlay (§1.5) -->
+    <PageTransition />
+
+    <!--
+      ── GSAP + Lenis Bootstrap ─────────────────────────────────────────────
+      Loads after DOMContentLoaded. Uses dynamic import so it does not block
+      the LCP element. Three.js scenes import SceneManager independently via
+      client:idle Astro islands per page.
+    -->
+    <script>
+      // Bootstrap GSAP config + Lenis on every page.
+      // Must run before any page-level ScrollTrigger code.
+      (async () => {
+        const { killPageTriggers } = await import('../3d/core/gsap-config');
+        const { initLenis } = await import('../3d/core/lenis-setup');
+
+        // Check reduced-motion — if yes, skip Lenis smooth scroll entirely (§1.6)
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduced) {
+          initLenis();
+        }
+
+        // Disable Three.js scroll animation on reduced-motion (§1.6)
+        if (reduced) {
+          const { SceneManager } = await import('../3d/core/SceneManager');
+          SceneManager.getInstance().disableScrollAnimation();
+        }
+      })();
+    </script>
+
     <!-- Sticky Nav -->
     <header id="site-header" style="
       position: sticky;

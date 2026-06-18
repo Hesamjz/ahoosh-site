@@ -1,0 +1,168 @@
+---
+/**
+ * PageTransition.astro — AHoosh.ai Page Wipe System
+ * Part I §1.5 of AHoosh_3D_Interaction_Spec.docx v1.0 (2026-06-18)
+ *
+ * ALL navigations use the same transition. No exceptions.
+ * Total duration: 800ms.
+ *
+ * EXIT (0ms → 400ms):
+ *   - D:.page-wrapper  clipPath  inset(0%)  →  inset(0% 0% 100% 0%)  400ms power4.in  (wipe upward)
+ *   - T:SceneManager   camera.z  current    →  current + 3            400ms power2.in  (camera pulls back)
+ *   - T:SceneManager   opacity   1          →  0                      300ms power2.in  (3D fades)
+ *
+ * ENTER (0ms → 400ms after exit fires):
+ *   - D:.page-wrapper  clipPath  inset(100% 0% 0% 0%)  →  inset(0%)  400ms power4.out (reveals from top)
+ *   - T:SceneManager   opacity   0          →  1                      400ms power2.out (new scene fades)
+ *
+ * Reduced-motion: transition skipped, direct navigation (§1.6).
+ */
+---
+
+<!-- Overlay curtain (sits above content, below cursor) -->
+<div id="page-curtain" aria-hidden="true"></div>
+
+<style>
+  #page-curtain {
+    position: fixed;
+    inset: 0;
+    background: var(--navy-dark, #010A18);
+    z-index: 9000;
+    /* Starts hidden below viewport — reveals from top on ENTER */
+    clip-path: inset(100% 0% 0% 0%);
+    pointer-events: none;
+    will-change: clip-path;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { SceneManager } from '../3d/core/SceneManager';
+  import { killPageTriggers } from '../3d/core/gsap-config';
+
+  const curtain = document.getElementById('page-curtain')!;
+
+  // Check reduced-motion preference (§1.6)
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── EXIT transition ────────────────────────────────────────────────────
+  // Called before the browser navigates away
+
+  function runExit(onComplete: () => void): void {
+    if (reduced) { onComplete(); return; }
+
+    const sm = SceneManager.getInstance();
+    const cam = sm.camera;
+
+    const tl = gsap.timeline({ onComplete });
+
+    // 1. Wipe page upward — clipPath inset(0%) → inset(0% 0% 100% 0%)
+    tl.to(curtain, {
+      clipPath: 'inset(0% 0% 0% 0%)', // first: make curtain fully visible
+      duration: 0,
+    })
+    .to('#page-wrapper, main', {
+      clipPath: 'inset(0% 0% 100% 0%)',
+      duration: 0.4,
+      ease: 'power4.in',
+    }, 0)
+
+    // 2. Camera pulls back (§1.5)
+    .to(cam.position, {
+      z: cam.position.z + 3,
+      duration: 0.4,
+      ease: 'power2.in',
+    }, 0)
+
+    // 3. 3D scene fades (§1.5)
+    .to(sm.scene, {
+      // Three.js scenes don't have opacity — we fade via renderer alpha
+      // We animate a proxy and drive it in a custom onUpdate
+      duration: 0.3,
+      ease: 'power2.in',
+      onStart() {
+        // handled via css canvas fade below
+        document.getElementById('canvas-3d')?.style.setProperty('opacity', '0');
+        (document.getElementById('canvas-3d') as HTMLElement)!.style.transition = '300ms ease';
+      },
+    }, 0);
+
+    return;
+  }
+
+  // ── ENTER transition ────────────────────────────────────────────────────
+  // Called after new page DOM is ready
+
+  function runEnter(): void {
+    if (reduced) {
+      // Snap to visible, skip animation
+      curtain.style.clipPath = 'inset(100% 0% 0% 0%)';
+      document.getElementById('canvas-3d')?.style.setProperty('opacity', '1');
+      return;
+    }
+
+    const sm = SceneManager.getInstance();
+    const canvas3d = document.getElementById('canvas-3d') as HTMLElement | null;
+
+    const tl = gsap.timeline();
+
+    // 1. Reveal from top — clipPath inset(100% 0% 0% 0%) → inset(0%)
+    // The curtain was left at fully visible after exit; set it back to top-clipped
+    gsap.set(curtain, { clipPath: 'inset(100% 0% 0% 0%)' });
+
+    tl.to('#page-wrapper, main', {
+      clipPath: 'inset(0%)',
+      duration: 0.4,
+      ease: 'power4.out',
+    }, 0)
+
+    // 2. 3D scene fades in
+    .to(canvas3d, {
+      opacity: 1,
+      duration: 0.4,
+      ease: 'power2.out',
+    }, 0.2); // 200ms offset per spec
+
+    return;
+  }
+
+  // ── Wire to Astro navigation events ─────────────────────────────────────
+  // Astro fires: astro:before-preparation (leaving), astro:page-load (arrived)
+  // See: https://docs.astro.build/en/guides/view-transitions/#lifecycle-events
+
+  document.addEventListener('astro:before-preparation', (e) => {
+    // Kill existing ScrollTriggers before navigation (§6.2)
+    killPageTriggers();
+
+    // Intercept navigation — run exit, then let Astro proceed
+    const nav = e as any;
+    if (nav.loader && typeof nav.loader === 'function') {
+      const originalLoader = nav.loader.bind(nav);
+      nav.loader = async () => {
+        await new Promise<void>((resolve) => runExit(resolve));
+        return originalLoader();
+      };
+    } else {
+      // Fallback: just run exit non-blocking
+      runExit(() => {});
+    }
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    // Dispose old Three.js scene (§6.3 via §1.5)
+    SceneManager.getInstance().disposeCurrentScene();
+
+    // Run enter animation
+    runEnter();
+  });
+
+  // ── Initial page load: just run enter ────────────────────────────────────
+  // (No exit on first load)
+  document.addEventListener('DOMContentLoaded', () => {
+    // Reset clip-path so content is visible on first load
+    const wrapper = document.querySelector('#page-wrapper, main') as HTMLElement | null;
+    if (wrapper) wrapper.style.clipPath = 'inset(0%)';
+
+    runEnter();
+  });
+</script>

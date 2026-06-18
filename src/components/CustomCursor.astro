@@ -1,0 +1,240 @@
+---
+/**
+ * CustomCursor.astro — AHoosh.ai Custom Cursor
+ * Part I §1.4 of AHoosh_3D_Interaction_Spec.docx v1.0 (2026-06-18)
+ *
+ * 6 cursor modes: default | cta | drag | link | click | idle
+ * Hidden on touch devices (pointer: coarse).
+ * Exposes window.cursor.setMode(mode) for use by any component or scene.
+ */
+---
+
+<!-- Cursor DOM: dot + ring -->
+<div id="cursor" aria-hidden="true">
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring">
+    <span id="cursor-label"></span>
+  </div>
+</div>
+
+<style>
+  /* Hidden on touch devices (§1.4) */
+  @media (pointer: coarse) {
+    #cursor { display: none !important; }
+  }
+
+  #cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    /* transform origin set to center via JS */
+  }
+
+  #cursor-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold, #D7A13D);
+    transform: translate(-50%, -50%);
+    transition:
+      transform var(--duration-fast, 200ms) var(--ease-out, cubic-bezier(0.16,1,0.3,1)),
+      opacity   var(--duration-fast, 200ms) ease;
+    will-change: transform;
+  }
+
+  #cursor-ring {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(215, 161, 61, 0.4);
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      width     var(--duration-base, 400ms) var(--ease-out, cubic-bezier(0.16,1,0.3,1)),
+      height    var(--duration-base, 400ms) var(--ease-out, cubic-bezier(0.16,1,0.3,1)),
+      background var(--duration-base, 400ms) ease,
+      border-color var(--duration-fast, 200ms) ease,
+      opacity   var(--duration-base, 400ms) ease;
+    will-change: transform, width, height;
+  }
+
+  #cursor-label {
+    font-family: var(--font-display, 'Montserrat', sans-serif);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--navy-dark, #010A18);
+    opacity: 0;
+    transition: opacity var(--duration-fast, 200ms) ease;
+    text-transform: uppercase;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* ─── Mode: cta ─────────────────────────────────────────────────────── */
+  #cursor[data-mode="cta"] #cursor-ring {
+    width: 64px;
+    height: 64px;
+    background: rgba(215, 161, 61, 0.10);
+    border-color: var(--gold, #D7A13D);
+  }
+  #cursor[data-mode="cta"] #cursor-label {
+    opacity: 1;
+  }
+
+  /* ─── Mode: drag ─────────────────────────────────────────────────────── */
+  #cursor[data-mode="drag"] #cursor-ring {
+    animation: ring-rotate 2s linear infinite;
+    border-color: var(--gold, #D7A13D);
+  }
+  @keyframes ring-rotate {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* ─── Mode: link ─────────────────────────────────────────────────────── */
+  #cursor[data-mode="link"] #cursor-dot {
+    opacity: 0;
+  }
+  #cursor[data-mode="link"] #cursor-ring {
+    width: 18px;
+    height: 18px;
+    border-color: rgba(215, 161, 61, 0.7);
+  }
+
+  /* ─── Mode: click (mousedown) ────────────────────────────────────────── */
+  #cursor[data-mode="click"] #cursor-dot {
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  #cursor[data-mode="click"] #cursor-ring {
+    transform: translate(-50%, -50%) scale(1.4);
+  }
+
+  /* ─── Mode: idle (2s no movement) ───────────────────────────────────── */
+  #cursor[data-mode="idle"] {
+    opacity: 0.2;
+  }
+</style>
+
+<script>
+  // ── Only run on non-touch devices ──────────────────────────────────────
+  if (window.matchMedia('(pointer: fine)').matches) {
+    const cursor = document.getElementById('cursor')!;
+    const dot    = document.getElementById('cursor-dot')!;
+    const ring   = document.getElementById('cursor-ring')!;
+    const label  = document.getElementById('cursor-label')!;
+
+    let raf = 0;
+    let mouseX = window.innerWidth  / 2;
+    let mouseY = window.innerHeight / 2;
+    // Ring lags slightly behind dot for inertia feel
+    let ringX = mouseX;
+    let ringY = mouseY;
+
+    const LERP = 0.15;
+
+    function lerp(a: number, b: number, t: number) {
+      return a + (b - a) * t;
+    }
+
+    function tick() {
+      raf = requestAnimationFrame(tick);
+      ringX = lerp(ringX, mouseX, LERP);
+      ringY = lerp(ringY, mouseY, LERP);
+
+      // Move dot instantly, ring with inertia
+      dot.style.left  = mouseX + 'px';
+      dot.style.top   = mouseY + 'px';
+      ring.style.left = ringX + 'px';
+      ring.style.top  = ringY + 'px';
+    }
+    tick();
+
+    // ── Track pointer ────────────────────────────────────────────────────
+    let idleTimer: ReturnType<typeof setTimeout>;
+    let prevMode = 'default';
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      // Reset idle
+      clearTimeout(idleTimer);
+      if (cursor.dataset.mode === 'idle') {
+        setMode(prevMode);
+      }
+      idleTimer = setTimeout(() => {
+        prevMode = cursor.dataset.mode || 'default';
+        setMode('idle');
+      }, 2000);
+    }, { passive: true });
+
+    // ── Click states ─────────────────────────────────────────────────────
+    window.addEventListener('mousedown', () => {
+      if (cursor.dataset.mode !== 'idle') setMode('click');
+    });
+    window.addEventListener('mouseup', () => {
+      setMode(prevMode || 'default');
+    });
+
+    // ── Hover detection by data-cursor attribute ──────────────────────────
+    // Pages/components set data-cursor="cta|drag|link" on interactive elements
+    document.addEventListener('mouseover', (e) => {
+      const el = (e.target as HTMLElement).closest('[data-cursor]') as HTMLElement | null;
+      const mode = el?.dataset.cursor ?? null;
+
+      if (mode && mode !== 'click' && mode !== 'idle') {
+        prevMode = mode;
+        setMode(mode);
+        if (mode === 'cta') label.textContent = el?.dataset.cursorLabel ?? 'CLICK';
+        if (mode === 'drag') label.textContent = 'DRAG';
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      const el = (e.target as HTMLElement).closest('[data-cursor]');
+      if (el) {
+        label.textContent = '';
+        prevMode = 'default';
+        setMode('default');
+      }
+    });
+
+    // ── Auto-detect links and nav items ──────────────────────────────────
+    document.addEventListener('mouseover', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a') || target.closest('button')) {
+        if (!target.closest('[data-cursor]')) {
+          prevMode = 'link';
+          setMode('link');
+        }
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a') || target.closest('button')) {
+        if (!target.closest('[data-cursor]')) {
+          prevMode = 'default';
+          setMode('default');
+        }
+      }
+    });
+
+    // ── Public API (§1.4) ─────────────────────────────────────────────────
+    function setMode(mode: string) {
+      cursor.dataset.mode = mode;
+    }
+
+    // Expose globally so Three.js scenes can call cursor.setMode("drag") etc.
+    (window as any).cursor = { setMode };
+
+    // Hide native cursor
+    document.documentElement.style.cursor = 'none';
+  }
+</script>

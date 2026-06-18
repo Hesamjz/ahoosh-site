@@ -1,0 +1,41 @@
+/**
+ * motion-tokens.css — AHoosh.ai Global Motion System
+ * Part I §1.1 of AHoosh_3D_Interaction_Spec.docx v1.0 (2026-06-18)
+ *
+ * These constants govern ALL animations across every page.
+ * No individual page may override them. Change here = change everywhere.
+ */
+
+/* ─── Duration Tokens ────────────────────────────────────────────────────── */
+:root {
+  --duration-instant: 0ms;      /* state swaps (show/hide, class toggling) */
+  --duration-fast:    200ms;    /* micro-interactions, icon bounces, badge appear */
+  --duration-base:    400ms;    /* default UI transition (card hover, button press) */
+  --duration-slow:    800ms;    /* section enters, nav transitions */
+  --duration-xslow:  1200ms;   /* hero entrance, page transition out */
+}
+
+/* ─── Easing Tokens ──────────────────────────────────────────────────────── */
+:root {
+  /* Natural deceleration for all enters → GSAP: "power4.out" */
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Symmetric spring for scroll-scrub → GSAP: "power2.inOut" */
+  --ease-in-out:  cubic-bezier(0.87, 0, 0.13, 1);
+
+  /* Playful elements (tags, pills) → GSAP: "back.out(1.7)" */
+  --ease-bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Depth perception, 3D reveals → GSAP: "circ.out" */
+  --ease-circ:    cubic-bezier(0, 0.55, 0.45, 1);
+}
+
+/* ─── Reduced Motion — MANDATORY (§1.6) ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration:   0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:  0.01ms !important;
+    scroll-behavior:      auto  !important;
+  }
+}
