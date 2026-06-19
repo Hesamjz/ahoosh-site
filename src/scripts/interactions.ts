@@ -57,8 +57,8 @@ export function initInteractions(): void {
       const r = el.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width - 0.5;
       const py = (e.clientY - r.top) / r.height - 0.5;
-      gsap.to(inner, { rotationY: px * max * 2, rotationX: -py * max * 2, transformPerspective: 900, transformOrigin: 'center', scale: 1.04, duration: 0.4, ease: 'power2.out' });
-      if (glare) gsap.to(glare, { opacity: 0.18, x: px * 40, y: py * 40, duration: 0.4 });
+      gsap.to(inner, { rotationY: px * max * 2, rotationX: -py * max * 2, transformPerspective: 900, transformOrigin: 'center', scale: 1.045, duration: 0.3, ease: 'power2.out' });
+      if (glare) gsap.to(glare, { opacity: 0.2, x: px * 44, y: py * 44, duration: 0.3 });
     });
     el.addEventListener('mouseleave', () => {
       gsap.to(inner, { rotationY: 0, rotationX: 0, scale: 1, duration: 0.7, ease: 'power3.out' });

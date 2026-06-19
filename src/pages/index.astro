@@ -35,6 +35,12 @@ const caps = [
     <div class="scroll-hint">Scroll ↓</div>
   </section>
 
+  <!-- ══ LIVE NEWS — headlines sliding right→left ══ -->
+  <section class="news-strip" aria-label="Live news">
+    <span class="news-label">● Live news</span>
+    <div class="news-viewport"><div class="news-track" id="news-track"></div></div>
+  </section>
+
   <!-- ══ CAPABILITIES — float-in text rows, no boxes ══ -->
   <section class="s-caps">
     <div data-reveal data-from="up" class="caps-head">
@@ -153,6 +159,7 @@ const caps = [
     import { initHomepageScroll } from '../scripts/homepage-scroll';
     import { initInteractions } from '../scripts/interactions';
     import { initMarketsLive } from '../scripts/markets-live';
+    import { initNewsTicker } from '../scripts/news-ticker';
     const start = () => {
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const canvas = document.getElementById('canvas-3d');
@@ -160,7 +167,7 @@ const caps = [
         try { const sm = SceneManager.getInstance(); sm.mount(canvas); sm.loadScene('home', createHomepageScene); }
         catch (e) { console.warn('[homepage] 3D bg skipped:', e); }
       }
-      initHomepageScroll(); initInteractions(); initMarketsLive();
+      initHomepageScroll(); initInteractions(); initMarketsLive(); initNewsTicker();
     };
     if ('requestIdleCallback' in window) (window as any).requestIdleCallback(start, { timeout: 1500 });
     else setTimeout(start, 400);
@@ -177,6 +184,17 @@ const caps = [
     .hero-cta .btn-primary, .hero-cta .btn-secondary { font-size: 15px; padding: 14px 28px; will-change: transform; }
     .scroll-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--silver-muted); }
     .st-word { display: inline-block; } /* keep words intact under SplitText */
+
+    /* Live news ticker — slides right→left, no box */
+    .news-strip { display: flex; align-items: center; gap: 18px; max-width: 1200px; margin: 0 auto; padding: 14px 24px; border-top: 1px solid rgba(224,169,63,0.16); border-bottom: 1px solid rgba(224,169,63,0.16); }
+    .news-label { flex: 0 0 auto; font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+    .news-viewport { flex: 1; overflow: hidden; -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent); }
+    .news-track { display: inline-flex; align-items: center; white-space: nowrap; will-change: transform; }
+    .news-item { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none; padding: 0 6px; }
+    .news-src { font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); opacity: 0.85; }
+    .news-ttl { font-size: 14px; color: var(--silver); }
+    .news-item:hover .news-ttl { color: #fff; }
+    .news-dot { color: var(--gold); opacity: 0.5; padding: 0 16px; font-size: 8px; }
 
     /* Capabilities — float-in text rows, hairline dividers, no cards */
     .s-caps { max-width: 1000px; margin: 0 auto; padding: 50px 24px 80px; }
@@ -201,7 +219,7 @@ const caps = [
     /* Article slides — image + text, cross-fade via .active */
     .article-slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: clamp(20px, 5vw, 64px); padding: 0 24px; max-width: 1060px; margin: 0 auto;
       opacity: 0; transform: translateY(42px); pointer-events: none; text-decoration: none;
-      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
     .article-slide.active { opacity: 1; transform: none; pointer-events: auto; }
     .art-visual { flex: 0 0 46%; max-width: 480px; perspective: 1000px; }
     .art-img { position: relative; width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(224,169,63,0.18); transform-style: preserve-3d; will-change: transform; }
