@@ -409,13 +409,14 @@ const CHANNELS_ALL = [
     ]
   },
   // Persian — News
-  { id:'bbc-fa',      name:'BBC Persian',     lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
-  { id:'iranintl',    name:'Iran Intl',        lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
-  { id:'manoto',      name:'Manoto',           lang:'fa', type:'youtube', vid:'bQJFCVV8hCg' },
-  { id:'voa-fa',      name:'VOA Farsi',        lang:'fa', type:'youtube', vid:'nkwyi4gDpxs' },
-  { id:'euronews-fa', name:'Euronews Persian', lang:'fa', type:'youtube', vid:'0GRLL6sA0oE' },
+  { id:'bbc-fa',      name:'BBC Persian',     lang:'fa', sources:[{ type:'youtube', chanId:'UCHZk9MrT3DGWmVqdsj5y0EA' }] },
+  { id:'iranintl',    name:'Iran Intl',        lang:'fa', sources:[{ type:'youtube', chanId:'UCyDoic6SdHXTN0mWPub_nOg' }] },
+  { id:'voa-fa',      name:'VOA Farsi',        lang:'fa', sources:[{ type:'youtube', chanId:'UCttfDeGMwUxPjnlsKagcwKw' }] },
+  { id:'euronews-fa', name:'Euronews Persian', lang:'fa', sources:[{ type:'youtube', chanId:'UChxIQP4D05EBdRHX57_mSFQ' }] },
   { id:'rfarda',      name:'Radio Farda',      lang:'fa', type:'hls', src:'https://rferl-ingest.akamaized.net/hls/live/2121768/tvmc01/playlist.m3u8' },
   { id:'iranfarda',   name:'Irane Farda',      lang:'fa', type:'hls', src:'https://hls.iranfarda.live/hls/stream.m3u8' },
+  // Persian — Tech
+  { id:'zoomit',      name:'Zoomit',           lang:'fa', topic:'tech', sources:[{ type:'youtube', chanId:'UCJNb9g5cwEzDV6syWZ0eK9Q' }] },
   // German — News
   { id:'welt',        name:'WELT',         lang:'de', type:'youtube', vid:'RRr0687ik44' },
   { id:'tagesschau',  name:'Tagesschau',   lang:'de', type:'youtube', vid:'P02w1OLz6sQ' },
@@ -834,7 +835,7 @@ if (langSel && topicSel && nameSel) {
         return c.lang === 'sport' || (c.lang === lang && c.topic === 'sport');
       });
     } else if (topic === 'tech') {
-      list = CHANNELS_ALL.filter(function(c){ return c.lang === 'tech'; });
+      list = CHANNELS_ALL.filter(function(c){ return c.lang === 'tech' || (c.lang === lang && c.topic === 'tech'); });
     } else {
       // News — language channels, excluding sport-tagged ones
       list = CHANNELS_ALL.filter(function(c){ return c.lang === lang && !c.topic; });
