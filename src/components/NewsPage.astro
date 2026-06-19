@@ -1031,7 +1031,7 @@ function renderRssList() {
         '<span class="rss-src">' + escHtml(a.source||'') + '</span>' +
         '<span class="rss-time">' + timeAgo(a.pubDate) + '</span>' +
       '</div>' +
-      '<div class="rss-title">' + decodeEntities(a.title||'') + '</div>';
+      '<div class="rss-title">' + escHtml(decodeEntities(a.title||'')) + '</div>';
     list.appendChild(row);
   });
   var meta = document.getElementById('news-meta');

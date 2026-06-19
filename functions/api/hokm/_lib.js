@@ -58,13 +58,21 @@ export async function verifyRoomPass(token, secret) {
       key,
       enc.encode(`${h}.${p}`),
     );
-    if (b64urlEncode(expected) !== sig) return null;
+    if (!timingSafeEqualStr(b64urlEncode(expected), sig)) return null;
     const payload = JSON.parse(dec.decode(b64urlToBytes(p)));
     if (!payload.exp || payload.exp * 1000 < Date.now()) return null;
     return payload;
   } catch {
     return null;
   }
+}
+
+// Constant-time string comparison (avoids leaking the signature via timing).
+function timingSafeEqualStr(a, b) {
+  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
 }
 
 // ─── Google ID token verification ────────────────────────────────────────────
@@ -116,6 +124,8 @@ export async function verifyGoogleIdToken(idToken, clientId) {
     }
     if (payload.aud !== clientId) return null;
     if (!payload.exp || payload.exp * 1000 < Date.now()) return null;
+    // Reject tokens whose email Google has explicitly NOT verified.
+    if (payload.email_verified === false) return null;
     return payload;
   } catch {
     return null;

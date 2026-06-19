@@ -23,3 +23,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# ── secret-hardening 2026-06-20 ───────────────────────────────────────────
+# Local helper scripts have historically carried inline tokens. Never commit them.
+*.command
+*_result.txt
+# Local Claude settings have carried dev secrets (e.g. devsecret123). Never commit.
+.claude/settings.local.json

@@ -2,7 +2,14 @@
 // Env vars required (set in Cloudflare Pages → Settings → Environment variables):
 //   RESEND_API_KEY  — your Resend transactional API key
 
+import { isSameOrigin, isValidEmail, escapeHtml } from './_guard.js';
+
 export async function onRequestPost({ request, env }) {
+  // Block cross-site form posts (CSRF / spam relay).
+  if (!isSameOrigin(request)) {
+    return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+  }
+
   try {
     const formData = await request.formData();
     const name        = (formData.get('name')         || '').trim();
@@ -10,10 +17,22 @@ export async function onRequestPost({ request, env }) {
     const company     = (formData.get('company')      || '').trim();
     const message     = (formData.get('message')      || '').trim();
     const requestType = (formData.get('request_type') || '').trim();
+    const honeypot    = (formData.get('_honey')        || '').trim();
 
-    if (!email || !name || !message) {
+    // Honeypot: real users never fill the hidden "_honey" field. Bots do.
+    // Pretend success so the bot moves on, but send nothing.
+    if (honeypot) {
+      return Response.redirect('https://ahoosh.ai/thank-you', 302);
+    }
+
+    if (!name || !message || !isValidEmail(email)) {
       return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
     }
+
+    // Cap lengths to keep emails sane and limit abuse payloads.
+    const safeName    = name.slice(0, 120);
+    const safeCompany = company.slice(0, 160);
+    const safeMessage = message.slice(0, 5000);
 
     const resendKey = env.RESEND_API_KEY;
     const labelMap = {
@@ -31,8 +50,8 @@ export async function onRequestPost({ request, env }) {
       from:    'AHoosh Contact Form <contact@ahoosh.ai>',
       to:      ['hesamjafarzadeh@gmail.com'],
       reply_to: email,
-      subject: `New contact: ${name}${company ? ' · ' + company : ''}`,
-      html:    notificationHtml({ name, email, company, message, typeLabel }),
+      subject: `New contact: ${safeName}${safeCompany ? ' · ' + safeCompany : ''}`,
+      html:    notificationHtml({ name: safeName, email, company: safeCompany, message: safeMessage, typeLabel }),
     });
 
     // ── 2. Auto-reply to submitter ───────────────────────────────────────────
@@ -40,7 +59,7 @@ export async function onRequestPost({ request, env }) {
       from:    'Hesam Jafarzadeh · AHoosh <contact@ahoosh.ai>',
       to:      [email],
       subject: 'Thank you for reaching out to AHoosh',
-      html:    thankYouHtml(name),
+      html:    thankYouHtml(safeName),
     });
 
     return Response.redirect('https://ahoosh.ai/thank-you', 302);
@@ -66,7 +85,13 @@ async function resendSend(apiKey, payload) {
 }
 
 // ── Notification email to Hesam ───────────────────────────────────────────────
-function notificationHtml({ name, email, company, message, typeLabel }) {
+function notificationHtml(raw) {
+  // Escape every user-supplied value before it touches the email HTML.
+  const name      = escapeHtml(raw.name);
+  const email     = escapeHtml(raw.email);
+  const company   = escapeHtml(raw.company);
+  const message   = escapeHtml(raw.message);
+  const typeLabel = escapeHtml(raw.typeLabel);
   const row = (label, value) => `
     <tr>
       <td style="padding:8px 12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#8A9BB0;white-space:nowrap;border-bottom:1px solid #E8ECF0;width:140px;">${label}</td>
@@ -114,7 +139,7 @@ function notificationHtml({ name, email, company, message, typeLabel }) {
 
 // ── Auto-reply thank-you email to the submitter ───────────────────────────────
 function thankYouHtml(name) {
-  const firstName = name.split(' ')[0] || name;
+  const firstName = escapeHtml(String(name).split(' ')[0] || name);
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>

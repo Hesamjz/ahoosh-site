@@ -1,27 +1,33 @@
 // functions/api/business-qa.js
 // Accepts 10 business Q&A answers → Claude Haiku → structured business analysis
+import { preflight, corsHeaders, isSameOrigin, forbidden } from './_guard.js';
+
 export async function onRequest(context) {
   const { request, env } = context;
+  const cors = corsHeaders(request);
 
   if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400' } });
+    return preflight(request);
   }
 
   if (request.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+    return new Response('Method not allowed', { status: 405, headers: cors });
   }
 
+  // Block cross-site / scripted abuse of this paid-AI endpoint.
+  if (!isSameOrigin(request)) return forbidden(request);
+
   let body;
-  try { body = await request.json(); } catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }); }
+  try { body = await request.json(); } catch { return Response.json({ error: 'Invalid JSON' }, { status: 400, headers: cors }); }
 
   const { answers = {} } = body;
   const answeredCount = Object.values(answers).filter(v => v && v.trim().length > 2).length;
   if (answeredCount < 5) {
-    return Response.json({ error: 'Please answer at least 5 questions before submitting.' }, { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } });
+    return Response.json({ error: 'Please answer at least 5 questions before submitting.' }, { status: 400, headers: cors });
   }
 
   const apiKey = env.ANTHROPIC_API_KEY;
-  if (!apiKey) return Response.json({ error: 'Service temporarily unavailable.' }, { status: 503, headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (!apiKey) return Response.json({ error: 'Service temporarily unavailable.' }, { status: 503, headers: cors });
 
   const questions = [
     'What industry or business sector are you in?',
@@ -76,12 +82,12 @@ Rules: Base everything on actual answers. No generic startup advice. No motivati
     const text = claudeData.content?.[0]?.text || '';
 
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return Response.json({ error: 'Analysis generation failed. Please try again.' }, { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });
+    if (!jsonMatch) return Response.json({ error: 'Analysis generation failed. Please try again.' }, { status: 500, headers: cors });
 
     const analysis = JSON.parse(jsonMatch[0]);
-    return Response.json({ analysis }, { headers: { 'Access-Control-Allow-Origin': '*' } });
+    return Response.json({ analysis }, { headers: cors });
 
   } catch (err) {
-    return Response.json({ error: 'Analysis failed: ' + err.message }, { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });
+    return Response.json({ error: 'Analysis failed: ' + err.message }, { status: 500, headers: cors });
   }
 }

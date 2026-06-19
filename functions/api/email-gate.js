@@ -8,12 +8,17 @@
 //
 // Without BREVO_API_KEY the function still returns ok:true (PDF unlocks, no CRM capture).
 
+import { corsHeaders, isSameOrigin, forbidden, preflight } from './_guard.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
+  // Block cross-site / scripted abuse (this writes to the Brevo CRM).
+  if (!isSameOrigin(request)) return forbidden(request);
+
   const headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    ...corsHeaders(request),
   };
 
   let email = '';
@@ -73,12 +78,6 @@ export async function onRequestPost(context) {
   }
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+export async function onRequestOptions({ request }) {
+  return preflight(request);
 }

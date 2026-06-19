@@ -7,6 +7,8 @@
 // Required D1 binding (set via Cloudflare dashboard → Pages → Settings → Bindings):
 //   ASSESS_DB          — D1 database "ahoosh-assess"
 
+import { corsHeaders, isSameOrigin, forbidden, preflight } from "./_guard.js";
+
 const SYSTEM_PROMPT = `You are a senior business consultant working at AHoosh.ai. You have received assessment results from a potential client. Produce a concise, precise consulting report.
 
 AHoosh.ai services: branding, strategy, digital marketing, website design/build, SEO, content, AI agent setup, ad campaigns, social management, video production.
@@ -36,6 +38,10 @@ Rules:
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  const cors = corsHeaders(request);
+
+  // Block cross-site / scripted abuse of this paid-AI + DB-writing endpoint.
+  if (!isSameOrigin(request)) return forbidden(request);
 
   try {
     const body = await request.json();
@@ -123,29 +129,23 @@ export async function onRequestPost(context) {
       );
     }
 
-    return json({ ok: true, report });
+    return json({ ok: true, report }, 200, cors);
   } catch (e) {
     console.error("[report] Unexpected error:", e);
-    return json({ error: e.message || "Internal error" }, 500);
+    return json({ error: e.message || "Internal error" }, 500, cors);
   }
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
+export async function onRequestOptions({ request }) {
+  return preflight(request);
 }
 
-function json(body, status = 200) {
+function json(body, status = 200, originHeaders = { "Access-Control-Allow-Origin": "https://ahoosh.ai", "Vary": "Origin" }) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      ...originHeaders,
     },
   });
 }
