@@ -23,3 +23,12 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# local helper scripts & run logs (never source — kept off-repo) [Hesam-requested 2026-06-19]
+*.command
+*_result.txt
+.claude/skills/
+
+# recommended additions (trim if unwanted) [Claude 2026-06-19]
+.wrangler/
+*.tmp
