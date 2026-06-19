@@ -150,13 +150,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 .v2-stat {
   text-align: center;
   padding: 28px 16px;
-  border: 1px solid rgba(215,161,61,0.1);
-  border-radius: 10px;
-  background: rgba(215,161,61,0.02);
+  border: 1px solid rgba(215,161,61,0.12);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
   opacity: 0;
   transform: translateY(28px) scale(0.97);
   position: relative;
   overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.v2-stat:hover {
+  border-color: rgba(215,161,61,0.25);
+  box-shadow: 0 6px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07);
 }
 .v2-stat::before {
   content: '';
@@ -213,19 +221,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 }
 .v2-svc-card {
   padding: 24px;
-  border: 1px solid rgba(215,161,61,0.1);
-  border-radius: 10px;
-  background: rgba(215,161,61,0.02);
+  border: 1px solid rgba(215,161,61,0.12);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
   opacity: 0;
   transform: translateX(50px);
-  transition: border-color 0.25s ease, background 0.25s ease;
+  transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
   cursor: default;
 }
 .v2-svc-card:hover {
-  border-color: rgba(215,161,61,0.28);
-  background: rgba(215,161,61,0.05);
+  border-color: rgba(215,161,61,0.35);
+  background: rgba(215,161,61,0.04);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(215,161,61,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
+  transform: translateX(0) translateY(-2px);
 }
-.v2-svc-icon { font-size: 22px; margin-bottom: 10px; }
+.v2-svc-icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 12px;
+  color: var(--gold);
+  opacity: 0.85;
+  flex-shrink: 0;
+}
 .v2-svc-title {
   font-family: var(--font-head);
   font-weight: 600;
@@ -446,22 +466,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
     <div class="v2-svc-right">
       <div class="v2-svc-card">
-        <div class="v2-svc-icon">🤖</div>
+        <svg class="v2-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <circle cx="12" cy="16" r="1.5" fill="currentColor" stroke="none"/>
+        </svg>
         <div class="v2-svc-title">AI-Assisted Research</div>
         <div class="v2-svc-desc">Using AI tools to collect, organize, compare, and explain information faster than traditional methods allow.</div>
       </div>
       <div class="v2-svc-card">
-        <div class="v2-svc-icon">📊</div>
+        <svg class="v2-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6"  y1="20" x2="6"  y2="14"/>
+        </svg>
         <div class="v2-svc-title">Market Intelligence</div>
         <div class="v2-svc-desc">Tracking prices, trends, signals, and public data that affect business and investment decisions.</div>
       </div>
       <div class="v2-svc-card">
-        <div class="v2-svc-icon">🧩</div>
+        <svg class="v2-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+        </svg>
         <div class="v2-svc-title">Consulting</div>
         <div class="v2-svc-desc">Helping founders and companies turn unclear problems into practical decisions and action plans.</div>
       </div>
       <div class="v2-svc-card">
-        <div class="v2-svc-icon">📝</div>
+        <svg class="v2-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
         <div class="v2-svc-title">Content &amp; Education</div>
         <div class="v2-svc-desc">Publishing articles, guides, and explanations for a global audience across industries and markets.</div>
       </div>
