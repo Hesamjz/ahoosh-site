@@ -1,9 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-// REDESIGN 2026-06-19 (per Hesam): landing = a high-contrast, animated PORTAL to
-// the product — News, Markets, Articles, tools. NO personal info (that lives on
-// /about). The brand sphere is restored as the hero centerpiece. Smooth reveals,
-// no scroll pinning (kills the "jumpers"). Brand navy + gold, punchier contrast.
+import { getCollection } from 'astro:content';
+// REDESIGN 2026-06-19 (mont-fort/capital feel): one continuous particle background;
+// content "stages" play REAL content as you scroll — latest articles cross-fade
+// one→next while sticky, live markets tick on screen. No personal info (that's /about).
+const latestArticles = (await getCollection('blog'))
+  .filter((p) => !p.data.draft && !/^(fa|de|sr)\//.test(p.id))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+const artStageVh = latestArticles.length * 62 + 30;
 const functions = [
   { href: '/news', tag: 'Live', title: 'News', desc: 'Business news in English, Persian, German and Serbian — refreshed through the day.', accent: '#e0a93f' },
   { href: '/markets', tag: 'Live', title: 'Markets', desc: 'FX, gold and crypto prices, updated every minute.', accent: '#4ea3ff' },
@@ -17,7 +22,7 @@ const functions = [
   title="Home"
   description="AHoosh brings live market data, business news in four languages, AI-assisted research and practical tools into one place — clear enough to act on."
 >
-  <!-- ══ HERO — brand sphere + portal headline (no personal info) ══ -->
+  <!-- ══ HERO — brand sphere + portal headline ══ -->
   <section class="s-hero" style="min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 24px 56px;position:relative;">
     <div class="hero-eyebrow" style="font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;">AHoosh.ai</div>
     <canvas class="hero-sphere" id="vc" width="340" height="260" style="cursor:grab;display:block;touch-action:none;width:min(380px,82vw);aspect-ratio:340/260;margin-bottom:28px;filter:drop-shadow(0 0 40px rgba(224,169,63,0.28));"></canvas>
@@ -30,7 +35,7 @@ const functions = [
     <div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--silver-muted);">Scroll ↓</div>
   </section>
 
-  <!-- ══ FUNCTIONS — the portal grid (high contrast cards) ══ -->
+  <!-- ══ FUNCTIONS — portal grid ══ -->
   <section style="padding:40px 24px 72px;max-width:1120px;margin:0 auto;">
     <div class="reveal" style="text-align:center;margin-bottom:40px;">
       <div style="font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Everything in one place</div>
@@ -49,40 +54,43 @@ const functions = [
     </div>
   </section>
 
-  <!-- ══ FULLSCREEN SCALE PANELS — card → fullscreen on scroll (mont-fort feel) ══ -->
-  <section class="fs-panels">
-    <div class="fs-panel">
-      <div class="fs-panel-inner">
-        <a href="/news" class="fs-panel-media" aria-label="Open the news" style="background:radial-gradient(ellipse 90% 70% at 30% 20%,rgba(224,169,63,0.30) 0%,#150d02 45%,#07142a 100%);"></a>
-        <div class="fs-panel-content">
-          <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">● Live · 4 languages</div>
-          <h2 style="font-family:var(--font-head);font-weight:800;font-size:clamp(30px,6vw,68px);letter-spacing:-0.03em;line-height:1.02;color:#fff;margin-bottom:18px;">Business news,<br/>translated as it breaks</h2>
-          <p style="font-size:clamp(15px,2vw,18px);line-height:1.7;color:var(--silver-dim);max-width:520px;margin:0 auto 26px;">Business and markets news in English, Persian, German and Serbian — written and translated with AI, refreshed through the day.</p>
-          <a href="/news" class="btn-primary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Open the news</a>
-        </div>
-      </div>
-    </div>
-    <div class="fs-panel">
-      <div class="fs-panel-inner">
-        <a href="/markets" class="fs-panel-media" aria-label="Open the markets" style="background:radial-gradient(ellipse 90% 70% at 70% 25%,rgba(78,163,255,0.32) 0%,#06182e 45%,#07142a 100%);"></a>
-        <div class="fs-panel-content">
-          <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4ea3ff;margin-bottom:16px;">● Live · updates every minute</div>
-          <h2 style="font-family:var(--font-head);font-weight:800;font-size:clamp(30px,6vw,68px);letter-spacing:-0.03em;line-height:1.02;color:#fff;margin-bottom:18px;">The markets,<br/>always live</h2>
-          <p style="font-size:clamp(15px,2vw,18px);line-height:1.7;color:var(--silver-dim);max-width:520px;margin:0 auto 26px;">FX, gold and crypto — tracked continuously, with last-known-good fallback so the numbers never go blank.</p>
-          <a href="/markets" class="btn-primary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Open the markets</a>
-        </div>
+  <!-- ══ ARTICLES STAGE — real posts cross-fade as you scroll ══ -->
+  <section class={`stage stage-articles`} style={`height:${artStageVh}vh;`}>
+    <div class="stage-inner">
+      <div class="stage-eyebrow">From the journal · scroll</div>
+      {latestArticles.map((post, i) => (
+        <a class={`article-slide${i === 0 ? ' active' : ''}`} href={`/articles/${post.id}`}>
+          <div class="art-tag">{(post.data.tags && post.data.tags[0]) || 'Analysis'}</div>
+          <div class="art-title">{post.data.title}</div>
+          {post.data.description && <div class="art-desc">{post.data.description}</div>}
+          <div class="art-meta">{post.data.pubDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</div>
+          <span class="art-read">Read the article →</span>
+        </a>
+      ))}
+      <div class="stage-dots">
+        {latestArticles.map((_, i) => (<span class={`stage-dot${i === 0 ? ' on' : ''}`}></span>))}
       </div>
     </div>
   </section>
 
-  <!-- ══ CTA band (no personal info) ══ -->
-  <section style="padding:72px 24px;text-align:center;background:linear-gradient(160deg,rgba(224,169,63,0.1) 0%,rgba(7,20,42,0.9) 55%,rgba(78,163,255,0.08) 100%);border-top:1px solid rgba(224,169,63,0.22);border-bottom:1px solid rgba(224,169,63,0.22);">
+  <!-- ══ MARKETS STAGE — live numbers on screen ══ -->
+  <section class="stage stage-markets" style="height:150vh;">
+    <div class="stage-inner">
+      <div class="stage-eyebrow" style="color:#4ea3ff;">● Live markets · updates every minute</div>
+      <h2 class="stage-heading">The markets, right now</h2>
+      <div id="mkt-live" class="mkt-grid"><div class="mkt-loading">loading live prices…</div></div>
+      <a href="/markets" class="stage-cta link-gold" data-magnetic="0.4" style="margin-top:26px;display:inline-block;will-change:transform;">Open the full markets →</a>
+    </div>
+  </section>
+
+  <!-- ══ CTA ══ -->
+  <section style="padding:80px 24px;text-align:center;background:linear-gradient(160deg,rgba(224,169,63,0.1) 0%,rgba(7,20,42,0.9) 55%,rgba(78,163,255,0.08) 100%);border-top:1px solid rgba(224,169,63,0.22);border-bottom:1px solid rgba(224,169,63,0.22);">
     <div class="reveal" style="max-width:620px;margin:0 auto;">
       <h2 class="cta-h2" style="font-family:var(--font-head);font-weight:800;font-size:clamp(28px,6vw,52px);letter-spacing:-0.025em;line-height:1.08;color:#fff;margin-bottom:18px;">Start with what you need</h2>
       <p style="font-size:15px;color:var(--silver-dim);margin-bottom:32px;line-height:1.7;">Read the markets, scan the news, or bring a problem and work on it directly.</p>
       <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-        <a href="/consulting" class="btn-primary" style="font-size:15px;padding:14px 28px;">Work with AHoosh</a>
-        <a href="/assess" class="btn-secondary" style="font-size:15px;padding:14px 28px;">Try the free diagnostics</a>
+        <a href="/consulting" class="btn-primary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Work with AHoosh</a>
+        <a href="/assess" class="btn-secondary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Try the free diagnostics</a>
       </div>
     </div>
   </section>
@@ -119,12 +127,13 @@ const functions = [
   })();
   </script>
 
-  <!-- Ambient 3D particle background + smooth reveals (deferred, guarded). -->
+  <!-- Ambient 3D background + scroll motion + magnetism + live markets (deferred). -->
   <script>
     import { SceneManager } from '../3d/core/SceneManager';
     import { createHomepageScene } from '../3d/scenes/SceneHomepage';
     import { initHomepageScroll } from '../scripts/homepage-scroll';
     import { initInteractions } from '../scripts/interactions';
+    import { initMarketsLive } from '../scripts/markets-live';
 
     const start = () => {
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -140,6 +149,7 @@ const functions = [
       }
       initHomepageScroll();
       initInteractions();
+      initMarketsLive();
     };
 
     if ('requestIdleCallback' in window) {
@@ -150,32 +160,67 @@ const functions = [
   </script>
 
   <style>
-    /* Fullscreen scale panels (mont-fort feel). The media is full-bleed; JS opens
-       its clip-path from a rounded card to fullscreen on scroll. Sticky inner
-       holds it on screen while the panel's extra height scrolls past. */
-    .fs-panels { position: relative; }
-    .fs-panel { height: 175vh; position: relative; }
-    .fs-panel-inner {
+    /* ── Living stages (sticky, content plays over the continuous background) ── */
+    .stage { position: relative; }
+    .stage-inner {
       position: sticky; top: 0; height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 0 24px; overflow: hidden;
     }
-    .fs-panel-media {
-      position: absolute; inset: 0; display: block;
-      clip-path: inset(0 0 round 0px);
-      will-change: clip-path, transform;
+    .stage-eyebrow {
+      font-family: var(--font-head); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 22px;
     }
-    .fs-panel-media::after {
-      content: ""; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at center, transparent 30%, rgba(3,10,24,0.55) 100%);
+    .stage-heading {
+      font-family: var(--font-head); font-weight: 800; color: #fff;
+      font-size: clamp(28px, 5vw, 56px); letter-spacing: -0.03em; margin-bottom: 32px;
     }
-    .fs-panel-content {
-      position: relative; z-index: 2; text-align: center;
-      padding: 0 24px; max-width: 760px;
+
+    /* Article slides cross-fade via CSS transition (toggled by .active in JS) */
+    .article-slide {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 0 24px; max-width: 860px; margin: 0 auto;
+      opacity: 0; transform: translateY(42px); pointer-events: none;
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+      text-decoration: none;
     }
-    @media (pointer: coarse) {
-      /* On touch, ease the scroll cost: shorter panels, no oversized media scale. */
-      .fs-panel { height: 130vh; }
+    .article-slide.active { opacity: 1; transform: none; pointer-events: auto; }
+    .art-tag {
+      display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold); border: 1px solid rgba(224,169,63,0.4);
+      border-radius: 999px; padding: 4px 12px; margin-bottom: 20px;
     }
+    .art-title {
+      font-family: var(--font-head); font-weight: 800; color: #fff;
+      font-size: clamp(26px, 5vw, 60px); letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 18px;
+    }
+    .art-desc { font-size: clamp(15px,2.2vw,20px); line-height: 1.7; color: var(--silver-dim); max-width: 620px; margin: 0 auto 18px; }
+    .art-meta { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--silver-muted); margin-bottom: 22px; }
+    .art-read { color: var(--gold); font-weight: 600; font-size: 15px; }
+    .stage-dots { position: absolute; bottom: 9vh; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; }
+    .stage-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.22); transition: all 0.3s ease; }
+    .stage-dot.on { background: var(--gold); transform: scale(1.4); box-shadow: 0 0 12px rgba(224,169,63,0.6); }
+
+    /* Live market tiles */
+    .mkt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; width: 100%; max-width: 860px; }
+    .mkt-loading { grid-column: 1 / -1; color: var(--silver-muted); font-size: 14px; }
+    .mkt-tile {
+      background: linear-gradient(160deg, #0d2140 0%, #07142a 100%);
+      border: 1px solid rgba(224,169,63,0.18); border-radius: 14px; padding: 20px 18px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35); transition: background 0.6s ease;
+    }
+    .mkt-sym { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--silver-muted); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .mkt-dot { width: 6px; height: 6px; border-radius: 50%; background: #46d6c0; box-shadow: 0 0 8px #46d6c0; animation: mkt-pulse 2s infinite; }
+    @keyframes mkt-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .mkt-val { font-family: var(--font-head); font-weight: 800; font-size: clamp(20px, 3vw, 30px); color: #fff; letter-spacing: -0.01em; }
+    .mkt-ch { font-size: 12px; font-weight: 600; margin-top: 6px; }
+    .mkt-up { color: #46d6a0; } .mkt-down { color: #ff6b6b; } .mkt-flat { color: var(--silver-muted); }
+    .mkt-tile.flash-up { animation: flash-g 0.8s ease; } .mkt-tile.flash-down { animation: flash-r 0.8s ease; }
+    @keyframes flash-g { 0% { background: rgba(70,214,160,0.25); } 100% { background: linear-gradient(160deg,#0d2140,#07142a); } }
+    @keyframes flash-r { 0% { background: rgba(255,107,107,0.22); } 100% { background: linear-gradient(160deg,#0d2140,#07142a); } }
+
+    @media (pointer: coarse) { .stage-articles { /* height set inline; sticky still smooth */ } }
   </style>
 </BaseLayout>

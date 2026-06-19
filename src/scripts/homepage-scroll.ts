@@ -1,20 +1,23 @@
 /**
- * homepage-scroll.ts — AHoosh.ai landing scroll motion
+ * homepage-scroll.ts — AHoosh.ai landing scroll motion (living-stages redesign)
  *
- * Smooth, scroll-driven motion (pointer interactions live in interactions.ts):
- *  - Hero entrance timeline (load) with SplitText.
- *  - Fade-up reveals (batched) for content blocks + function cards.
- *  - mont-fort-style "card → fullscreen" panels: a sticky full-bleed media whose
- *    clip-path insets open from a rounded card to fullscreen on scroll (clip-path
- *    is GPU-composited, so it's buttery — no pinning, no layout thrash, no jumps).
- *
- * Entrance uses gsap.from() so content stays visible without JS.
+ * mont-fort/capital feel: the particle field is one continuous background; content
+ * "stages" sit over it (transparent) and play REAL content as you scroll:
+ *   - Articles stage: latest posts cross-fade one→next while the stage is sticky.
+ *     (Cross-fade is a CSS transition toggled by an .active class — cheap + smooth,
+ *      no per-frame tweening, so there's no "stop/jump".)
+ *   - Markets stage: live tiles (filled by markets-live.ts) reveal and keep ticking.
+ * Hero entrance + card reveals as before. Pointer magnetism lives in interactions.ts.
  */
 
 import { gsap, ScrollTrigger, SplitText, prefersReducedMotion } from '../3d/core/gsap-config';
 
 export function initHomepageScroll(): void {
-  if (prefersReducedMotion) return;
+  if (prefersReducedMotion) {
+    // Make sure article slides are all visible if motion is off.
+    document.querySelectorAll('.article-slide').forEach((s) => s.classList.add('active'));
+    return;
+  }
 
   // ── Hero entrance ────────────────────────────────────────────────────────────
   const heroH1 = document.querySelector<HTMLElement>('.hero-h1');
@@ -29,7 +32,7 @@ export function initHomepageScroll(): void {
   tl.from('.hero-subline', { y: 30, opacity: 0, duration: 0.7 }, 0.55)
     .from('.hero-cta > *', { y: 20, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'back.out(1.6)' }, 0.75);
 
-  // ── Fade-up reveals (batched, smooth, no pin) ───────────────────────────────
+  // ── Fade-up reveals (batched) ───────────────────────────────────────────────
   ScrollTrigger.batch('.reveal', {
     start: 'top 85%',
     onEnter: (els) => gsap.from(els, { y: 40, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08, overwrite: true }),
@@ -39,35 +42,47 @@ export function initHomepageScroll(): void {
     onEnter: (els) => gsap.from(els, { y: 50, opacity: 0, scale: 0.96, duration: 0.6, ease: 'power3.out', stagger: 0.09, overwrite: true }),
   });
 
-  // ── mont-fort: card → fullscreen on scroll (clip-path scrub) ────────────────
-  gsap.utils.toArray<HTMLElement>('.fs-panel').forEach((panel) => {
-    const media = panel.querySelector<HTMLElement>('.fs-panel-media');
-    const content = panel.querySelector<HTMLElement>('.fs-panel-content');
-    if (media) {
-      // Opens from a centered rounded card to a full-bleed panel as it scrolls up.
-      gsap.fromTo(
-        media,
-        { clipPath: 'inset(14% 16% round 28px)' },
-        {
-          clipPath: 'inset(0% 0% round 0px)',
-          ease: 'none',
-          scrollTrigger: { trigger: panel, start: 'top bottom', end: 'top top', scrub: 1 },
-        }
-      );
-      // Subtle media scale for depth ("living in the background")
-      gsap.fromTo(
-        media,
-        { scale: 1.12 },
-        { scale: 1, ease: 'none', scrollTrigger: { trigger: panel, start: 'top bottom', end: 'bottom top', scrub: 1.2 } }
-      );
-    }
-    if (content) {
-      gsap.from(content.children, {
-        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.12,
-        scrollTrigger: { trigger: panel, start: 'top 55%' },
+  // ── Articles stage — cross-fade through real posts while sticky ─────────────
+  const artStage = document.querySelector<HTMLElement>('.stage-articles');
+  if (artStage) {
+    const slides = gsap.utils.toArray<HTMLElement>('.article-slide', artStage);
+    const dots = gsap.utils.toArray<HTMLElement>('.stage-dot', artStage);
+    const n = slides.length;
+    if (n) {
+      let current = -1;
+      const setActive = (idx: number) => {
+        if (idx === current) return;
+        current = idx;
+        slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+        dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+      };
+      setActive(0);
+      ScrollTrigger.create({
+        trigger: artStage,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => setActive(Math.min(n - 1, Math.floor(self.progress * n * 0.999))),
+      });
+      // Eyebrow fades in once
+      gsap.from(artStage.querySelector('.stage-eyebrow'), {
+        y: 20, opacity: 0, duration: 0.6, ease: 'power3.out',
+        scrollTrigger: { trigger: artStage, start: 'top 70%' },
       });
     }
-  });
+  }
+
+  // ── Markets stage — reveal; markets-live.ts keeps the numbers ticking ───────
+  const mktStage = document.querySelector<HTMLElement>('.stage-markets');
+  if (mktStage) {
+    gsap.from(mktStage.querySelectorAll('.stage-eyebrow, .stage-heading, .stage-cta'), {
+      y: 30, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.12,
+      scrollTrigger: { trigger: mktStage, start: 'top 60%' },
+    });
+    ScrollTrigger.batch('#mkt-live .mkt-tile', {
+      start: 'top 85%',
+      onEnter: (els) => gsap.from(els, { y: 30, opacity: 0, scale: 0.95, duration: 0.6, ease: 'power3.out', stagger: 0.06, overwrite: true }),
+    });
+  }
 
   // ── CTA headline splittext ──────────────────────────────────────────────────
   const ctaH2 = document.querySelector<HTMLElement>('.cta-h2');
