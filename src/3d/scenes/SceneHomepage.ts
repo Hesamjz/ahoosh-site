@@ -1,16 +1,14 @@
 /**
- * SceneHomepage.ts — AHoosh.ai living background (custom WebGL shader)
+ * SceneHomepage.ts — AHoosh.ai living background (3 selectable WebGL looks)
  *
- * Hesam's choice (2026-06-19): a Lusion-class, code-only background. A full-screen
- * flowing aurora/fog shader (domain-warped fbm, navy+gold+blue) that:
- *   - reacts to the pointer (soft gold bloom follows the cursor),
- *   - EVOLVES as you scroll (warms + the flow drifts) → one continuous "living"
- *     background behind the whole page (mont-fort/capital feel),
- * plus a light particle layer on top for sparkle. No assets, themed in brand
- * colours, degrades on low-end / coarse-pointer devices.
+ * Three interactive background styles to choose from (pick via ?bg=1|2|3, default 1;
+ * an on-page switcher sets it). All are mouse-reactive + evolve on scroll:
+ *   1 — Molten gold ink: liquid gold veins/smoke in near-black navy (premium).
+ *   2 — Data nebula: soft gold+blue clouds + particles (cosmic / research).
+ *   3 — Fintech grid/waves: moving grid + flowing line-waves (markets / precise).
+ * Light particle sparkle on top (1 & 2). Degrades on low-end / coarse pointers.
  *
  * SceneFactory for SceneManager.loadScene('home', createHomepageScene).
- * Self-animates on gsap.ticker; reads window scroll for the evolve uniform.
  */
 
 import * as THREE from 'three';
@@ -44,128 +42,156 @@ float snoise(vec3 v){
 }
 `;
 
+const HEAD = (oct: number) => /* glsl */ `
+  ${SIMPLEX_GLSL}
+  varying vec2 vUv;
+  uniform float uTime; uniform float uScroll; uniform float uOpacity;
+  uniform vec2 uMouse; uniform vec2 uRes;
+  float fbm(vec3 p){ float v=0.0,a=0.5; for(int i=0;i<${oct};i++){ v+=a*snoise(p); p*=2.0; a*=0.5; } return v; }
+`;
+
+// 1 — Molten gold ink
+const FRAG_GOLD = (oct: number) => HEAD(oct) + /* glsl */ `
+  void main(){
+    vec2 p = vUv - 0.5; p.x *= uRes.x/uRes.y;
+    float t = uTime*0.04;
+    vec3 q = vec3(p*1.5, t);
+    float w = fbm(q + vec3(fbm(q*1.3), fbm(q+7.0), t*0.5));
+    float veins = pow(smoothstep(0.0, 0.9, abs(w)), 1.6);
+    float glow = smoothstep(0.55, 1.0, w + fbm(vec3(p*3.0, t)) * 0.4);
+    vec3 navy = vec3(0.006, 0.022, 0.06);
+    vec3 gold = vec3(0.92, 0.69, 0.26);
+    vec3 deepgold = vec3(0.5, 0.32, 0.08);
+    vec3 col = navy;
+    col = mix(col, deepgold, veins * (0.5 + uScroll*0.3));
+    col = mix(col, gold, glow * (0.6 + uScroll*0.4));
+    float md = distance(p, uMouse);
+    col += gold * 0.22 * smoothstep(0.4, 0.0, md);
+    col *= 1.0 - 0.5*dot(p,p);
+    gl_FragColor = vec4(col, uOpacity);
+  }
+`;
+
+// 2 — Data nebula
+const FRAG_NEBULA = (oct: number) => HEAD(oct) + /* glsl */ `
+  void main(){
+    vec2 p = vUv - 0.5; p.x *= uRes.x/uRes.y;
+    float t = uTime*0.035;
+    vec3 q = vec3(p*1.2 + vec2(0.0, -uScroll*1.2), t);
+    float n = fbm(q + vec3(fbm(q), fbm(q+4.0), 0.0));
+    float clouds = smoothstep(-0.4, 1.0, n);
+    vec3 navy = vec3(0.010, 0.035, 0.085);
+    vec3 blue = vec3(0.18, 0.45, 0.98);
+    vec3 gold = vec3(0.90, 0.68, 0.28);
+    vec3 col = navy;
+    col = mix(col, blue*0.7, clouds*0.5);
+    col = mix(col, gold, pow(clouds,2.5)*(0.35 + uScroll*0.4));
+    float md = distance(p, uMouse);
+    col += blue * 0.12 * smoothstep(0.5, 0.0, md);
+    col *= 1.0 - 0.45*dot(p,p);
+    gl_FragColor = vec4(col, uOpacity);
+  }
+`;
+
+// 3 — Fintech grid / waves
+const FRAG_GRID = (oct: number) => HEAD(oct) + /* glsl */ `
+  void main(){
+    vec2 p = vUv - 0.5; p.x *= uRes.x/uRes.y;
+    float t = uTime*0.15*(1.0+uScroll);
+    vec3 navy = vec3(0.010, 0.032, 0.08);
+    vec3 col = navy;
+    // perspective-ish grid
+    vec2 g = p; g.y += 0.5;
+    float gd = 0.0;
+    float gx = abs(fract(g.x*14.0 + sin(g.y*4.0+t)*0.1) - 0.5);
+    float gy = abs(fract(g.y*10.0 - t*0.1) - 0.5);
+    gd += smoothstep(0.49, 0.5, 1.0-gx) + smoothstep(0.49, 0.5, 1.0-gy);
+    col += vec3(0.16,0.36,0.7) * gd * 0.10;
+    // flowing line-waves (chart breathing)
+    float wave = 0.0;
+    for(int i=0;i<4;i++){
+      float fi = float(i);
+      float y = 0.15*sin(p.x*3.0 + t + fi*1.7 + uMouse.x*2.0) * (0.6+0.2*fi) - 0.1 + fi*0.06 - 0.1;
+      wave += smoothstep(0.012, 0.0, abs(p.y - y));
+    }
+    vec3 gold = vec3(0.95, 0.72, 0.30);
+    col += gold * wave * (0.8 + uScroll*0.5);
+    float md = distance(p, uMouse);
+    col += gold * 0.12 * smoothstep(0.35, 0.0, md);
+    col *= 1.0 - 0.4*dot(p,p);
+    gl_FragColor = vec4(col, uOpacity);
+  }
+`;
+
 export function createHomepageScene(scene: THREE.Scene, camera: THREE.PerspectiveCamera): () => void {
   const isCoarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
   const lowEnd = SceneManager.isLowEnd() || isCoarse;
-  const OCT = lowEnd ? 3 : 5;            // fbm octaves — cheaper on weak GPUs
-  const PARTS = lowEnd ? 700 : 1600;
+  const OCT = lowEnd ? 3 : 5;
+  const PARTS = lowEnd ? 600 : 1500;
+  const variant = new URLSearchParams(location.search).get('bg') || '1';
+  const frag = variant === '3' ? FRAG_GRID(OCT) : variant === '2' ? FRAG_NEBULA(OCT) : FRAG_GOLD(OCT);
 
   camera.position.set(0, 0, 8);
 
-  // ── Full-screen flowing aurora/fog shader (fullscreen quad) ─────────────────
-  const bgGeo = new THREE.PlaneGeometry(2, 2);
   const bgMat = new THREE.ShaderMaterial({
-    depthTest: false,
-    depthWrite: false,
+    depthTest: false, depthWrite: false,
     uniforms: {
-      uTime: { value: 0 },
-      uScroll: { value: 0 },     // 0..1 page progress — warms + drifts the flow
+      uTime: { value: 0 }, uScroll: { value: 0 },
       uMouse: { value: new THREE.Vector2(0, 0) },
       uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       uOpacity: { value: 0 },
     },
-    vertexShader: /* glsl */ `
-      varying vec2 vUv;
-      void main(){ vUv = position.xy * 0.5 + 0.5; gl_Position = vec4(position.xy, 0.0, 1.0); }
-    `,
-    fragmentShader: /* glsl */ `
-      ${SIMPLEX_GLSL}
-      varying vec2 vUv;
-      uniform float uTime; uniform float uScroll; uniform float uOpacity;
-      uniform vec2 uMouse; uniform vec2 uRes;
-      float fbm(vec3 p){ float v=0.0, a=0.5; for(int i=0;i<${OCT};i++){ v+=a*snoise(p); p*=2.0; a*=0.5; } return v; }
-      void main(){
-        vec2 p = vUv - 0.5; p.x *= uRes.x / uRes.y;
-        float t = uTime * 0.045;
-        // domain-warped fbm for a fluid look
-        vec3 q = vec3(p * 1.4, t);
-        float w = fbm(q + vec3(fbm(q), fbm(q + 5.2), 0.0));
-        // a second flow that drifts upward as you scroll the page
-        float flow = fbm(vec3(p * 2.1 + vec2(0.0, -uScroll * 1.6), t * 1.25));
-        float n = smoothstep(-0.5, 1.0, w + flow * 0.55);
-        vec3 navy = vec3(0.010, 0.038, 0.095);
-        vec3 blue = vec3(0.16, 0.42, 0.95);
-        vec3 gold = vec3(0.88, 0.66, 0.24);
-        vec3 col = navy;
-        col = mix(col, blue * 0.55, smoothstep(0.30, 0.85, n) * 0.45);
-        col = mix(col, gold, pow(max(n, 0.0), 2.0) * (0.30 + uScroll * 0.45)); // warmer downward
-        // soft gold bloom around the pointer
-        float md = distance(p, uMouse);
-        col += gold * 0.14 * smoothstep(0.45, 0.0, md);
-        // vignette
-        col *= 1.0 - 0.45 * dot(p, p);
-        gl_FragColor = vec4(col, uOpacity);
-      }
-    `,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = position.xy*0.5+0.5; gl_Position = vec4(position.xy,0.0,1.0); }',
+    fragmentShader: frag,
   });
-  const bg = new THREE.Mesh(bgGeo, bgMat);
-  bg.frustumCulled = false;
-  bg.renderOrder = -10;
+  const bg = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bgMat);
+  bg.frustumCulled = false; bg.renderOrder = -10;
   scene.add(bg);
 
-  // ── Light particle sparkle on top ───────────────────────────────────────────
-  const pos = new Float32Array(PARTS * 3);
-  const seed = new Float32Array(PARTS);
-  for (let i = 0; i < PARTS; i++) {
-    pos[i * 3] = (Math.random() - 0.5) * 18;
-    pos[i * 3 + 1] = (Math.random() - 0.5) * 12;
-    pos[i * 3 + 2] = (Math.random() - 0.5) * 8;
-    seed[i] = Math.random() * 100;
+  // Particle sparkle (skip on grid look for cleanliness)
+  let pMat: THREE.ShaderMaterial | null = null;
+  if (variant !== '3') {
+    const pos = new Float32Array(PARTS * 3); const seed = new Float32Array(PARTS);
+    for (let i = 0; i < PARTS; i++) {
+      pos[i*3] = (Math.random()-0.5)*18; pos[i*3+1] = (Math.random()-0.5)*12; pos[i*3+2] = (Math.random()-0.5)*8;
+      seed[i] = Math.random()*100;
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    pGeo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+    pMat = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 }, uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) } },
+      vertexShader: `${SIMPLEX_GLSL}
+        attribute float aSeed; uniform float uTime; uniform float uPixelRatio;
+        void main(){ vec3 p=position; float t=uTime*0.1+aSeed; p.x+=snoise(vec3(p.yz*0.18,t))*0.6; p.y+=snoise(vec3(p.xz*0.18,t+9.0))*0.6;
+          vec4 mv=modelViewMatrix*vec4(p,1.0); gl_Position=projectionMatrix*mv; gl_PointSize=0.03*uPixelRatio*900.0/-mv.z; }`,
+      fragmentShader: `uniform float uOpacity; void main(){ float d=length(gl_PointCoord-0.5); if(d>0.5) discard; gl_FragColor=vec4(0.9,0.7,0.32, smoothstep(0.5,0.0,d)*uOpacity); }`,
+    });
+    scene.add(new THREE.Points(pGeo, pMat));
   }
-  const pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  pGeo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
-  const pMat = new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 }, uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) } },
-    vertexShader: /* glsl */ `
-      ${SIMPLEX_GLSL}
-      attribute float aSeed; uniform float uTime; uniform float uPixelRatio;
-      void main(){
-        vec3 p = position; float t = uTime * 0.1 + aSeed;
-        p.x += snoise(vec3(p.yz*0.18, t))*0.6; p.y += snoise(vec3(p.xz*0.18, t+9.0))*0.6;
-        vec4 mv = modelViewMatrix * vec4(p,1.0);
-        gl_Position = projectionMatrix * mv;
-        gl_PointSize = 0.03 * uPixelRatio * 900.0 / -mv.z;
-      }
-    `,
-    fragmentShader: /* glsl */ `
-      uniform float uOpacity;
-      void main(){ float d=length(gl_PointCoord-0.5); if(d>0.5) discard; gl_FragColor=vec4(0.88,0.69,0.30, smoothstep(0.5,0.0,d)*uOpacity); }
-    `,
-  });
-  const points = new THREE.Points(pGeo, pMat);
-  scene.add(points);
 
   gsap.to(bgMat.uniforms.uOpacity, { value: 1, duration: 1.6, ease: 'power2.out' });
-  gsap.to(pMat.uniforms.uOpacity, { value: 0.6, duration: 1.6, ease: 'power2.out' });
+  if (pMat) gsap.to(pMat.uniforms.uOpacity, { value: 0.6, duration: 1.6, ease: 'power2.out' });
 
-  // ── Pointer + scroll reactivity ─────────────────────────────────────────────
   const aspect = () => window.innerWidth / window.innerHeight;
   const mouseTarget = new THREE.Vector2(0, 0);
-  const onMouse = (e: MouseEvent) => {
-    mouseTarget.set((e.clientX / window.innerWidth - 0.5) * aspect(), -(e.clientY / window.innerHeight - 0.5));
-  };
+  const onMouse = (e: MouseEvent) => mouseTarget.set((e.clientX/window.innerWidth-0.5)*aspect(), -(e.clientY/window.innerHeight-0.5));
   const onResize = () => bgMat.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
   window.addEventListener('mousemove', onMouse, { passive: true });
   window.addEventListener('resize', onResize);
 
   let scrollTarget = 0;
-  const onScroll = () => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    scrollTarget = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-  };
+  const onScroll = () => { const max = document.documentElement.scrollHeight - window.innerHeight; scrollTarget = max > 0 ? Math.min(1, window.scrollY/max) : 0; };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
   const onTick = (time: number) => {
     bgMat.uniforms.uTime.value = time;
-    pMat.uniforms.uTime.value = time;
+    if (pMat) pMat.uniforms.uTime.value = time;
     const m = bgMat.uniforms.uMouse.value as THREE.Vector2;
-    m.x += (mouseTarget.x - m.x) * 0.04;
-    m.y += (mouseTarget.y - m.y) * 0.04;
+    m.x += (mouseTarget.x - m.x) * 0.05; m.y += (mouseTarget.y - m.y) * 0.05;
     bgMat.uniforms.uScroll.value += (scrollTarget - bgMat.uniforms.uScroll.value) * 0.06;
-    points.rotation.y += 0.0004;
   };
   gsap.ticker.add(onTick);
 

@@ -95,6 +95,25 @@ const functions = [
     </div>
   </section>
 
+  <!-- TEMP background switcher (review phase) — pick 1/2/3, reloads with ?bg= -->
+  <div id="bg-switch" style="position:fixed;right:16px;bottom:16px;z-index:9998;display:flex;gap:6px;align-items:center;background:rgba(7,20,42,0.82);border:1px solid rgba(224,169,63,0.3);border-radius:999px;padding:6px 8px;backdrop-filter:blur(8px);font-family:var(--font-head);">
+    <span style="font-size:10px;color:var(--silver-muted);letter-spacing:0.12em;padding:0 4px;">BG</span>
+    <button data-bg="1" type="button" title="Molten gold" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(224,169,63,0.4);background:transparent;color:var(--silver-dim);font-size:12px;font-weight:700;cursor:pointer;">1</button>
+    <button data-bg="2" type="button" title="Data nebula" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(224,169,63,0.4);background:transparent;color:var(--silver-dim);font-size:12px;font-weight:700;cursor:pointer;">2</button>
+    <button data-bg="3" type="button" title="Fintech grid" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(224,169,63,0.4);background:transparent;color:var(--silver-dim);font-size:12px;font-weight:700;cursor:pointer;">3</button>
+  </div>
+  <script is:inline>
+    (function(){
+      var cur = new URLSearchParams(location.search).get('bg') || '1';
+      document.querySelectorAll('#bg-switch button').forEach(function(b){
+        if (b.getAttribute('data-bg') === cur) { b.style.background = 'var(--gold)'; b.style.color = '#07142a'; b.style.borderColor = 'var(--gold)'; }
+        b.addEventListener('click', function(){
+          var u = new URL(location.href); u.searchParams.set('bg', b.getAttribute('data-bg')); location.href = u.toString();
+        });
+      });
+    })();
+  </script>
+
   <!-- Brand sphere (restored vortex) — self-contained 2D canvas, no scroll dep. -->
   <script is:inline>
   (function(){
