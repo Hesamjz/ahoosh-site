@@ -1,25 +1,19 @@
 /**
- * SceneHomepage.ts — AHoosh.ai Homepage 3D Scene
- * Part II → PAGE 1: HOMEPAGE of AHoosh_3D_Interaction_Spec.docx v1.0.
+ * SceneHomepage.ts — AHoosh.ai Homepage ambient background
  *
- * A SceneFactory for SceneManager.loadScene('home', createHomepageScene).
- * Builds every named object from the spec (§Scene Setup):
- *   - ParticleField   4,000 Points (1,600 on coarse pointers), simplex-noise float shader
- *   - HeroOrb         IcosahedronGeometry(2,8), iridescent standard material, at (3,0,0)
- *   - ServiceGeo[4]   TorusKnotGeometry, one per service (strategy/digital/ai/web)
- *   - DNAHelix        two intertwined strands of small spheres (Segment C)
- *   - Constellation   80 points + LineSegments, morph scattered→connected (uConnect)
- *   - GlowRing        TorusGeometry that orbits the CTA (Segment F)
+ * REDESIGN (2026-06-19, per Hesam): the landing page is a smooth, high-contrast
+ * PORTAL to the product (News / Markets / Articles / tools) — no personal info,
+ * no scroll-pinned narrative (that caused the scroll "jumpers"). This scene is a
+ * calm, always-on particle field that lives BEHIND the content for a "live" feel.
+ * It does NOT couple to scroll, so scrolling stays buttery.
  *
- * The factory exposes a controller on `scene.userData.home` so homepage-scroll.ts
- * can drive objects from ScrollTrigger. Idle animation runs on gsap.ticker (the
- * SceneManager render loop only calls composer.render(), it does not tick scenes).
+ * SceneFactory for SceneManager.loadScene('home', createHomepageScene).
+ * Self-animates on gsap.ticker; gentle parallax toward the pointer.
  */
 
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 
-// Compact Ashima 3D simplex noise — used by the particle float vertex shader.
 const SIMPLEX_GLSL = /* glsl */ `
 vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
 vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
@@ -47,78 +41,53 @@ float snoise(vec3 v){
 }
 `;
 
-const GOLD = new THREE.Color('#d7a13d');
-const WHITE = new THREE.Color('#f7f4ec');
-
-export interface HomeController {
-  particleMat: THREE.ShaderMaterial;
-  heroOrb: THREE.Mesh;
-  serviceGeos: Record<'strategy' | 'digital' | 'ai' | 'web', THREE.Mesh>;
-  dnaHelix: THREE.Group;
-  constellation: { lines: THREE.LineSegments; mat: THREE.LineBasicMaterial };
-  glowRing: THREE.Mesh;
-  camera: THREE.PerspectiveCamera;
-  /** continuous idle-rotation speed multiplier (hover boosts) */
-  helixSpeed: number;
-}
+const GOLD = new THREE.Color('#e0a93f');
+const BLUE = new THREE.Color('#4ea3ff');
 
 export function createHomepageScene(scene: THREE.Scene, camera: THREE.PerspectiveCamera): () => void {
-  const isCoarse =
-    typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
-  const PARTICLE_COUNT = isCoarse ? 1600 : 4000; // §perf: 60% reduction on touch
+  const isCoarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+  const COUNT = isCoarse ? 1500 : 3200;
 
-  // ── Lights ────────────────────────────────────────────────────────────────
-  const ambient = new THREE.AmbientLight(0x88aaff, 0.6);
-  const key = new THREE.PointLight(0xffffff, 60, 100);
-  key.position.set(5, 5, 8);
-  const goldFill = new THREE.PointLight(0xd7a13d, 30, 100);
-  goldFill.position.set(-5, -2, 4);
-  scene.add(ambient, key, goldFill);
+  camera.position.set(0, 0, 8);
 
-  // ── ParticleField — 4,000 Points, simplex float shader ─────────────────────
-  const pPos = new Float32Array(PARTICLE_COUNT * 3);
-  const pSeed = new Float32Array(PARTICLE_COUNT);
-  const pColor = new Float32Array(PARTICLE_COUNT * 3);
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    pPos[i * 3] = (Math.random() - 0.5) * 16; // ±8 units
-    pPos[i * 3 + 1] = (Math.random() - 0.5) * 16;
-    pPos[i * 3 + 2] = (Math.random() - 0.5) * 16;
-    pSeed[i] = Math.random() * 100;
-    const c = Math.random() > 0.5 ? GOLD : WHITE;
-    pColor[i * 3] = c.r;
-    pColor[i * 3 + 1] = c.g;
-    pColor[i * 3 + 2] = c.b;
+  const pos = new Float32Array(COUNT * 3);
+  const seed = new Float32Array(COUNT);
+  const col = new Float32Array(COUNT * 3);
+  for (let i = 0; i < COUNT; i++) {
+    pos[i * 3] = (Math.random() - 0.5) * 18;
+    pos[i * 3 + 1] = (Math.random() - 0.5) * 12;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
+    seed[i] = Math.random() * 100;
+    const c = Math.random() > 0.35 ? GOLD : BLUE; // gold-dominant, blue accents
+    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
   }
-  const pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  pGeo.setAttribute('aSeed', new THREE.BufferAttribute(pSeed, 1));
-  pGeo.setAttribute('aColor', new THREE.BufferAttribute(pColor, 3));
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+  geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
 
-  const particleMat = new THREE.ShaderMaterial({
+  const mat = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     uniforms: {
       uTime: { value: 0 },
-      uSize: { value: 0.02 },
-      uOpacity: { value: 0 }, // animated 0→1 on entry (§Segment A)
+      uSize: { value: 0.03 },
+      uOpacity: { value: 0 },
       uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
     },
     vertexShader: /* glsl */ `
       ${SIMPLEX_GLSL}
       attribute float aSeed;
       attribute vec3 aColor;
-      uniform float uTime;
-      uniform float uSize;
-      uniform float uPixelRatio;
+      uniform float uTime; uniform float uSize; uniform float uPixelRatio;
       varying vec3 vColor;
       void main(){
         vColor = aColor;
         vec3 p = position;
-        float t = uTime * 0.15 + aSeed;
-        p.x += snoise(vec3(p.yz * 0.2, t)) * 0.6;
-        p.y += snoise(vec3(p.xz * 0.2, t + 10.0)) * 0.6;
-        p.z += snoise(vec3(p.xy * 0.2, t + 20.0)) * 0.6;
+        float t = uTime * 0.12 + aSeed;
+        p.x += snoise(vec3(p.yz * 0.18, t)) * 0.7;
+        p.y += snoise(vec3(p.xz * 0.18, t + 10.0)) * 0.7;
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         gl_Position = projectionMatrix * mv;
         gl_PointSize = uSize * uPixelRatio * 900.0 / -mv.z;
@@ -135,134 +104,29 @@ export function createHomepageScene(scene: THREE.Scene, camera: THREE.Perspectiv
       }
     `,
   });
-  const particles = new THREE.Points(pGeo, particleMat);
-  scene.add(particles);
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
 
-  // ── HeroOrb — Icosahedron(2,8), iridescent standard material at (3,0,0) ────
-  const orbGeo = new THREE.IcosahedronGeometry(2, 8);
-  const orbMat = new THREE.MeshStandardMaterial({
-    color: 0x0a1830,
-    metalness: 1.0,
-    roughness: 0.18,
-    emissive: GOLD,
-    emissiveIntensity: 0.25,
-    flatShading: true,
-  });
-  const heroOrb = new THREE.Mesh(orbGeo, orbMat);
-  heroOrb.position.set(3, 0, 0);
-  heroOrb.scale.setScalar(0); // pops in on entry
-  scene.add(heroOrb);
+  // Fade in once, then leave it running — no scroll coupling = no jank.
+  gsap.to(mat.uniforms.uOpacity, { value: 0.7, duration: 1.6, ease: 'power2.out' });
 
-  // ── ServiceGeo[4] — TorusKnot per service, hidden until Segment B ──────────
-  const knotGeo = new THREE.TorusKnotGeometry(0.55, 0.18, 120, 16);
-  const svcPositions: Record<string, [number, number, number]> = {
-    strategy: [-3.5, 1.6, -1],
-    digital: [-1.2, 1.6, -1],
-    ai: [1.2, 1.6, -1],
-    web: [3.5, 1.6, -1],
+  // Gentle pointer parallax (live feel, cheap).
+  const target = { x: 0, y: 0 };
+  const onMouse = (e: MouseEvent) => {
+    target.x = (e.clientX / window.innerWidth - 0.5) * 0.25;
+    target.y = (e.clientY / window.innerHeight - 0.5) * 0.25;
   };
-  const svcColors: Record<string, number> = {
-    strategy: 0xd7a13d,
-    digital: 0x4ea3ff,
-    ai: 0x9b7bff,
-    web: 0x46d6c0,
-  };
-  const serviceGeos = {} as HomeController['serviceGeos'];
-  (['strategy', 'digital', 'ai', 'web'] as const).forEach((k) => {
-    const mat = new THREE.MeshStandardMaterial({
-      color: svcColors[k],
-      metalness: 0.7,
-      roughness: 0.25,
-      emissive: new THREE.Color(svcColors[k]),
-      emissiveIntensity: 0.2,
-    });
-    const m = new THREE.Mesh(knotGeo, mat);
-    m.position.set(...svcPositions[k]);
-    m.scale.setScalar(0);
-    scene.add(m);
-    serviceGeos[k] = m;
-  });
+  window.addEventListener('mousemove', onMouse, { passive: true });
 
-  // ── DNAHelix — two intertwined strands (Segment C) ─────────────────────────
-  const dnaHelix = new THREE.Group();
-  const beadGeo = new THREE.SphereGeometry(0.08, 12, 12);
-  const beadMatA = new THREE.MeshStandardMaterial({ color: GOLD, emissive: GOLD, emissiveIntensity: 0.6, metalness: 0.6, roughness: 0.3 });
-  const beadMatB = new THREE.MeshStandardMaterial({ color: WHITE, emissive: 0x4ea3ff, emissiveIntensity: 0.4, metalness: 0.6, roughness: 0.3 });
-  const TURNS = 18;
-  for (let i = 0; i < TURNS; i++) {
-    const t = (i / TURNS) * Math.PI * 4;
-    const y = (i / TURNS) * 4 - 2;
-    const a = new THREE.Mesh(beadGeo, beadMatA);
-    a.position.set(Math.cos(t) * 0.8, y, Math.sin(t) * 0.8);
-    const b = new THREE.Mesh(beadGeo, beadMatB);
-    b.position.set(Math.cos(t + Math.PI) * 0.8, y, Math.sin(t + Math.PI) * 0.8);
-    dnaHelix.add(a, b);
-  }
-  dnaHelix.scale.setScalar(0);
-  dnaHelix.position.set(-2.5, 0, -1);
-  scene.add(dnaHelix);
-
-  // ── Constellation — 80 points + LineSegments, morph scattered→connected ────
-  const CN = 80;
-  const cPts: THREE.Vector3[] = [];
-  for (let i = 0; i < CN; i++) {
-    cPts.push(new THREE.Vector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 6, (Math.random() - 0.5) * 4));
-  }
-  const linePos: number[] = [];
-  for (let i = 0; i < CN; i++) {
-    for (let j = i + 1; j < CN; j++) {
-      if (cPts[i]!.distanceTo(cPts[j]!) < 2.2) {
-        linePos.push(cPts[i]!.x, cPts[i]!.y, cPts[i]!.z, cPts[j]!.x, cPts[j]!.y, cPts[j]!.z);
-      }
-    }
-  }
-  const lineGeo = new THREE.BufferGeometry();
-  lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePos, 3));
-  const lineMat = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0 });
-  const constellationLines = new THREE.LineSegments(lineGeo, lineMat);
-  constellationLines.scale.setScalar(0.001); // "scattered" = collapsed; uConnect grows it
-  scene.add(constellationLines);
-
-  // ── GlowRing — orbits the CTA (Segment F) ──────────────────────────────────
-  const ringGeo = new THREE.TorusGeometry(1.6, 0.04, 16, 100);
-  const ringMat = new THREE.MeshStandardMaterial({ color: GOLD, emissive: GOLD, emissiveIntensity: 2.0, metalness: 0.5, roughness: 0.2, transparent: true, opacity: 0 });
-  const glowRing = new THREE.Mesh(ringGeo, ringMat);
-  glowRing.scale.setScalar(0);
-  scene.add(glowRing);
-
-  // ── Controller exposed to the scroll script ────────────────────────────────
-  const controller: HomeController = {
-    particleMat,
-    heroOrb,
-    serviceGeos,
-    dnaHelix,
-    constellation: { lines: constellationLines, mat: lineMat },
-    glowRing,
-    camera,
-    helixSpeed: 1,
-  };
-  scene.userData.home = controller;
-
-  // ── Entry tweens (§Segment A) — particles + orb materialize on load ─────────
-  gsap.to(particleMat.uniforms.uOpacity, { value: 1, duration: 1.2, ease: 'power2.out' });
-  gsap.to(heroOrb.scale, { x: 1, y: 1, z: 1, duration: 1.4, ease: 'elastic.out(1,0.5)' });
-
-  // ── Idle animation loop on gsap.ticker ─────────────────────────────────────
   const onTick = (time: number) => {
-    particleMat.uniforms.uTime.value = time;
-    heroOrb.rotation.y += 0.0025;
-    heroOrb.rotation.x += 0.0008;
-    (['strategy', 'digital', 'ai', 'web'] as const).forEach((k) => {
-      serviceGeos[k].rotation.y += 0.01;
-    });
-    dnaHelix.rotation.y += 0.004 * controller.helixSpeed;
-    glowRing.rotation.z += 0.01;
+    mat.uniforms.uTime.value = time;
+    points.rotation.y += (target.x - points.rotation.y) * 0.02 + 0.0004;
+    points.rotation.x += (-target.y - points.rotation.x) * 0.02;
   };
   gsap.ticker.add(onTick);
 
-  // ── Cleanup ─────────────────────────────────────────────────────────────────
   return () => {
     gsap.ticker.remove(onTick);
-    delete scene.userData.home;
+    window.removeEventListener('mousemove', onMouse);
   };
 }
