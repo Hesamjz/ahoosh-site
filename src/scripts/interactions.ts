@@ -48,6 +48,24 @@ export function initInteractions(): void {
     }
   });
 
+  // ── 3D tilt on hover (article images etc.) ──────────────────────────────────
+  document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
+    const max = parseFloat(el.dataset.tilt || '9');
+    const inner = el.querySelector<HTMLElement>('[data-tilt-inner]') || el;
+    const glare = el.querySelector<HTMLElement>('[data-tilt-glare]');
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      gsap.to(inner, { rotationY: px * max * 2, rotationX: -py * max * 2, transformPerspective: 900, transformOrigin: 'center', scale: 1.04, duration: 0.4, ease: 'power2.out' });
+      if (glare) gsap.to(glare, { opacity: 0.18, x: px * 40, y: py * 40, duration: 0.4 });
+    });
+    el.addEventListener('mouseleave', () => {
+      gsap.to(inner, { rotationY: 0, rotationX: 0, scale: 1, duration: 0.7, ease: 'power3.out' });
+      if (glare) gsap.to(glare, { opacity: 0, duration: 0.5 });
+    });
+  });
+
   // ── Mouse parallax ───────────────────────────────────────────────────────────
   const layers = gsap.utils.toArray<HTMLElement>('[data-parallax]');
   if (layers.length) {

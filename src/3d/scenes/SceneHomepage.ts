@@ -128,7 +128,7 @@ export function createHomepageScene(scene: THREE.Scene, camera: THREE.Perspectiv
   const lowEnd = SceneManager.isLowEnd() || isCoarse;
   const OCT = lowEnd ? 3 : 5;
   const PARTS = lowEnd ? 600 : 1500;
-  const variant = new URLSearchParams(location.search).get('bg') || '1';
+  const variant = new URLSearchParams(location.search).get('bg') || '3';
   const frag = variant === '3' ? FRAG_GRID(OCT) : variant === '2' ? FRAG_NEBULA(OCT) : FRAG_GOLD(OCT);
 
   camera.position.set(0, 0, 8);
