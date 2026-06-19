@@ -24,8 +24,8 @@ const functions = [
     <h1 class="hero-h1" style="font-family:var(--font-head);font-weight:800;font-size:clamp(34px,7.5vw,72px);letter-spacing:-0.035em;line-height:1.02;color:#fff;margin-bottom:22px;max-width:880px;text-shadow:0 2px 40px rgba(0,0,0,0.6);">Markets, news &amp; research —<br/><span style="color:var(--gold);">clear enough to act on.</span></h1>
     <p class="hero-subline" style="font-size:clamp(15px,2.2vw,19px);line-height:1.7;color:var(--silver-dim);max-width:580px;margin:0 auto 36px;">Live market data, business news in four languages, and AI-assisted research and tools — in one place.</p>
     <div class="hero-cta" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-      <a href="/news" class="btn-primary" style="font-size:15px;padding:14px 28px;">Explore the News</a>
-      <a href="/markets" class="btn-secondary" style="font-size:15px;padding:14px 28px;">Live Markets</a>
+      <a href="/news" class="btn-primary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Explore the News</a>
+      <a href="/markets" class="btn-secondary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Live Markets</a>
     </div>
     <div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--silver-muted);">Scroll ↓</div>
   </section>
@@ -38,7 +38,7 @@ const functions = [
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:18px;">
       {functions.map((f) => (
-        <a href={f.href} class="fn-card" style="display:block;text-decoration:none;position:relative;padding:28px;border-radius:16px;background:linear-gradient(160deg,#0d2140 0%,#07142a 100%);border:1px solid rgba(224,169,63,0.18);box-shadow:0 8px 28px rgba(0,0,0,0.35);overflow:hidden;">
+        <a href={f.href} class="fn-card" data-magnetic="0.3" data-cursor="cta" data-cursor-label="OPEN" style="display:block;text-decoration:none;position:relative;padding:28px;border-radius:16px;background:linear-gradient(160deg,#0d2140 0%,#07142a 100%);border:1px solid rgba(224,169,63,0.18);box-shadow:0 8px 28px rgba(0,0,0,0.35);overflow:hidden;will-change:transform;">
           <div style={`position:absolute;top:0;left:0;width:100%;height:3px;background:${f.accent};opacity:0.9;`}></div>
           <div style={`display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${f.accent};border:1px solid ${f.accent}55;border-radius:999px;padding:3px 10px;margin-bottom:18px;`}>{f.tag}</div>
           <div style="font-family:var(--font-head);font-weight:700;font-size:22px;color:#fff;margin-bottom:10px;">{f.title}</div>
@@ -49,21 +49,29 @@ const functions = [
     </div>
   </section>
 
-  <!-- ══ LIVE HIGHLIGHT — Markets + News feature band ══ -->
-  <section style="padding:24px 24px 72px;max-width:1120px;margin:0 auto;">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;">
-      <a href="/markets" class="teaser-card reveal" style="display:block;text-decoration:none;padding:34px;border-radius:18px;background:linear-gradient(150deg,rgba(78,163,255,0.14) 0%,#07142a 60%);border:1px solid rgba(224,169,63,0.18);box-shadow:0 8px 28px rgba(0,0,0,0.35);">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#4ea3ff;margin-bottom:14px;">● Live · updates every minute</div>
-        <div style="font-family:var(--font-head);font-weight:800;font-size:clamp(22px,3vw,32px);color:#fff;margin-bottom:10px;">The Markets, live</div>
-        <div style="font-size:14px;line-height:1.7;color:var(--silver-dim);margin-bottom:18px;">FX, gold and crypto — tracked continuously, with last-known-good fallback so the numbers never go blank.</div>
-        <span class="arrow" style="color:var(--gold);font-weight:600;opacity:0.8;">Open the markets →</span>
-      </a>
-      <a href="/news" class="teaser-card reveal" style="display:block;text-decoration:none;padding:34px;border-radius:18px;background:linear-gradient(150deg,rgba(224,169,63,0.14) 0%,#07142a 60%);border:1px solid rgba(224,169,63,0.18);box-shadow:0 8px 28px rgba(0,0,0,0.35);">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">● Live · 4 languages</div>
-        <div style="font-family:var(--font-head);font-weight:800;font-size:clamp(22px,3vw,32px);color:#fff;margin-bottom:10px;">Business news, translated</div>
-        <div style="font-size:14px;line-height:1.7;color:var(--silver-dim);margin-bottom:18px;">Business and markets news in English, Persian, German and Serbian — written and translated with AI, refreshed through the day.</div>
-        <span class="arrow" style="color:var(--gold);font-weight:600;opacity:0.8;">Open the news →</span>
-      </a>
+  <!-- ══ FULLSCREEN SCALE PANELS — card → fullscreen on scroll (mont-fort feel) ══ -->
+  <section class="fs-panels">
+    <div class="fs-panel">
+      <div class="fs-panel-inner">
+        <a href="/news" class="fs-panel-media" aria-label="Open the news" style="background:radial-gradient(ellipse 90% 70% at 30% 20%,rgba(224,169,63,0.30) 0%,#150d02 45%,#07142a 100%);"></a>
+        <div class="fs-panel-content">
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">● Live · 4 languages</div>
+          <h2 style="font-family:var(--font-head);font-weight:800;font-size:clamp(30px,6vw,68px);letter-spacing:-0.03em;line-height:1.02;color:#fff;margin-bottom:18px;">Business news,<br/>translated as it breaks</h2>
+          <p style="font-size:clamp(15px,2vw,18px);line-height:1.7;color:var(--silver-dim);max-width:520px;margin:0 auto 26px;">Business and markets news in English, Persian, German and Serbian — written and translated with AI, refreshed through the day.</p>
+          <a href="/news" class="btn-primary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Open the news</a>
+        </div>
+      </div>
+    </div>
+    <div class="fs-panel">
+      <div class="fs-panel-inner">
+        <a href="/markets" class="fs-panel-media" aria-label="Open the markets" style="background:radial-gradient(ellipse 90% 70% at 70% 25%,rgba(78,163,255,0.32) 0%,#06182e 45%,#07142a 100%);"></a>
+        <div class="fs-panel-content">
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4ea3ff;margin-bottom:16px;">● Live · updates every minute</div>
+          <h2 style="font-family:var(--font-head);font-weight:800;font-size:clamp(30px,6vw,68px);letter-spacing:-0.03em;line-height:1.02;color:#fff;margin-bottom:18px;">The markets,<br/>always live</h2>
+          <p style="font-size:clamp(15px,2vw,18px);line-height:1.7;color:var(--silver-dim);max-width:520px;margin:0 auto 26px;">FX, gold and crypto — tracked continuously, with last-known-good fallback so the numbers never go blank.</p>
+          <a href="/markets" class="btn-primary" data-magnetic="0.5" style="font-size:15px;padding:14px 28px;will-change:transform;">Open the markets</a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -116,6 +124,7 @@ const functions = [
     import { SceneManager } from '../3d/core/SceneManager';
     import { createHomepageScene } from '../3d/scenes/SceneHomepage';
     import { initHomepageScroll } from '../scripts/homepage-scroll';
+    import { initInteractions } from '../scripts/interactions';
 
     const start = () => {
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -130,6 +139,7 @@ const functions = [
         }
       }
       initHomepageScroll();
+      initInteractions();
     };
 
     if ('requestIdleCallback' in window) {
@@ -138,4 +148,34 @@ const functions = [
       setTimeout(start, 400);
     }
   </script>
+
+  <style>
+    /* Fullscreen scale panels (mont-fort feel). The media is full-bleed; JS opens
+       its clip-path from a rounded card to fullscreen on scroll. Sticky inner
+       holds it on screen while the panel's extra height scrolls past. */
+    .fs-panels { position: relative; }
+    .fs-panel { height: 175vh; position: relative; }
+    .fs-panel-inner {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .fs-panel-media {
+      position: absolute; inset: 0; display: block;
+      clip-path: inset(0 0 round 0px);
+      will-change: clip-path, transform;
+    }
+    .fs-panel-media::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(3,10,24,0.55) 100%);
+    }
+    .fs-panel-content {
+      position: relative; z-index: 2; text-align: center;
+      padding: 0 24px; max-width: 760px;
+    }
+    @media (pointer: coarse) {
+      /* On touch, ease the scroll cost: shorter panels, no oversized media scale. */
+      .fs-panel { height: 130vh; }
+    }
+  </style>
 </BaseLayout>
