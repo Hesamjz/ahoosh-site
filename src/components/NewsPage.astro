@@ -934,7 +934,7 @@ function fetchTitleNews() {
   var updEl = document.getElementById('rss-updated');
   if (updEl) updEl.textContent = '↻…';
   fetch('/api/news?lang=' + (locale || 'en'), { cache: 'no-cache' }).then(function(r){ return r.json(); }).then(function(data) {
-    rssArticles = data.articles || [];
+    rssArticles = (data.articles || []).filter(function(a){ return a.lang === 'en' || a.lang === 'fa'; }); // launch: EN+FA only
     buildRssLangTabs(rssArticles);
     renderRssList();
     if (updEl) updEl.textContent = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });

@@ -1,7 +1,7 @@
 // Source POOL — deliberately broad and business-weighted. Per Hesam: the list
 // itself doesn't matter; the business-relevance gate (relevance.ts) decides what
 // survives. Drawn from _publishing_rules/news_sources_200.md. Add/remove freely.
-export type Source = { url: string; name: string; lang: "en" | "fa" | "de" | "sr" };
+export type Source = { url: string; name: string; lang: "en" | "fa" };
 
 export const SOURCES: Source[] = [
   // EN — markets/business/economy/trade/crypto/ai
@@ -33,17 +33,5 @@ export const SOURCES: Source[] = [
   { url: "https://digiato.com/feed", name: "Digiato", lang: "fa" },
   { url: "https://www.iranintl.com/feed/economy", name: "Iran Intl Economy", lang: "fa" },
   // DE — wirtschaft/börse/finance/tech
-  { url: "https://feeds.cms.handelsblatt.com/finanzen", name: "Handelsblatt Finanzen", lang: "de" },
-  { url: "https://feeds.cms.wiwo.de/rss/schlagzeilen", name: "WirtschaftsWoche", lang: "de" },
-  { url: "https://www.tagesschau.de/wirtschaft/index~rss2.xml", name: "Tagesschau Wirtschaft", lang: "de" },
-  { url: "https://www.wallstreet-online.de/rss/nachrichten-alle.xml", name: "wallstreet-online", lang: "de" },
-  { url: "https://t-online.de/wirtschaft/feed.rss", name: "t-online Wirtschaft", lang: "de" },
-  { url: "https://www.heise.de/rss/heise-atom.xml", name: "Heise", lang: "de" },
-  { url: "https://www.btc-echo.de/feed/", name: "BTC-Echo", lang: "de" },
-  { url: "https://www.derstandard.at/rss/wirtschaft", name: "Der Standard Wirtschaft", lang: "de" },
   // SR — business/economy (light)
-  { url: "https://www.biznis.rs/feed/", name: "Biznis.rs", lang: "sr" },
-  { url: "https://bif.rs/feed/", name: "Biznis i Finansije", lang: "sr" },
-  { url: "https://talas.rs/feed/", name: "Talas.rs", lang: "sr" },
-  { url: "https://n1info.rs/biznis/feed/", name: "N1 Biznis", lang: "sr" },
 ];
