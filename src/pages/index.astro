@@ -168,7 +168,14 @@ const caps = [
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const canvas = document.getElementById('canvas-3d');
       if (!reduced && canvas instanceof HTMLCanvasElement && SceneManager.isWebGLAvailable()) {
-        try { const sm = SceneManager.getInstance(); sm.mount(canvas); const bgParam = new URLSearchParams(location.search).get('bg'); sm.loadScene('home', bgParam === '6' ? createImageScene() : createHomepageScene); }
+        try {
+          const sm = SceneManager.getInstance(); sm.mount(canvas);
+          const bgParam = new URLSearchParams(location.search).get('bg');
+          const useShader = !!bgParam && ['1','2','3','4','5'].includes(bgParam);
+          // Image-first default: real photographic Mont-Fort-style background (drifts + zooms on scroll).
+          const HERO_IMG = 'https://images.unsplash.com/photo-1761437855740-c894da924d79?auto=format&fit=crop&w=1920&q=70';
+          sm.loadScene('home', useShader ? createHomepageScene : createImageScene({ src: HERO_IMG }));
+        }
         catch (e) { console.warn('[homepage] 3D bg skipped:', e); }
       }
       initHomepageScroll(); initInteractions(); initMarketsLive(); initNewsTicker();
