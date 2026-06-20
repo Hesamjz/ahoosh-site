@@ -180,7 +180,7 @@ const FRAG_SILK = (oct: number) => HEAD(oct) + /* glsl */ `
 export function createHomepageScene(scene: THREE.Scene, camera: THREE.PerspectiveCamera): () => void {
   const isCoarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
   const lowEnd = SceneManager.isLowEnd() || isCoarse;
-  const OCT = lowEnd ? 3 : 5;
+  const OCT = lowEnd ? 3 : 4;
   const PARTS = lowEnd ? 600 : 1500;
   const variant = new URLSearchParams(location.search).get('bg') || '3';
   const frag = variant === '5' ? FRAG_SILK(OCT) : variant === '4' ? FRAG_LINES(OCT) : variant === '3' ? FRAG_GRID(OCT) : variant === '2' ? FRAG_NEBULA(OCT) : FRAG_GOLD(OCT);

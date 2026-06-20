@@ -81,7 +81,9 @@ export class SceneManager {
       alpha: true,
       powerPreference: 'high-performance',
     });
-    this._renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Cap pixel ratio low — a full-screen shader at 2x retina starves the main
+    // thread and makes Lenis scroll stutter. 1.5 looks identical for an abstract bg.
+    this._renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     this._renderer.setSize(window.innerWidth, window.innerHeight);
     this._renderer.outputColorSpace = THREE.SRGBColorSpace;
     this._renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -94,11 +96,13 @@ export class SceneManager {
     // Post-processing — §1.3: UnrealBloomPass
     this._composer = new EffectComposer(this._renderer);
     this._composer.addPass(new RenderPass(this._scene, this._camera));
+    // Bloom at HALF resolution + lower strength — multi-pass bloom at full retina
+    // res was a big chunk of the per-frame cost behind the scroll jank.
     const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.8,  // strength
+      new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2),
+      0.5,  // strength
       0.4,  // radius
-      0.2   // threshold
+      0.25  // threshold
     );
     this._composer.addPass(bloomPass);
 
