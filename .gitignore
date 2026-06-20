@@ -30,3 +30,11 @@ pnpm-debug.log*
 *_result.txt
 # Local Claude settings have carried dev secrets (e.g. devsecret123). Never commit.
 .claude/settings.local.json
+
+# local archive of retired scripts / content (not for git)
+_archive/
+# wrangler local state
+.wrangler/
+workers/**/.wrangler/
+# locally-installed claude skills
+.claude/skills/
