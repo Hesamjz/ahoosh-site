@@ -4,6 +4,7 @@ import '../styles/motion-tokens.css';
 import '../styles/effects.css';
 import CustomCursor from '../components/CustomCursor.astro';
 import PageTransition from '../components/PageTransition.astro';
+import { ClientRouter } from 'astro:transitions';
 import {
   CHROME,
   LOCALES,
@@ -91,6 +92,9 @@ const alternates = isLocalized
     )}
     <slot name="head" />
 
+    <!-- View Transitions: seamless in-place navigation (activates PageTransition + persistent canvas) -->
+    <ClientRouter />
+
     <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1X8JHR84R"></script>
     <script is:inline>
@@ -109,6 +113,7 @@ const alternates = isLocalized
     -->
     <canvas
       id="canvas-3d"
+      transition:persist
       style="position:fixed;inset:0;z-index:-1;pointer-events:none;width:100%;height:100%;opacity:1;transition:opacity 300ms ease;"
       aria-hidden="true"
     ></canvas>
@@ -128,22 +133,19 @@ const alternates = isLocalized
     <script>
       // Bootstrap GSAP config + Lenis on every page.
       // Must run before any page-level ScrollTrigger code.
-      (async () => {
-        const { killPageTriggers } = await import('../3d/core/gsap-config');
+      // Re-run on every View Transitions navigation (astro:page-load fires on
+      // initial load too when ClientRouter is present). initLenis is idempotent.
+      const bootMotion = async () => {
         const { initLenis } = await import('../3d/core/lenis-setup');
-
-        // Check reduced-motion — if yes, skip Lenis smooth scroll entirely (§1.6)
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (!reduced) {
           initLenis();
-        }
-
-        // Disable Three.js scroll animation on reduced-motion (§1.6)
-        if (reduced) {
+        } else {
           const { SceneManager } = await import('../3d/core/SceneManager');
           SceneManager.getInstance().disableScrollAnimation();
         }
-      })();
+      };
+      document.addEventListener('astro:page-load', bootMotion);
     </script>
 
     <!-- Sticky Nav -->

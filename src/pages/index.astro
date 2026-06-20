@@ -173,8 +173,9 @@ const caps = [
       }
       initHomepageScroll(); initInteractions(); initMarketsLive(); initNewsTicker();
     };
-    if ('requestIdleCallback' in window) (window as any).requestIdleCallback(start, { timeout: 1500 });
-    else setTimeout(start, 400);
+    // Run on every View Transitions navigation that lands on the homepage.
+    // (astro:page-load fires on initial load too when ClientRouter is present.)
+    document.addEventListener('astro:page-load', () => { if (location.pathname === '/') start(); });
   </script>
 
   <style>
