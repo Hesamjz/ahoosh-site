@@ -418,6 +418,9 @@ const CHANNELS_ALL = [
   { id:'earth-tv',  name:'Earth TV',  lang:'tech', type:'youtube', vid:'HfgIFGbdGJ0' },
   { id:'bbc-earth', name:'BBC Earth', lang:'tech', type:'hls', src:'https://amg00793-amg00793c6-firetv-us-4067.playouts.now.amagi.tv/playlist.m3u8' },
   { id:'cgtn-doc',  name:'CGTN Doc',  lang:'tech', type:'hls', src:'https://english-livetx.cgtn.com/hls/yypdjlctzb_hd.m3u8' },
+  // Tech / Science — playlist channels (auto-play video-by-video; channels have no 24/7 live)
+  { id:'natgeo', name:'Nat Geo',   lang:'tech', sources:[{ type:'youtube', list:'UUpVm7bg6pXKo1Pr6k5kxG9A' }] },
+  { id:'ted',    name:'TED Talks', lang:'tech', sources:[{ type:'youtube', list:'UUAuUUnT6oDeKwE6v1NGQxug' }] },
 ];
 
 // ── Lang order ──
@@ -567,7 +570,7 @@ function tryNextSource() {
 }
 
 function playSrc(src) {
-  if (src.type === 'youtube') { loadYoutube(src.vid, src.chanId); }
+  if (src.type === 'youtube') { loadYoutube(src.vid, src.chanId, src.list); }
   else if (src.type === 'iframe') { loadIframe(src.src); }
   else { loadHls(src.src); }
 }
@@ -581,12 +584,14 @@ function loadIframe(src) {
   i.style.display = 'block';
 }
 
-function loadYoutube(vid, chanId) {
+function loadYoutube(vid, chanId, list) {
   var v = document.getElementById('live-video');
   var i = document.getElementById('live-iframe');
   v.style.display = 'none';
   if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-  var base = chanId
+  var base = list
+    ? 'https://www.youtube.com/embed/videoseries?list=' + list + '&autoplay=1&rel=0&playsinline=1&loop=1'
+    : chanId
     ? 'https://www.youtube.com/embed/live_stream?channel=' + chanId + '&autoplay=1&rel=0&playsinline=1'
     : 'https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0&playsinline=1&fs=0';
   i.src = base;
