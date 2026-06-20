@@ -380,184 +380,48 @@ const { locale, t } = Astro.props;
 // Sport & Tech channels use `sources` array for intelligent auto-fallback
 // ─────────────────────────────────────────────────────────────────────────────
 const CHANNELS_ALL = [
-  // English
-  { id:'france24-en', name:'France 24',    lang:'en', type:'youtube', vid:'HvZt-nh9sGg' },
-  { id:'aljazeera',   name:'Al Jazeera',   lang:'en', type:'hls',     src:'https://live-hls-web-aje-gcp.thehlive.com/AJE/index.m3u8' },
-  { id:'bbc-world',   name:'BBC World',    lang:'en', type:'hls',     src:'https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8' },
-  { id:'sky',         name:'Sky News',     lang:'en', type:'youtube', vid:'YDvsBbKfLPA' },
-  { id:'cnn',         name:'CNN',          lang:'en', type:'youtube', vid:'aB-6_-GboaM' },
-  { id:'cnn-i',       name:'CNN Intl',     lang:'en', type:'youtube', vid:'Z-nKTmdGpz0' },
-  { id:'dw-en',       name:'DW News',      lang:'en', type:'youtube', vid:'LuKwFajn37U' },
-  { id:'trt',         name:'TRT World',    lang:'en', type:'youtube', vid:'oNUi_iXNPeo' },
-  { id:'euronews-en', name:'Euronews EN',  lang:'en', type:'youtube', vid:'pykpO5kQJ98' },
-  { id:'reuters',     name:'Reuters',      lang:'en', type:'youtube', vid:'R02egjcxpUw' },
-  { id:'abc',         name:'ABC News',     lang:'en', type:'youtube', vid:'exIvC0l8x-Y' },
-  { id:'cbs',         name:'CBS News',     lang:'en', type:'youtube', vid:'khdVidn7AfQ' },
-  { id:'fox',         name:'Fox News',     lang:'en', type:'youtube', vid:'qEHza_8UL-k' },
-  { id:'wion',        name:'WION',         lang:'en', type:'youtube', vid:'X5yAyEpwxU0' },
-  { id:'gbnews',      name:'GB News',      lang:'en', type:'youtube', vid:'4fzMTueenHs' },
-  // Finance / Markets (English)
-  { id:'bloomberg',     name:'Bloomberg TV',   lang:'en', type:'hls',     src:'https://liveproduseast.global.ssl.fastly.net/us/index.m3u8' },
-  { id:'cnbc',          name:'CNBC',           lang:'en', type:'youtube', vid:'9NyxcX3rhQs' },
-  { id:'yahoo-finance', name:'Yahoo Finance',  lang:'en', type:'youtube', vid:'sSn4OeE38rY' },
-  // Persian — diaspora only (no Iranian state media)
+  // ───────────────────────────────────────────────────────────────────────────
+  // English + Persian + Sport + Science/Tech ONLY.
+  // Every source verified live on 2026-06-20 (YouTube via oEmbed title check,
+  // HLS via manifest fetch). Foreign-language channels (de/fr/es/sr/ar) and all
+  // dead/stale streams removed.
+  // ───────────────────────────────────────────────────────────────────────────
+  // English — News
+  { id:'france24-en', name:'France 24',   lang:'en', type:'youtube', vid:'HvZt-nh9sGg' },
+  { id:'aljazeera',   name:'Al Jazeera',  lang:'en', type:'hls',     src:'https://live-hls-web-aje-gcp.thehlive.com/AJE/index.m3u8' },
+  { id:'bbc-world',   name:'BBC World',   lang:'en', type:'hls',     src:'https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8' },
+  { id:'sky',         name:'Sky News',    lang:'en', type:'youtube', vid:'YDvsBbKfLPA' },
+  { id:'dw-en',       name:'DW News',     lang:'en', type:'youtube', vid:'LuKwFajn37U' },
+  { id:'trt',         name:'TRT World',   lang:'en', type:'youtube', vid:'oNUi_iXNPeo' },
+  { id:'euronews-en', name:'Euronews EN', lang:'en', type:'youtube', vid:'pykpO5kQJ98' },
+  { id:'cbs',         name:'CBS News',    lang:'en', type:'youtube', vid:'khdVidn7AfQ' },
+  // Persian — Sport
   {
     id:'shabakeh3', name:'90', lang:'fa', topic:'sport',
     sources:[
-      { type:'hls', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/manifest/video.m3u8' },
+      { type:'hls',    src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/manifest/video.m3u8' },
       { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/iframe' },
     ]
   },
   // Persian — News
-  { id:'bbc-fa',      name:'BBC Persian',     lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
-  { id:'iranintl',    name:'Iran Intl',        lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
-  { id:'manoto',      name:'Manoto',           lang:'fa', type:'youtube', vid:'bQJFCVV8hCg' },
-  { id:'voa-fa',      name:'VOA Farsi',        lang:'fa', type:'youtube', vid:'nkwyi4gDpxs' },
-  { id:'euronews-fa', name:'Euronews Persian', lang:'fa', type:'youtube', vid:'0GRLL6sA0oE' },
-  { id:'rfarda',      name:'Radio Farda',      lang:'fa', type:'hls', src:'https://rferl-ingest.akamaized.net/hls/live/2121768/tvmc01/playlist.m3u8' },
-  { id:'iranfarda',   name:'Irane Farda',      lang:'fa', type:'hls', src:'https://hls.iranfarda.live/hls/stream.m3u8' },
-  // German — News
-  { id:'welt',        name:'WELT',         lang:'de', type:'youtube', vid:'RRr0687ik44' },
-  { id:'tagesschau',  name:'Tagesschau',   lang:'de', type:'youtube', vid:'P02w1OLz6sQ' },
-  { id:'phoenix-de',  name:'Phoenix',      lang:'de', type:'youtube', vid:'VI30oGmvn90' },
-  { id:'ntv-de',      name:'n-tv',         lang:'de', type:'youtube', vid:'eJlI_K09elU' },
-  { id:'euronews-de', name:'Euronews DE',  lang:'de', type:'youtube', vid:'CQ3KsEbsYHs' },
-  { id:'arte',        name:'ARTE',         lang:'de', type:'youtube', vid:'3gjNL03uYWc' },
-  // German — Sport
-  { id:'sky-sport-de',  name:'Sky Sport DE',  lang:'de', topic:'sport', sources:[{ type:'youtube', chanId:'UC_VsQmcsFWUhGn3DTwiO8bg' }] },
-  { id:'eurosport-de',  name:'Eurosport DE',  lang:'de', topic:'sport', type:'youtube', vid:'7azI9NqBXTE' },
-  // French — News
-  { id:'france24-fr', name:'France 24 FR', lang:'fr', type:'youtube', vid:'a47ckXKZjxI' },
-  { id:'bfmtv',       name:'BFM TV',       lang:'fr', sources:[{ type:'youtube', chanId:'UCUsBMOIUl_ad6JUOC16DpmQ' }] },
-  { id:'lci',         name:'LCI',          lang:'fr', type:'youtube', vid:'yVwws2eGJEI' },
-  { id:'franceinfo',  name:'France Info',  lang:'fr', type:'youtube', vid:'NG7ZX42nZKc' },
-  { id:'euronews-fr', name:'Euronews FR',  lang:'fr', type:'youtube', vid:'NiRIbKwAejk' },
-  // Spanish — News
-  { id:'france24-es', name:'France 24 ES', lang:'es', sources:[{ type:'youtube', chanId:'UCCCPCZNChQdGa9EkATeye4g' }] },
-  { id:'tve24',       name:'TVE 24h',      lang:'es', type:'youtube', vid:'3GyDq846U08' },
-  { id:'euronews-es', name:'Euronews ES',  lang:'es', type:'youtube', vid:'O9mOtdZ-nSk' },
-  { id:'dw-es',       name:'DW Español',   lang:'es', type:'youtube', vid:'yZh3xsFqCt8' },
-  // Serbian / Balkan — News
-  { id:'rts1',        name:'RTS 1',        lang:'sr', type:'youtube', vid:'8jrBwSYdZEQ' },
-  { id:'hrt',         name:'HRT',          lang:'sr', type:'youtube', vid:'lbAeay4EVZ0' },
-  { id:'nova-s',        name:'Nova S',          lang:'sr', type:'youtube', vid:'sczAI-GB8Z0' },
-  { id:'n1-sr',         name:'N1 Srbija',       lang:'sr', type:'youtube', vid:'kduO0HKuqIY' },
-  { id:'euronews-sr',   name:'Euronews Serbia', lang:'sr', sources:[{ type:'youtube', chanId:'UCcEeLmoKP0B8DZvReDOmafw' }] },
-  // Arabic — News
-  { id:'aljazeera-ar',name:'Al Jazeera عر',lang:'ar', type:'youtube', vid:'N8xxOD0nT1Y' },
-  { id:'alarabiya',   name:'Al Arabiya',   lang:'ar', type:'youtube', vid:'n7eQejkXbnM' },
-  { id:'bbc-ar',      name:'BBC Arabic',   lang:'ar', type:'youtube', vid:'O1pGmVtj2Y8' },
-  { id:'indep-ar',    name:'Indep. Arabic',lang:'ar', type:'youtube', vid:'WKryGkxaPn4' },
-  { id:'dw-ar',       name:'DW Arabic',    lang:'ar', type:'youtube', vid:'AGkp2AL8e7o' },
-  { id:'alhadath',    name:'Al Hadath',    lang:'ar', type:'youtube', vid:'SPvxA_UuoYY' },
-  { id:'sky-ar',      name:'Sky Arabia',   lang:'ar', type:'youtube', vid:'ymYr5ze2XeA' },
-  { id:'cnn-ar',      name:'CNN Arabic',   lang:'ar', type:'youtube', vid:'n8osICWftpU' },
-  // Arabic — Sport + Euronews Arabic
-  { id:'euronews-ar', name:'Euronews عربية',lang:'ar', type:'youtube', vid:'xncZ2Vw3EyA' },
-  { id:'mbc-sport',   name:'MBC Sport',    lang:'ar', topic:'sport', sources:[{ type:'youtube', chanId:'UCy2CIDKYZqqbeJ0NHNcJ9sQ' }] },
-  // ── Sport ── verified HLS (re-engineered from parsatv.com, June 2026)
-  {
-    id:'fifa-plus', name:'FIFA+', lang:'sport',
-    sources:[
-      { type:'hls', src:'https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8' },
-    ]
-  },
-  {
-    id:'fifa-tv', name:'FIFA TV', lang:'sport',
-    sources:[
-      { type:'hls', src:'https://d2w9q46ikgrcwx.cloudfront.net/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8' },
-    ]
-  },
-  {
-    id:'redbull-tv', name:'Red Bull TV', lang:'sport',
-    sources:[
-      { type:'hls',     src:'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8' },
-      { type:'youtube', vid:'BgfBvF8XExc' },
-    ]
-  },
-  {
-    id:'bein-sports', name:'beIN Sports', lang:'sport',
-    sources:[
-      { type:'youtube', chanId:'UCJUCcJUeh0Cz2xyKwkw5Q1w' },
-    ]
-  },
-  {
-    id:'espn-live', name:'ESPN', lang:'sport',
-    sources:[
-      { type:'youtube', chanId:'UCiWLfSweyRNmLpgEHekhoAg' },
-    ]
-  },
-  {
-    id:'sky-sports-news', name:'Sky Sports News', lang:'sport',
-    sources:[
-      { type:'youtube', chanId:'UCcw05gGzjLIs5dnxGkQHMvw' },
-    ]
-  },
-  {
-    id:'dw-kickoff', name:'DW Kick-off!', lang:'sport',
-    sources:[{ type:'youtube', chanId:'UCb72Gn5LXaLEcsOuPKGfQOg' }]
-  },
-  {
-    id:'top-gear', name:'BBC Top Gear', lang:'sport',
-    sources:[
-      { type:'hls', src:'https://amg00793-amg00793c5-xumo-us-2664.playouts.now.amagi.tv/bbcstudios-bbctopgear8min-all/playlist.m3u8' },
-    ]
-  },
-  // ── Tech / Science / Documentary ── (re-engineered from parsatv.com, June 2026)
-  {
-    id:'nasa-tv', name:'NASA TV', lang:'tech',
-    sources:[
-      { type:'youtube', vid:'FuuC4dpSQ1M' },
-      { type:'youtube', vid:'uwXgcTc8oY8' },
-    ]
-  },
-  {
-    id:'bbc-earth', name:'BBC Earth', lang:'tech',
-    sources:[
-      { type:'hls', src:'https://amg00793-amg00793c6-firetv-us-4067.playouts.now.amagi.tv/playlist.m3u8' },
-    ]
-  },
-  {
-    id:'natgeo', name:'Nat Geo', lang:'tech',
-    sources:[
-      { type:'youtube', vid:'wVd836vHl6s' },
-    ]
-  },
-  {
-    id:'natgeo-wild', name:'Nat Geo Wild', lang:'tech',
-    sources:[
-      { type:'hls',     src:'https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8' },
-      { type:'youtube', vid:'wVd836vHl6s' },
-    ]
-  },
-  {
-    id:'cgtn-doc', name:'CGTN Doc', lang:'tech',
-    sources:[
-      { type:'hls', src:'https://english-livetx.cgtn.com/hls/yypdjlctzb_hd.m3u8' },
-    ]
-  },
-  {
-    id:'earth-tv', name:'Earth TV', lang:'tech',
-    sources:[
-      { type:'youtube', vid:'HfgIFGbdGJ0' },
-    ]
-  },
-  {
-    id:'dw-doc', name:'DW Documentary', lang:'tech',
-    sources:[{ type:'youtube', chanId:'UCQ1GpKa15ulyoQuxz7H4rng' }]
-  },
-  {
-    id:'ted', name:'TED Talks', lang:'tech',
-    sources:[{ type:'youtube', chanId:'UCAuUUnT6oDeKwE6v1NGQxug' }]
-  },
-  {
-    id:'tedx', name:'TEDx Talks', lang:'tech',
-    sources:[{ type:'youtube', chanId:'UCsT0YIqwnpJCM-mx7-gSA4Q' }]
-  },
+  { id:'bbc-fa',   name:'BBC Persian', lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
+  { id:'iranintl', name:'Iran Intl',   lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
+  { id:'voa-fa',   name:'VOA Farsi',   lang:'fa', type:'youtube', vid:'4u3IpQFQkj4' },
+  { id:'rfarda',   name:'Radio Farda', lang:'fa', type:'hls', src:'https://rferl-ingest.akamaized.net/hls/live/2121768/tvmc01/playlist.m3u8' },
+  // Sport — verified HLS
+  { id:'fifa-plus',  name:'FIFA+',        lang:'sport', type:'hls', src:'https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8' },
+  { id:'fifa-tv',    name:'FIFA TV',      lang:'sport', type:'hls', src:'https://d2w9q46ikgrcwx.cloudfront.net/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8' },
+  { id:'redbull-tv', name:'Red Bull TV',  lang:'sport', type:'hls', src:'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8' },
+  { id:'top-gear',   name:'BBC Top Gear', lang:'sport', type:'hls', src:'https://amg00793-amg00793c5-xumo-us-2664.playouts.now.amagi.tv/bbcstudios-bbctopgear8min-all/playlist.m3u8' },
+  // Tech / Science — verified
+  { id:'nasa-tv',   name:'NASA TV',   lang:'tech', type:'youtube', vid:'FuuC4dpSQ1M' },
+  { id:'earth-tv',  name:'Earth TV',  lang:'tech', type:'youtube', vid:'HfgIFGbdGJ0' },
+  { id:'bbc-earth', name:'BBC Earth', lang:'tech', type:'hls', src:'https://amg00793-amg00793c6-firetv-us-4067.playouts.now.amagi.tv/playlist.m3u8' },
+  { id:'cgtn-doc',  name:'CGTN Doc',  lang:'tech', type:'hls', src:'https://english-livetx.cgtn.com/hls/yypdjlctzb_hd.m3u8' },
 ];
 
 // ── Lang order ──
-var langOrder = [locale, 'en', 'sport', 'tech', 'de', 'fr', 'fa', 'ar', 'sr', 'es'];
+var langOrder = [locale, 'en', 'fa', 'sport', 'tech'];
 function langRank(l) { var i = langOrder.indexOf(l); return i < 0 ? 99 : i; }
 var SORTED = CHANNELS_ALL.slice().sort(function(a,b){ return langRank(a.lang)-langRank(b.lang); });
 
@@ -724,7 +588,7 @@ function loadYoutube(vid, chanId) {
   if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
   var base = chanId
     ? 'https://www.youtube.com/embed/live_stream?channel=' + chanId + '&autoplay=1&rel=0&playsinline=1'
-    : 'https://www.yout-ube.com/embed/' + vid + '?autoplay=1&rel=0&playsinline=1&fs=0';
+    : 'https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0&playsinline=1&fs=0';
   i.src = base;
   i.style.display = 'block';
 }
@@ -800,7 +664,7 @@ var nameSel  = document.getElementById('ch-name-sel');
 
 if (langSel && topicSel && nameSel) {
   // 1. Language dropdown — pure languages only, no sport/tech
-  var LANG_KEYS = ['en','fa','de','fr','es','sr','ar'];
+  var LANG_KEYS = ['en','fa'];
   LANG_KEYS.forEach(function(l) {
     var hasCh = CHANNELS_ALL.some(function(c){ return c.lang === l; });
     if (!hasCh) return;
