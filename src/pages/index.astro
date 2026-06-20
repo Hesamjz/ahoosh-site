@@ -160,6 +160,7 @@ const caps = [
     import { initInteractions } from '../scripts/interactions';
     import { initMarketsLive } from '../scripts/markets-live';
     import { initNewsTicker } from '../scripts/news-ticker';
+    import { initReveals } from '../scripts/reveal';
     const start = () => {
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const canvas = document.getElementById('canvas-3d');
@@ -167,7 +168,7 @@ const caps = [
         try { const sm = SceneManager.getInstance(); sm.mount(canvas); sm.loadScene('home', createHomepageScene); }
         catch (e) { console.warn('[homepage] 3D bg skipped:', e); }
       }
-      initHomepageScroll(); initInteractions(); initMarketsLive(); initNewsTicker();
+      initHomepageScroll(); initInteractions(); initMarketsLive(); initNewsTicker(); initReveals();
     };
     if ('requestIdleCallback' in window) (window as any).requestIdleCallback(start, { timeout: 1500 });
     else setTimeout(start, 400);
