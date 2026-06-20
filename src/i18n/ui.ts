@@ -5,7 +5,10 @@
 
 export type Locale = 'en' | 'fa' | 'de' | 'sr';
 
-export const LOCALES: Locale[] = ['fa', 'en', 'de', 'sr'];
+// English-only at launch (locked rule). Was ['fa','en','de','sr'] — fa/de/sr
+// routes + content stripped 2026-06-20. The LOCALE_META/CHROME records below
+// keep all four keys so restoring is a one-line change here.
+export const LOCALES: Locale[] = ['en'];
 
 export const LOCALE_META: Record<
   Locale,

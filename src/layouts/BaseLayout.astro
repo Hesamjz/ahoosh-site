@@ -185,7 +185,8 @@ const alternates = isLocalized
         <a href={`${base}/about`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.about}</a>
         <a href={`${base}/contact`} class="btn-primary" style="padding:10px 20px;font-size:12px;min-height:40px;display:inline-flex;align-items:center;">{t.bookCall}</a>
 
-        <!-- Language switcher (desktop) -->
+        <!-- Language switcher (desktop) — hidden while single-locale (English-only launch) -->
+        {LOCALES.length > 1 && (
         <div style="display:flex;gap:2px;border:1px solid rgba(215,161,61,0.25);border-radius:6px;padding:2px;">
           {LOCALES.map((l) => (
             <a
@@ -198,10 +199,12 @@ const alternates = isLocalized
             >{LOCALE_META[l].label}</a>
           ))}
         </div>
+        )}
       </nav>
 
       <!-- Mobile: switcher + hamburger -->
       <div style="display:flex;align-items:center;gap:10px;" id="mobile-controls">
+        {LOCALES.length > 1 && (
         <div id="mobile-lang" style="display:flex;gap:2px;border:1px solid rgba(215,161,61,0.25);border-radius:6px;padding:2px;">
           {LOCALES.map((l) => (
             <a
@@ -214,6 +217,7 @@ const alternates = isLocalized
             >{LOCALE_META[l].label}</a>
           ))}
         </div>
+        )}
         <button id="nav-toggle" aria-label="Open menu" style="
           background: none;
           border: none;
