@@ -14,6 +14,7 @@
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { SceneManager } from '../core/SceneManager';
+import { Parallax } from '../core/Parallax';
 
 const SIMPLEX_GLSL = /* glsl */ `
 vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
@@ -46,7 +47,7 @@ const HEAD = (oct: number) => /* glsl */ `
   ${SIMPLEX_GLSL}
   varying vec2 vUv;
   uniform float uTime; uniform float uScroll; uniform float uOpacity;
-  uniform vec2 uMouse; uniform vec2 uRes;
+  uniform vec2 uMouse; uniform vec2 uRes; uniform vec2 uParallax;
   float fbm(vec3 p){ float v=0.0,a=0.5; for(int i=0;i<${oct};i++){ v+=a*snoise(p); p*=2.0; a*=0.5; } return v; }
 `;
 
@@ -54,6 +55,7 @@ const HEAD = (oct: number) => /* glsl */ `
 const FRAG_GOLD = (oct: number) => HEAD(oct) + /* glsl */ `
   void main(){
     vec2 p = vUv - 0.5; p.x *= uRes.x/uRes.y;
+    p += uParallax; // field drifts up + left on scroll (pointer-nudged)
     float t = uTime*0.04;
     vec3 q = vec3(p*1.5, t);
     float w = fbm(q + vec3(fbm(q*1.3), fbm(q+7.0), t*0.5));
@@ -76,6 +78,7 @@ const FRAG_GOLD = (oct: number) => HEAD(oct) + /* glsl */ `
 const FRAG_NEBULA = (oct: number) => HEAD(oct) + /* glsl */ `
   void main(){
     vec2 p = vUv - 0.5; p.x *= uRes.x/uRes.y;
+    p += uParallax; // field drifts up + left on scroll (pointer-nudged)
     float t = uTime*0.035;
     vec3 q = vec3(p*1.2 + vec2(0.0, -uScroll*1.2), t);
     float n = fbm(q + vec3(fbm(q), fbm(q+4.0), 0.0));
@@ -97,6 +100,7 @@ const FRAG_NEBULA = (oct: number) => HEAD(oct) + /* glsl */ `
 const FRAG_GRID = (oct: number) => HEAD(oct) + /* glsl */ `
   void main(){
     vec2 p = vUv - 0.5; p.x *= uRes.x/uRes.y;
+    p += uParallax; // field drifts up + left on scroll (pointer-nudged)
     float t = uTime*0.15*(1.0+uScroll);
     vec3 navy = vec3(0.010, 0.032, 0.08);
     vec3 col = navy;
@@ -138,6 +142,7 @@ export function createHomepageScene(scene: THREE.Scene, camera: THREE.Perspectiv
     uniforms: {
       uTime: { value: 0 }, uScroll: { value: 0 },
       uMouse: { value: new THREE.Vector2(0, 0) },
+      uParallax: { value: new THREE.Vector2(0, 0) },
       uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       uOpacity: { value: 0 },
     },
@@ -174,31 +179,24 @@ export function createHomepageScene(scene: THREE.Scene, camera: THREE.Perspectiv
   gsap.to(bgMat.uniforms.uOpacity, { value: 1, duration: 1.6, ease: 'power2.out' });
   if (pMat) gsap.to(pMat.uniforms.uOpacity, { value: 0.6, duration: 1.6, ease: 'power2.out' });
 
-  const aspect = () => window.innerWidth / window.innerHeight;
-  const mouseTarget = new THREE.Vector2(0, 0);
-  const onMouse = (e: MouseEvent) => mouseTarget.set((e.clientX/window.innerWidth-0.5)*aspect(), -(e.clientY/window.innerHeight-0.5));
   const onResize = () => bgMat.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
-  window.addEventListener('mousemove', onMouse, { passive: true });
   window.addEventListener('resize', onResize);
 
-  let scrollTarget = 0;
-  const onScroll = () => { const max = document.documentElement.scrollHeight - window.innerHeight; scrollTarget = max > 0 ? Math.min(1, window.scrollY/max) : 0; };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  // Centralized scroll + pointer parallax (field drifts up/left on scroll)
+  const para = Parallax.getInstance();
+  para.start();
 
   const onTick = (time: number) => {
     bgMat.uniforms.uTime.value = time;
     if (pMat) pMat.uniforms.uTime.value = time;
-    const m = bgMat.uniforms.uMouse.value as THREE.Vector2;
-    m.x += (mouseTarget.x - m.x) * 0.05; m.y += (mouseTarget.y - m.y) * 0.05;
-    bgMat.uniforms.uScroll.value += (scrollTarget - bgMat.uniforms.uScroll.value) * 0.06;
+    (bgMat.uniforms.uMouse.value as THREE.Vector2).set(para.mouse.x, para.mouse.y);
+    (bgMat.uniforms.uParallax.value as THREE.Vector2).set(para.offset.x, para.offset.y);
+    bgMat.uniforms.uScroll.value = para.scroll;
   };
   gsap.ticker.add(onTick);
 
   return () => {
     gsap.ticker.remove(onTick);
-    window.removeEventListener('mousemove', onMouse);
     window.removeEventListener('resize', onResize);
-    window.removeEventListener('scroll', onScroll);
   };
 }

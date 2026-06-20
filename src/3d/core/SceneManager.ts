@@ -16,6 +16,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { PerfGovernor } from './PerfGovernor';
 
 export type SceneSlug = string;
 export type SceneFactory = (scene: THREE.Scene, camera: THREE.PerspectiveCamera) => () => void;
@@ -35,6 +36,7 @@ export class SceneManager {
   private _scrollAnimDisabled = false;
   private _canvas: HTMLCanvasElement | null = null;
   private _resizeObserver: ResizeObserver | null = null;
+  private _perf: PerfGovernor | null = null;
 
   /** Singleton accessor — safe to call before mount() */
   static getInstance(): SceneManager {
@@ -109,6 +111,9 @@ export class SceneManager {
     // Resize
     this._resizeObserver = new ResizeObserver(() => this._onResize());
     this._resizeObserver.observe(document.documentElement);
+
+    // Perf gating — skip frames when tab hidden / canvas off-screen
+    this._perf = new PerfGovernor(canvas);
 
     // Render loop
     this._startLoop();
@@ -200,7 +205,7 @@ export class SceneManager {
   private _startLoop(): void {
     const tick = () => {
       this._animFrameId = requestAnimationFrame(tick);
-      this._composer.render();
+      if (!this._perf || this._perf.shouldRender) this._composer.render();
     };
     this._animFrameId = requestAnimationFrame(tick);
   }
@@ -228,6 +233,8 @@ export class SceneManager {
 
   destroy(): void {
     cancelAnimationFrame(this._animFrameId);
+    this._perf?.dispose();
+    this._perf = null;
     this._disposeScene();
     this._renderer.dispose();
     this._renderer.forceContextLoss();
