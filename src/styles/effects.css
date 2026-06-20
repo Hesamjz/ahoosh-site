@@ -1,0 +1,30 @@
+/* effects.css — AHoosh.ai reusable visual effects ported from 21st.dev techniques.
+   No libraries imported — pure CSS, brand-tokened, reduced-motion aware. */
+
+/* Animated Shiny Text (after anurag-mishra22's "Animated Shiny Text").
+   Gold shimmer sweep for eyebrows, accents, and CTA labels.
+   Usage: <span class="shiny-text">Market Intelligence</span> */
+.shiny-text {
+  background: linear-gradient(
+    110deg,
+    var(--gold, #e0a93f) 0%,
+    var(--gold-light, #f4d98b) 18%,
+    #fff6e0 30%,
+    var(--gold-light, #f4d98b) 42%,
+    var(--gold, #e0a93f) 60%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shiny-sweep 6s linear infinite;
+}
+
+@keyframes shiny-sweep {
+  to { background-position: 200% center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shiny-text { animation: none; }
+}

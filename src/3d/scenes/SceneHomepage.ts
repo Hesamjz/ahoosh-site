@@ -155,13 +155,35 @@ const FRAG_LINES = (oct: number) => HEAD(oct) + /* glsl */ `
   }
 `;
 
+// 5 — Liquid silk (flowing mesh-gradient, after thanh's "Animated Shader Background")
+const FRAG_SILK = (oct: number) => HEAD(oct) + /* glsl */ `
+  void main(){
+    vec2 p = vUv - 0.5; p.x *= uRes.x/uRes.y;
+    p += uParallax; // field drifts up + left on scroll (pointer-nudged)
+    float t = uTime*0.03;
+    vec3 q = vec3(p*1.1, t);
+    float n1 = fbm(q + vec3(fbm(q+1.7), fbm(q*1.2-3.0), t*0.4));
+    float n2 = fbm(q*0.7 + vec3(2.0, n1*1.5, t*0.6));
+    float m = 0.5 + 0.5*sin((n1+n2)*3.14159 + uScroll*2.0);
+    vec3 navy = vec3(0.008, 0.028, 0.07);
+    vec3 blue = vec3(0.12, 0.30, 0.85);
+    vec3 gold = vec3(0.93, 0.70, 0.28);
+    vec3 col = mix(navy, blue, smoothstep(0.2, 0.7, m));
+    col = mix(col, gold, smoothstep(0.6, 1.0, m) * (0.5 + uScroll*0.4));
+    float md = distance(p, uMouse);
+    col += gold * 0.10 * smoothstep(0.45, 0.0, md);
+    col *= 1.0 - 0.4*dot(p,p);
+    gl_FragColor = vec4(col, uOpacity);
+  }
+`;
+
 export function createHomepageScene(scene: THREE.Scene, camera: THREE.PerspectiveCamera): () => void {
   const isCoarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
   const lowEnd = SceneManager.isLowEnd() || isCoarse;
   const OCT = lowEnd ? 3 : 5;
   const PARTS = lowEnd ? 600 : 1500;
   const variant = new URLSearchParams(location.search).get('bg') || '3';
-  const frag = variant === '4' ? FRAG_LINES(OCT) : variant === '3' ? FRAG_GRID(OCT) : variant === '2' ? FRAG_NEBULA(OCT) : FRAG_GOLD(OCT);
+  const frag = variant === '5' ? FRAG_SILK(OCT) : variant === '4' ? FRAG_LINES(OCT) : variant === '3' ? FRAG_GRID(OCT) : variant === '2' ? FRAG_NEBULA(OCT) : FRAG_GOLD(OCT);
 
   camera.position.set(0, 0, 8);
 
@@ -183,7 +205,7 @@ export function createHomepageScene(scene: THREE.Scene, camera: THREE.Perspectiv
 
   // Particle sparkle (skip on grid + lines looks for cleanliness)
   let pMat: THREE.ShaderMaterial | null = null;
-  if (variant !== '3' && variant !== '4') {
+  if (variant !== '3' && variant !== '4' && variant !== '5') {
     const pos = new Float32Array(PARTS * 3); const seed = new Float32Array(PARTS);
     for (let i = 0; i < PARTS; i++) {
       pos[i*3] = (Math.random()-0.5)*18; pos[i*3+1] = (Math.random()-0.5)*12; pos[i*3+2] = (Math.random()-0.5)*8;
