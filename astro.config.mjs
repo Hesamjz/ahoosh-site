@@ -8,7 +8,7 @@ export default defineConfig({
   site: 'https://ahoosh.ai',
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'fa', 'de', 'sr'],
+    locales: ['en'],
     routing: { prefixDefaultLocale: false },
   },
   integrations: [mdx(), sitemap()],
