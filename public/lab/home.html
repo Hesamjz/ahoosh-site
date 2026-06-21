@@ -311,8 +311,20 @@
 
   /* ===== Mobile sizing pass ===== */
   @media(max-width:820px){
-    #orbStage{opacity:.42;filter:brightness(.72)}
+    #orbStage{display:none!important}
     .sweep .panel.sw-anim .flabel,.sweep .panel.sw-anim .tag,.sweep .panel.sw-anim h2,.sweep .panel.sw-anim p,.sweep .panel.sw-anim .c-bullets,.sweep .panel.sw-anim .feed-item{opacity:1!important;transform:none!important;filter:none!important}
+    /* force clean vertical stacking — no pin, no overlap */
+    .frames{height:auto!important}
+    .frames-pin{position:static!important;height:auto!important;overflow:visible!important;display:block!important}
+    .frame{position:relative!important;inset:auto!important;opacity:1!important;height:auto!important;padding:46px 0!important;display:block!important}
+    .frames-rail{display:none!important}
+    .sweep{height:auto!important}
+    .sweep-pin{position:static!important;height:auto!important;overflow:visible!important;display:block!important}
+    .sweep-row{width:100%!important;flex-direction:column!important;transform:none!important;height:auto!important}
+    .panel{position:relative!important;width:100%!important;height:auto!important;min-height:0!important;padding:42px 0!important;display:block!important}
+    .frame-inner,.panel-inner{display:block!important}
+    .frame-inner>div,.panel-inner>div{margin-bottom:24px}
+    .frame .visual,.assess-visual{margin-top:8px}
     #fr4 .panel-inner,.panel-inner,.frame-inner{grid-template-columns:1fr!important;gap:26px!important;text-align:left}
     .frame{padding:52px 0!important}
     .panel{padding:46px 0!important}
@@ -625,6 +637,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
 /* ===== Background Earth globe (globe.gl) — large, persistent, mouse-reactive, behind content ===== */
 (function(){
   const stage=document.getElementById('orbStage'), host=document.getElementById('globeViz');
+  if(window.matchMedia('(max-width:820px)').matches){ if(stage) stage.style.display='none'; return; }
   if(!stage||!host||typeof Globe==='undefined') return;
   const GOLD="#e0a93f", GOLDL="#f2cd84", HOT="#fff3d0";
   const NAMED=[{name:"London",lat:51.5074,lng:-0.1278},{name:"New York",lat:40.7128,lng:-74.0060},{name:"Tehran",lat:35.6892,lng:51.3890},{name:"Paris",lat:48.8566,lng:2.3522}];
