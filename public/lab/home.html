@@ -280,6 +280,7 @@
   body.reduce .sweep-row{width:100%;flex-direction:column}
   body.reduce .panel{width:100%;height:auto;padding:60px 0}
   body.reduce .sweep-hint{display:none}
+  body.reduce .sweep .panel.sw-anim h2,body.reduce .sweep .panel.sw-anim .flabel,body.reduce .sweep .panel.sw-anim .tag,body.reduce .sweep .panel.sw-anim .lead,body.reduce .sweep .panel.sw-anim .c-bullets,body.reduce .sweep .panel.sw-anim p,body.reduce .sweep .panel.sw-anim .feed-item{opacity:1!important;transform:none!important;filter:none!important}
 
   /* ===== Responsive ===== */
   @media(max-width:900px){
@@ -693,8 +694,8 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   addEventListener('resize',function(){ if(window.matchMedia('(max-width:820px)').matches){ if(innerWidth===_lw) return; _lw=innerWidth; } size(); });
   const ctr=world.controls(); ctr.enabled=false;  // we drive rotation ourselves so it works over EVERY section
   const coarse=matchMedia('(pointer:coarse)').matches;
-  const MOB=window.matchMedia('(max-width:820px)').matches;
-  world.pointOfView({lat:6,lng:51.4,altitude:(window.matchMedia('(max-width:820px)').matches?3.0:1.85)},0);
+  const MOB=window.matchMedia('(max-width:820px)').matches || window.matchMedia('(max-height:600px) and (orientation:landscape)').matches;
+  world.pointOfView({lat:6,lng:51.4,altitude:(MOB?3.0:1.85)},0);
   stage.style.opacity='1';
   let paused=false, fStart=innerHeight*0.85, fEnd=innerHeight*5;
   function calcFade(){ const fr=document.querySelector('.frames'); fStart=(fr?fr.offsetTop:innerHeight)-innerHeight*0.1; fEnd=fr?(fr.offsetTop+fr.offsetHeight*0.9):innerHeight*5; }
@@ -714,7 +715,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
     else { visible = (p<1); stage.style.transform='translateY('+(p*innerHeight*1.12).toFixed(1)+'px)'; }
     if(!dragging && !reduce && visible) lng+=0.02;  // very slow, smooth idle rotation (starts at Tehran)
     cLng+=(lng-cLng)*0.12; cLat+=(lat-cLat)*0.12;
-    world.pointOfView({lat:cLat,lng:cLng,altitude:(window.matchMedia('(max-width:820px)').matches?3.0:1.85)},0);
+    world.pointOfView({lat:cLat,lng:cLng,altitude:(MOB?3.0:1.85)},0);
     if(dir&&cam) dir.position.copy(cam.position);
     if(!visible&&!paused){paused=true; world.pauseAnimation&&world.pauseAnimation();}
     else if(visible&&paused){paused=false; world.resumeAnimation&&world.resumeAnimation();}
