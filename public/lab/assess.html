@@ -1101,30 +1101,13 @@
   function openWebsite(){
     if(tracks) tracks.style.display = 'none';
     if(hero) hero.style.display = 'none';
-    detachKeys();
-    stage.innerHTML =
-      '<div class="aq-panel">'
-      + '<div id="aq-back-mount"></div>'
-      + '<span class="label">Website &amp; Digital Presence</span>'
-      + '<h2 class="display as-h2" style="margin:10px 0 8px">Automated website scan</h2>'
-      + '<p class="as-sub">Step 1 \u2014 enter your URL for a quick scan (performance, Core Web Vitals, SEO). Step 2 \u2014 12 fast questions about your wider digital presence.</p>'
-      + '<div class="aq-form">'
-      +   '<div class="aq-urlrow"><input class="aq-input" type="url" id="aq-url" placeholder="https://yourwebsite.com" autocomplete="off" />'
-      +   '<button class="aq-btn aq-btn-gold" id="aq-scanbtn" type="button">Run scan</button></div>'
-      +   '<div id="aq-urlmsg" class="aq-hint" style="margin-top:12px;min-height:1em"></div>'
-      +   '<div class="aq-scan" id="aq-scan" hidden></div>'
-      + '</div></div>';
-    stage.querySelector('#aq-back-mount').appendChild(backBtn('Back to tracks', showTrackSelect));
-    var input = stage.querySelector('#aq-url');
-    var btn = stage.querySelector('#aq-scanbtn');
-    var msg = stage.querySelector('#aq-urlmsg');
-    function run(){
-      if(msg) msg.textContent = '';
-      runScan();
-    }
-    if(btn) btn.addEventListener('click', run);
-    if(input) input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } });
-    reveal(); scrollTop();
+    startQuizObj(WEBSITE_TEST, 'Back to tracks', showTrackSelect, {
+      back: { label:'Back to tracks', fn: showTrackSelect },
+      title: 'Website check complete.',
+      lead: 'You mapped your digital presence. ',
+      fine: 'This preview shows the experience; the full site audit and AI fix list connect to the backend.',
+      cta: { label:'Book a call', href:'/contact' }
+    });
   }
   function runScan(){
     var scan = stage.querySelector('#aq-scan');
