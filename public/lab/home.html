@@ -1323,6 +1323,7 @@ document.querySelectorAll('[data-count]').forEach(el=>{
 .sweep-dots{display:none}
 @media(max-width:820px){
   html,body{overflow-x:hidden!important;max-width:100%!important}
+  .hero{justify-content:flex-start!important;padding-top:24vh!important}
   .hero h1{font-size:clamp(2.8rem,14vw,4.6rem)!important;line-height:1.0!important}
   .hero h1 .line2{font-size:.56em!important;-webkit-text-stroke:1px var(--gold-lt)!important}
   .sweep{height:auto!important}
@@ -1348,23 +1349,29 @@ document.querySelectorAll('[data-count]').forEach(el=>{
   /* tool marquee: keep visible on mobile */
   .cta-band .tools-bar{min-height:70px}
   #tickerTrack .tk-logo{opacity:.85!important;height:30px!important}
-  .sweep-dots{display:flex!important;justify-content:center;gap:9px;padding:16px 0 6px}
-  .sweep-dots i{width:8px;height:8px;border-radius:50%;background:rgba(224,169,63,.32);transition:.3s}
-  .sweep-dots i.on{background:var(--gold);width:24px;border-radius:5px;box-shadow:0 0 10px rgba(224,169,63,.6)}
+  .sweep-dots{display:flex!important;position:fixed;left:0;right:0;bottom:200px;z-index:40;justify-content:center;gap:10px;opacity:0;pointer-events:none;transition:opacity .35s}
+  .sweep-dots.show{opacity:1}
+  .sweep-dots i{width:9px;height:9px;border-radius:50%;background:rgba(224,169,63,.42);transition:.3s;box-shadow:0 2px 8px rgba(0,0,0,.55)}
+  .sweep-dots i.on{background:var(--gold);width:26px;border-radius:5px;box-shadow:0 0 12px rgba(224,169,63,.75)}
 }
 </style>
 <script id="sweep-dots-js">
 (function(){
   if(!window.matchMedia('(max-width:820px)').matches) return;
-  var row=document.getElementById('sweepRow'), dots=document.getElementById('sweepDots');
-  if(!row||!dots) return;
+  var row=document.getElementById('sweepRow'), dots=document.getElementById('sweepDots'), sweep=document.querySelector('.sweep');
+  if(!row||!dots||!sweep) return;
   var ds=[].slice.call(dots.children), panels=[].slice.call(row.children), raf=0;
-  function upd(){ raf=0; var sl=row.scrollLeft, best=0, bd=1e9;
+  function upd(){ raf=0;
+    var r=sweep.getBoundingClientRect(), mid=window.innerHeight*0.55;
+    dots.classList.toggle('show', r.top<mid && r.bottom>mid);
+    var sl=row.scrollLeft, best=0, bd=1e9;
     for(var i=0;i<panels.length;i++){ var d=Math.abs(panels[i].offsetLeft-sl); if(d<bd){bd=d;best=i;} }
     for(var j=0;j<ds.length;j++){ ds[j].classList.toggle('on', j===best); }
   }
-  row.addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true});
-  window.addEventListener('resize',function(){ if(!raf) raf=requestAnimationFrame(upd); });
+  function tick(){ if(!raf) raf=requestAnimationFrame(upd); }
+  row.addEventListener('scroll',tick,{passive:true});
+  window.addEventListener('scroll',tick,{passive:true});
+  window.addEventListener('resize',tick);
   upd();
 })();
 </script>
