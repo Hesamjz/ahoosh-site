@@ -465,10 +465,146 @@
     .as-get{grid-template-columns:1fr;}
     .as-flow{padding:26px 22px;}
   }
+
+  /* ============================================================
+     INTERACTIVE FLOW ENGINE — scoped .aq-*  (UI only, no scoring)
+     ============================================================ */
+  .as-card[data-track]{cursor:pointer;}
+  .as-card .as-card-go{margin-top:18px;display:inline-flex;align-items:center;gap:8px;
+    font-family:'Montserrat',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--gold);transition:gap .3s var(--ease);}
+  .as-card[data-track]:hover .as-card-go{gap:14px;}
+  .as-card .as-card-go svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:2;}
+  #aq-stage{position:relative;z-index:2;}
+  .aq-panel{opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease);}
+  .aq-panel.in{opacity:1;transform:none;}
+  .aq-back{display:inline-flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;
+    font-family:'Montserrat',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dim);padding:8px 0;margin-bottom:26px;transition:color .3s var(--ease),gap .3s var(--ease);}
+  .aq-back:hover{color:var(--gold-lt);gap:13px;}
+  .aq-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
+  .aq-menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;}
+  .aq-test{position:relative;text-align:left;cursor:pointer;border:1px solid rgba(205,214,230,.12);
+    border-radius:16px;padding:26px 24px;background:rgba(10,20,48,.42);backdrop-filter:blur(6px);font:inherit;color:inherit;
+    transition:transform .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease);}
+  .aq-test:hover{transform:translateY(-4px);border-color:rgba(224,169,63,.42);box-shadow:0 14px 44px rgba(224,169,63,.16);}
+  .aq-test .aq-test-no{font-family:'Montserrat',sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.12em;color:var(--gold);opacity:.65;}
+  .aq-test h4{font-family:'Montserrat',sans-serif;font-weight:700;font-size:1.04rem;color:#eef2fb;margin:10px 0 7px;line-height:1.25;}
+  .aq-test p{color:var(--silver);font-size:.84rem;line-height:1.5;margin:0 0 16px;}
+  .aq-test .aq-test-meta{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.66rem;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:8px;}
+  .aq-test .aq-test-meta b{color:var(--gold-lt);font-weight:700;}
+  .aq-quiz{border:1px solid rgba(224,169,63,.22);border-radius:20px;padding:38px 40px 34px;
+    background:rgba(10,20,48,.52);backdrop-filter:blur(10px);box-shadow:0 18px 60px rgba(0,0,0,.45);
+    min-height:440px;display:flex;flex-direction:column;}
+  .aq-quiz-top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:9px;flex-wrap:wrap;}
+  .aq-count{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);}
+  .aq-test-name{font-size:.68rem;letter-spacing:.04em;color:var(--dim);}
+  .aq-bar{height:6px;border-radius:6px;background:rgba(205,214,230,.12);overflow:hidden;margin:8px 0 0;}
+  .aq-bar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--gold-lt));transition:width .55s var(--ease);}
+  .aq-view{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;padding:30px 0 8px;overflow:hidden;}
+  .aq-slide{transition:opacity .26s var(--ease),transform .26s var(--ease);}
+  .aq-slide.exit-left{opacity:0;transform:translateX(-46px);}
+  .aq-slide.exit-right{opacity:0;transform:translateX(46px);}
+  .aq-slide.enter-right{opacity:0;transform:translateX(46px);}
+  .aq-slide.enter-left{opacity:0;transform:translateX(-46px);}
+  .aq-qtext{font-family:'Montserrat',sans-serif;font-weight:700;font-size:clamp(1.35rem,3.4vw,2rem);
+    color:#eef2fb;line-height:1.34;margin:0 auto 30px;text-align:center;max-width:640px;}
+  .aq-likert{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .aq-likert.cols5 .aq-lbtn{flex:1 1 0;min-width:120px;max-width:200px;}
+  .aq-likert.cols4 .aq-lbtn{flex:1 1 0;min-width:140px;max-width:230px;}
+  .aq-lbtn{position:relative;cursor:pointer;border:1px solid rgba(205,214,230,.16);border-radius:14px;
+    padding:18px 14px;background:rgba(3,6,15,.4);color:var(--silver);font:inherit;font-size:.9rem;text-align:center;
+    line-height:1.35;transition:border-color .25s var(--ease),background .25s var(--ease),transform .25s var(--ease),color .25s var(--ease);}
+  .aq-lbtn .aq-key{display:block;font-family:'Montserrat',sans-serif;font-weight:800;font-size:.7rem;
+    letter-spacing:.1em;color:var(--dim);margin-bottom:9px;transition:color .25s var(--ease);}
+  .aq-lbtn:hover{border-color:rgba(224,169,63,.45);transform:translateY(-3px);color:#eef2fb;}
+  .aq-lbtn:hover .aq-key{color:var(--gold);}
+  .aq-lbtn.sel{border-color:rgba(224,169,63,.6);background:rgba(224,169,63,.1);color:#eef2fb;
+    box-shadow:0 0 0 1px rgba(224,169,63,.4),0 10px 30px rgba(224,169,63,.16);}
+  .aq-lbtn.sel .aq-key{color:var(--gold-lt);}
+  .aq-lbtn.pulse{animation:aqPulse .4s var(--ease);}
+  @keyframes aqPulse{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
+  .aq-quiz-foot{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap;}
+  .aq-prev{display:inline-flex;align-items:center;gap:8px;background:none;border:1px solid rgba(205,214,230,.18);
+    border-radius:40px;cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.68rem;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--silver);padding:11px 22px;
+    transition:border-color .3s var(--ease),color .3s var(--ease),transform .3s var(--ease),opacity .3s var(--ease);}
+  .aq-prev:hover{border-color:var(--gold);color:var(--gold-lt);transform:translateX(-2px);}
+  .aq-prev[disabled]{opacity:.32;cursor:default;pointer-events:none;}
+  .aq-prev svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;}
+  .aq-hint{font-size:.66rem;letter-spacing:.05em;color:var(--dim);}
+  .aq-form{border:1px solid rgba(224,169,63,.22);border-radius:20px;padding:38px 40px 34px;
+    background:rgba(10,20,48,.52);backdrop-filter:blur(10px);box-shadow:0 18px 60px rgba(0,0,0,.45);}
+  .aq-steptitle{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--gold);margin:18px 0 24px;}
+  .aq-step{display:none;}
+  .aq-step.active{display:block;animation:aqFade .45s var(--ease);}
+  @keyframes aqFade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .aq-field{margin-bottom:22px;}
+  .aq-field label{display:block;font-size:.84rem;font-weight:600;color:#c8d4e0;margin-bottom:9px;}
+  .aq-field .req{color:var(--gold);}
+  .aq-input,.aq-select,.aq-area{width:100%;font:inherit;font-size:.92rem;color:#eef2fb;
+    background:rgba(3,6,15,.45);border:1px solid rgba(205,214,230,.16);border-radius:12px;padding:13px 15px;
+    transition:border-color .3s var(--ease),box-shadow .3s var(--ease);}
+  .aq-area{resize:vertical;min-height:78px;line-height:1.55;}
+  .aq-input::placeholder,.aq-area::placeholder{color:#566177;}
+  .aq-input:focus,.aq-select:focus,.aq-area:focus{outline:none;border-color:rgba(224,169,63,.5);box-shadow:0 0 0 3px rgba(224,169,63,.1);}
+  .aq-select{appearance:none;-webkit-appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0a93f' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;background-size:16px;padding-right:42px;}
+  .aq-select option{background:#0a1430;color:#eef2fb;}
+  .aq-row2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .aq-swot{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .aq-swot .s label{color:#5fd99a;} .aq-swot .w label{color:#f08a8a;}
+  .aq-swot .o label{color:#6db1ff;} .aq-swot .t label{color:var(--gold-lt);}
+  .aq-swot label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;}
+  .aq-formfoot{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap;}
+  .aq-btn{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
+    font-size:.7rem;padding:14px 30px;border-radius:40px;cursor:pointer;border:1.5px solid transparent;
+    transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);}
+  .aq-btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--navy);box-shadow:0 8px 28px rgba(224,169,63,.3);}
+  .aq-btn-gold:hover{transform:translateY(-3px);box-shadow:0 12px 38px rgba(224,169,63,.46);}
+  .aq-btn-ghost{background:transparent;border-color:rgba(205,214,230,.22);color:var(--silver);}
+  .aq-btn-ghost:hover{border-color:var(--gold);color:var(--gold-lt);}
+  .aq-urlrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;}
+  .aq-urlrow .aq-input{flex:1 1 320px;}
+  .aq-scan{margin-top:30px;display:flex;flex-direction:column;gap:14px;}
+  .aq-scanline{display:flex;align-items:center;gap:16px;border:1px solid rgba(205,214,230,.1);border-radius:14px;padding:16px 20px;background:rgba(3,6,15,.32);}
+  .aq-scanline .aq-scanname{flex:0 0 160px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.06em;color:#dbe3f1;}
+  .aq-scantrack{flex:1;height:6px;border-radius:6px;background:rgba(205,214,230,.1);overflow:hidden;}
+  .aq-scantrack i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--gold-lt));transition:width 1.1s var(--ease);}
+  .aq-scanstate{flex:0 0 92px;text-align:right;font-size:.7rem;letter-spacing:.06em;color:var(--dim);font-family:'Montserrat',sans-serif;font-weight:700;}
+  .aq-scanstate.done{color:#5fd99a;}
+  .aq-done{text-align:center;border:1px solid rgba(224,169,63,.24);border-radius:20px;padding:64px 40px;background:rgba(224,169,63,.05);backdrop-filter:blur(8px);}
+  .aq-done .aq-seal{width:74px;height:74px;border-radius:50%;margin:0 auto 26px;display:flex;align-items:center;justify-content:center;
+    border:1px solid rgba(224,169,63,.4);background:radial-gradient(circle at 30% 30%,rgba(224,169,63,.24),rgba(10,20,48,.5));box-shadow:0 8px 30px rgba(224,169,63,.22);}
+  .aq-done .aq-seal svg{width:34px;height:34px;stroke:var(--gold-lt);fill:none;stroke-width:1.8;stroke-dasharray:40;stroke-dashoffset:40;animation:aqDraw .8s var(--ease) .25s forwards;}
+  @keyframes aqDraw{to{stroke-dashoffset:0}}
+  .aq-done h3{font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;font-size:clamp(1.5rem,4vw,2.3rem);color:#fff;margin:0 0 14px;}
+  .aq-done p{color:var(--silver);max-width:480px;margin:0 auto 12px;line-height:1.62;}
+  .aq-done .aq-fine{font-size:.8rem;color:var(--dim);max-width:460px;margin:0 auto 30px;}
+  .aq-done .pill{margin-top:6px;display:inline-block;}
+  @media (prefers-reduced-motion:reduce){
+    .aq-panel,.aq-slide,.aq-step.active,.aq-bar i,.aq-scantrack i,.aq-done .aq-seal svg{
+      transition:none!important;animation:none!important;transform:none!important;opacity:1!important;stroke-dashoffset:0!important;}
+    .aq-lbtn.pulse{animation:none!important;}
+  }
+  @media (max-width:820px){
+    .aq-menu-grid{grid-template-columns:1fr;}
+    .aq-quiz,.aq-form{padding:26px 22px;min-height:0;}
+    .aq-qtext{font-size:1.45rem;margin-bottom:24px;}
+    .aq-likert{flex-direction:column;}
+    .aq-likert.cols5 .aq-lbtn,.aq-likert.cols4 .aq-lbtn{max-width:none;min-width:0;width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:16px 18px;}
+    .aq-lbtn .aq-key{margin-bottom:0;flex:0 0 auto;}
+    .aq-row2,.aq-swot{grid-template-columns:1fr;}
+    .aq-scanline .aq-scanname{flex-basis:110px;font-size:.72rem;}
+    .aq-done{padding:46px 24px;}
+  }
 </style>
 
 <!-- HERO -->
-<section class="as-section as-hero">
+<section class="as-section as-hero" id="aq-hero-sec">
   <div class="as-wrap">
     <span class="label">Free AI Diagnostics</span>
     <h1 class="display" data-anim="gradient">See where you<br>actually stand</h1>
@@ -478,55 +614,41 @@
 </section>
 
 <!-- TRACKS -->
-<section class="as-section">
+<section class="as-section" id="aq-tracks-sec">
   <div class="as-wrap">
     <span class="label">Three diagnostic tracks</span>
     <h2 class="display as-h2" data-anim="stagger">Choose where to start</h2>
-    <p class="as-sub">Take one or take all three. Any order, no account needed.</p>
+    <p class="as-sub">Take one or take all three. Any order, no account needed. Pick a card to begin.</p>
     <div class="as-tracks">
-      <div class="as-card" data-cursor>
+      <div class="as-card" data-track="personality" data-cursor>
         <div class="as-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></div>
         <h3>Personality &amp; Leadership</h3>
         <p>How you decide and lead, and where it shows up in the business.</p>
-        <div class="as-meta">8 questions &middot; ~5 min</div>
+        <div class="as-meta">6 assessments &middot; 129 questions</div>
+        <div class="as-card-go"><span>Start</span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
       </div>
-      <div class="as-card" data-cursor>
+      <div class="as-card" data-track="business" data-cursor>
         <div class="as-badge"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></div>
         <h3>Business Diagnostic</h3>
         <p>Strengths, gaps and market position, mapped clearly.</p>
-        <div class="as-meta">12 questions &middot; ~6 min</div>
+        <div class="as-meta">4 steps &middot; ~6 min</div>
+        <div class="as-card-go"><span>Start</span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
       </div>
-      <div class="as-card" data-cursor>
+      <div class="as-card" data-track="website" data-cursor>
         <div class="as-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg></div>
         <h3>Website &amp; Digital Presence</h3>
         <p>Speed, SEO and what is holding your site back.</p>
         <div class="as-meta">Paste your URL &middot; ~2 min</div>
+        <div class="as-card-go"><span>Start</span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SAMPLE FLOW -->
+<!-- INTERACTIVE FLOW ENGINE (mount) -->
 <section class="as-section">
   <div class="as-wrap">
-    <span class="label">A look inside</span>
-    <h2 class="display as-h2" data-anim="type">How a question feels</h2>
-    <p class="as-sub">A preview of the flow. Pick an option to see how it responds &mdash; nothing is saved here.</p>
-    <div class="as-flow">
-      <div class="as-flow-top">
-        <span class="as-prog-label">Question 3 of 12</span>
-        <span class="as-prog-tag">Business Diagnostic &middot; preview</span>
-      </div>
-      <div class="as-bar"><span></span></div>
-      <p class="as-q">When a new customer leaves, how clearly do you know why?</p>
-      <div class="as-opts" id="as-opts">
-        <button class="as-opt" data-cursor><span class="as-dot"></span><span>I track it and review the reasons regularly</span></button>
-        <button class="as-opt" data-cursor><span class="as-dot"></span><span>I have a rough sense but no real record</span></button>
-        <button class="as-opt" data-cursor><span class="as-dot"></span><span>I usually find out too late, if at all</span></button>
-        <button class="as-opt" data-cursor><span class="as-dot"></span><span>I have never looked at this properly</span></button>
-      </div>
-      <p class="as-flow-foot">Preview only &mdash; the real assessment saves your progress in the browser.</p>
-    </div>
+    <div id="aq-stage"></div>
   </div>
 </section>
 
@@ -569,17 +691,412 @@
   </div>
 </section>
 
-<script>
-  (function(){
-    var opts = document.querySelectorAll('#as-opts .as-opt');
-    if(!opts || !opts.length) return;
-    opts.forEach(function(btn){
+<script id="aq-engine">
+(function(){
+  var DATA = [{"title":"Big Five Personality","subtitle":"IPIP-50 · 50 questions · ~10 min","labels":["Very Inaccurate","Mod. Inaccurate","Neither","Mod. Accurate","Very Accurate"],"questions":["I am the life of the party.","I insult people.","I am always prepared.","I get stressed out easily.","I have a rich vocabulary.","I don't talk a lot.","I am interested in people.","I leave my belongings around.","I am relaxed most of the time.","I have difficulty understanding abstract ideas.","I feel comfortable around people.","I am not really interested in others.","I pay attention to details.","I worry about things.","I have a vivid imagination.","I keep in the background.","I sympathize with others' feelings.","I make a mess of things.","I seldom feel blue.","I am not interested in abstract ideas.","I start conversations.","I am not interested in other people's problems.","I get chores done right away.","I am easily disturbed.","I have excellent ideas.","I have little to say.","I have a soft heart.","I often forget to put things back in their proper place.","I am not easily bothered by things.","I do not have a good imagination.","I talk to a lot of different people at parties.","I don't have a soft side.","I like order.","I get upset easily.","I am quick to understand things.","I don't like to draw attention to myself.","I take time out for others.","I shirk my duties.","I don't get irritated easily.","I avoid difficult reading material.","I don't mind being the center of attention.","I feel little concern for others.","I follow a schedule.","I change my mood a lot.","I use difficult words.","I am quiet around strangers.","I feel others' emotions.","I don't see things through.","I rarely feel depressed.","I have difficulty imagining things."]},{"title":"Self-Esteem","subtitle":"Rosenberg Scale · 10 questions · ~3 min","labels":["Strongly Disagree","Disagree","Agree","Strongly Agree"],"questions":["On the whole, I am satisfied with myself.","At times I think I am no good at all.","I feel that I have a number of good qualities.","I am able to do things as well as most other people.","I feel I do not have much to be proud of.","I certainly feel useless at times.","I feel that I am a person of worth, at least on an equal plane with others.","I wish I could have more respect for myself.","All in all, I am inclined to feel that I am a failure.","I take a positive attitude toward myself."]},{"title":"Self-Efficacy","subtitle":"GSE · 10 questions · ~3 min","labels":["Not at all true","Hardly true","Moderately true","Exactly true"],"questions":["I can always manage to solve difficult problems if I try hard enough.","If someone opposes me, I can find the means and ways to get what I want.","It is easy for me to stick to my aims and accomplish my goals.","I am confident that I could deal efficiently with unexpected events.","Thanks to my resourcefulness, I know how to handle unforeseen situations.","I can solve most problems if I invest the necessary effort.","I can remain calm when facing difficulties because I can rely on my coping abilities.","When I am confronted with a problem, I can usually find several solutions.","If I am in trouble, I can usually think of a solution.","I can usually handle whatever comes my way."]},{"title":"Optimism","subtitle":"LOT-R · 10 questions · ~3 min","labels":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"],"questions":["In uncertain times, I usually expect the best.","It's easy for me to relax.","If something can go wrong for me, it will.","I'm always optimistic about my future.","I enjoy my friends a lot.","It's important for me to keep busy.","I hardly ever expect things to go my way.","I don't get upset too easily.","I rarely count on good things happening to me.","Overall, I expect more good things to happen to me than bad."]},{"title":"DISC Profile","subtitle":"IDRlabs · 24 questions · ~5 min","labels":["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"],"questions":["I prefer to take charge and lead rather than follow.","I am direct and get to the point quickly.","I push hard to achieve results.","I prefer to lead rather than be led.","I make quick decisions, even under pressure.","I am competitive and enjoy winning.","I enjoy meeting new people and making connections.","I am enthusiastic and expressive.","I motivate and inspire the people around me.","I prefer working with a group over working alone.","I focus on what's positive rather than what might go wrong.","I find it easy to strike up conversations with strangers.","I prefer a stable, predictable environment.","I am patient, even when others are not.","I value loyalty and long-term relationships.","I listen more than I talk in most conversations.","I avoid conflict and try to maintain harmony.","I prefer a steady, methodical pace over rushing.","I pay close attention to details and accuracy.","I follow rules and established procedures carefully.","I research thoroughly before making decisions.","I like to have clear expectations and defined roles.","I work in a systematic, step-by-step way.","I check my work carefully before submitting it."]},{"title":"Decision-Making Style","subtitle":"GDMS · 25 questions · ~5 min","labels":["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"],"questions":["I make decisions in a logical and systematic way.","When making decisions, I consider the situation methodically.","I weigh the pros and cons carefully before deciding.","My decision-making is well thought-out.","I think carefully before I make a final decision.","When I make a decision, it feels right to me even if I can't explain why.","My decisions are made based on gut feelings.","I trust my inner feelings and reactions when making choices.","I make decisions based on intuition.","My feelings help determine the importance of a decision for me.","I rely on other people's advice when making important decisions.","I need assistance from others when making important decisions.","I rarely make decisions without consulting other people.","I like to get the approval of others before proceeding.","I use advice from others to help make decisions.","I avoid making important decisions until I absolutely must.","I put off making decisions as long as possible.","I delay making decisions until it is too late.","I avoid making decisions whenever I can.","I postpone decisions whenever possible.","I often make snap decisions.","I am generally impulsive when making decisions.","I make decisions quickly without thinking much about them.","I often make fast decisions.","I make decisions on the spur of the moment."]}];
+  var stage = document.getElementById('aq-stage');
+  var tracks = document.getElementById('aq-tracks-sec');
+  var hero = document.getElementById('aq-hero-sec');
+  if(!stage) return;
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var SVG_ARROW_L = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+  var SVG_ARROW_R = '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // reveal helper
+  function reveal(){
+    var p = stage.querySelector('.aq-panel');
+    if(!p) return;
+    if(reduce){ p.classList.add('in'); return; }
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ p.classList.add('in'); }); });
+  }
+  function scrollTop(){
+    if(!stage) return;
+    var y = stage.getBoundingClientRect().top + window.pageYOffset - 96;
+    try{ window.scrollTo({top:y, behavior: reduce ? 'auto' : 'smooth'}); }catch(e){ window.scrollTo(0,y); }
+  }
+  function backBtn(label, fn){
+    var b = document.createElement('button');
+    b.className = 'aq-back'; b.type='button';
+    b.innerHTML = SVG_ARROW_L + '<span>' + esc(label) + '</span>';
+    b.addEventListener('click', fn);
+    return b;
+  }
+
+  // ---- track select (top-level) ----
+  function showTrackSelect(){
+    stage.innerHTML = '';
+    if(tracks) tracks.style.display = '';
+    if(hero) hero.style.display = '';
+    detachKeys();
+  }
+
+  // ---- PERSONALITY: test menu ----
+  function openPersonality(){
+    if(tracks) tracks.style.display = 'none';
+    if(hero) hero.style.display = 'none';
+    detachKeys();
+    var cards = DATA.map(function(t, i){
+      return '<button class="aq-test" type="button" data-test="'+i+'">'
+        + '<span class="aq-test-no">TEST 0'+(i+1)+'</span>'
+        + '<h4>'+esc(t.title)+'</h4>'
+        + '<p>'+esc(t.subtitle)+'</p>'
+        + '<span class="aq-test-meta"><b>'+t.questions.length+'</b> questions</span>'
+        + '</button>';
+    }).join('');
+    stage.innerHTML =
+      '<div class="aq-panel">'
+      + '<div id="aq-back-mount"></div>'
+      + '<span class="label">Personality &amp; Leadership</span>'
+      + '<h2 class="display as-h2" style="margin:10px 0 8px">Pick an assessment</h2>'
+      + '<p class="as-sub">Six validated instruments. Choose one to begin &mdash; answer at your own pace.</p>'
+      + '<div class="aq-menu-grid">'+cards+'</div>'
+      + '</div>';
+    stage.querySelector('#aq-back-mount').appendChild(backBtn('Back to tracks', showTrackSelect));
+    [].forEach.call(stage.querySelectorAll('.aq-test'), function(btn){
+      btn.addEventListener('click', function(){ startQuiz(parseInt(btn.getAttribute('data-test'),10)); });
+    });
+    reveal(); scrollTop();
+  }
+
+  // ---- QUIZ engine ----
+  var quiz = null;
+  function startQuiz(idx){
+    var t = DATA[idx];
+    if(!t) return;
+    quiz = { test:t, i:0, answers:new Array(t.questions.length).fill(-1) };
+    stage.innerHTML =
+      '<div class="aq-panel">'
+      + '<div id="aq-back-mount"></div>'
+      + '<div class="aq-quiz">'
+      +   '<div class="aq-quiz-top"><span class="aq-count" id="aq-count"></span>'
+      +     '<span class="aq-test-name">'+esc(t.title)+'</span></div>'
+      +   '<div class="aq-bar"><i id="aq-bar"></i></div>'
+      +   '<div class="aq-view" id="aq-view"></div>'
+      +   '<div class="aq-quiz-foot">'
+      +     '<button class="aq-prev" id="aq-prev" type="button">'+SVG_ARROW_L+'<span>Previous</span></button>'
+      +     '<span class="aq-hint">Tap an answer &middot; or press 1&ndash;'+t.labels.length+'</span>'
+      +   '</div>'
+      + '</div></div>';
+    stage.querySelector('#aq-back-mount').appendChild(backBtn('Back to tests', openPersonality));
+    stage.querySelector('#aq-prev').addEventListener('click', function(){ goPrev(); });
+    attachKeys();
+    renderQuestion('enter-right');
+    reveal(); scrollTop();
+  }
+
+  function renderQuestion(enterDir){
+    if(!quiz) return;
+    var t = quiz.test, n = t.questions.length, i = quiz.i;
+    var view = document.getElementById('aq-view');
+    var bar = document.getElementById('aq-bar');
+    var count = document.getElementById('aq-count');
+    var prev = document.getElementById('aq-prev');
+    if(!view) return;
+    if(count) count.textContent = 'Question ' + (i+1) + ' of ' + n;
+    if(bar) bar.style.width = ((i)/n*100) + '%';
+    if(prev) prev.disabled = (i===0);
+
+    var cols = t.labels.length;
+    var opts = t.labels.map(function(lab, k){
+      var selCls = quiz.answers[i]===k ? ' sel' : '';
+      return '<button class="aq-lbtn'+selCls+'" type="button" data-k="'+k+'">'
+        + '<span class="aq-key">'+(k+1)+'</span>' + esc(lab) + '</button>';
+    }).join('');
+    var html = '<div class="aq-slide '+(reduce?'':enterDir)+'">'
+      + '<p class="aq-qtext">'+esc(t.questions[i])+'</p>'
+      + '<div class="aq-likert cols'+cols+'">'+opts+'</div>'
+      + '</div>';
+    view.innerHTML = html;
+    var slide = view.querySelector('.aq-slide');
+    if(!reduce && slide){
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        slide.classList.remove('enter-right','enter-left'); }); });
+    }
+    [].forEach.call(view.querySelectorAll('.aq-lbtn'), function(b){
+      b.addEventListener('click', function(){ choose(parseInt(b.getAttribute('data-k'),10), b); });
+    });
+  }
+
+  var animating = false;
+  function choose(k, btn){
+    if(!quiz || animating) return;
+    quiz.answers[quiz.i] = k;
+    [].forEach.call(document.querySelectorAll('#aq-view .aq-lbtn'), function(b){ b.classList.remove('sel'); });
+    if(btn){ btn.classList.add('sel'); if(!reduce) btn.classList.add('pulse'); }
+    var last = (quiz.i >= quiz.test.questions.length - 1);
+    var delay = reduce ? 0 : 250;
+    animating = true;
+    setTimeout(function(){
+      if(last){ animating=false; finishQuiz(); return; }
+      advance(1);
+    }, delay);
+  }
+
+  function advance(dir){
+    var view = document.getElementById('aq-view');
+    var slide = view ? view.querySelector('.aq-slide') : null;
+    function next(){
+      quiz.i += dir;
+      renderQuestion(dir>0 ? 'enter-right' : 'enter-left');
+      var bar = document.getElementById('aq-bar');
+      if(bar) bar.style.width = ((quiz.i)/quiz.test.questions.length*100) + '%';
+      animating = false;
+    }
+    if(reduce || !slide){ next(); return; }
+    slide.classList.add(dir>0 ? 'exit-left' : 'exit-right');
+    setTimeout(next, 240);
+  }
+
+  function goPrev(){
+    if(!quiz || animating || quiz.i===0) return;
+    animating = true;
+    advance(-1);
+  }
+
+  // keyboard
+  var keyHandler = null;
+  function attachKeys(){
+    detachKeys();
+    keyHandler = function(e){
+      if(!quiz) return;
+      var t = quiz.test;
+      if(e.key === 'ArrowLeft'){ e.preventDefault(); goPrev(); return; }
+      if(e.key === 'ArrowRight'){
+        e.preventDefault();
+        if(quiz.answers[quiz.i] > -1 && quiz.i < t.questions.length-1 && !animating){ animating=true; advance(1); }
+        return;
+      }
+      var num = parseInt(e.key,10);
+      if(!isNaN(num) && num>=1 && num<=t.labels.length){
+        e.preventDefault();
+        var btn = document.querySelector('#aq-view .aq-lbtn[data-k="'+(num-1)+'"]');
+        choose(num-1, btn);
+      }
+    };
+    document.addEventListener('keydown', keyHandler);
+  }
+  function detachKeys(){ if(keyHandler){ document.removeEventListener('keydown', keyHandler); keyHandler=null; } }
+
+  function finishQuiz(){
+    detachKeys();
+    var name = quiz ? quiz.test.title : 'assessment';
+    showDone({
+      back: { label:'Back to tests', fn: openPersonality },
+      title: 'Your responses are in.',
+      lead: 'You answered every question in the ' + name + '. ',
+      fine: 'This preview shows the experience; AI scoring and your full report connect to the backend.',
+      cta: { label:'Get my report', href:'/contact' }
+    });
+  }
+
+  // ---- BUSINESS DIAGNOSTIC ----
+  function openBusiness(){
+    if(tracks) tracks.style.display = 'none';
+    if(hero) hero.style.display = 'none';
+    detachKeys();
+    stage.innerHTML =
+      '<div class="aq-panel">'
+      + '<div id="aq-back-mount"></div>'
+      + '<span class="label">Business Diagnostic</span>'
+      + '<h2 class="display as-h2" style="margin:10px 0 8px">Map your position</h2>'
+      + '<p class="as-sub" id="aq-bz-prog">Step 1 of 4</p>'
+      + '<div class="aq-bar" style="margin-bottom:26px"><i id="aq-bz-bar" style="width:25%"></i></div>'
+      + '<div class="aq-form">'
+      + bizStep1() + bizStep2() + bizStep3() + bizStep4()
+      + '</div></div>';
+    stage.querySelector('#aq-back-mount').appendChild(backBtn('Back to tracks', showTrackSelect));
+    var cur = 1, total = 4;
+    function go(n){
+      var a = stage.querySelector('#aq-step-'+cur); if(a) a.classList.remove('active');
+      cur = n;
+      var b = stage.querySelector('#aq-step-'+cur); if(b) b.classList.add('active');
+      var bar = stage.querySelector('#aq-bz-bar'); if(bar) bar.style.width = (cur/total*100)+'%';
+      var pl = stage.querySelector('#aq-bz-prog'); if(pl) pl.textContent = 'Step '+cur+' of '+total;
+      scrollTop();
+    }
+    [].forEach.call(stage.querySelectorAll('[data-go]'), function(btn){
       btn.addEventListener('click', function(){
-        opts.forEach(function(o){ o.classList.remove('sel'); });
-        btn.classList.add('sel');
+        var v = btn.getAttribute('data-go');
+        if(v==='done'){ bizDone(); } else { go(parseInt(v,10)); }
       });
     });
-  })();
+    function bizDone(){
+      showDone({
+        back: { label:'Back to tracks', fn: showTrackSelect },
+        title: 'Business diagnostic complete.',
+        lead: 'Your business profile, SWOT, value proposition and ideal customer are captured. ',
+        fine: 'This preview shows the experience; AI scoring and your full report connect to the backend.',
+        cta: { label:'Book a call', href:'/contact' }
+      });
+    }
+    reveal(); scrollTop();
+  }
+  function sel(id, label, opts){
+    return '<div class="aq-field"><label>'+label+'</label><select class="aq-select" id="'+id+'">'
+      + opts.map(function(o,i){ return '<option'+(i===0?' value=""':'')+'>'+o+'</option>'; }).join('')
+      + '</select></div>';
+  }
+  function area(id, label, ph, req){
+    return '<div class="aq-field"><label>'+label+(req?' <span class="req">*</span>':'')+'</label>'
+      + '<textarea class="aq-area" id="'+id+'" rows="3" placeholder="'+ph+'"></textarea></div>';
+  }
+  function bizStep1(){
+    return '<div class="aq-step active" id="aq-step-1">'
+      + '<div class="aq-steptitle">About your business</div>'
+      + area('bz-desc','What does your business do?','e.g. We distribute premium beverages to 400+ B2B customers across the Balkans.',true)
+      + '<div class="aq-row2">'
+      +   sel('bz-industry','Industry',['Select industry','B2B Distribution','SaaS / Software','Professional Services','E-commerce / Retail','Manufacturing','Construction / Real Estate','Healthcare','Education / Training','Marketing / Creative Agency','Food & Beverage','Logistics / Supply Chain','Finance / FinTech','Other'])
+      +   sel('bz-stage','Business stage',['Select stage','Pre-revenue (idea / prototype)','Early (0–1 year, first customers)','Growth (1–3 years, scaling)','Established (3+ years, stable)','Mature (profitable, looking to expand)'])
+      + '</div>'
+      + '<div class="aq-row2">'
+      +   sel('bz-team','Team size',['Select size','Solo (just me)','2–5 people','6–15 people','16–50 people','50+ people'])
+      +   sel('bz-rev','Monthly revenue (approximate)',['Select range','Pre-revenue','Under €1,000','€1,000 – €5,000','€5,000 – €20,000','€20,000 – €100,000','Over €100,000'])
+      + '</div>'
+      + area('bz-challenge','Biggest challenge right now','e.g. We lose deals on price although our quality is clearly better.',false)
+      + '<div class="aq-formfoot"><span></span><button class="aq-btn aq-btn-gold" type="button" data-go="2">Continue</button></div>'
+      + '</div>';
+  }
+  function bizStep2(){
+    return '<div class="aq-step" id="aq-step-2">'
+      + '<div class="aq-steptitle">SWOT Analysis</div>'
+      + '<div class="aq-swot">'
+      +   '<div class="aq-field s"><label>Strengths</label><textarea class="aq-area" id="bz-s" placeholder="What do you do better than competitors? What do customers consistently praise?"></textarea></div>'
+      +   '<div class="aq-field w"><label>Weaknesses</label><textarea class="aq-area" id="bz-w" placeholder="What are you not good at? Where do you lose deals?"></textarea></div>'
+      +   '<div class="aq-field o"><label>Opportunities</label><textarea class="aq-area" id="bz-o" placeholder="What market trends or gaps could you exploit? What are competitors missing?"></textarea></div>'
+      +   '<div class="aq-field t"><label>Threats</label><textarea class="aq-area" id="bz-t" placeholder="What could hurt this business in 12 months? New competitors, regulation, economic shifts?"></textarea></div>'
+      + '</div>'
+      + '<div class="aq-formfoot"><button class="aq-btn aq-btn-ghost" type="button" data-go="1">Back</button><button class="aq-btn aq-btn-gold" type="button" data-go="3">Continue</button></div>'
+      + '</div>';
+  }
+  function bizStep3(){
+    return '<div class="aq-step" id="aq-step-3">'
+      + '<div class="aq-steptitle">Value Proposition</div>'
+      + area('bz-customer','Who is your customer?','e.g. Operations managers at mid-size importers (10–50 employees) buying specialty beverages.',true)
+      + area('bz-problem','What problem do you solve?','e.g. They spend 3+ hours/week on manual reorder tracking and run out of their top SKUs.',true)
+      + area('bz-solution','What is your solution?','e.g. Automated replenishment with a 24h delivery window and a dedicated account manager.',false)
+      + area('bz-diff','Why are you better than the alternatives?','e.g. Competitors deliver in 48–72h. We deliver next day with a real-time stock portal.',false)
+      + '<div class="aq-formfoot"><button class="aq-btn aq-btn-ghost" type="button" data-go="2">Back</button><button class="aq-btn aq-btn-gold" type="button" data-go="4">Continue</button></div>'
+      + '</div>';
+  }
+  function bizStep4(){
+    return '<div class="aq-step" id="aq-step-4">'
+      + '<div class="aq-steptitle">Ideal Customer Profile</div>'
+      + '<div class="aq-row2">'
+      +   '<div class="aq-field"><label>Decision-maker’s job title</label><input class="aq-input" type="text" id="bz-title" placeholder="e.g. Operations Manager, CEO" /></div>'
+      +   sel('bz-size','Their company size',['Select size','Solopreneur / freelancer','2–10 employees','11–50 employees','51–200 employees','200+ employees'])
+      + '</div>'
+      + area('bz-pain','Their main pain point (in their words)','e.g. I never know what will be in stock next week and I am always chasing suppliers.',false)
+      + area('bz-current','How do they currently solve this?','e.g. Manual spreadsheets and messages to the supplier, or a competitor’s slower service.',false)
+      + area('bz-channel','Where do you find them?','e.g. LinkedIn, industry trade shows, referrals from existing clients.',false)
+      + '<div class="aq-formfoot"><button class="aq-btn aq-btn-ghost" type="button" data-go="3">Back</button><button class="aq-btn aq-btn-gold" type="button" data-go="done">Finish diagnostic</button></div>'
+      + '</div>';
+  }
+
+  // ---- WEBSITE SCAN ----
+  function openWebsite(){
+    if(tracks) tracks.style.display = 'none';
+    if(hero) hero.style.display = 'none';
+    detachKeys();
+    stage.innerHTML =
+      '<div class="aq-panel">'
+      + '<div id="aq-back-mount"></div>'
+      + '<span class="label">Website &amp; Digital Presence</span>'
+      + '<h2 class="display as-h2" style="margin:10px 0 8px">Automated website scan</h2>'
+      + '<p class="as-sub">Enter your URL and we check performance, Core Web Vitals and SEO.</p>'
+      + '<div class="aq-form">'
+      +   '<div class="aq-urlrow"><input class="aq-input" type="url" id="aq-url" placeholder="https://yourwebsite.com" autocomplete="off" />'
+      +   '<button class="aq-btn aq-btn-gold" id="aq-scanbtn" type="button">Run scan</button></div>'
+      +   '<div id="aq-urlmsg" class="aq-hint" style="margin-top:12px;min-height:1em"></div>'
+      +   '<div class="aq-scan" id="aq-scan" hidden></div>'
+      + '</div></div>';
+    stage.querySelector('#aq-back-mount').appendChild(backBtn('Back to tracks', showTrackSelect));
+    var input = stage.querySelector('#aq-url');
+    var btn = stage.querySelector('#aq-scanbtn');
+    var msg = stage.querySelector('#aq-urlmsg');
+    function run(){
+      var v = input ? input.value.trim() : '';
+      if(!v){ if(msg) msg.textContent = 'Enter a URL first.'; return; }
+      try{ new URL(/^https?:\/\//.test(v)? v : 'https://'+v); }
+      catch(e){ if(msg) msg.textContent = 'That does not look like a valid URL — include https://'; return; }
+      if(msg) msg.textContent = '';
+      runScan();
+    }
+    if(btn) btn.addEventListener('click', run);
+    if(input) input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } });
+    reveal(); scrollTop();
+  }
+  function runScan(){
+    var scan = stage.querySelector('#aq-scan');
+    var btn = stage.querySelector('#aq-scanbtn');
+    if(!scan) return;
+    if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
+    var lines = [
+      { name:'Performance', target:84 },
+      { name:'Core Web Vitals', target:71 },
+      { name:'SEO', target:92 }
+    ];
+    scan.hidden = false;
+    scan.innerHTML = lines.map(function(l,i){
+      return '<div class="aq-scanline"><span class="aq-scanname">'+l.name+'</span>'
+        + '<span class="aq-scantrack"><i id="aq-sc-'+i+'"></i></span>'
+        + '<span class="aq-scanstate" id="aq-st-'+i+'">checking…</span></div>';
+    }).join('');
+    if(reduce){
+      lines.forEach(function(l,i){
+        var bar = scan.querySelector('#aq-sc-'+i); if(bar) bar.style.width = l.target+'%';
+        var st = scan.querySelector('#aq-st-'+i); if(st){ st.textContent = l.target+'/100'; st.classList.add('done'); }
+      });
+      setTimeout(scanDone, 200); return;
+    }
+    lines.forEach(function(l,i){
+      setTimeout(function(){
+        var bar = scan.querySelector('#aq-sc-'+i); if(bar) bar.style.width = l.target+'%';
+      }, 200 + i*520);
+      setTimeout(function(){
+        var st = scan.querySelector('#aq-st-'+i); if(st){ st.textContent = l.target+'/100'; st.classList.add('done'); }
+      }, 200 + i*520 + 1100);
+    });
+    setTimeout(scanDone, 200 + lines.length*520 + 1300);
+  }
+  function scanDone(){
+    showDone({
+      back: { label:'Back to tracks', fn: showTrackSelect },
+      title: 'Scan complete.',
+      lead: 'We ran a first pass on performance, Core Web Vitals and SEO. ',
+      fine: 'This preview shows the experience; the full audit and AI fix list connect to the backend.',
+      cta: { label:'Get my report', href:'/contact' }
+    });
+  }
+
+  // ---- shared completion ----
+  function showDone(o){
+    detachKeys();
+    stage.innerHTML =
+      '<div class="aq-panel">'
+      + '<div id="aq-back-mount"></div>'
+      + '<div class="aq-done">'
+      +   '<div class="aq-seal"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div>'
+      +   '<h3>'+esc(o.title)+'</h3>'
+      +   '<p>'+esc(o.lead)+'</p>'
+      +   '<p class="aq-fine">'+esc(o.fine)+'</p>'
+      +   '<a href="'+o.cta.href+'" class="pill" data-cursor>'+esc(o.cta.label)+'</a>'
+      + '</div></div>';
+    stage.querySelector('#aq-back-mount').appendChild(backBtn(o.back.label, o.back.fn));
+    reveal(); scrollTop();
+  }
+
+  // ---- wire the 3 track cards ----
+  [].forEach.call(document.querySelectorAll('.as-card[data-track]'), function(card){
+    card.addEventListener('click', function(){
+      var tr = card.getAttribute('data-track');
+      if(tr==='personality') openPersonality();
+      else if(tr==='business') openBusiness();
+      else if(tr==='website') openWebsite();
+    });
+  });
+})();
 </script>
 
 <style id="aa-anim">

@@ -468,7 +468,7 @@
         <div class="visual assess-visual" id="assessVisual">
           <div class="assess-card">
             <button class="ac-head" data-cursor>
-              <span class="ac-ico">&#129504;</span>
+              <span class="ac-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>
               <span class="ac-main"><span class="ac-t">Personality &amp; Leadership</span><span class="ac-d">How you decide and lead &mdash; and where it shows up in the business.</span></span>
               <span class="ac-chev">+</span>
             </button>
@@ -480,7 +480,7 @@
           </div>
           <div class="assess-card">
             <button class="ac-head" data-cursor>
-              <span class="ac-ico">&#128202;</span>
+              <span class="ac-ico"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span>
               <span class="ac-main"><span class="ac-t">Business Diagnostic</span><span class="ac-d">Strengths, gaps and market position, mapped clearly.</span></span>
               <span class="ac-chev">+</span>
             </button>
@@ -492,7 +492,7 @@
           </div>
           <div class="assess-card">
             <button class="ac-head" data-cursor>
-              <span class="ac-ico">&#127760;</span>
+              <span class="ac-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg></span>
               <span class="ac-main"><span class="ac-t">Website &amp; Digital Presence</span><span class="ac-d">Speed, SEO and what is holding your site back.</span></span>
               <span class="ac-chev">+</span>
             </button>
@@ -1153,6 +1153,7 @@ document.querySelectorAll('[data-count]').forEach(el=>{
 .ac-t{transition:color .25s ease}
 
 .ac-ico{flex:0 0 auto;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid rgba(224,169,63,.4);background:rgba(224,169,63,.06);transition:.35s}
+.ac-ico svg{width:26px;height:26px;stroke:var(--gold);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block}
 .assess-card.open .ac-ico{border-color:var(--gold);box-shadow:0 0 20px rgba(224,169,63,.35)}
 .ac-main{display:flex;flex-direction:column;gap:4px;min-width:0}
 .ac-t{font-family:'Montserrat',sans-serif;font-weight:700;color:#fff;font-size:1.18rem}
