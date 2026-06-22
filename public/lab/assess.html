@@ -716,8 +716,8 @@
       <div class="as-card" data-track="website" data-cursor>
         <div class="as-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg></div>
         <h3>Website &amp; Digital Presence</h3>
-        <p>How visible and active you are online — content, social, reviews and presence.</p>
-        <div class="as-meta">12 questions &middot; ~4 min</div>
+        <p>Speed, SEO and what is holding your site back.</p>
+        <div class="as-meta">URL + 12 questions &middot; ~4 min</div>
         <div class="as-card-go"><span>Start</span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
       </div>
     </div>
@@ -1101,11 +1101,70 @@
   function openWebsite(){
     if(tracks) tracks.style.display = 'none';
     if(hero) hero.style.display = 'none';
-    startQuizObj(WEBSITE_TEST, 'Back to tracks', showTrackSelect, {
+    detachKeys();
+    stage.innerHTML =
+      '<div class="aq-panel">'
+      + '<div id="aq-back-mount"></div>'
+      + '<span class="label">Website &amp; Digital Presence</span>'
+      + '<h2 class="display as-h2" style="margin:10px 0 8px">Automated website scan</h2>'
+      + '<p class="as-sub">Step 1 \u2014 enter your URL for a quick scan (performance, Core Web Vitals, SEO). Step 2 \u2014 12 fast questions about your wider digital presence.</p>'
+      + '<div class="aq-form">'
+      +   '<div class="aq-urlrow"><input class="aq-input" type="url" id="aq-url" placeholder="https://yourwebsite.com" autocomplete="off" />'
+      +   '<button class="aq-btn aq-btn-gold" id="aq-scanbtn" type="button">Run scan</button></div>'
+      +   '<div id="aq-urlmsg" class="aq-hint" style="margin-top:12px;min-height:1em"></div>'
+      +   '<div class="aq-scan" id="aq-scan" hidden></div>'
+      + '</div></div>';
+    stage.querySelector('#aq-back-mount').appendChild(backBtn('Back to tracks', showTrackSelect));
+    var input = stage.querySelector('#aq-url');
+    var btn = stage.querySelector('#aq-scanbtn');
+    var msg = stage.querySelector('#aq-urlmsg');
+    function run(){
+      if(msg) msg.textContent = '';
+      runScan();
+    }
+    if(btn) btn.addEventListener('click', run);
+    if(input) input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } });
+    reveal(); scrollTop();
+  }
+  function runScan(){
+    var scan = stage.querySelector('#aq-scan');
+    var btn = stage.querySelector('#aq-scanbtn');
+    if(!scan) return;
+    if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
+    var lines = [
+      { name:'Performance', target:84 },
+      { name:'Core Web Vitals', target:71 },
+      { name:'SEO', target:92 }
+    ];
+    scan.hidden = false;
+    scan.innerHTML = lines.map(function(l,i){
+      return '<div class="aq-scanline"><span class="aq-scanname">'+l.name+'</span>'
+        + '<span class="aq-scantrack"><i id="aq-sc-'+i+'"></i></span>'
+        + '<span class="aq-scanstate" id="aq-st-'+i+'">checking…</span></div>';
+    }).join('');
+    if(reduce){
+      lines.forEach(function(l,i){
+        var bar = scan.querySelector('#aq-sc-'+i); if(bar) bar.style.width = l.target+'%';
+        var st = scan.querySelector('#aq-st-'+i); if(st){ st.textContent = l.target+'/100'; st.classList.add('done'); }
+      });
+      setTimeout(scanDone, 200); return;
+    }
+    lines.forEach(function(l,i){
+      setTimeout(function(){
+        var bar = scan.querySelector('#aq-sc-'+i); if(bar) bar.style.width = l.target+'%';
+      }, 200 + i*520);
+      setTimeout(function(){
+        var st = scan.querySelector('#aq-st-'+i); if(st){ st.textContent = l.target+'/100'; st.classList.add('done'); }
+      }, 200 + i*520 + 1100);
+    });
+    setTimeout(scanDone, 200 + lines.length*520 + 1300);
+  }
+  function scanDone(){
+    startQuizObj(WEBSITE_TEST, 'Back to scan', openWebsite, {
       back: { label:'Back to tracks', fn: showTrackSelect },
       title: 'Website check complete.',
-      lead: 'You mapped your digital presence. ',
-      fine: 'This preview shows the experience; the full site audit and AI fix list connect to the backend.',
+      lead: 'We scanned your site and mapped your digital presence beyond it. ',
+      fine: 'This preview shows the experience; the full audit and AI fix list connect to the backend.',
       cta: { label:'Book a call', href:'/contact' }
     });
   }
