@@ -457,6 +457,71 @@
   .as-cta .as-h2{margin-bottom:10px;}
   .as-cta p{color:var(--silver);max-width:480px;margin:0 auto 28px;line-height:1.6;}
 
+  /* ============================================================
+     3D TEXT HALLWAY — hero background (scoped .ah-*)
+     CSS 3D corridor: left/right walls + floor + ceiling receding
+     to a vanishing point. Gold neon seams + scrolling wall text.
+     ============================================================ */
+  .as-hero{position:relative;overflow:hidden;isolation:isolate;}
+  #ah-hall{position:absolute;inset:0;z-index:0;pointer-events:none;
+    perspective:560px;perspective-origin:50% 46%;
+    background:#03060f;}
+  #ah-hall .ah-scrim{position:absolute;inset:0;z-index:6;pointer-events:none;
+    background:
+      radial-gradient(120% 80% at 50% 44%,rgba(3,6,15,0) 0%,rgba(3,6,15,.34) 52%,rgba(3,6,15,.78) 100%),
+      linear-gradient(180deg,rgba(3,6,15,.62) 0%,rgba(3,6,15,.12) 26%,rgba(3,6,15,.12) 70%,rgba(3,6,15,.7) 100%);}
+  .ah-stage{position:absolute;inset:0;transform-style:preserve-3d;
+    transform:translateZ(-90px) rotateX(0deg) rotateY(0deg);
+    transition:transform .5s var(--ease);will-change:transform;}
+  .ah-wall{position:absolute;top:50%;left:50%;width:1600px;height:760px;
+    transform-style:preserve-3d;transform-origin:50% 50%;
+    background:
+      linear-gradient(180deg,rgba(8,16,40,.9),rgba(3,6,15,.96));
+    overflow:hidden;}
+  /* left + right side walls */
+  .ah-wall-l{transform:translate(-50%,-50%) translateX(-380px) rotateY(90deg);}
+  .ah-wall-r{transform:translate(-50%,-50%) translateX(380px) rotateY(-90deg);}
+  /* floor + ceiling */
+  .ah-wall-f{width:760px;height:1600px;
+    transform:translate(-50%,-50%) translateY(380px) rotateX(90deg);
+    background:linear-gradient(180deg,rgba(3,6,15,.98),rgba(6,12,30,.9));}
+  .ah-wall-c{width:760px;height:1600px;
+    transform:translate(-50%,-50%) translateY(-380px) rotateX(-90deg);
+    background:linear-gradient(180deg,rgba(6,12,30,.85),rgba(3,6,15,.98));}
+  /* gold neon seams glowing along the corridor edges */
+  .ah-wall::before,.ah-wall::after{content:"";position:absolute;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,rgba(224,169,63,0),var(--gold-lt) 22%,var(--gold) 50%,var(--gold-lt) 78%,rgba(224,169,63,0));
+    box-shadow:0 0 14px 2px rgba(224,169,63,.55),0 0 36px 6px rgba(224,169,63,.28);}
+  .ah-wall::before{top:0;}
+  .ah-wall::after{bottom:0;}
+  .ah-wall-f::before,.ah-wall-c::before,.ah-wall-f::after,.ah-wall-c::after{
+    height:auto;width:3px;top:0;bottom:0;left:0;right:auto;
+    background:linear-gradient(180deg,rgba(224,169,63,0),var(--gold) 50%,rgba(224,169,63,0));}
+  .ah-wall-f::after,.ah-wall-c::after{left:auto;right:0;}
+  /* scrolling wall text — repeated strips moving toward camera */
+  .ah-track{position:absolute;top:0;left:0;height:100%;width:200%;
+    display:flex;align-items:center;gap:80px;white-space:nowrap;
+    font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;
+    font-size:128px;letter-spacing:.02em;line-height:1;will-change:transform;}
+  .ah-wall-l .ah-track{color:rgba(205,214,230,.10);
+    animation:ah-scroll-l 26s linear infinite;}
+  .ah-wall-r .ah-track{color:rgba(224,169,63,.12);
+    animation:ah-scroll-r 30s linear infinite;}
+  .ah-track span{padding:0 6px;
+    background:linear-gradient(180deg,rgba(244,217,139,.5),rgba(205,214,230,.06));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  @keyframes ah-scroll-l{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes ah-scroll-r{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+  /* floor reflection — faded mirrored hint of glow/text */
+  .ah-wall-f .ah-track{color:rgba(224,169,63,.06);transform:scaleY(-1);
+    font-size:108px;animation:ah-scroll-l 30s linear infinite;
+    -webkit-mask-image:linear-gradient(180deg,transparent,rgba(0,0,0,.5));
+    mask-image:linear-gradient(180deg,transparent,rgba(0,0,0,.5));}
+  .ah-glow{position:absolute;left:50%;top:46%;width:120px;height:120px;
+    transform:translate(-50%,-50%);border-radius:50%;
+    background:radial-gradient(circle,rgba(244,217,139,.35),rgba(224,169,63,.12) 45%,transparent 72%);
+    z-index:3;pointer-events:none;}
+
   @media (max-width:820px){
     .as-wrap{padding:0 20px;}
     .as-section{padding:56px 0;}
@@ -464,6 +529,19 @@
     .as-tracks{grid-template-columns:1fr;}
     .as-get{grid-template-columns:1fr;}
     .as-flow{padding:26px 22px;}
+    /* hallway: lighter on mobile — narrower corridor, smaller text, parallax off */
+    #ah-hall{perspective:420px;}
+    .ah-wall-l{transform:translate(-50%,-50%) translateX(-300px) rotateY(90deg);}
+    .ah-wall-r{transform:translate(-50%,-50%) translateX(300px) rotateY(-90deg);}
+    .ah-wall-f{transform:translate(-50%,-50%) translateY(300px) rotateX(90deg);}
+    .ah-wall-c{transform:translate(-50%,-50%) translateY(-300px) rotateX(-90deg);}
+    .ah-track{font-size:74px;gap:48px;}
+    .ah-wall-f .ah-track{font-size:62px;}
+  }
+  /* reduced motion: freeze corridor — static perspective, no scroll/parallax */
+  @media (prefers-reduced-motion:reduce){
+    .ah-stage{transition:none!important;}
+    .ah-wall-l .ah-track,.ah-wall-r .ah-track,.ah-wall-f .ah-track{animation:none!important;}
   }
 
   /* ============================================================
