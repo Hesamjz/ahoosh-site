@@ -410,14 +410,14 @@
   .nd-card-h .nd-mini{font-size:.62rem;color:var(--dim);letter-spacing:.04em}
 
   /* ===== Clocks band — luxury analogue watch faces ===== */
-  .nd-clocks{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 16px;padding:8px 2px 16px}
-  .nd-clock{flex:0 0 auto;width:132px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:transform .35s var(--ease)}
+  .nd-clocks{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 18px;padding:8px 2px 18px}
+  .nd-clock{flex:0 0 auto;width:138px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:transform .35s var(--ease)}
   .nd-clock:hover{transform:translateY(-4px)}
-  .nd-clock svg{width:120px;height:120px;display:block;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55))}
+  .nd-clock svg{width:128px;height:128px;display:block;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55))}
   .nd-clock .city{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.6rem;color:var(--silver);margin-top:9px}
   .nd-clock .meta{font-family:'Montserrat',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:.55rem;color:var(--gold);margin-top:2px;font-variant-numeric:tabular-nums}
-  /* hands transition smoothly; hour/min get a slight ease, second sweeps live */
-  .nd-clock .ndh-hour,.nd-clock .ndh-min{transition:transform .35s cubic-bezier(.4,2.1,.55,.85)}
+  /* hands are driven frame-by-frame in JS (smooth sweep) — no CSS transition */
+  .nd-clock .ndh-hour,.nd-clock .ndh-min,.nd-clock .ndh-sec{transition:none}
 
   /* ===== Ticker ===== */
   .nd-ticker{position:relative;overflow:hidden;border-radius:12px;border:1px solid rgba(224,169,63,.16);background:linear-gradient(90deg,rgba(13,22,48,.85),rgba(4,8,18,.8));margin:8px 0 26px;height:40px;display:flex;align-items:center}
@@ -518,12 +518,23 @@
   .nd-cal-cell.today{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--navy);font-weight:800;box-shadow:0 6px 16px -6px rgba(224,169,63,.6)}
 
   @media (max-width:980px){
-    .nd-wrap .container{padding:0 22px}
+    .nd-wrap .container{padding:0 18px}
     .nd-wrap{padding:118px 0 60px}
-    /* clocks become a single horizontal swipe row */
-    .nd-clocks{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;gap:14px;padding:8px 2px 14px;scrollbar-width:none}
+
+    /* CLOCKS — small, ~4 across, horizontal scroll-snap swipe row */
+    .nd-clocks{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;gap:10px;padding:6px 2px 12px;scrollbar-width:none}
     .nd-clocks::-webkit-scrollbar{display:none}
-    .nd-clock{scroll-snap-align:center}
+    .nd-clock{scroll-snap-align:center;width:calc((100% - 30px)/4);min-width:78px;max-width:96px}
+    .nd-clock svg{width:100%;height:auto}
+    .nd-clock .city{font-size:.5rem;letter-spacing:.1em;margin-top:6px}
+    .nd-clock .meta{font-size:.46rem;margin-top:1px}
+
+    /* TICKER — smaller tag, font, height on mobile */
+    .nd-ticker{height:32px;border-radius:10px;margin:6px 0 22px}
+    .nd-ticker-tag{padding:0 10px;font-size:.5rem;gap:5px}
+    .nd-track{gap:24px;padding-left:84px}
+    .nd-tk{font-size:.68rem;gap:5px}
+
     /* flatten the grid so feed + rail widgets become reorderable siblings */
     .nd-grid{display:flex;flex-direction:column;gap:22px}
     .nd-main,.nd-rail{display:contents}
@@ -538,6 +549,32 @@
     .nd-wx{order:4}
     /* markets panel is redundant on mobile (ticker covers it) — hide */
     .nd-mkt{display:none}
+
+    /* LIVE TV CONTROLS — stack full-width, bigger tap targets, clear labels */
+    .nd-tv-controls{display:flex;flex-direction:column;gap:12px;padding:14px 16px}
+    .nd-tv-controls .nd-sel-wrap:last-child{grid-column:auto}
+    .nd-sel-wrap label{font-size:.6rem;letter-spacing:.12em;margin-bottom:1px}
+    .nd-sel{font-size:.92rem;padding:13px 34px 13px 14px;border-radius:11px;background-position:right 14px center}
+
+    /* CALENDAR — tighter padding, legible cells that fit the width */
+    .nd-cal-h{padding:12px 14px}
+    .nd-cal-grid{gap:2px;padding:0 12px 14px}
+    .nd-cal-dow{font-size:.5rem;padding:4px 0}
+    .nd-cal-cell{font-size:.78rem;border-radius:7px}
+
+    /* WEATHER — tighter; current temp + 5-day row fit cleanly */
+    .nd-wx-now{gap:12px;padding:14px}
+    .nd-wx-temp{font-size:2.3rem}
+    .nd-wx-ico{width:46px;height:46px}
+    .nd-wx-meta .c{font-size:.62rem}
+    .nd-wx-meta .d{font-size:.72rem}
+    .nd-wx-meta .w{font-size:.62rem}
+    .nd-wx-fc{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .nd-wx-fc::-webkit-scrollbar{display:none}
+    .nd-wx-day{flex:1 0 auto;min-width:56px;padding:10px 6px}
+    .nd-wx-day .dn{font-size:.52rem}
+    .nd-wx-day .di{font-size:1.05rem;margin:4px 0 2px}
+    .nd-wx-day .dt{font-size:.66rem}
   }
   @media (prefers-reduced-motion:reduce){
     .nd-track{animation:none!important;padding-left:120px}
@@ -649,80 +686,78 @@
     {city:'Tokyo', tz:'Asia/Tokyo'},
     {city:'Paris', tz:'Europe/Paris'},
     {city:'Tehran', tz:'Asia/Tehran'},
-    {city:'Vancouver', tz:'America/Vancouver'},
-    {city:'Toronto', tz:'America/Toronto'},
     {city:'Los Angeles', tz:'America/Los_Angeles'},
     {city:'Hong Kong', tz:'Asia/Hong_Kong'}
   ];
   var clk = document.getElementById('ndClocks');
   if(clk){
     var SVGNS = 'http://www.w3.org/2000/svg';
-    // ---- build a static Rolex-style dial as an inline SVG string ----
+    // ---- build a clean luxury analogue dial as an inline SVG string ----
     function dialSVG(id){
       var cx=60, cy=60, s='';
-      // fluted gold bezel: many thin radial ticks between two gold rings
-      var flutes='';
-      for(var f=0; f<90; f++){
-        var a=f*4*Math.PI/180;
-        var x1=cx+54*Math.sin(a), y1=cy-54*Math.cos(a);
-        var x2=cx+59*Math.sin(a), y2=cy-59*Math.cos(a);
-        flutes+='<line x1="'+x1.toFixed(2)+'" y1="'+y1.toFixed(2)+'" x2="'+x2.toFixed(2)+'" y2="'+y2.toFixed(2)+'" stroke="url(#bzl'+id+')" stroke-width="1.1"/>';
-      }
-      // 60 minute ticks + 12 baton hour indices
-      var ticks='', idx='';
+      // fine minute-tick ring (60 ticks; longer + brighter every 5)
+      var ticks='';
       for(var m=0; m<60; m++){
-        var am=m*6*Math.PI/180;
-        var r1=(m%5===0)?44:46.5, r2=49;
-        var mx1=cx+r1*Math.sin(am), my1=cy-r1*Math.cos(am);
-        var mx2=cx+r2*Math.sin(am), my2=cy-r2*Math.cos(am);
-        ticks+='<line x1="'+mx1.toFixed(2)+'" y1="'+my1.toFixed(2)+'" x2="'+mx2.toFixed(2)+'" y2="'+my2.toFixed(2)+'" stroke="rgba(244,217,139,.55)" stroke-width="'+((m%5===0)?1.1:0.5)+'"/>';
+        var am=m*6*Math.PI/180, big=(m%5===0);
+        var r1=big?44.5:46.5, r2=49.5;
+        var x1=cx+r1*Math.sin(am), y1=cy-r1*Math.cos(am);
+        var x2=cx+r2*Math.sin(am), y2=cy-r2*Math.cos(am);
+        ticks+='<line x1="'+x1.toFixed(2)+'" y1="'+y1.toFixed(2)+'" x2="'+x2.toFixed(2)+'" y2="'+y2.toFixed(2)+'" stroke="rgba(244,224,160,'+(big?'.85':'.4')+')" stroke-width="'+(big?'1':'.5')+'"/>';
       }
+      // 12 applied gold baton hour markers (double baton at 12)
+      var idx='';
       for(var h=0; h<12; h++){
         var ah=h*30*Math.PI/180;
-        var ir=cx+39*Math.sin(ah), iy=cy-39*Math.cos(ah);
-        if(h===0){ // double baton at 12
-          idx+='<rect x="'+(ir-4.6).toFixed(2)+'" y="'+(iy-5.5).toFixed(2)+'" width="3" height="11" rx="1" fill="url(#gold'+id+')" stroke="#7a5a18" stroke-width=".4"/>'+
-               '<rect x="'+(ir+1.6).toFixed(2)+'" y="'+(iy-5.5).toFixed(2)+'" width="3" height="11" rx="1" fill="url(#gold'+id+')" stroke="#7a5a18" stroke-width=".4"/>';
+        var ir=cx+38*Math.sin(ah), iy=cy-38*Math.cos(ah);
+        if(h===0){
+          idx+='<rect x="'+(ir-3.9).toFixed(2)+'" y="'+(iy-5.5).toFixed(2)+'" width="2.6" height="11" rx="1.1" fill="url(#gold'+id+')" stroke="#6b4e16" stroke-width=".35"/>'+
+               '<rect x="'+(ir+1.3).toFixed(2)+'" y="'+(iy-5.5).toFixed(2)+'" width="2.6" height="11" rx="1.1" fill="url(#gold'+id+')" stroke="#6b4e16" stroke-width=".35"/>';
         } else {
           var rot=h*30;
-          idx+='<rect x="'+(ir-1.7).toFixed(2)+'" y="'+(iy-5).toFixed(2)+'" width="3.4" height="10" rx="1.3" fill="url(#gold'+id+')" stroke="#7a5a18" stroke-width=".4" transform="rotate('+rot+' '+ir.toFixed(2)+' '+iy.toFixed(2)+')"/>';
+          idx+='<rect x="'+(ir-1.5).toFixed(2)+'" y="'+(iy-5).toFixed(2)+'" width="3" height="10" rx="1.4" fill="url(#gold'+id+')" stroke="#6b4e16" stroke-width=".35" transform="rotate('+rot+' '+ir.toFixed(2)+' '+iy.toFixed(2)+')"/>';
         }
       }
       s='<svg viewBox="0 0 120 120" role="img" aria-label="analogue clock">'+
         '<defs>'+
-          '<radialGradient id="face'+id+'" cx="38%" cy="32%" r="78%">'+
-            '<stop offset="0%" stop-color="#16203f"/><stop offset="55%" stop-color="#0a1330"/><stop offset="100%" stop-color="#03060f"/>'+
+          '<radialGradient id="face'+id+'" cx="40%" cy="33%" r="80%">'+
+            '<stop offset="0%" stop-color="#1a2548"/><stop offset="50%" stop-color="#0c1635"/><stop offset="100%" stop-color="#040712"/>'+
           '</radialGradient>'+
           '<linearGradient id="gold'+id+'" x1="0" y1="0" x2="1" y2="1">'+
-            '<stop offset="0%" stop-color="#f6e3a0"/><stop offset="48%" stop-color="#e0a93f"/><stop offset="100%" stop-color="#a9781f"/>'+
+            '<stop offset="0%" stop-color="#fff0c0"/><stop offset="45%" stop-color="#e6b24a"/><stop offset="100%" stop-color="#a9781f"/>'+
           '</linearGradient>'+
           '<linearGradient id="bzl'+id+'" x1="0" y1="0" x2="1" y2="1">'+
-            '<stop offset="0%" stop-color="#fbeeb6"/><stop offset="50%" stop-color="#d39c34"/><stop offset="100%" stop-color="#8c6418"/>'+
+            '<stop offset="0%" stop-color="#fdf1c0"/><stop offset="30%" stop-color="#e3b24c"/><stop offset="62%" stop-color="#b5852c"/><stop offset="100%" stop-color="#8a6418"/>'+
           '</linearGradient>'+
-          '<radialGradient id="gloss'+id+'" cx="34%" cy="26%" r="60%">'+
-            '<stop offset="0%" stop-color="rgba(255,255,255,.30)"/><stop offset="40%" stop-color="rgba(255,255,255,.06)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>'+
+          '<radialGradient id="sheen'+id+'" cx="38%" cy="22%" r="58%">'+
+            '<stop offset="0%" stop-color="rgba(255,255,255,.22)"/><stop offset="45%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>'+
+          '</radialGradient>'+
+          '<radialGradient id="gloss'+id+'" cx="34%" cy="24%" r="62%">'+
+            '<stop offset="0%" stop-color="rgba(255,255,255,.28)"/><stop offset="42%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>'+
           '</radialGradient>'+
         '</defs>'+
-        // outer gold case + fluted bezel
-        '<circle cx="60" cy="60" r="59" fill="url(#bzl'+id+')"/>'+
-        '<circle cx="60" cy="60" r="56" fill="url(#face'+id+')"/>'+
-        flutes+
-        '<circle cx="60" cy="60" r="52" fill="none" stroke="url(#gold'+id+')" stroke-width="2.2"/>'+
-        '<circle cx="60" cy="60" r="50" fill="url(#face'+id+')"/>'+
+        // slim polished gold bezel = outer ring + thin inner ring
+        '<circle cx="60" cy="60" r="58.5" fill="url(#bzl'+id+')"/>'+
+        '<circle cx="60" cy="60" r="54.5" fill="url(#face'+id+')"/>'+
+        '<circle cx="60" cy="60" r="54.5" fill="none" stroke="url(#gold'+id+')" stroke-width="1.1" opacity=".9"/>'+
+        // dial top sheen
+        '<circle cx="60" cy="60" r="54" fill="url(#sheen'+id+')"/>'+
         ticks+idx+
-        // hands
-        '<g class="ndh-hour" id="h'+id+'" style="transform-box:fill-box;transform-origin:center" transform="rotate(0 60 60)">'+
-          '<rect x="58.4" y="32" width="3.2" height="32" rx="1.6" fill="url(#gold'+id+')" stroke="#5e440f" stroke-width=".5"/></g>'+
+        // tapered hour hand (shorter, chunkier)
+        '<g class="ndh-hour" id="h'+id+'" transform="rotate(0 60 60)">'+
+          '<path d="M60 36 L62.7 60 L60 64.5 L57.3 60 Z" fill="url(#gold'+id+')" stroke="#4f3a0d" stroke-width=".55" stroke-linejoin="round"/></g>'+
+        // tapered minute hand (longer, slimmer)
         '<g class="ndh-min" id="m'+id+'" transform="rotate(0 60 60)">'+
-          '<rect x="58.9" y="20" width="2.2" height="44" rx="1.1" fill="url(#gold'+id+')" stroke="#5e440f" stroke-width=".5"/></g>'+
+          '<path d="M60 21 L61.6 60 L60 64.5 L58.4 60 Z" fill="url(#gold'+id+')" stroke="#4f3a0d" stroke-width=".5" stroke-linejoin="round"/></g>'+
+        // slim second hand — gold w/ red tip + counterweight
         '<g class="ndh-sec" id="s'+id+'" transform="rotate(0 60 60)">'+
-          '<rect x="59.55" y="16" width="0.9" height="50" rx="0.45" fill="#ff5a4d"/>'+
-          '<rect x="59.3" y="60" width="1.4" height="13" rx="0.7" fill="#e0a93f"/></g>'+
-        '<circle cx="60" cy="60" r="3.4" fill="url(#gold'+id+')" stroke="#5e440f" stroke-width=".5"/>'+
-        '<circle cx="60" cy="60" r="1.2" fill="#03060f"/>'+
-        // glass gloss
-        '<path d="M14 44 A52 52 0 0 1 96 26 Q70 50 26 70 Z" fill="url(#gloss'+id+')"/>'+
-        '<circle cx="60" cy="60" r="50" fill="url(#gloss'+id+')" opacity=".5"/>'+
+          '<rect x="59.6" y="26" width="0.8" height="38" fill="#e6b24a"/>'+
+          '<rect x="59.6" y="18" width="0.8" height="9" fill="#ff5a4d"/>'+
+          '<circle cx="60" cy="69.5" r="2.6" fill="#e6b24a"/></g>'+
+        // gold center cap
+        '<circle cx="60" cy="60" r="3" fill="url(#gold'+id+')" stroke="#4f3a0d" stroke-width=".5"/>'+
+        '<circle cx="60" cy="60" r="1.1" fill="#040712"/>'+
+        // faint glass gloss
+        '<path d="M16 42 A50 50 0 0 1 92 25 Q66 48 26 66 Z" fill="url(#gloss'+id+')"/>'+
         '</svg>';
       return s;
     }
@@ -754,29 +789,50 @@
       try{ return new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'short',day:'numeric'}).format(new Date()).toUpperCase(); }
       catch(e){ return ''; }
     }
-    function tickClocks(){
+    // Re-read accurate h/m/s per city once per second; cache on the ref.
+    // The ms phase is captured so the second hand can sweep between reads.
+    function syncClocks(){
+      var anchor = (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();
       refs.forEach(function(r){
-        if(!r.h||!r.m) return;
         var p = parts(r.tz);
         if(!p) return;
-        var h=p.hour, m=p.minute, s=p.second;
-        var hourDeg = (h%12)*30 + m*0.5;
-        var minDeg  = m*6 + s*0.1;
-        r.h.setAttribute('transform','rotate('+hourDeg.toFixed(2)+' 60 60)');
-        r.m.setAttribute('transform','rotate('+minDeg.toFixed(2)+' 60 60)');
-        if(r.s && !rm){
-          var secDeg = s*6;
-          r.s.setAttribute('transform','rotate('+secDeg.toFixed(2)+' 60 60)');
-        }
+        r.hh = p.hour; r.mm = p.minute; r.ss = p.second; r.anchor = anchor;
         if(r.meta) r.meta.textContent = dateStr(r.tz);
       });
     }
+    function place(r, frac){
+      if(!r.h||!r.m||r.hh==null) return;
+      var sec = r.ss + frac;                 // fractional seconds for smooth sweep
+      var hourDeg = (r.hh%12)*30 + r.mm*0.5 + sec*(0.5/60);
+      var minDeg  = r.mm*6 + sec*0.1;
+      r.h.setAttribute('transform','rotate('+hourDeg.toFixed(3)+' 60 60)');
+      r.m.setAttribute('transform','rotate('+minDeg.toFixed(3)+' 60 60)');
+      if(r.s){
+        var secDeg = sec*6;
+        r.s.setAttribute('transform','rotate('+secDeg.toFixed(3)+' 60 60)');
+      }
+    }
     if(rm){
-      // reduced motion: hide the sweeping second hand, update once a minute
+      // reduced motion: no sweep — hide second hand, snap update once a minute
       refs.forEach(function(r){ if(r.s) r.s.style.display='none'; });
-      tickClocks(); setInterval(tickClocks, 60000);
+      syncClocks();
+      refs.forEach(function(r){ place(r, 0); });
+      setInterval(function(){ syncClocks(); refs.forEach(function(r){ place(r,0); }); }, 60000);
     } else {
-      tickClocks(); setInterval(tickClocks, 1000);
+      syncClocks();
+      setInterval(syncClocks, 1000);          // re-anchor each second for accuracy
+      var frame = function(){
+        var now = (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();
+        refs.forEach(function(r){
+          if(r.anchor==null) return;
+          var frac = (now - r.anchor)/1000;   // ms since last sync → fractional second
+          if(frac>1) frac=1;                  // clamp if a tab was throttled
+          place(r, frac);
+        });
+        if(typeof requestAnimationFrame==='function') requestAnimationFrame(frame);
+      };
+      if(typeof requestAnimationFrame==='function'){ requestAnimationFrame(frame); }
+      else { setInterval(function(){ refs.forEach(function(r){ place(r,0); }); }, 1000); }
     }
   }
 
