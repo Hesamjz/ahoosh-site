@@ -1378,5 +1378,18 @@ document.querySelectorAll('[data-count]').forEach(el=>{
   upd();
 })();
 </script>
+<script id="orientation-reinit-js">
+/* Phone rotation re-init: the page picks mobile-vs-desktop once at load (CSS + JS gated on max-width:820).
+   On rotate, width crosses that line but the GSAP pins / globe / reveal JS stay set for the old orientation
+   (globe jumps to a corner, panel text stays hidden). Cleanest robust fix: reload once when the breakpoint
+   actually flips. Touch devices only, so desktop window-resizing never reloads. */
+(function(){
+  if(!window.matchMedia) return;
+  if(!window.matchMedia('(pointer:coarse)').matches) return;
+  var mq=window.matchMedia('(max-width:820px)'), last=mq.matches, t=0;
+  function flip(){ if(mq.matches!==last){ last=mq.matches; clearTimeout(t); t=setTimeout(function(){ location.reload(); },120); } }
+  if(mq.addEventListener) mq.addEventListener('change',flip); else if(mq.addListener) mq.addListener(flip);
+})();
+</script>
 </body>
 </html>
