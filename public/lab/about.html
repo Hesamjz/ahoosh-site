@@ -401,7 +401,7 @@
       text-transform:uppercase;letter-spacing:.14em;font-size:.66rem;color:var(--gold-lt);
       background:rgba(224,169,63,.08);border:1px solid rgba(224,169,63,.28);padding:9px 20px;border-radius:40px;margin-bottom:30px}
     .ab-name{font-size:clamp(2.6rem,7vw,5.4rem);color:var(--silver);margin:0 0 36px;text-shadow:0 4px 40px rgba(0,0,0,.55)}
-    .ab-portrait{width:190px;height:190px;margin:0 auto 32px;border-radius:26px;overflow:hidden;
+    .ab-portrait{width:264px;height:264px;margin:0 auto 36px;border-radius:50%;overflow:hidden;
       border:2px solid rgba(224,169,63,.45);box-shadow:0 0 50px rgba(224,169,63,.22),inset 0 0 0 1px rgba(244,217,139,.15);
       background:rgba(13,21,42,.6)}
     .ab-portrait img{width:100%;height:100%;object-fit:cover;object-position:center 18%;display:block}
@@ -451,7 +451,7 @@
       .ab-wrap{padding:0 22px}
       .ab-hero{padding:110px 0 64px}
       .ab-values{grid-template-columns:1fr}
-      .ab-portrait{width:160px;height:160px}
+      .ab-portrait{width:220px;height:220px}
       .ab-timeline{padding-left:30px}
       .ab-stop::before{left:-30px}
     }
@@ -460,7 +460,6 @@
   <!-- 1 — HERO -->
   <section class="ab-sec ab-hero">
     <div class="ab-wrap">
-      <span class="ab-roletag">Founder · Researcher · Consultant</span>
       <h1 class="display ab-name" data-anim="gradient">Hesam Jafarzadeh</h1>
       <div class="ab-portrait">
         <img src="image19.png" alt="Hesam Jafarzadeh" onerror="this.parentElement.style.display='none';" />
@@ -522,19 +521,6 @@
     </div>
   </section>
 
-  <!-- 4 — WORKING STYLE -->
-  <section class="ab-sec" style="padding:24px 0 90px">
-    <div class="ab-wrap ab-style">
-      <p>AHoosh is not an agency — it is a founder-led practice. You get direct access to me and a focused team assembled for your context. Each engagement starts from the actual problem and ends with something practical.</p>
-      <div class="ab-creds">
-        <span class="ab-cred">DBA</span>
-        <span class="ab-cred">PhD researcher · Belgrade</span>
-        <span class="ab-cred">Springer publications</span>
-        <span class="ab-cred">15+ years</span>
-        <span class="ab-cred">AI &amp; market intelligence</span>
-      </div>
-    </div>
-  </section>
 
   <!-- 5 — CTA -->
   <section class="ab-sec ab-cta">
@@ -629,6 +615,17 @@
 [].forEach.call(document.querySelectorAll('.btn,.pill'),function(b){ if(b.closest('header'))return; b.style.transition='transform .18s ease';
 b.addEventListener('mousemove',function(e){var r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.25).toFixed(1)+'px,'+((e.clientY-r.top-r.height/2)*.4).toFixed(1)+'px)';});
 b.addEventListener('mouseleave',function(){b.style.transform='';}); }); })();</script>
+<style id="ab-tl-style">
+  body.aa-on .ab-stop{opacity:0;transform:translateY(34px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  body.aa-on .ab-stop.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){ body.aa-on .ab-stop{opacity:1!important;transform:none!important} }
+</style>
+<script id="ab-timeline-js">
+(function(){ if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:.28});
+  [].forEach.call(document.querySelectorAll('.ab-stop'),function(el){ io.observe(el); });
+})();
+</script>
 </main>
 
 <footer>
