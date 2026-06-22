@@ -446,7 +446,7 @@
     <!-- 1. Hero -->
     <section class="art-hero">
       <span class="label">Articles</span>
-      <h1 class="display">Intelligence,<br>Written Down</h1>
+      <h1 class="display" data-anim="gradient">Intelligence,<br>Written Down</h1>
       <p>Practitioner perspectives on AI, B2B operations, and building in emerging markets.</p>
     </section>
 
@@ -469,7 +469,7 @@
           <div class="art-thumb th-a"></div>
           <div class="art-body">
             <span class="art-chip">AI</span>
-            <h3>AI in B2B E-Business: Where It Actually Helps</h3>
+            <h3 data-anim="stagger">AI in B2B E-Business: Where It Actually Helps</h3>
             <p class="excerpt">A grounded look at the B2B steps where AI earns its keep &mdash; lead qualification, document handling, demand signals &mdash; and the ones where it adds cost without payoff.</p>
             <div class="art-foot">
               <span class="art-date">March 2025</span>
@@ -482,7 +482,7 @@
           <div class="art-thumb th-b"></div>
           <div class="art-body">
             <span class="art-chip">Research</span>
-            <h3>Digital Trends Reshaping B2B &mdash; and the Research Gaps</h3>
+            <h3 data-anim="type">Digital Trends Reshaping B2B &mdash; and the Research Gaps</h3>
             <p class="excerpt">A map of the digital shifts moving through B2B commerce, paired with the open questions the academic literature still hasn't answered.</p>
             <div class="art-foot">
               <span class="art-date">November 2024</span>
@@ -495,7 +495,7 @@
           <div class="art-thumb th-c"></div>
           <div class="art-body">
             <span class="art-chip">Research</span>
-            <h3>Blockchain for ESG-Oriented Supply Chains</h3>
+            <h3 data-anim="gradient">Blockchain for ESG-Oriented Supply Chains</h3>
             <p class="excerpt">Where a shared, tamper-evident ledger genuinely improves ESG traceability &mdash; and where it's a heavy answer to a problem a database already solves.</p>
             <div class="art-foot">
               <span class="art-date">August 2024</span>
@@ -508,7 +508,7 @@
           <div class="art-thumb th-d"></div>
           <div class="art-body">
             <span class="art-chip">AI</span>
-            <h3>IoT-Enabled Business Models: A Practical View</h3>
+            <h3 data-anim="stagger">IoT-Enabled Business Models: A Practical View</h3>
             <p class="excerpt">How connected-device data changes what a B2B company can sell &mdash; from one-off products to usage-based and outcome-based models &mdash; and what it takes to run them.</p>
             <div class="art-foot">
               <span class="art-date">June 2024</span>
@@ -521,7 +521,7 @@
           <div class="art-thumb th-e"></div>
           <div class="art-body">
             <span class="art-chip">Operations</span>
-            <h3>Where AI Actually Saves Time in Operations</h3>
+            <h3 data-anim="type">Where AI Actually Saves Time in Operations</h3>
             <p class="excerpt">A short audit method for finding the repetitive, rule-bound tasks in an operations team where automation returns hours &mdash; instead of guessing.</p>
             <div class="art-foot">
               <span class="art-date">February 2025</span>
@@ -534,7 +534,7 @@
           <div class="art-thumb th-f"></div>
           <div class="art-body">
             <span class="art-chip">Markets</span>
-            <h3>Researching a Market Before You Commit</h3>
+            <h3 data-anim="gradient">Researching a Market Before You Commit</h3>
             <p class="excerpt">A repeatable way to size a market, read the competitive field, and test demand &mdash; so the decision to enter rests on evidence rather than optimism.</p>
             <div class="art-foot">
               <span class="art-date">December 2024</span>
@@ -571,6 +571,87 @@
     });
   })();
   </script>
+
+<style id="aa-anim">
+  /* ===== AHoosh anim-kit (21st.dev-inspired, vanilla, self-contained) ===== */
+  body.aa-on [data-anim="gradient"]{
+    background:linear-gradient(100deg,var(--gold) 0%,var(--gold-lt) 20%,#fff7e0 50%,var(--gold-lt) 80%,var(--gold) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    background-size:220% auto;animation:aaGrad 7s linear infinite;position:relative}
+  @keyframes aaGrad{to{background-position:-220% center}}
+  body.aa-on [data-anim="stagger"] .aa-w{display:inline-block;opacity:0;filter:blur(12px);
+    transform:translateY(.5em) scale(.96);transition:opacity .7s var(--ease),filter .7s var(--ease),transform .7s var(--ease)}
+  body.aa-on [data-anim="stagger"].in .aa-w{opacity:1;filter:blur(0);transform:none}
+  body.aa-on [data-anim="type"]{white-space:normal}
+  body.aa-on [data-anim="type"].aa-caret{border-right:.06em solid var(--gold);padding-right:.06em}
+  body.aa-on [data-anim="type"].done{border-right-color:transparent}
+  .aa-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--gold-lt);
+    box-shadow:0 0 9px 2px rgba(244,217,139,.85);pointer-events:none;opacity:0;animation:aaSpark 1.9s var(--ease) infinite}
+  @keyframes aaSpark{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1)}}
+  /* service cards cascade */
+  body.aa-on .svc-card{opacity:0;transform:translateY(32px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  body.aa-on .svc-grid.in .svc-card{opacity:1;transform:none}
+  /* process steps cascade + badge pulse */
+  body.aa-on .steps .step{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  body.aa-on .steps.in .step{opacity:1;transform:none}
+  body.aa-on .steps.in .step:nth-child(1){transition-delay:.0s}
+  body.aa-on .steps.in .step:nth-child(2){transition-delay:.12s}
+  body.aa-on .steps.in .step:nth-child(3){transition-delay:.24s}
+  body.aa-on .steps.in .step:nth-child(4){transition-delay:.36s}
+  body.aa-on .steps.in .step-badge{animation:aaPulse 2.6s var(--ease) infinite}
+  @keyframes aaPulse{0%,100%{box-shadow:0 0 0 0 rgba(224,169,63,0)}50%{box-shadow:0 0 0 7px rgba(224,169,63,.13)}}
+  @media (prefers-reduced-motion:reduce){
+    body.aa-on [data-anim="gradient"]{animation:none}
+    body.aa-on [data-anim="stagger"] .aa-w{opacity:1!important;filter:none!important;transform:none!important}
+    body.aa-on .svc-card,body.aa-on .steps .step{opacity:1!important;transform:none!important}
+    body.aa-on .steps.in .step-badge{animation:none}
+    .aa-spark{display:none}
+  }
+</style>
+<script id="aa-anim-js">
+(function(){
+  if(!('IntersectionObserver' in window)) return;            // graceful: content stays visible, no anim
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var mob=matchMedia('(max-width:820px)').matches;
+  document.body.classList.add('aa-on');
+  // split stagger titles into words
+  [].forEach.call(document.querySelectorAll('[data-anim="stagger"]'),function(el){
+    var ws=el.textContent.trim().split(/\s+/);
+    el.innerHTML=ws.map(function(w,i){return '<span class="aa-w" style="transition-delay:'+(i*95)+'ms">'+w+'</span>';}).join(' ');
+  });
+  // typewriter: stash + blank
+  [].forEach.call(document.querySelectorAll('[data-anim="type"]'),function(el){ el.dataset.full=el.textContent.trim(); el.textContent=''; });
+  // sparkles on gradient titles (desktop only)
+  if(!reduce && !mob){
+    [].forEach.call(document.querySelectorAll('[data-anim="gradient"]'),function(el){
+      for(var k=0;k<6;k++){ var sp=document.createElement('i'); sp.className='aa-spark';
+        sp.style.left=(8+Math.random()*84)+'%'; sp.style.top=(Math.random()*86)+'%';
+        sp.style.animationDelay=(Math.random()*1.9).toFixed(2)+'s'; el.appendChild(sp); }
+    });
+  }
+  function typeIt(el){
+    var t=el.dataset.full||''; if(reduce){ el.textContent=t; return; }
+    el.classList.add('aa-caret'); var i=0;
+    (function step(){ el.textContent=t.slice(0,i++); if(i<=t.length){ setTimeout(step,40); } else { el.classList.add('done'); } })();
+  }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ var el=e.target;
+    el.classList.add('in'); if(el.getAttribute('data-anim')==='type'){ typeIt(el); } io.unobserve(el); } }); },{threshold:.2});
+  [].forEach.call(document.querySelectorAll('[data-anim],.svc-grid,.steps'),function(el){ io.observe(el); });
+  // magnetic CTA button (desktop, hover-capable)
+  if(!reduce && matchMedia('(hover:hover)').matches){
+    [].forEach.call(document.querySelectorAll('.cons-cta .pill,.cons-cta .btn'),function(b){
+      b.style.transition='transform .18s var(--ease)';
+      b.addEventListener('mousemove',function(e){ var r=b.getBoundingClientRect();
+        b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.25).toFixed(1)+'px,'+((e.clientY-r.top-r.height/2)*.4).toFixed(1)+'px)'; });
+      b.addEventListener('mouseleave',function(){ b.style.transform=''; });
+    });
+  }
+})();
+</script>
+<script>(function(){ if(matchMedia('(prefers-reduced-motion:reduce)').matches||!matchMedia('(hover:hover)').matches)return;
+[].forEach.call(document.querySelectorAll('.btn,.pill'),function(b){ if(b.closest('header'))return; b.style.transition='transform .18s ease';
+b.addEventListener('mousemove',function(e){var r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.25).toFixed(1)+'px,'+((e.clientY-r.top-r.height/2)*.4).toFixed(1)+'px)';});
+b.addEventListener('mouseleave',function(){b.style.transform='';}); }); })();</script>
 </main>
 
 <footer>

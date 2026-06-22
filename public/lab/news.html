@@ -484,7 +484,7 @@
 <section class="news-wrap">
   <div class="news-hero">
     <span class="label">News + Live TV</span>
-    <h1 class="display">World Events — <span class="ghost">Live</span></h1>
+    <h1 class="display" data-anim="gradient">World Events — <span class="ghost">Live</span></h1>
     <p class="sub">Persian &amp; international news · Updated every 5 minutes · Information only.</p>
   </div>
 
@@ -532,7 +532,7 @@
           <div class="nm-thumb th-a"></div>
           <div class="nm-body">
             <div class="nm-srcrow"><span class="nm-src">Reuters</span><span class="nm-time">8 min ago</span></div>
-            <h3>Central banks signal a slower path on rate cuts into the second half</h3>
+            <h3 data-anim="stagger">Central banks signal a slower path on rate cuts into the second half</h3>
             <p class="nm-dek">Policymakers point to sticky services inflation as the reason for holding steady this quarter.</p>
             <span class="nm-chip">International</span>
           </div>
@@ -542,7 +542,7 @@
           <div class="nm-thumb th-b"></div>
           <div class="nm-body">
             <div class="nm-srcrow"><span class="nm-src">BBC Persian</span><span class="nm-time">21 min ago</span></div>
-            <h3>Currency markets stay volatile as traders weigh new import rules</h3>
+            <h3 data-anim="type">Currency markets stay volatile as traders weigh new import rules</h3>
             <p class="nm-dek">Local exchanges report wider spreads through the morning session.</p>
             <span class="nm-chip">Persian</span>
           </div>
@@ -552,7 +552,7 @@
           <div class="nm-thumb th-c"></div>
           <div class="nm-body">
             <div class="nm-srcrow"><span class="nm-src">Bloomberg</span><span class="nm-time">37 min ago</span></div>
-            <h3>Gold edges toward a fresh monthly high as the dollar softens</h3>
+            <h3 data-anim="gradient">Gold edges toward a fresh monthly high as the dollar softens</h3>
             <p class="nm-dek">Safe-haven demand returns ahead of the next inflation print.</p>
             <span class="nm-chip">Markets</span>
           </div>
@@ -562,7 +562,7 @@
           <div class="nm-thumb th-d"></div>
           <div class="nm-body">
             <div class="nm-srcrow"><span class="nm-src">DW News</span><span class="nm-time">1 hr ago</span></div>
-            <h3>Researchers publish an open dataset for small-model fine-tuning</h3>
+            <h3 data-anim="stagger">Researchers publish an open dataset for small-model fine-tuning</h3>
             <p class="nm-dek">The release covers reproducible benchmarks across four languages.</p>
             <span class="nm-chip">Tech &amp; Science</span>
           </div>
@@ -572,7 +572,7 @@
           <div class="nm-thumb th-e"></div>
           <div class="nm-body">
             <div class="nm-srcrow"><span class="nm-src">TRT World</span><span class="nm-time">2 hr ago</span></div>
-            <h3>League qualifiers tighten as two clubs draw level on points</h3>
+            <h3 data-anim="type">League qualifiers tighten as two clubs draw level on points</h3>
             <p class="nm-dek">The final round will decide the last continental slot this weekend.</p>
             <span class="nm-chip">Sport</span>
           </div>
@@ -582,7 +582,7 @@
           <div class="nm-thumb th-f"></div>
           <div class="nm-body">
             <div class="nm-srcrow"><span class="nm-src">France 24</span><span class="nm-time">3 hr ago</span></div>
-            <h3>Energy ministers meet to coordinate winter supply planning</h3>
+            <h3 data-anim="gradient">Energy ministers meet to coordinate winter supply planning</h3>
             <p class="nm-dek">Talks focus on storage levels and cross-border grid capacity.</p>
             <span class="nm-chip">International</span>
           </div>
@@ -652,6 +652,87 @@
 })();
 </script>
 
+
+<style id="aa-anim">
+  /* ===== AHoosh anim-kit (21st.dev-inspired, vanilla, self-contained) ===== */
+  body.aa-on [data-anim="gradient"]{
+    background:linear-gradient(100deg,var(--gold) 0%,var(--gold-lt) 20%,#fff7e0 50%,var(--gold-lt) 80%,var(--gold) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    background-size:220% auto;animation:aaGrad 7s linear infinite;position:relative}
+  @keyframes aaGrad{to{background-position:-220% center}}
+  body.aa-on [data-anim="stagger"] .aa-w{display:inline-block;opacity:0;filter:blur(12px);
+    transform:translateY(.5em) scale(.96);transition:opacity .7s var(--ease),filter .7s var(--ease),transform .7s var(--ease)}
+  body.aa-on [data-anim="stagger"].in .aa-w{opacity:1;filter:blur(0);transform:none}
+  body.aa-on [data-anim="type"]{white-space:normal}
+  body.aa-on [data-anim="type"].aa-caret{border-right:.06em solid var(--gold);padding-right:.06em}
+  body.aa-on [data-anim="type"].done{border-right-color:transparent}
+  .aa-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--gold-lt);
+    box-shadow:0 0 9px 2px rgba(244,217,139,.85);pointer-events:none;opacity:0;animation:aaSpark 1.9s var(--ease) infinite}
+  @keyframes aaSpark{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1)}}
+  /* service cards cascade */
+  body.aa-on .svc-card{opacity:0;transform:translateY(32px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  body.aa-on .svc-grid.in .svc-card{opacity:1;transform:none}
+  /* process steps cascade + badge pulse */
+  body.aa-on .steps .step{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  body.aa-on .steps.in .step{opacity:1;transform:none}
+  body.aa-on .steps.in .step:nth-child(1){transition-delay:.0s}
+  body.aa-on .steps.in .step:nth-child(2){transition-delay:.12s}
+  body.aa-on .steps.in .step:nth-child(3){transition-delay:.24s}
+  body.aa-on .steps.in .step:nth-child(4){transition-delay:.36s}
+  body.aa-on .steps.in .step-badge{animation:aaPulse 2.6s var(--ease) infinite}
+  @keyframes aaPulse{0%,100%{box-shadow:0 0 0 0 rgba(224,169,63,0)}50%{box-shadow:0 0 0 7px rgba(224,169,63,.13)}}
+  @media (prefers-reduced-motion:reduce){
+    body.aa-on [data-anim="gradient"]{animation:none}
+    body.aa-on [data-anim="stagger"] .aa-w{opacity:1!important;filter:none!important;transform:none!important}
+    body.aa-on .svc-card,body.aa-on .steps .step{opacity:1!important;transform:none!important}
+    body.aa-on .steps.in .step-badge{animation:none}
+    .aa-spark{display:none}
+  }
+</style>
+<script id="aa-anim-js">
+(function(){
+  if(!('IntersectionObserver' in window)) return;            // graceful: content stays visible, no anim
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var mob=matchMedia('(max-width:820px)').matches;
+  document.body.classList.add('aa-on');
+  // split stagger titles into words
+  [].forEach.call(document.querySelectorAll('[data-anim="stagger"]'),function(el){
+    var ws=el.textContent.trim().split(/\s+/);
+    el.innerHTML=ws.map(function(w,i){return '<span class="aa-w" style="transition-delay:'+(i*95)+'ms">'+w+'</span>';}).join(' ');
+  });
+  // typewriter: stash + blank
+  [].forEach.call(document.querySelectorAll('[data-anim="type"]'),function(el){ el.dataset.full=el.textContent.trim(); el.textContent=''; });
+  // sparkles on gradient titles (desktop only)
+  if(!reduce && !mob){
+    [].forEach.call(document.querySelectorAll('[data-anim="gradient"]'),function(el){
+      for(var k=0;k<6;k++){ var sp=document.createElement('i'); sp.className='aa-spark';
+        sp.style.left=(8+Math.random()*84)+'%'; sp.style.top=(Math.random()*86)+'%';
+        sp.style.animationDelay=(Math.random()*1.9).toFixed(2)+'s'; el.appendChild(sp); }
+    });
+  }
+  function typeIt(el){
+    var t=el.dataset.full||''; if(reduce){ el.textContent=t; return; }
+    el.classList.add('aa-caret'); var i=0;
+    (function step(){ el.textContent=t.slice(0,i++); if(i<=t.length){ setTimeout(step,40); } else { el.classList.add('done'); } })();
+  }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ var el=e.target;
+    el.classList.add('in'); if(el.getAttribute('data-anim')==='type'){ typeIt(el); } io.unobserve(el); } }); },{threshold:.2});
+  [].forEach.call(document.querySelectorAll('[data-anim],.svc-grid,.steps'),function(el){ io.observe(el); });
+  // magnetic CTA button (desktop, hover-capable)
+  if(!reduce && matchMedia('(hover:hover)').matches){
+    [].forEach.call(document.querySelectorAll('.cons-cta .pill,.cons-cta .btn'),function(b){
+      b.style.transition='transform .18s var(--ease)';
+      b.addEventListener('mousemove',function(e){ var r=b.getBoundingClientRect();
+        b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.25).toFixed(1)+'px,'+((e.clientY-r.top-r.height/2)*.4).toFixed(1)+'px)'; });
+      b.addEventListener('mouseleave',function(){ b.style.transform=''; });
+    });
+  }
+})();
+</script>
+<script>(function(){ if(matchMedia('(prefers-reduced-motion:reduce)').matches||!matchMedia('(hover:hover)').matches)return;
+[].forEach.call(document.querySelectorAll('.btn,.pill'),function(b){ if(b.closest('header'))return; b.style.transition='transform .18s ease';
+b.addEventListener('mousemove',function(e){var r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.25).toFixed(1)+'px,'+((e.clientY-r.top-r.height/2)*.4).toFixed(1)+'px)';});
+b.addEventListener('mouseleave',function(){b.style.transform='';}); }); })();</script>
 </main>
 
 <footer>
