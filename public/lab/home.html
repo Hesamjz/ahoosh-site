@@ -637,6 +637,23 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   var SVGNS='http://www.w3.org/2000/svg';
   function add(){ ICONS.forEach(function(t){ var s=document.createElementNS(SVGNS,'svg'); s.setAttribute('class','tk-logo'); s.setAttribute('viewBox','0 0 24 24'); s.setAttribute('role','img'); s.setAttribute('aria-label',t[0]); var ti=document.createElementNS(SVGNS,'title'); ti.textContent=t[0]; s.appendChild(ti); var p=document.createElementNS(SVGNS,'path'); p.setAttribute('d',t[1]); s.appendChild(p); track.appendChild(s); }); }
   add(); add();
+  /* iOS defers offscreen JS-built CSS animations until a tap. On mobile, drive the
+     marquee with requestAnimationFrame so it always scrolls from load, no tap needed. */
+  if(window.matchMedia&&window.matchMedia('(max-width:820px)').matches){
+    track.style.animation='none'; track.style.willChange='transform';
+    var _x=0,_last=0,_half=0,_dur=26,_vis=true;
+    function _step(ts){
+      if(!_half){ _half=track.scrollWidth/2; }
+      if(!_last){ _last=ts; }
+      var dt=(ts-_last)/1000; _last=ts;
+      if(_vis&&_half){ _x-=(_half/_dur)*dt; if(-_x>=_half){ _x+=_half; } track.style.transform='translateX('+_x.toFixed(2)+'px)'; }
+      requestAnimationFrame(_step);
+    }
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(e){ _vis=e[0].isIntersecting; if(_vis){ _last=0; } },{threshold:0}).observe(track.parentNode||track);
+    }
+    requestAnimationFrame(_step);
+  }
 })();
 
 /* ===== Background Earth globe (globe.gl) — large, persistent, mouse-reactive, behind content ===== */
