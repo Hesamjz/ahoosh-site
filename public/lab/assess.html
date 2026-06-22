@@ -717,7 +717,7 @@
         <div class="as-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg></div>
         <h3>Website &amp; Digital Presence</h3>
         <p>Speed, SEO and what is holding your site back.</p>
-        <div class="as-meta">Paste your URL &middot; ~2 min</div>
+        <div class="as-meta">URL + 12 questions &middot; ~4 min</div>
         <div class="as-card-go"><span>Start</span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
       </div>
     </div>
@@ -1107,7 +1107,7 @@
       + '<div id="aq-back-mount"></div>'
       + '<span class="label">Website &amp; Digital Presence</span>'
       + '<h2 class="display as-h2" style="margin:10px 0 8px">Automated website scan</h2>'
-      + '<p class="as-sub">Enter your URL and we check performance, Core Web Vitals and SEO.</p>'
+      + '<p class="as-sub">Step 1 \u2014 enter your URL for a quick scan (performance, Core Web Vitals, SEO). Step 2 \u2014 12 fast questions about your wider digital presence.</p>'
       + '<div class="aq-form">'
       +   '<div class="aq-urlrow"><input class="aq-input" type="url" id="aq-url" placeholder="https://yourwebsite.com" autocomplete="off" />'
       +   '<button class="aq-btn aq-btn-gold" id="aq-scanbtn" type="button">Run scan</button></div>'
@@ -1119,10 +1119,6 @@
     var btn = stage.querySelector('#aq-scanbtn');
     var msg = stage.querySelector('#aq-urlmsg');
     function run(){
-      var v = input ? input.value.trim() : '';
-      if(!v){ if(msg) msg.textContent = 'Enter a URL first.'; return; }
-      try{ new URL(/^https?:\/\//.test(v)? v : 'https://'+v); }
-      catch(e){ if(msg) msg.textContent = 'That does not look like a valid URL — include https://'; return; }
       if(msg) msg.textContent = '';
       runScan();
     }
