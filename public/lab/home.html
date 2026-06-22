@@ -1351,7 +1351,8 @@ document.querySelectorAll('[data-count]').forEach(el=>{
   /* tool marquee: keep visible on mobile */
   .cta-band .tools-bar{min-height:70px}
   #tickerTrack .tk-logo{opacity:.85!important;height:30px!important}
-  .sweep-dots{display:flex!important;position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;z-index:40;justify-content:center;gap:10px;opacity:0;pointer-events:none;transition:opacity .35s}
+  .sweep-pin{position:relative!important}
+  .sweep-dots{display:flex!important;position:absolute;left:0;right:0;bottom:calc(42px + env(safe-area-inset-bottom,0px))!important;z-index:40;justify-content:center;gap:10px;opacity:0;pointer-events:none;transition:opacity .45s}
   .sweep-dots.show{opacity:1}
   .sweep-dots i{width:9px;height:9px;border-radius:50%;background:rgba(224,169,63,.42);transition:.3s;box-shadow:0 2px 8px rgba(0,0,0,.55)}
   .sweep-dots i.on{background:var(--gold);width:26px;border-radius:5px;box-shadow:0 0 12px rgba(224,169,63,.75)}
