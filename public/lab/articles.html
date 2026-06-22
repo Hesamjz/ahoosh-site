@@ -452,97 +452,387 @@
 
     <!-- 2. Tag filter -->
     <div class="art-filter" id="artFilter">
-      <button class="art-pill active" data-filter="All">All</button>
-      <button class="art-pill" data-filter="AI">AI</button>
-      <button class="art-pill" data-filter="B2B">B2B</button>
-      <button class="art-pill" data-filter="Research">Research</button>
-      <button class="art-pill" data-filter="Operations">Operations</button>
-      <button class="art-pill" data-filter="Markets">Markets</button>
-      <button class="art-pill" data-filter="Persian">Persian</button>
+      <button class="art-pill active" data-filter="all">All</button>
+      <button class="art-pill" data-filter="ai">AI</button>
+      <button class="art-pill" data-filter="b2b">B2B</button>
+      <button class="art-pill" data-filter="ops">Operations</button>
+      <button class="art-pill" data-filter="strategy">Strategy</button>
+      <button class="art-pill" data-filter="trade">Trade &amp; FX</button>
+      <button class="art-pill" data-filter="content">Content</button>
     </div>
 
     <!-- 3. Article grid -->
     <section class="art-grid-sec">
       <div class="art-grid" id="artGrid">
-
-        <article class="art-card" data-tag="AI" data-cursor>
-          <div class="art-thumb th-a"></div>
+        <a class="art-card" href="https://ahoosh.ai/articles/hello-world" data-cats="b2b" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">B2B</span>
+            <h3>Welcome to AHoosh</h3>
+            <p class="excerpt">AI-augmented consulting for B2B operations — why we built this and what&#x27;s coming.</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-15_ai-product-catalog-automation-b2b-distributors" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ai_1.jpg" alt="" loading="lazy"></div>
           <div class="art-body">
             <span class="art-chip">AI</span>
-            <h3 data-anim="stagger">AI in B2B E-Business: Where It Actually Helps</h3>
-            <p class="excerpt">A grounded look at the B2B steps where AI earns its keep &mdash; lead qualification, document handling, demand signals &mdash; and the ones where it adds cost without payoff.</p>
-            <div class="art-foot">
-              <span class="art-date">March 2025</span>
-              <a href="#" class="art-read" data-cursor>Read &rarr;</a>
-            </div>
+            <h3>Automating Your B2B Product Catalog with AI: Descriptions at Scale</h3>
+            <p class="excerpt">AI catalog automation solves 2,000 missing product descriptions in days — but only if your source data is clean. Workflow, quality control, and cost…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
           </div>
-        </article>
-
-        <article class="art-card" data-tag="Research" data-cursor>
-          <div class="art-thumb th-b"></div>
-          <div class="art-body">
-            <span class="art-chip">Research</span>
-            <h3 data-anim="type">Digital Trends Reshaping B2B &mdash; and the Research Gaps</h3>
-            <p class="excerpt">A map of the digital shifts moving through B2B commerce, paired with the open questions the academic literature still hasn't answered.</p>
-            <div class="art-foot">
-              <span class="art-date">November 2024</span>
-              <a href="#" class="art-read" data-cursor>Read &rarr;</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="art-card" data-tag="Research" data-cursor>
-          <div class="art-thumb th-c"></div>
-          <div class="art-body">
-            <span class="art-chip">Research</span>
-            <h3 data-anim="gradient">Blockchain for ESG-Oriented Supply Chains</h3>
-            <p class="excerpt">Where a shared, tamper-evident ledger genuinely improves ESG traceability &mdash; and where it's a heavy answer to a problem a database already solves.</p>
-            <div class="art-foot">
-              <span class="art-date">August 2024</span>
-              <a href="#" class="art-read" data-cursor>Read &rarr;</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="art-card" data-tag="AI" data-cursor>
-          <div class="art-thumb th-d"></div>
-          <div class="art-body">
-            <span class="art-chip">AI</span>
-            <h3 data-anim="stagger">IoT-Enabled Business Models: A Practical View</h3>
-            <p class="excerpt">How connected-device data changes what a B2B company can sell &mdash; from one-off products to usage-based and outcome-based models &mdash; and what it takes to run them.</p>
-            <div class="art-foot">
-              <span class="art-date">June 2024</span>
-              <a href="#" class="art-read" data-cursor>Read &rarr;</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="art-card" data-tag="Operations" data-cursor>
-          <div class="art-thumb th-e"></div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-14_brevo-b2b-marketing-setup-guide-2026" data-cats="content b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_content_1.jpg" alt="" loading="lazy"></div>
           <div class="art-body">
             <span class="art-chip">Operations</span>
-            <h3 data-anim="type">Where AI Actually Saves Time in Operations</h3>
-            <p class="excerpt">A short audit method for finding the repetitive, rule-bound tasks in an operations team where automation returns hours &mdash; instead of guessing.</p>
-            <div class="art-foot">
-              <span class="art-date">February 2025</span>
-              <a href="#" class="art-read" data-cursor>Read &rarr;</a>
-            </div>
+            <h3>Brevo from Zero to Automated: A Setup Guide for B2B Marketing Teams</h3>
+            <p class="excerpt">How to configure Brevo for B2B marketing from scratch — list architecture, DKIM/SPF, five automation workflows, and deliverability testing before first…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
           </div>
-        </article>
-
-        <article class="art-card" data-tag="Markets" data-cursor>
-          <div class="art-thumb th-f"></div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-13_ai-returns-management-b2b-distribution" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ai_2.jpg" alt="" loading="lazy"></div>
           <div class="art-body">
-            <span class="art-chip">Markets</span>
-            <h3 data-anim="gradient">Researching a Market Before You Commit</h3>
-            <p class="excerpt">A repeatable way to size a market, read the competitive field, and test demand &mdash; so the decision to enter rests on evidence rather than optimism.</p>
-            <div class="art-foot">
-              <span class="art-date">December 2024</span>
-              <a href="#" class="art-read" data-cursor>Read &rarr;</a>
-            </div>
+            <span class="art-chip">AI</span>
+            <h3>AI Returns Management in B2B Distribution: What&#x27;s Automatable, What Isn&#x27;t</h3>
+            <p class="excerpt">AI can automate three parts of B2B returns workflows — but trying to automate the rest costs more than it saves. Here&#x27;s where the boundary sits.</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
           </div>
-        </article>
-
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-12_iran-sanctions-map-eu-b2b-operators-2026" data-cats="trade strategy" data-cursor>
+          <div class="art-thumb"><img src="art_trade_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>The Iran Sanctions Map in 2026: What&#x27;s Prohibited, What&#x27;s Permitted, What&#x27;s Gray</h3>
+            <p class="excerpt">EU snapback sanctions are fully in force since September 2025. This article maps what&#x27;s prohibited, permitted, and gray for EU B2B operators in 2026.</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-11_ecb-rate-hike-2025-trade-finance-eu-importers" data-cats="trade strategy" data-cursor>
+          <div class="art-thumb"><img src="art_trade_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>ECB at 2.25%: What the First Rate Hike Since 2023 Means for Trade Finance</h3>
+            <p class="excerpt">On June 11, 2026, the ECB raised rates to 2.25% — the first hike since 2023. Here&#x27;s what that means for EU importers with EUR-denominated trade…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-10_recurring-revenue-b2b-distributors-loyalty" data-cats="b2b ops strategy" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Operations</span>
+            <h3>How B2B Distributors Build Recurring Revenue from Existing Buyers</h3>
+            <p class="excerpt">5% better retention can drive 25–95% profit growth. For distributors, loyalty is not about points — it&#x27;s about friction removal. Here&#x27;s the…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-09_ai-pricing-b2b-distribution-2026" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>AI-Assisted Pricing in B2B Distribution: When It Helps, When It Doesn&#x27;t</h3>
+            <p class="excerpt">AI pricing tools can add 50+ basis points of margin — but for mid-market B2B distributors, dynamic pricing has a trust cost most models ignore.…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-08_serbia-company-setup-non-eu-founder-2026" data-cats="strategy ops trade" data-cursor>
+          <div class="art-thumb"><img src="art_strat_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>Setting Up a Serbian Company as a Non-EU Founder: What the Official Timeline Misses</h3>
+            <p class="excerpt">The official Serbian company registration timeline is 3–5 days. For non-EU founders, the real timeline is 3–8 weeks. Here&#x27;s what adds the time.</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-07_ai-deployment-failure-modes-b2b-operations" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ops_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>When AI Deployments Fail: Three Failure Modes in B2B Operations</h3>
+            <p class="excerpt">68% of B2B distributors can&#x27;t measure AI ROI. The deployments didn&#x27;t fail visibly — they failed silently. Three distinct failure modes…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-06_whatsapp-b2b-order-channel-emerging-markets" data-cats="b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ops_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Operations</span>
+            <h3>WhatsApp as a B2B Order Channel: The $45B Economy Most Distributors Ignore</h3>
+            <p class="excerpt">Global WhatsApp commerce hit $45B in 2026. B2B usage is up 42% year-over-year. Here&#x27;s what a structured order workflow on WhatsApp actually looks…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-05_building-ai-knowledge-base-b2b-operations" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ai_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>Building a Knowledge Base Your AI Can Actually Use</h3>
+            <p class="excerpt">Most AI support deployments fail because the knowledge base was built for humans, not machines. Here&#x27;s what a RAG-ready KB structure actually…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-04_turkey-transit-corridor-iran-eu-trade-2026" data-cats="trade strategy" data-cursor>
+          <div class="art-thumb"><img src="art_strat_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>Turkey as a Transit Corridor in 2026: Opportunities and the Sanctions Ceiling</h3>
+            <p class="excerpt">Turkey&#x27;s role as an EU–Iran trade gateway has shifted in 2026. Secondary sanctions, the gas renegotiation, and the Middle Corridor alternative —…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-03_ai-inventory-forecasting-b2b-distributors" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ai_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>AI Inventory Forecasting for Distributors: The 30% Accuracy Gap</h3>
+            <p class="excerpt">AI demand forecasting delivers 30–50% accuracy improvements over moving-average methods — and 20–30% lower inventory holding costs. Here&#x27;s how it…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-02_minimum-viable-crm-b2b-distributor-2026" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>The Minimum Viable CRM for a B2B Distributor in 2026</h3>
+            <p class="excerpt">HubSpot Free supports unlimited users and 1M contacts — but has five specific limits distributors hit within 90 days. Here&#x27;s what each one looks…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-07-01_email-automation-b2b-distributors-results" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>Email Automation for B2B Distributors: The Results Gap</h3>
+            <p class="excerpt">Automated trigger emails hit 30.63% open rates vs 20.73% for broadcast. Here&#x27;s what five specific email sequences look like for a B2B distributor…</p>
+            <div class="art-foot"><span class="art-date">Jul 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_usd-invoicing-trap-eu-iran" data-cats="trade b2b" data-cursor>
+          <div class="art-thumb"><img src="art_trade_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>The USD Invoicing Trap: Why It&#x27;s Costing EU–Iran Importers More Than They Think</h3>
+            <p class="excerpt">When you invoice Iranian trades in USD and sell to European buyers in EUR, you&#x27;re stacking two separate currency risks in one transaction.…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_trade-credit-b2b-2026" data-cats="trade b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_trade_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>Trade Credit in Distribution: What&#x27;s Changing in 2026</h3>
+            <p class="excerpt">Payment terms in B2B trade are tightening. Days Sales Outstanding is rising. For importers managing cross-currency supply chains, the cash flow math is…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_telegram-b2b-distribution-channel" data-cats="strategy content ops" data-cursor>
+          <div class="art-thumb"><img src="art_content_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Operations</span>
+            <h3>Why Distributors Are Building Telegram Channels in 2026</h3>
+            <p class="excerpt">A Telegram channel for daily FX snapshots and trade intelligence reaches B2B buyers where they already are — their phone. Here&#x27;s how the model…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_seo-b2b-services-2026" data-cats="strategy content" data-cursor>
+          <div class="art-thumb"><img src="art_strat_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Strategy</span>
+            <h3>SEO for Service Businesses in 2026: What Actually Moves the Needle</h3>
+            <p class="excerpt">B2B service SEO in 2026 is not about keyword stuffing or backlink building. It&#x27;s about becoming the most specific, credible source on a narrow…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_reading-fx-data-iran-sourcing" data-cats="trade ops" data-cursor>
+          <div class="art-thumb"><img src="art_ops_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>How to Read FX Data When Sourcing from Iran in 2026</h3>
+            <p class="excerpt">There are at least two USD/IRR exchange rates operating simultaneously in Iran right now. Using the wrong one for procurement cost modelling is one of…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_product-recommendations-b2b-distribution" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ops_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>AI Product Recommendations in Distribution: The 23% Margin Story</h3>
+            <p class="excerpt">B2B distributors using AI product recommendations are generating 23% higher margins. The mechanism is not sophisticated — it&#x27;s pattern recognition…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_minimal-tech-stack-b2b-consulting" data-cats="strategy ops" data-cursor>
+          <div class="art-thumb"><img src="art_strat_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Operations</span>
+            <h3>The Minimal Tech Stack for a Bootstrapped Consulting Practice in 2026</h3>
+            <p class="excerpt">A consulting practice that generates €3,000–€5,000/month in revenue doesn&#x27;t need a €2,000/month tech stack. Here&#x27;s what you actually need —…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_linkedin-strategy-b2b-consultants" data-cats="strategy content" data-cursor>
+          <div class="art-thumb"><img src="art_content_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Strategy</span>
+            <h3>LinkedIn Content Strategy for Consultants in 2026: What Actually Works</h3>
+            <p class="excerpt">LinkedIn organic reach is declining for generic content and rising for specific, operational expertise. Here&#x27;s what a B2B consultant&#x27;s…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_iral-depreciation-supply-chain" data-cats="trade b2b" data-cursor>
+          <div class="art-thumb"><img src="art_trade_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>112% in 12 Months: What IRR Depreciation Means for Your Supply Chain</h3>
+            <p class="excerpt">The rial went from 827,400 to 1,753,000 per USD in one year. Here&#x27;s what that number actually means for B2B importers who source from Iranian…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_incoterms-b2b-eu-iran" data-cats="trade ops" data-cursor>
+          <div class="art-thumb"><img src="art_trade_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>Incoterms for the EU–Iran Trade Corridor: Which Terms Work, Which Don&#x27;t</h3>
+            <p class="excerpt">Standard Incoterms were designed for a world with predictable banking and logistics infrastructure. On the EU–Iran corridor, sanctions, payment…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_fx-risk-b2b-importers" data-cats="trade b2b" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>FX Risk for Importers in 2026: A Practical Framework</h3>
+            <p class="excerpt">The rial lost 112% year-over-year. The dinar hasn&#x27;t moved. These two facts define the FX risk picture for B2B importers working the EU–Iran…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_founder-brand-consulting" data-cats="strategy content" data-cursor>
+          <div class="art-thumb"><img src="art_content_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Strategy</span>
+            <h3>Why Consulting Practices That Lead With a Founder Brand Close Deals Faster</h3>
+            <p class="excerpt">A named, visible founder who writes and speaks about specific problems converts trust faster than a faceless agency brand. Here&#x27;s why the model…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_five-ai-tools-b2b-sales-2026" data-cats="ai b2b content" data-cursor>
+          <div class="art-thumb"><img src="art_ai_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>5 AI Tools for Sales Teams That Actually Work in 2026</h3>
+            <p class="excerpt">Most AI tool roundups are lists of software features. This one is a list of tools organized around the specific sales problems they solve — with what…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_first-10-clients-b2b-content" data-cats="strategy content" data-cursor>
+          <div class="art-thumb"><img src="art_strat_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Strategy</span>
+            <h3>How Service Businesses Get Their First 10 Clients Through Content</h3>
+            <p class="excerpt">The first 10 clients for a B2B consulting or service business almost never come from advertising. They come from content that demonstrates you…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_eur-rsd-stable-what-it-means" data-cats="trade b2b" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>EUR/RSD Is Stable. Here&#x27;s Why That Matters for Importers Right Now.</h3>
+            <p class="excerpt">The Serbian dinar has moved less than 0.1% against the euro year-to-date. The National Bank of Serbia is holding the corridor deliberately. This has…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_emerging-markets-digital-marketing" data-cats="strategy trade content" data-cursor>
+          <div class="art-thumb"><img src="art_strat_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Trade & FX</span>
+            <h3>Digital Marketing in the Iran–Europe Corridor: What Works and What Doesn&#x27;t</h3>
+            <p class="excerpt">The Iran–Europe B2B corridor has specific platform constraints, language requirements, and trust dynamics that make standard Western digital marketing…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_b2b-website-conversion-2026" data-cats="strategy content" data-cursor>
+          <div class="art-thumb"><img src="art_content_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">Strategy</span>
+            <h3>Why Most Service Websites Don&#x27;t Convert — And the Five Fixes That Work</h3>
+            <p class="excerpt">A B2B service website has one job: make a qualified visitor confident enough to start a conversation. Most B2B websites fail at this job for five…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_ai-vs-erp-which-first" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ai_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>AI vs. ERP: Which Problem Should a Distributor Solve First?</h3>
+            <p class="excerpt">A question that comes up constantly: should we upgrade the ERP before adding AI, or can we layer AI on top of what we have? The answer depends on which…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_ai-support-layer-200-month" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ops_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>Build an AI Customer Support Layer for €200/Month</h3>
+            <p class="excerpt">A mid-size B2B distributor handling 20 support queries per day can automate 65–70% of them for under €200/month. Here&#x27;s the exact stack and what…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_ai-startup-budget-ops-team" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ops_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>Building an AI-First Operations Team on a Startup Budget</h3>
+            <p class="excerpt">You don&#x27;t need a data science team or a six-figure AI budget to run AI-augmented operations. Here&#x27;s what a 2–5 person operations team looks…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_ai-order-entry-2026" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ai_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>AI Order Entry in 2026: What It Costs, What It Saves, Who Should Buy It</h3>
+            <p class="excerpt">60% of wholesale distributors have adopted order entry automation. The benchmark for mature implementations is 96% touchless processing. Here&#x27;s…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_ai-measurement-framework" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_ai_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>The Four Metrics That Turn AI From a Cost Into a Documented Advantage</h3>
+            <p class="excerpt">68% of wholesale distributors running AI cannot measure its ROI. The measurement gap is not a data problem — it&#x27;s a baseline problem. Here&#x27;s…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-10_ai-adoption-wholesale-2026-data" data-cats="ai ops b2b" data-cursor>
+          <div class="art-thumb"><img src="art_ops_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>The AI Adoption Numbers in Wholesale Distribution: What the 2026 Data Shows</h3>
+            <p class="excerpt">63% call AI &#x27;extremely relevant.&#x27; 85% will run it as core infrastructure by 2031. 68% can&#x27;t measure ROI. Here&#x27;s what these three…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-09_ai-adoption-wholesale-distribution-2026" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_1.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>85% of Wholesale Distributors Will Run on AI by 2031. The Window Is Now.</h3>
+            <p class="excerpt">63% of wholesale distributors call AI &#x27;extremely relevant&#x27; in 2026. By 2031, 85% will treat it as core infrastructure. Here&#x27;s what the…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
+        <a class="art-card" href="https://ahoosh.ai/articles/2026-06-08_distributor-ai-execution-gap-2026" data-cats="ai b2b ops" data-cursor>
+          <div class="art-thumb"><img src="art_b2b_2.jpg" alt="" loading="lazy"></div>
+          <div class="art-body">
+            <span class="art-chip">AI</span>
+            <h3>The Distributor AI Execution Gap: What the 2026 Data Actually Shows</h3>
+            <p class="excerpt">37% of wholesale distributors are piloting AI. 60% have automated order entry. The bottleneck isn&#x27;t strategy anymore — it&#x27;s execution.…</p>
+            <div class="art-foot"><span class="art-date">Jun 2026</span><span class="art-read">Read &rarr;</span></div>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -552,25 +842,39 @@
     </div>
   </div>
 
-  <script>
-  (function(){
-    var filter=document.getElementById('artFilter');
-    var grid=document.getElementById('artGrid');
-    if(!filter||!grid)return;
-    var pills=filter.querySelectorAll('.art-pill');
-    var cards=grid.querySelectorAll('.art-card');
-    filter.addEventListener('click',function(e){
-      var btn=e.target.closest('.art-pill');
-      if(!btn)return;
-      var tag=btn.getAttribute('data-filter');
-      pills.forEach(function(p){p.classList.toggle('active',p===btn);});
-      cards.forEach(function(c){
-        var show=(tag==='All')||(c.getAttribute('data-tag')===tag);
-        c.classList.toggle('hidden',!show);
-      });
+  <style id="art-real">
+  .art-card{text-decoration:none;will-change:transform;transition:transform .22s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease)}
+  .art-thumb{height:172px!important}
+  .art-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+  .art-card:hover .art-thumb img{transform:scale(1.07)}
+  @keyframes artPop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+  .art-card.pop{animation:artPop .5s var(--ease) both}
+</style>
+<script>
+(function(){
+  var filter=document.getElementById('artFilter'),grid=document.getElementById('artGrid');
+  if(!filter||!grid)return;
+  var pills=filter.querySelectorAll('.art-pill'),cards=[].slice.call(grid.querySelectorAll('.art-card'));
+  filter.addEventListener('click',function(e){ var btn=e.target.closest('.art-pill'); if(!btn)return;
+    var f=btn.getAttribute('data-filter');
+    pills.forEach(function(p){p.classList.toggle('active',p===btn);});
+    cards.forEach(function(c){
+      var show=(f==='all')||((' '+c.getAttribute('data-cats')+' ').indexOf(' '+f+' ')>-1);
+      c.classList.toggle('hidden',!show);
+      if(show){ c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
     });
-  })();
-  </script>
+  });
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(!reduce && matchMedia('(hover:hover)').matches){
+    cards.forEach(function(c){
+      c.addEventListener('pointermove',function(e){ var r=c.getBoundingClientRect();
+        var px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+        c.style.transform='translateY(-8px) perspective(900px) rotateX('+(-py*6).toFixed(2)+'deg) rotateY('+(px*7).toFixed(2)+'deg)'; });
+      c.addEventListener('pointerleave',function(){ c.style.transform=''; });
+    });
+  }
+})();
+</script>
 
 <style id="aa-anim">
   /* ===== AHoosh anim-kit (21st.dev-inspired, vanilla, self-contained) ===== */
