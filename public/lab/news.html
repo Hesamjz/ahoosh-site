@@ -410,10 +410,10 @@
   .nd-card-h .nd-mini{font-size:.62rem;color:var(--dim);letter-spacing:.04em}
 
   /* ===== Clocks band — luxury analogue watch faces ===== */
-  .nd-clocks{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 18px;padding:8px 2px 18px}
-  .nd-clock{flex:0 0 auto;width:138px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:transform .35s var(--ease)}
+  .nd-clocks{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 2px 18px}
+  .nd-clock{flex:1 1 0;min-width:0;max-width:128px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:transform .35s var(--ease)}
   .nd-clock:hover{transform:translateY(-4px)}
-  .nd-clock svg{width:128px;height:128px;display:block;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55))}
+  .nd-clock svg{width:100%;max-width:112px;height:auto;display:block;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55))}
   .nd-clock .city{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.6rem;color:var(--silver);margin-top:9px}
   .nd-clock .meta{font-family:'Montserrat',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:.55rem;color:var(--gold);margin-top:2px;font-variant-numeric:tabular-nums}
   /* hands are driven frame-by-frame in JS (smooth sweep) — no CSS transition */
@@ -455,7 +455,10 @@
   .nd-empty{padding:40px;text-align:center;color:var(--dim);font-size:.85rem}
 
   /* ===== Right rail ===== */
-  .nd-rail{position:sticky;top:96px;display:flex;flex-direction:column;gap:22px}
+  .nd-rail{position:sticky;top:96px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 116px);overflow-y:auto;overscroll-behavior:contain;padding-right:6px}
+  .nd-main{position:sticky;top:96px;align-self:start;max-height:calc(100vh - 116px);overflow-y:auto;overscroll-behavior:contain;padding-right:6px}
+  .nd-main::-webkit-scrollbar,.nd-rail::-webkit-scrollbar{width:8px}
+  .nd-main::-webkit-scrollbar-thumb,.nd-rail::-webkit-scrollbar-thumb{background:rgba(224,169,63,.32);border-radius:8px}
 
   /* Live TV */
   .nd-tv-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px 16px}
@@ -542,6 +545,17 @@
     .nd-grid{display:flex;flex-direction:column;gap:22px}
     .nd-main,.nd-rail{display:contents}
     .nd-rail{position:static;top:auto}
+    /* FIX5: flattened grid children full width; video fills 16/9 like the live */
+    .nd-grid>*{width:100%;max-width:100%}
+    .nd-tv,.nd-screen{width:100%}
+    .nd-screen{margin:0 16px;aspect-ratio:16/9;height:auto}
+    .nd-tv-media{width:100%;height:100%}
+    /* FIX6: news feed as one fixed-height internal scroll box (~4-5 items) */
+    .nd-feed{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(224,169,63,.18);border-radius:16px;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(224,169,63,.32) transparent}
+    .nd-feed::-webkit-scrollbar{width:6px}
+    .nd-feed::-webkit-scrollbar-thumb{background:rgba(224,169,63,.32);border-radius:6px}
+    /* FIX6: keep calendar header uncrowded */
+    .nd-cal-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
     /* mobile stacked order: clocks + ticker already sit ABOVE the grid →
        1) Live TV  2) News feed  3) Calendar  4) Weather */
     .nd-tv{order:1}
@@ -554,8 +568,8 @@
     .nd-mkt{display:none}
 
     /* LIVE TV CONTROLS — stack full-width, bigger tap targets, clear labels */
-    .nd-tv-controls{display:flex;flex-direction:column;gap:12px;padding:14px 16px}
-    .nd-tv-controls .nd-sel-wrap:last-child{grid-column:auto}
+    .nd-tv-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px}
+    .nd-tv-controls .nd-sel-wrap:last-child{grid-column:1 / -1}
     .nd-sel-wrap label{font-size:.6rem;letter-spacing:.12em;margin-bottom:1px}
     .nd-sel{font-size:.92rem;padding:13px 34px 13px 14px;border-radius:11px;background-position:right 14px center}
 
@@ -634,7 +648,7 @@
             <div class="nd-sel-wrap"><label>Channel</label><select class="nd-sel" id="ndTvCh"></select></div>
           </div>
           <div class="nd-screen">
-            <video id="ndTvVideo" class="nd-tv-media" playsinline muted style="display:none"></video>
+            <video id="ndTvVideo" class="nd-tv-media" controls playsinline muted style="display:none"></video>
             <iframe id="ndTvFrame" class="nd-tv-media" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="display:none"></iframe>
             <div class="nd-live-badge"><span class="nd-live-dot"></span>Live</div>
             <button class="nd-play" id="ndPlay" aria-label="Play"><svg width="22" height="24" viewBox="0 0 22 24"><path d="M1 1.7v20.6a1 1 0 0 0 1.5.87l18-10.3a1 1 0 0 0 0-1.74l-18-10.3A1 1 0 0 0 1 1.7Z" fill="#f4d98b"/></svg></button>
@@ -700,70 +714,85 @@
     var SVGNS = 'http://www.w3.org/2000/svg';
     // ---- build a clean luxury analogue dial as an inline SVG string ----
     function dialSVG(id){
-      var cx=60, cy=60, s='';
-      // fine minute-tick ring (60 ticks; longer + brighter every 5)
-      var ticks='';
-      for(var m=0; m<60; m++){
-        var am=m*6*Math.PI/180, big=(m%5===0);
-        var r1=big?44.5:46.5, r2=49.5;
-        var x1=cx+r1*Math.sin(am), y1=cy-r1*Math.cos(am);
-        var x2=cx+r2*Math.sin(am), y2=cy-r2*Math.cos(am);
-        ticks+='<line x1="'+x1.toFixed(2)+'" y1="'+y1.toFixed(2)+'" x2="'+x2.toFixed(2)+'" y2="'+y2.toFixed(2)+'" stroke="rgba(244,224,160,'+(big?'.85':'.4')+')" stroke-width="'+(big?'1':'.5')+'"/>';
+      var cx=60, cy=60;
+      function pt(r,a){ return [cx+r*Math.sin(a), cy-r*Math.cos(a)]; }
+      // ---- fluted steel bezel: alternating light/dark wedges between two polished rings ----
+      var flut='', N=72, rOut=58.5, rIn=51.8;
+      for(var k=0;k<N;k++){
+        var a0=(k/N)*2*Math.PI, a1=((k+0.5)/N)*2*Math.PI, a2=((k+1)/N)*2*Math.PI;
+        var p1=pt(rIn,a0),p2=pt(rOut,a0),p3=pt(rOut,a1),p4=pt(rIn,a1);
+        flut+='<path d="M'+p1[0].toFixed(2)+' '+p1[1].toFixed(2)+' L'+p2[0].toFixed(2)+' '+p2[1].toFixed(2)+' L'+p3[0].toFixed(2)+' '+p3[1].toFixed(2)+' L'+p4[0].toFixed(2)+' '+p4[1].toFixed(2)+' Z" fill="url(#flL'+id+')"/>';
+        p1=pt(rIn,a1);p2=pt(rOut,a1);p3=pt(rOut,a2);p4=pt(rIn,a2);
+        flut+='<path d="M'+p1[0].toFixed(2)+' '+p1[1].toFixed(2)+' L'+p2[0].toFixed(2)+' '+p2[1].toFixed(2)+' L'+p3[0].toFixed(2)+' '+p3[1].toFixed(2)+' L'+p4[0].toFixed(2)+' '+p4[1].toFixed(2)+' Z" fill="url(#flD'+id+')"/>';
       }
-      // 12 applied gold baton hour markers (double baton at 12)
+      // ---- fine 60-tick minute track ----
+      var ticks='';
+      for(var m=0;m<60;m++){
+        var am=m*6*Math.PI/180, big=(m%5===0);
+        var r1=big?43.5:45.0, r2=47.0;
+        var t1=pt(r1,am), t2=pt(r2,am);
+        ticks+='<line x1="'+t1[0].toFixed(2)+'" y1="'+t1[1].toFixed(2)+'" x2="'+t2[0].toFixed(2)+'" y2="'+t2[1].toFixed(2)+'" stroke="rgba(220,230,248,'+(big?'.95':'.5')+')" stroke-width="'+(big?'.95':'.45')+'"/>';
+      }
+      // ---- 12 applied silver/white-gold stick markers with white lume centers (double baton at 12) ----
       var idx='';
-      for(var h=0; h<12; h++){
-        var ah=h*30*Math.PI/180;
-        var ir=cx+38*Math.sin(ah), iy=cy-38*Math.cos(ah);
+      for(var h=0;h<12;h++){
+        var ah=h*30*Math.PI/180, pm=pt(38,ah), ir=pm[0], iy=pm[1], rot=h*30;
         if(h===0){
-          idx+='<rect x="'+(ir-3.9).toFixed(2)+'" y="'+(iy-5.5).toFixed(2)+'" width="2.6" height="11" rx="1.1" fill="url(#gold'+id+')" stroke="#6b4e16" stroke-width=".35"/>'+
-               '<rect x="'+(ir+1.3).toFixed(2)+'" y="'+(iy-5.5).toFixed(2)+'" width="2.6" height="11" rx="1.1" fill="url(#gold'+id+')" stroke="#6b4e16" stroke-width=".35"/>';
+          var offs=[-3.4,0.9];
+          for(var d=0;d<2;d++){
+            var dx=offs[d];
+            idx+='<g transform="rotate('+rot+' '+ir.toFixed(2)+' '+iy.toFixed(2)+')">'+
+                 '<rect x="'+(ir+dx).toFixed(2)+'" y="'+(iy-6.2).toFixed(2)+'" width="2.5" height="12.5" rx="0.6" fill="url(#stk'+id+')" stroke="#7e8da6" stroke-width=".3"/>'+
+                 '<rect x="'+(ir+dx+0.7).toFixed(2)+'" y="'+(iy-4.9).toFixed(2)+'" width="1.1" height="10" rx="0.4" fill="#eef4ff"/></g>';
+          }
         } else {
-          var rot=h*30;
-          idx+='<rect x="'+(ir-1.5).toFixed(2)+'" y="'+(iy-5).toFixed(2)+'" width="3" height="10" rx="1.4" fill="url(#gold'+id+')" stroke="#6b4e16" stroke-width=".35" transform="rotate('+rot+' '+ir.toFixed(2)+' '+iy.toFixed(2)+')"/>';
+          idx+='<g transform="rotate('+rot+' '+ir.toFixed(2)+' '+iy.toFixed(2)+')">'+
+               '<rect x="'+(ir-1.4).toFixed(2)+'" y="'+(iy-5.5).toFixed(2)+'" width="2.8" height="11" rx="0.6" fill="url(#stk'+id+')" stroke="#7e8da6" stroke-width=".3"/>'+
+               '<rect x="'+(ir-0.65).toFixed(2)+'" y="'+(iy-4.3).toFixed(2)+'" width="1.3" height="8.6" rx="0.4" fill="#eef4ff"/></g>';
         }
       }
-      s='<svg viewBox="0 0 120 120" role="img" aria-label="analogue clock">'+
+      // ---- faint sunburst rays for the metallic blue sheen ----
+      var rays='';
+      for(var k2=0;k2<120;k2++){
+        var ra=(k2/120)*2*Math.PI, rp=pt(50,ra);
+        rays+='<line x1="60" y1="60" x2="'+rp[0].toFixed(2)+'" y2="'+rp[1].toFixed(2)+'" stroke="rgba(255,255,255,'+(k2%2?'.04':'.09')+')" stroke-width="0.5"/>';
+      }
+      var s='<svg viewBox="0 0 120 120" role="img" aria-label="analogue clock">'+
         '<defs>'+
-          '<radialGradient id="face'+id+'" cx="40%" cy="33%" r="80%">'+
-            '<stop offset="0%" stop-color="#1a2548"/><stop offset="50%" stop-color="#0c1635"/><stop offset="100%" stop-color="#040712"/>'+
-          '</radialGradient>'+
-          '<linearGradient id="gold'+id+'" x1="0" y1="0" x2="1" y2="1">'+
-            '<stop offset="0%" stop-color="#fff0c0"/><stop offset="45%" stop-color="#e6b24a"/><stop offset="100%" stop-color="#a9781f"/>'+
-          '</linearGradient>'+
-          '<linearGradient id="bzl'+id+'" x1="0" y1="0" x2="1" y2="1">'+
-            '<stop offset="0%" stop-color="#fdf1c0"/><stop offset="30%" stop-color="#e3b24c"/><stop offset="62%" stop-color="#b5852c"/><stop offset="100%" stop-color="#8a6418"/>'+
-          '</linearGradient>'+
-          '<radialGradient id="sheen'+id+'" cx="38%" cy="22%" r="58%">'+
-            '<stop offset="0%" stop-color="rgba(255,255,255,.22)"/><stop offset="45%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>'+
-          '</radialGradient>'+
-          '<radialGradient id="gloss'+id+'" cx="34%" cy="24%" r="62%">'+
-            '<stop offset="0%" stop-color="rgba(255,255,255,.28)"/><stop offset="42%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>'+
-          '</radialGradient>'+
+          '<radialGradient id="face'+id+'" cx="42%" cy="34%" r="80%">'+
+            '<stop offset="0%" stop-color="#5f86d8"/><stop offset="40%" stop-color="#2c57b6"/><stop offset="76%" stop-color="#143c92"/><stop offset="100%" stop-color="#0b2666"/></radialGradient>'+
+          '<linearGradient id="flL'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7f9fc"/><stop offset="50%" stop-color="#d2d9e3"/><stop offset="100%" stop-color="#aeb6c2"/></linearGradient>'+
+          '<linearGradient id="flD'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8d96a4"/><stop offset="55%" stop-color="#646c79"/><stop offset="100%" stop-color="#444b56"/></linearGradient>'+
+          '<linearGradient id="stk'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="45%" stop-color="#cfd8e4"/><stop offset="100%" stop-color="#9aa4b4"/></linearGradient>'+
+          '<linearGradient id="ring'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7f9fc"/><stop offset="50%" stop-color="#aeb6c2"/><stop offset="100%" stop-color="#6c7480"/></linearGradient>'+
+          '<radialGradient id="gloss'+id+'" cx="34%" cy="22%" r="62%"><stop offset="0%" stop-color="rgba(255,255,255,.30)"/><stop offset="42%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient>'+
+          '<clipPath id="clip'+id+'"><circle cx="60" cy="60" r="50"/></clipPath>'+
         '</defs>'+
-        // slim polished gold bezel = outer ring + thin inner ring
-        '<circle cx="60" cy="60" r="58.5" fill="url(#bzl'+id+')"/>'+
-        '<circle cx="60" cy="60" r="54.5" fill="url(#face'+id+')"/>'+
-        '<circle cx="60" cy="60" r="54.5" fill="none" stroke="url(#gold'+id+')" stroke-width="1.1" opacity=".9"/>'+
-        // dial top sheen
-        '<circle cx="60" cy="60" r="54" fill="url(#sheen'+id+')"/>'+
+        '<circle cx="60" cy="60" r="59" fill="url(#ring'+id+')"/>'+
+        flut+
+        '<circle cx="60" cy="60" r="51.8" fill="url(#ring'+id+')"/>'+
+        '<circle cx="60" cy="60" r="50" fill="url(#face'+id+')"/>'+
+        '<g clip-path="url(#clip'+id+')">'+rays+'</g>'+
+        '<circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>'+
         ticks+idx+
-        // tapered hour hand (shorter, chunkier)
+        '<text x="60.8" y="45" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="3.6" letter-spacing="1.6" fill="rgba(228,237,252,.7)">AHOOSH</text>'+
+        // Mercedes hour hand (baton with open circle near tip) + lume
         '<g class="ndh-hour" id="h'+id+'" transform="rotate(0 60 60)">'+
-          '<path d="M60 36 L62.7 60 L60 64.5 L57.3 60 Z" fill="url(#gold'+id+')" stroke="#4f3a0d" stroke-width=".55" stroke-linejoin="round"/></g>'+
-        // tapered minute hand (longer, slimmer)
+          '<rect x="58.7" y="34" width="2.6" height="30" rx="1.1" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".5"/>'+
+          '<circle cx="60" cy="42" r="3.1" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".5"/>'+
+          '<circle cx="60" cy="42" r="1.5" fill="#1a3a86"/></g>'+
+        // baton minute hand + lume
         '<g class="ndh-min" id="m'+id+'" transform="rotate(0 60 60)">'+
-          '<path d="M60 21 L61.6 60 L60 64.5 L58.4 60 Z" fill="url(#gold'+id+')" stroke="#4f3a0d" stroke-width=".5" stroke-linejoin="round"/></g>'+
-        // slim second hand — gold w/ red tip + counterweight
+          '<rect x="59.1" y="20" width="1.8" height="44.5" rx="0.8" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".45"/></g>'+
+        // thin seconds hand + small counterweight
         '<g class="ndh-sec" id="s'+id+'" transform="rotate(0 60 60)">'+
-          '<rect x="59.6" y="26" width="0.8" height="38" fill="#e6b24a"/>'+
-          '<rect x="59.6" y="18" width="0.8" height="9" fill="#ff5a4d"/>'+
-          '<circle cx="60" cy="69.5" r="2.6" fill="#e6b24a"/></g>'+
-        // gold center cap
-        '<circle cx="60" cy="60" r="3" fill="url(#gold'+id+')" stroke="#4f3a0d" stroke-width=".5"/>'+
-        '<circle cx="60" cy="60" r="1.1" fill="#040712"/>'+
+          '<rect x="59.65" y="22" width="0.7" height="42" fill="#dfe7f4"/>'+
+          '<circle cx="60" cy="71" r="2.4" fill="#dfe7f4"/></g>'+
+        // silver center cap
+        '<circle cx="60" cy="60" r="2.6" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".5"/>'+
+        '<circle cx="60" cy="60" r="0.9" fill="#0b2666"/>'+
         // faint glass gloss
-        '<path d="M16 42 A50 50 0 0 1 92 25 Q66 48 26 66 Z" fill="url(#gloss'+id+')"/>'+
+        '<path d="M16 42 A50 50 0 0 1 92 25 Q66 48 26 66 Z" fill="url(#gloss'+id+')" clip-path="url(#clip'+id+')"/>'+
         '</svg>';
       return s;
     }
@@ -844,7 +873,7 @@
 
   /* ---------- Ticker ---------- */
   var TK = [
-    ['USD/Toman','1,602,900','+1.78%','up'],['EUR/Toman','1,736,400','+1.42%','up'],['EUR/RSD','117.39','-0.08%','down'],
+    ['USD/Rial','1,602,900','+1.78%','up'],['EUR/Rial','1,736,400','+1.42%','up'],['EUR/RSD','117.39','-0.08%','down'],
     ['BTC','$71,240','+2.34%','up'],['ETH','$3,915','+1.11%','up'],['Gold','$2,388','+0.64%','up'],
     ['Brent','$83.10','-0.42%','down'],['S&P 500','5,478','+0.31%','up'],['Nasdaq','17,690','+0.55%','up'],
     ['Silver','$29.84','-0.21%','down'],['USDT','$1.00','0.00%','up'],['BNB','$612','+0.88%','up']
@@ -1024,6 +1053,7 @@
     tvFrame.src = src.src;
     showMedia('frame');
   }
+  function tvPlay(){ tvVideo.muted=false; var p=tvVideo.play(); if(p&&p.catch){ p.catch(function(){ tvVideo.muted=true; var q=tvVideo.play(); if(q&&q.catch)q.catch(function(){}); }); } }
   function loadHls(src){
     if(!tvVideo){ return; }
     showMedia('video');
@@ -1034,9 +1064,9 @@
         hlsInstance = new Hls({ enableWorker:true, lowLatencyMode:true });
         hlsInstance.loadSource(url);
         hlsInstance.attachMedia(tvVideo);
-        hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(){ tvVideo.muted=true; var p=tvVideo.play(); if(p&&p.catch)p.catch(function(){}); });
+        hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(){ tvPlay(); });
       } else if(tvVideo.canPlayType('application/vnd.apple.mpegurl')){
-        tvVideo.src = url; tvVideo.muted=true; var p2=tvVideo.play(); if(p2&&p2.catch)p2.catch(function(){});
+        tvVideo.src = url; tvPlay();
       }
     }catch(e){ /* keep poster frame */ }
   }
@@ -1100,8 +1130,8 @@
 
   /* ---------- Markets panel ---------- */
   var MKT = [
-    {g:'FX (Toman & RSD)', open:true, rows:[
-      ['USD / Toman','1,602,900','+1.78%','up'],['EUR / Toman','1,736,400','+1.42%','up'],['EUR / RSD','117.39','-0.08%','down']
+    {g:'FX (Rial & RSD)', open:true, rows:[
+      ['USD / Rial','1,602,900','+1.78%','up'],['EUR / Rial','1,736,400','+1.42%','up'],['EUR / RSD','117.39','-0.08%','down']
     ]},
     {g:'Crypto', open:true, rows:[
       ['BTC','$71,240','+2.34%','up'],['ETH','$3,915','+1.11%','up'],['USDT','$1.00','0.00%','up'],['BNB','$612','+0.88%','up']
@@ -1161,8 +1191,8 @@
 
       if(m){
         if(m.irr){
-          if(m.irr.usd){ fxRows.push(row('USD / Toman', fmtNum(m.irr.usd.price,0)+' T', m.irr.usd.change)); }
-          if(m.irr.eur){ fxRows.push(row('EUR / Toman', fmtNum(m.irr.eur.price,0)+' T', m.irr.eur.change)); }
+          if(m.irr.usd){ fxRows.push(row('USD / Rial', fmtNum(m.irr.usd.price,0)+' R', m.irr.usd.change)); }
+          if(m.irr.eur){ fxRows.push(row('EUR / Rial', fmtNum(m.irr.eur.price,0)+' R', m.irr.eur.change)); }
         }
         if(m.eur_rsd){ fxRows.push(row('EUR / RSD', fmtNum(m.eur_rsd.price,2), m.eur_rsd.change)); }
         if(m.commodities){
@@ -1185,7 +1215,7 @@
       }
 
       var groups=[];
-      if(fxRows.length)     groups.push({g:'FX (Toman & RSD)', open:true,  rows:fxRows});
+      if(fxRows.length)     groups.push({g:'FX (Rial & RSD)', open:true,  rows:fxRows});
       if(cryptoRows.length) groups.push({g:'Crypto',           open:true,  rows:cryptoRows});
       if(commRows.length)   groups.push({g:'Commodities',      open:false, rows:commRows});
       if(idxRows.length)    groups.push({g:'Indices',          open:false, rows:idxRows});
