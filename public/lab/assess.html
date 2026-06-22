@@ -513,6 +513,7 @@
   .aq-likert{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
   .aq-likert.cols5 .aq-lbtn{flex:1 1 0;min-width:120px;max-width:200px;}
   .aq-likert.cols4 .aq-lbtn{flex:1 1 0;min-width:140px;max-width:230px;}
+  .aq-likert.cols3 .aq-lbtn{flex:1 1 0;min-width:130px;max-width:240px;}
   .aq-lbtn{position:relative;cursor:pointer;border:1px solid rgba(205,214,230,.16);border-radius:14px;
     padding:18px 14px;background:rgba(3,6,15,.4);color:var(--silver);font:inherit;font-size:.9rem;text-align:center;
     line-height:1.35;transition:border-color .25s var(--ease),background .25s var(--ease),transform .25s var(--ease),color .25s var(--ease);}
@@ -595,7 +596,7 @@
     .aq-quiz,.aq-form{padding:26px 22px;min-height:0;}
     .aq-qtext{font-size:1.45rem;margin-bottom:24px;}
     .aq-likert{flex-direction:column;}
-    .aq-likert.cols5 .aq-lbtn,.aq-likert.cols4 .aq-lbtn{max-width:none;min-width:0;width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:16px 18px;}
+    .aq-likert.cols5 .aq-lbtn,.aq-likert.cols4 .aq-lbtn,.aq-likert.cols3 .aq-lbtn{max-width:none;min-width:0;width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:16px 18px;}
     .aq-lbtn .aq-key{margin-bottom:0;flex:0 0 auto;}
     .aq-row2,.aq-swot{grid-template-columns:1fr;}
     .aq-scanline .aq-scanname{flex-basis:110px;font-size:.72rem;}
@@ -683,10 +684,10 @@
 <section class="as-section">
   <div class="as-wrap">
     <div class="as-cta">
-      <span class="label">Start free</span>
-      <h2 class="display as-h2" data-anim="stagger">Ready to see where you stand?</h2>
-      <p>Pick a track and answer a few questions. No account, no cost &mdash; just a clear read on your business.</p>
-      <a href="/assess" class="pill" data-cursor>Start your free diagnostic</a>
+      <span class="label">Next step</span>
+      <h2 class="display as-h2" data-anim="stagger">Want a human read on it?</h2>
+      <p>Book a free call and we'll walk through what your results mean and where to focus first.</p>
+      <a href="/contact" class="pill" data-cursor>Book a call</a>
     </div>
   </div>
 </section>
@@ -762,6 +763,29 @@
 
   // ---- QUIZ engine ----
   var quiz = null;
+  var WEBSITE_TEST = { title:'Social & Content Presence', subtitle:'12 questions \u00b7 Yes / Partial / No', labels:['No','Partial','Yes'], questions:["You publish new content (blog, articles, or resources) at least once a month", "Your website has a dedicated blog, insights, or resources section", "Your website content (pages, copy) has been updated in the last 6 months", "Your homepage has a clear, single call-to-action (contact, book, buy, etc.)", "You are active on at least one social media platform (posting 3+ times per week)", "Your social media profiles link back to your website", "You produce video content (YouTube, Reels, TikTok, or similar)", "Your Google Business Profile is complete, verified, and regularly updated", "You actively collect customer reviews and respond to them", "You have an email newsletter or actively collect email subscribers", "You track website analytics and review them at least monthly (GA4, Plausible, etc.)", "You run paid digital advertising (Google Ads, Meta Ads, or other channels)"] };
+  function startQuizObj(t, backLabel, backFn, finishInfo){
+    if(!t) return;
+    quiz = { test:t, i:0, answers:new Array(t.questions.length).fill(-1), finishInfo:finishInfo };
+    stage.innerHTML =
+      '<div class="aq-panel">'
+      + '<div id="aq-back-mount"></div>'
+      + '<div class="aq-quiz">'
+      +   '<div class="aq-quiz-top"><span class="aq-count" id="aq-count"></span>'
+      +     '<span class="aq-test-name">'+esc(t.title)+'</span></div>'
+      +   '<div class="aq-bar"><i id="aq-bar"></i></div>'
+      +   '<div class="aq-view" id="aq-view"></div>'
+      +   '<div class="aq-quiz-foot">'
+      +     '<button class="aq-prev" id="aq-prev" type="button">'+SVG_ARROW_L+'<span>Previous</span></button>'
+      +     '<span class="aq-hint">Tap an answer &middot; or press 1&ndash;'+t.labels.length+'</span>'
+      +   '</div>'
+      + '</div></div>';
+    stage.querySelector('#aq-back-mount').appendChild(backBtn(backLabel, backFn));
+    stage.querySelector('#aq-prev').addEventListener('click', function(){ goPrev(); });
+    attachKeys();
+    renderQuestion('enter-right');
+    reveal(); scrollTop();
+  }
   function startQuiz(idx){
     var t = DATA[idx];
     if(!t) return;
@@ -881,6 +905,7 @@
 
   function finishQuiz(){
     detachKeys();
+    if(quiz && quiz.finishInfo){ var f=quiz.finishInfo; showDone(f); return; }
     var name = quiz ? quiz.test.title : 'assessment';
     showDone({
       back: { label:'Back to tests', fn: openPersonality },
@@ -1061,12 +1086,12 @@
     setTimeout(scanDone, 200 + lines.length*520 + 1300);
   }
   function scanDone(){
-    showDone({
+    startQuizObj(WEBSITE_TEST, 'Back to scan', openWebsite, {
       back: { label:'Back to tracks', fn: showTrackSelect },
-      title: 'Scan complete.',
-      lead: 'We ran a first pass on performance, Core Web Vitals and SEO. ',
+      title: 'Website check complete.',
+      lead: 'We scanned your site and mapped your digital presence beyond it. ',
       fine: 'This preview shows the experience; the full audit and AI fix list connect to the backend.',
-      cta: { label:'Get my report', href:'/contact' }
+      cta: { label:'Book a call', href:'/contact' }
     });
   }
 
