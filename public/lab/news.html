@@ -467,13 +467,13 @@
   .nd-sel-wrap label{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.54rem;color:var(--dim)}
   .nd-sel{appearance:none;-webkit-appearance:none;width:100%;background:rgba(4,8,18,.8) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%23e0a93f' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 11px center;border:1px solid rgba(224,169,63,.2);border-radius:9px;color:var(--silver);font-size:.76rem;padding:9px 28px 9px 11px;cursor:pointer;font-family:'Inter',sans-serif}
   .nd-sel:focus{outline:none;border-color:var(--gold)}
-  .nd-screen{position:relative;width:auto;aspect-ratio:16/9;height:auto;margin:0 16px;border-radius:14px;overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,rgba(224,169,63,.16),transparent 55%),linear-gradient(160deg,#0a1430,#03060f 75%);border:1px solid rgba(224,169,63,.2);display:flex;align-items:center;justify-content:center}
+  .nd-screen{position:relative;width:auto;aspect-ratio:16/9;height:auto;margin:0 16px;border-radius:14px;overflow:hidden;-webkit-transform:translateZ(0);transform:translateZ(0);isolation:isolate;background:radial-gradient(120% 120% at 30% 20%,rgba(224,169,63,.16),transparent 55%),linear-gradient(160deg,#0a1430,#03060f 75%);border:1px solid rgba(224,169,63,.2);display:flex;align-items:center;justify-content:center}
   .nd-screen::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);pointer-events:none}
-  .nd-tv-media{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:cover;z-index:1}
+  .nd-tv-media{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:cover;border-radius:14px;overflow:hidden;z-index:1}
   .nd-screen.playing .nd-play{display:none}
   .nd-screen.playing .nd-ch-name{z-index:2}
-  .nd-play{width:62px;height:62px;border-radius:50%;background:rgba(224,169,63,.14);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .3s var(--ease),background .3s}
-  .nd-play:hover{transform:scale(1.08);background:rgba(224,169,63,.26)}
+  .nd-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;width:62px;height:62px;border-radius:50%;background:rgba(224,169,63,.14);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .3s var(--ease),background .3s}
+  .nd-play:hover{transform:translate(-50%,-50%) scale(1.08);background:rgba(224,169,63,.26)}
   .nd-play svg{margin-left:3px}
   .nd-live-badge{position:absolute;top:11px;left:11px;display:flex;align-items:center;gap:6px;background:rgba(4,8,18,.7);border:1px solid rgba(255,59,78,.4);padding:4px 9px;border-radius:30px;font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.55rem;color:#fff}
   .nd-ch-name{position:absolute;bottom:11px;left:13px;right:13px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.9rem;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.7)}
@@ -557,7 +557,7 @@
     .nd-grid>*{width:100%;max-width:100%}
     .nd-tv,.nd-cal,.nd-wx{width:100%;max-width:100%}
     .nd-tv,.nd-screen{width:100%}
-    .nd-screen{position:relative;width:100%;aspect-ratio:16/9;height:auto;overflow:hidden;border-radius:14px;margin:0 16px}
+    .nd-screen{position:relative;width:100%;aspect-ratio:16/9;height:auto;overflow:hidden;border-radius:14px;-webkit-transform:translateZ(0);transform:translateZ(0);isolation:isolate;margin:0 16px}
     .nd-tv-media{position:absolute;inset:0;width:100%;height:100%}
     /* FIX6: news feed as one fixed-height internal scroll box (~4-5 items) */
     .nd-feed{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(224,169,63,.18);border-radius:16px;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(224,169,63,.32) transparent}
@@ -1181,32 +1181,100 @@
     var sign = c>0?'+':(c<0?'':'');
     return [sign+Number(c).toFixed(2)+'%', dir];
   }
+  /* FX pairs — mirrors the live /markets page (Frankfurter, free no-key) */
+  var FX_SYMBOLS = 'USD,GBP,JPY,CHF,AUD,CAD,NZD,SGD,HKD,KRW,INR,IDR,MYR,THB,BRL,MXN,ZAR,NOK,SEK,DKK,PLN,CZK,HUF,RON,BGN,ILS,TRY';
+  var FX_PAIRS = [
+    {sym:'EUR/USD', type:'eur', to:'USD', g:'major'},
+    {sym:'EUR/GBP', type:'eur', to:'GBP', g:'major'},
+    {sym:'EUR/JPY', type:'eur', to:'JPY', g:'major'},
+    {sym:'EUR/CHF', type:'eur', to:'CHF', g:'major'},
+    {sym:'EUR/AUD', type:'eur', to:'AUD', g:'major'},
+    {sym:'EUR/CAD', type:'eur', to:'CAD', g:'major'},
+    {sym:'EUR/NZD', type:'eur', to:'NZD', g:'major'},
+    {sym:'GBP/USD', type:'cross', n:'USD', d:'GBP', g:'major'},
+    {sym:'AUD/USD', type:'cross', n:'USD', d:'AUD', g:'major'},
+    {sym:'USD/JPY', type:'usd', to:'JPY', g:'usd'},
+    {sym:'USD/CHF', type:'usd', to:'CHF', g:'usd'},
+    {sym:'USD/CAD', type:'usd', to:'CAD', g:'usd'},
+    {sym:'USD/SGD', type:'usd', to:'SGD', g:'usd'},
+    {sym:'USD/HKD', type:'usd', to:'HKD', g:'usd'},
+    {sym:'USD/KRW', type:'usd', to:'KRW', g:'usd'},
+    {sym:'USD/INR', type:'usd', to:'INR', g:'usd'},
+    {sym:'USD/TRY', type:'usd', to:'TRY', g:'usd'},
+    {sym:'USD/MXN', type:'usd', to:'MXN', g:'usd'},
+    {sym:'EUR/SGD', type:'eur', to:'SGD', g:'asia'},
+    {sym:'EUR/HKD', type:'eur', to:'HKD', g:'asia'},
+    {sym:'EUR/KRW', type:'eur', to:'KRW', g:'asia'},
+    {sym:'EUR/INR', type:'eur', to:'INR', g:'asia'},
+    {sym:'EUR/IDR', type:'eur', to:'IDR', g:'asia'},
+    {sym:'EUR/MYR', type:'eur', to:'MYR', g:'asia'},
+    {sym:'EUR/THB', type:'eur', to:'THB', g:'asia'},
+    {sym:'EUR/NOK', type:'eur', to:'NOK', g:'europe'},
+    {sym:'EUR/SEK', type:'eur', to:'SEK', g:'europe'},
+    {sym:'EUR/DKK', type:'eur', to:'DKK', g:'europe'},
+    {sym:'EUR/PLN', type:'eur', to:'PLN', g:'europe'},
+    {sym:'EUR/CZK', type:'eur', to:'CZK', g:'europe'},
+    {sym:'EUR/HUF', type:'eur', to:'HUF', g:'europe'},
+    {sym:'EUR/RON', type:'eur', to:'RON', g:'europe'},
+    {sym:'EUR/BGN', type:'eur', to:'BGN', g:'europe'},
+    {sym:'EUR/TRY', type:'eur', to:'TRY', g:'europe'},
+    {sym:'EUR/RSD', type:'rsd', g:'europe'},
+    {sym:'EUR/BRL', type:'eur', to:'BRL', g:'em'},
+    {sym:'EUR/MXN', type:'eur', to:'MXN', g:'em'},
+    {sym:'EUR/ZAR', type:'eur', to:'ZAR', g:'em'},
+    {sym:'EUR/ILS', type:'eur', to:'ILS', g:'em'},
+    {sym:'USD/Rial', type:'irr-usd', g:'iran'},
+    {sym:'EUR/Rial', type:'irr-eur', g:'iran'}
+  ];
+  function fxFmt(price){
+    if(price==null || !isFinite(price)) return '—';
+    var dec = price>=1000 ? 2 : (price>=100 ? 2 : 4);
+    return fmtNum(price, dec);
+  }
   function fetchMarkets(){
     Promise.all([
       fetch('/api/markets').then(function(r){ return r.json(); }).catch(function(){ return null; }),
-      fetch('/api/crypto').then(function(r){ return r.json(); }).catch(function(){ return null; })
+      fetch('/api/crypto').then(function(r){ return r.json(); }).catch(function(){ return null; }),
+      fetch('https://api.frankfurter.dev/v1/latest?base=EUR&symbols='+FX_SYMBOLS, {cache:'no-cache'}).then(function(r){ return r.json(); }).catch(function(){ return null; })
     ]).then(function(res){
-      var m = res[0], crypto = res[1];
-      if(!m && !(crypto && crypto.length)) return; // keep sample fallback
+      var m = res[0], crypto = res[1], fxData = res[2];
+      var rates = (fxData && fxData.rates) || {};
+      var hasFx = Object.keys(rates).length > 0;
+      if(!m && !(crypto && crypto.length) && !hasFx) return; // keep sample fallback
 
-      var fxRows=[], cryptoRows=[], commRows=[], idxRows=[], tickerRows=[];
+      var cryptoRows=[], commRows=[], idxRows=[];
       function row(name, priceStr, change){ var cp=chgParts(change); return [name, priceStr, cp[0], cp[1]]; }
 
-      if(m){
-        if(m.irr){
-          if(m.irr.usd){ fxRows.push(row('USD / Rial', fmtNum(m.irr.usd.price,0)+' R', m.irr.usd.change)); }
-          if(m.irr.eur){ fxRows.push(row('EUR / Rial', fmtNum(m.irr.eur.price,0)+' R', m.irr.eur.change)); }
-        }
-        if(m.eur_rsd){ fxRows.push(row('EUR / RSD', fmtNum(m.eur_rsd.price,2), m.eur_rsd.change)); }
-        if(m.commodities){
-          var co=m.commodities;
-          if(co.gold)   commRows.push(row('Gold',   '$'+fmtNum(co.gold.price,0),   co.gold.change));
-          if(co.silver) commRows.push(row('Silver', '$'+fmtNum(co.silver.price,2), co.silver.change));
-          if(co.brent)  commRows.push(row('Brent',  '$'+fmtNum(co.brent.price,2),  co.brent.change));
-          if(co.wti)    commRows.push(row('WTI',    '$'+fmtNum(co.wti.price,2),    co.wti.change));
-        }
-        (m.indices||[]).forEach(function(idx){ idxRows.push(row(idx.short||idx.name, fmtNum(idx.price,0), idx.change)); });
+      // IRR / RSD specials (from /api/markets)
+      var irrUsd = (m && m.irr && m.irr.usd) || null;
+      var irrEur = (m && m.irr && m.irr.eur) || null;
+      var rsd    = (m && m.eur_rsd) || null;
+
+      // Build FX pairs from Frankfurter + specials
+      var fxBuilt = {}; // sym -> row [name,val,chg,dir] (only when price resolved)
+      FX_PAIRS.forEach(function(p){
+        var price=null, change=null, valStr=null;
+        if(p.type==='eur'){ price = rates[p.to]!=null ? rates[p.to] : null; if(price!=null) valStr=fxFmt(price); }
+        else if(p.type==='usd'){ price = (rates[p.to]!=null && rates['USD']) ? rates[p.to]/rates['USD'] : null; if(price!=null) valStr=fxFmt(price); }
+        else if(p.type==='cross'){ price = (rates[p.n]!=null && rates[p.d]) ? rates[p.n]/rates[p.d] : null; if(price!=null) valStr=fxFmt(price); }
+        else if(p.type==='rsd'){ if(rsd){ price=rsd.price; change=rsd.change; valStr=fmtNum(price,2); } }
+        else if(p.type==='irr-usd'){ if(irrUsd){ price=irrUsd.price; change=irrUsd.change; valStr=fmtNum(price,0)+' R'; } }
+        else if(p.type==='irr-eur'){ if(irrEur){ price=irrEur.price; change=irrEur.change; valStr=fmtNum(price,0)+' R'; } }
+        if(valStr!=null){ fxBuilt[p.sym] = row(p.sym, valStr, change); }
+      });
+      function fxGroup(gid){ return FX_PAIRS.filter(function(p){ return p.g===gid; }).map(function(p){ return fxBuilt[p.sym]; }).filter(Boolean); }
+
+      // Commodities + indices (from /api/markets)
+      if(m && m.commodities){
+        var co=m.commodities;
+        if(co.gold)   commRows.push(row('Gold',   '$'+fmtNum(co.gold.price,0),   co.gold.change));
+        if(co.silver) commRows.push(row('Silver', '$'+fmtNum(co.silver.price,2), co.silver.change));
+        if(co.brent)  commRows.push(row('Brent',  '$'+fmtNum(co.brent.price,2),  co.brent.change));
+        if(co.wti)    commRows.push(row('WTI',    '$'+fmtNum(co.wti.price,2),    co.wti.change));
       }
+      if(m){ (m.indices||[]).forEach(function(idx){ idxRows.push(row(idx.short||idx.name, fmtNum(idx.price,0), idx.change)); }); }
+
+      // Crypto (from /api/crypto)
       if(Array.isArray(crypto)){
         crypto.slice(0,10).forEach(function(c){
           var sym=(c.symbol||'').toUpperCase();
@@ -1217,15 +1285,30 @@
         });
       }
 
+      // Grouped market panel
       var groups=[];
-      if(fxRows.length)     groups.push({g:'FX (Rial & RSD)', open:true,  rows:fxRows});
-      if(cryptoRows.length) groups.push({g:'Crypto',           open:true,  rows:cryptoRows});
-      if(commRows.length)   groups.push({g:'Commodities',      open:false, rows:commRows});
-      if(idxRows.length)    groups.push({g:'Indices',          open:false, rows:idxRows});
+      var gMajor=fxGroup('major'), gUsd=fxGroup('usd'), gAsia=fxGroup('asia'), gEurope=fxGroup('europe'), gEm=fxGroup('em'), gIran=fxGroup('iran');
+      if(gMajor.length)  groups.push({g:'Major Pairs',     open:true,  rows:gMajor});
+      if(gUsd.length)    groups.push({g:'USD Cross Rates',  open:false, rows:gUsd});
+      if(gAsia.length)   groups.push({g:'Asia-Pacific',     open:false, rows:gAsia});
+      if(gEurope.length) groups.push({g:'European',         open:false, rows:gEurope});
+      if(gEm.length)     groups.push({g:'Emerging Markets', open:false, rows:gEm});
+      if(gIran.length)   groups.push({g:'Iran — Rial', open:true,  rows:gIran});
+      if(cryptoRows.length) groups.push({g:'Crypto',        open:true,  rows:cryptoRows});
+      if(commRows.length)   groups.push({g:'Commodities',   open:false, rows:commRows});
+      if(idxRows.length)    groups.push({g:'Indices',       open:false, rows:idxRows});
       if(groups.length) renderMarkets(groups);
 
-      // Ticker = key FX + crypto + commodities + indices
-      tickerRows = fxRows.concat(cryptoRows.slice(0,4)).concat(commRows.slice(0,2)).concat(idxRows.slice(0,2));
+      // Rich single-line ticker (~16 items)
+      var tickerRows=[];
+      var tickSyms=['EUR/USD','GBP/USD','USD/JPY','USD/CHF','AUD/USD','USD/CAD','EUR/GBP','EUR/JPY','USD/Rial','EUR/Rial','EUR/RSD'];
+      tickSyms.forEach(function(s){ if(fxBuilt[s]) tickerRows.push(fxBuilt[s]); });
+      tickerRows = tickerRows.concat(cryptoRows.slice(0,3));
+      var gold = commRows.filter(function(r){ return r[0]==='Gold'; });
+      var brent = commRows.filter(function(r){ return r[0]==='Brent'; });
+      if(gold.length)  tickerRows.push(gold[0]);
+      if(brent.length) tickerRows.push(brent[0]);
+      tickerRows = tickerRows.concat(idxRows.slice(0,2));
       if(tickerRows.length) renderTicker(tickerRows);
     }).catch(function(){ /* keep sample fallback */ });
   }

@@ -1409,5 +1409,60 @@ document.querySelectorAll('[data-count]').forEach(el=>{
   if(mq.addEventListener) mq.addEventListener('change',flip); else if(mq.addListener) mq.addListener(flip);
 })();
 </script>
+<script id="home-live-markets">
+(function(){
+  var rows=document.getElementById('liveRows');
+  if(!rows) return;
+  function fmt(el,price,change){
+    if(price==null||isNaN(price)) return;
+    var pre=el.getAttribute('data-pre')||'';
+    var dec=parseInt(el.getAttribute('data-dec')||'0',10);
+    var k=el.getAttribute('data-k')==='1';
+    var v=k?price/1000:price;
+    var txt=pre+Number(v).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec})+(k?'K':'');
+    var b=el.querySelector('.val b'); if(b) b.textContent=txt;
+    var chg=el.querySelector('.chg');
+    if(chg && change!=null && !isNaN(change)){
+      chg.textContent=(change>=0?'+':'')+Number(change).toFixed(1)+'%';
+      el.classList.remove('up','down'); el.classList.add(change>=0?'up':'down');
+    }
+  }
+  function bySym(t){
+    var ls=rows.querySelectorAll('.lrow');
+    for(var i=0;i<ls.length;i++){
+      var s=ls[i].querySelector('.sym');
+      if(s && s.textContent.trim().replace(/\s+/g,' ')===t) return ls[i];
+    }
+    return null;
+  }
+  function load(){
+    Promise.all([
+      fetch('/api/markets',{cache:'no-cache'}).then(function(r){return r.json();}).catch(function(){return null;}),
+      fetch('/api/crypto',{cache:'no-cache'}).then(function(r){return r.json();}).catch(function(){return null;})
+    ]).then(function(res){
+      var m=res[0], cg=res[1];
+      if(m){
+        if(m.indices && m.indices.length){
+          var sp=null;
+          for(var i=0;i<m.indices.length;i++){ var x=m.indices[i]; if(x.short==='SPX'||x.name==='S&P 500'){sp=x;break;} }
+          if(sp){ var r1=bySym('S&P 500'); if(r1) fmt(r1, sp.price, sp.change); }
+        }
+        if(m.commodities){
+          if(m.commodities.gold){ var rg=bySym('Gold'); if(rg) fmt(rg, m.commodities.gold.price, m.commodities.gold.change); }
+          if(m.commodities.brent){ var rb=bySym('Brent'); if(rb) fmt(rb, m.commodities.brent.price, m.commodities.brent.change); }
+        }
+        if(m.eur_rsd){ var rr=bySym('EUR/RSD'); if(rr) fmt(rr, m.eur_rsd.price, m.eur_rsd.change); }
+      }
+      if(Array.isArray(cg)){
+        var btc=null;
+        for(var j=0;j<cg.length;j++){ if((cg[j].symbol||'').toLowerCase()==='btc'){btc=cg[j];break;} }
+        if(btc){ var rbtc=bySym('BTC'); if(rbtc) fmt(rbtc, btc.current_price, (btc.price_change_percentage_24h_in_currency!=null?btc.price_change_percentage_24h_in_currency:btc.price_change_percentage_24h)); }
+      }
+    }).catch(function(){});
+  }
+  load(); setInterval(load, 60000);
+})();
+</script>
+
 </body>
 </html>
