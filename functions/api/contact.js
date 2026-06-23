@@ -1,3 +1,4 @@
+// Build trigger 2026-06-23: redeploy for contact email pipeline fix.
 // Cloudflare Pages Function — handles AHoosh contact form
 // Delivery: FormSubmit.co (keyless relay to hesamjafarzadeh@gmail.com).
 // No API key / env var required. Restores the working pre-2026-06-13 delivery
