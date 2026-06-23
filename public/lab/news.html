@@ -467,7 +467,7 @@
   .nd-sel-wrap label{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.54rem;color:var(--dim)}
   .nd-sel{appearance:none;-webkit-appearance:none;width:100%;background:rgba(4,8,18,.8) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%23e0a93f' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 11px center;border:1px solid rgba(224,169,63,.2);border-radius:9px;color:var(--silver);font-size:.76rem;padding:9px 28px 9px 11px;cursor:pointer;font-family:'Inter',sans-serif}
   .nd-sel:focus{outline:none;border-color:var(--gold)}
-  .nd-screen{position:relative;width:auto;aspect-ratio:16/9;height:auto;margin:0 16px;border-radius:14px;overflow:hidden;-webkit-transform:translateZ(0);transform:translateZ(0);isolation:isolate;background:radial-gradient(120% 120% at 30% 20%,rgba(224,169,63,.16),transparent 55%),linear-gradient(160deg,#0a1430,#03060f 75%);border:1px solid rgba(224,169,63,.2);display:flex;align-items:center;justify-content:center}
+  .nd-screen{position:relative;width:auto;aspect-ratio:16/9;height:auto;margin:0 16px;border-radius:14px;overflow:hidden;-webkit-transform:translateZ(0);transform:translateZ(0);isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black);background:radial-gradient(120% 120% at 30% 20%,rgba(224,169,63,.16),transparent 55%),linear-gradient(160deg,#0a1430,#03060f 75%);border:1px solid rgba(224,169,63,.2);display:flex;align-items:center;justify-content:center}
   .nd-screen::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);pointer-events:none}
   .nd-tv-media{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:cover;border-radius:14px;overflow:hidden;z-index:1}
   .nd-screen.playing .nd-play{display:none}
@@ -556,8 +556,8 @@
     /* FIX5: flattened grid children full width; video fills 16/9 like the live */
     .nd-grid>*{width:100%;max-width:100%}
     .nd-tv,.nd-cal,.nd-wx{width:100%;max-width:100%}
-    .nd-tv,.nd-screen{width:100%}
-    .nd-screen{position:relative;width:100%;aspect-ratio:16/9;height:auto;overflow:hidden;border-radius:14px;-webkit-transform:translateZ(0);transform:translateZ(0);isolation:isolate;margin:0 16px}
+    .nd-tv{width:100%}
+    .nd-screen{position:relative;width:auto;aspect-ratio:16/9;height:auto;overflow:hidden;border-radius:14px;-webkit-mask-image:-webkit-radial-gradient(white,black);-webkit-transform:translateZ(0);transform:translateZ(0);isolation:isolate;margin:0 16px}
     .nd-tv-media{position:absolute;inset:0;width:100%;height:100%}
     /* FIX6: news feed as one fixed-height internal scroll box (~4-5 items) */
     .nd-feed{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(224,169,63,.18);border-radius:16px;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(224,169,63,.32) transparent}
@@ -636,11 +636,10 @@
       <div class="nd-main">
         <div class="nd-pills" id="ndPills">
           <button class="nd-pill on" data-f="all">All</button>
-          <button class="nd-pill" data-f="persian">Persian</button>
-          <button class="nd-pill" data-f="international">International</button>
           <button class="nd-pill" data-f="markets">Markets</button>
-          <button class="nd-pill" data-f="tech">Tech &amp; Science</button>
-          <button class="nd-pill" data-f="sport">Sport</button>
+          <button class="nd-pill" data-f="business">Business</button>
+          <button class="nd-pill" data-f="tech">Tech &amp; AI</button>
+          <button class="nd-pill" data-f="politics">Politics</button>
         </div>
         <div class="nd-feed" id="ndFeed"></div>
       </div>
@@ -891,18 +890,18 @@
 
   /* ---------- News feed ---------- */
   var NEWS = [
-    {src:'Iran International',time:'4 min ago',cat:'persian',chip:'Persian',head:'Rial steadies after central bank signals new FX corridor',summ:'Officials outlined a managed band for the open-market rate as the toman recovered modestly against the dollar in afternoon trade.'},
+    {src:'Iran International',time:'4 min ago',cat:'business',chip:'Business',head:'Rial steadies after central bank signals new FX corridor',summ:'Officials outlined a managed band for the open-market rate as the toman recovered modestly against the dollar in afternoon trade.'},
     {src:'Reuters',time:'11 min ago',cat:'markets',chip:'Markets',head:'Brent slips below $83 as supply worries ease',summ:'Crude pared early gains after inventory data pointed to softer demand across major refining hubs heading into summer.'},
-    {src:'BBC World',time:'18 min ago',cat:'international',chip:'World',head:'EU leaders agree framework on cross-border energy grid',summ:'A late-night summit produced a roadmap for shared transmission capacity, though funding details were left for autumn talks.'},
-    {src:'NASA',time:'25 min ago',cat:'tech',chip:'Science',head:'New telescope survey maps 300 million distant galaxies',summ:'The data release gives researchers the widest 3D view yet of large-scale structure, refining estimates of dark-energy behaviour.'},
-    {src:'Al Jazeera',time:'33 min ago',cat:'international',chip:'World',head:'Ceasefire talks resume amid cautious optimism',summ:'Mediators reported narrowing gaps on prisoner exchanges, while both sides played down expectations of a quick breakthrough.'},
-    {src:'BBC Persian',time:'41 min ago',cat:'persian',chip:'Persian',head:'Tehran air-quality alert lifted as winds clear haze',summ:'Schools returned to normal hours after particulate levels fell below the emergency threshold for the first time this week.'},
+    {src:'BBC World',time:'18 min ago',cat:'politics',chip:'Politics',head:'EU leaders agree framework on cross-border energy grid',summ:'A late-night summit produced a roadmap for shared transmission capacity, though funding details were left for autumn talks.'},
+    {src:'NASA',time:'25 min ago',cat:'tech',chip:'Tech & AI',head:'New telescope survey maps 300 million distant galaxies',summ:'The data release gives researchers the widest 3D view yet of large-scale structure, refining estimates of dark-energy behaviour.'},
+    {src:'Al Jazeera',time:'33 min ago',cat:'politics',chip:'Politics',head:'Ceasefire talks resume amid cautious optimism',summ:'Mediators reported narrowing gaps on prisoner exchanges, while both sides played down expectations of a quick breakthrough.'},
+    {src:'BBC Persian',time:'41 min ago',cat:'business',chip:'Business',head:'Tehran air-quality alert lifted as winds clear haze',summ:'Schools returned to normal hours after particulate levels fell below the emergency threshold for the first time this week.'},
     {src:'Bloomberg',time:'52 min ago',cat:'markets',chip:'Markets',head:'Gold holds near record as rate-cut bets firm up',summ:'Bullion traded close to $2,390 an ounce as traders priced in a softer policy path from major central banks.'},
-    {src:'FIFA+',time:'1 hr ago',cat:'sport',chip:'Sport',head:'Champions League draw sets up marquee group stage',summ:'Several heavyweight clubs landed in the same pool, guaranteeing early high-profile fixtures across the autumn schedule.'},
-    {src:'DW News',time:'1 hr ago',cat:'international',chip:'World',head:'Germany unveils skilled-migration fast-track pilot',summ:'The scheme shortens recognition timelines for foreign qualifications in shortage sectors, starting with healthcare and IT.'},
-    {src:'Nat Geo',time:'2 hr ago',cat:'tech',chip:'Science',head:'Coral restoration project reports record survival rates',summ:'Lab-grown fragments transplanted last year are thriving, offering a template for reef recovery in warming waters.'},
-    {src:'Varzesh',time:'2 hr ago',cat:'sport',chip:'Sport',head:'Iran national side names squad for friendly window',summ:'The coach recalled two European-based forwards as the team prepares for a pair of high-tempo warm-up matches.'},
-    {src:'Euronews',time:'3 hr ago',cat:'international',chip:'World',head:'Mediterranean heatwave pushes records across the south',summ:'Forecasters warned of prolonged high temperatures, urging coastal regions to brace for elevated wildfire risk this weekend.'}
+    {src:'FIFA+',time:'1 hr ago',cat:'business',chip:'Business',head:'Champions League draw sets up marquee group stage',summ:'Several heavyweight clubs landed in the same pool, guaranteeing early high-profile fixtures across the autumn schedule.'},
+    {src:'DW News',time:'1 hr ago',cat:'politics',chip:'Politics',head:'Germany unveils skilled-migration fast-track pilot',summ:'The scheme shortens recognition timelines for foreign qualifications in shortage sectors, starting with healthcare and IT.'},
+    {src:'Nat Geo',time:'2 hr ago',cat:'tech',chip:'Tech & AI',head:'Coral restoration project reports record survival rates',summ:'Lab-grown fragments transplanted last year are thriving, offering a template for reef recovery in warming waters.'},
+    {src:'Varzesh',time:'2 hr ago',cat:'business',chip:'Business',head:'Iran national side names squad for friendly window',summ:'The coach recalled two European-based forwards as the team prepares for a pair of high-tempo warm-up matches.'},
+    {src:'Euronews',time:'3 hr ago',cat:'politics',chip:'Politics',head:'Mediterranean heatwave pushes records across the south',summ:'Forecasters warned of prolonged high temperatures, urging coastal regions to brace for elevated wildfire risk this weekend.'}
   ];
   var feed = document.getElementById('ndFeed');
   var pills = document.getElementById('ndPills');
@@ -926,13 +925,22 @@
     }catch(e){ return ''; }
   }
   // Classify an API article into our pill categories.
+  // Map the live feed's categories (business/economy/markets/finance/trade-supply/tech/ai/ict-telecom/politics) into our pill buckets.
+  var CHIP = { markets:'Markets', business:'Business', tech:'Tech & AI', politics:'Politics' };
+  var CAT_MAP = {
+    markets:'markets', finance:'markets', economy:'markets',
+    business:'business', 'trade-supply':'business', trade:'business', supply:'business',
+    tech:'tech', ai:'tech', 'ict-telecom':'tech', ict:'tech', telecom:'tech', science:'tech',
+    politics:'politics', geopolitics:'politics', world:'politics', international:'politics'
+  };
   function classify(a){
-    var src=(a.source||'').toLowerCase(), title=(a.title||'').toLowerCase();
-    if(a.lang==='fa') return {cat:'persian', chip:'Persian'};
-    if(/reuters|bloomberg|market|stocks|nasdaq|brent|gold|crypto|bitcoin|oil|economy/.test(src+' '+title)) return {cat:'markets', chip:'Markets'};
-    if(/nasa|nat geo|science|space|telescope|tech|ai |research/.test(src+' '+title)) return {cat:'tech', chip:'Science'};
-    if(/fifa|sport|football|soccer|league|match|olympic|varzesh|f1|formula/.test(src+' '+title)) return {cat:'sport', chip:'Sport'};
-    return {cat:'international', chip:'World'};
+    var cat=(a.category||'').toLowerCase().trim();
+    if(cat && CAT_MAP[cat]){ var b=CAT_MAP[cat]; return {cat:b, chip:CHIP[b]}; }
+    var t=((a.source||'')+' '+(a.title||'')).toLowerCase();
+    if(/reuters|bloomberg|market|stock|nasdaq|brent|gold|crypto|bitcoin|oil|economy|economic|finance|financial|\bfx\b|currency|forex|rial|trade|tariff|supply/.test(t)) return {cat:'markets', chip:CHIP.markets};
+    if(/\bai\b|artificial intelligence|machine learning| tech|technology|telecom|ict|software|chip|semiconductor|startup|science|research|data/.test(t)) return {cat:'tech', chip:CHIP.tech};
+    if(/politic|election|government|sanction|diplomat|parliament|minister|war|conflict|geopolit|summit|treaty/.test(t)) return {cat:'politics', chip:CHIP.politics};
+    return {cat:'business', chip:CHIP.business};
   }
 
   function render(filter){
@@ -958,20 +966,14 @@
   }
 
   function fetchNews(){
-    Promise.all([
-      fetch('/api/news?lang=en',{cache:'no-cache'}).then(function(r){ return r.json(); }).catch(function(){ return null; }),
-      fetch('/api/news?lang=fa',{cache:'no-cache'}).then(function(r){ return r.json(); }).catch(function(){ return null; })
-    ]).then(function(res){
-      var raw = [];
-      [res[0],res[1]].forEach(function(d){ if(d && Array.isArray(d.articles)) raw = raw.concat(d.articles); });
-      raw = raw.filter(function(a){ return a && (a.lang==='en'||a.lang==='fa'); });
+    fetch('/api/news?lang=en',{cache:'no-cache'}).then(function(r){ return r.json(); }).then(function(d){
+      var raw = (d && Array.isArray(d.articles)) ? d.articles : [];
+      raw = raw.filter(function(a){ return a && a.title; });
       if(!raw.length) return; // keep sample fallback
       var mapped = raw.map(function(a){
         var c = classify(a);
         return { src:a.source||'', time:timeAgo(a.pubDate), cat:c.cat, chip:c.chip, head:a.title||'', summ:'', link:a.link||'' };
       }).filter(function(n){ return n.head; });
-      // newest first
-      mapped.sort(function(a,b){ return 0; }); // order preserved from API (already sorted)
       if(mapped.length){ ARTICLES = mapped; render(currentFilter); }
     }).catch(function(){ /* keep sample fallback */ });
   }
