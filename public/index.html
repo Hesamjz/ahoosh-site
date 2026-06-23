@@ -685,7 +685,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   NAMED.forEach(c=>c.named=true);
   const CITIES=NAMED.concat(AMB);
   const ARCS=[]; const arc=(a,b)=>{if(a&&b&&a!==b)ARCS.push({sLat:a.lat,sLng:a.lng,eLat:b.lat,eLng:b.lng});};
-  var TEHRAN=CITIES.filter(function(x){return x.name==='Tehran';})[0]||NAMED[2];var OTH=CITIES.filter(function(c){return c!==TEHRAN;});for(var s=OTH.length-1;s>0;s--){var r=Math.floor(Math.random()*(s+1));var tm=OTH[s];OTH[s]=OTH[r];OTH[r]=tm;}var HUB=Math.min(6,OTH.length);for(var h=0;h<HUB;h++){arc(OTH[h],TEHRAN);arc(TEHRAN,OTH[h]);}for(var x=0;x<3&&x+1<OTH.length;x++){arc(OTH[x],OTH[OTH.length-1-x]);}
+  var TEHRAN=CITIES.filter(function(x){return x.name==='Tehran';})[0]||NAMED[2];var OTH=CITIES.filter(function(c){return c!==TEHRAN;});OTH.forEach(function(c){arc(c,TEHRAN);});for(var s=OTH.length-1;s>0;s--){var r=Math.floor(Math.random()*(s+1));var tm=OTH[s];OTH[s]=OTH[r];OTH[r]=tm;}for(var h=0;h<Math.min(4,OTH.length);h++){arc(TEHRAN,OTH[h]);}for(var x=0;x<2&&x+1<OTH.length;x++){arc(OTH[x],OTH[OTH.length-1-x]);}
   /* mesh above replaces the nearest-hub funnel */
   const RINGS=CITIES.map(c=>({lat:c.lat,lng:c.lng,named:c.named}));
   const COUNTRIES=window.AHOOSH_COUNTRIES||{features:[]};
@@ -697,7 +697,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
     .pointsData(CITIES).pointLat("lat").pointLng("lng").pointColor(d=>d.named?HOT:GOLD).pointAltitude(d=>d.named?0.02:0.008).pointRadius(d=>d.named?0.34:0.2).pointResolution(12).pointsMerge(false)
     .arcsData(ARCS).arcStartLat("sLat").arcStartLng("sLng").arcEndLat("eLat").arcEndLng("eLng")
       .arcColor(()=>["rgba(255,225,150,0.04)","rgba(255,231,170,0.9)","rgba(255,225,150,0.04)"]).arcStroke(0.5).arcAltitudeAutoScale(0.45)
-      .arcDashLength(0.34).arcDashGap(1.4).arcDashInitialGap(()=>Math.random()).arcDashAnimateTime(3400)
+      .arcDashLength(0.3).arcDashGap(2.6).arcDashInitialGap(()=>Math.random()).arcDashAnimateTime(3400)
     .ringsData(RINGS).ringLat("lat").ringLng("lng").ringColor(()=>t=>`rgba(224,169,63,${Math.sqrt(1-t)})`).ringMaxRadius(d=>d.named?4:2.4).ringPropagationSpeed(2).ringRepeatPeriod(d=>d.named?1200:1800)
     .htmlElementsData(CITIES).htmlLat("lat").htmlLng("lng").htmlAltitude(0.012)
       .htmlElement(d=>{const el=document.createElement("div");el.className="city-pill named";el.textContent=d.name;el.style.position="absolute";return el;});
