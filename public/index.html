@@ -719,10 +719,10 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   if(!reduce){ (function(){ var FLIGHT=2400, live=[];
     function pick(){ return CITIES[(Math.random()*CITIES.length)|0]; }
     function emit(){ var a=pick(), b=pick(), g=0; while(b===a && g++<6) b=pick();
-      var o={sLat:a.lat,sLng:a.lng,eLat:b.lat,eLng:b.lng}; live.push(o); if(live.length>5) live.shift();
+      var o={sLat:a.lat,sLng:a.lng,eLat:b.lat,eLng:b.lng}; live.push(o); if(live.length>10) live.shift();
       world.arcsData(live.slice());
       setTimeout(function(){ var i=live.indexOf(o); if(i>-1){ live.splice(i,1); world.arcsData(live.slice()); } }, FLIGHT);
-      setTimeout(emit, 700+Math.random()*1500); }
+      setTimeout(emit, 350+Math.random()*750); }
     setTimeout(emit, 900); })(); }
   let paused=false, fStart=innerHeight*0.85, fEnd=innerHeight*5;
   function calcFade(){ const fr=document.querySelector('.frames'); fStart=(fr?fr.offsetTop:innerHeight)-innerHeight*0.1; fEnd=fr?(fr.offsetTop+fr.offsetHeight*0.9):innerHeight*5; }
