@@ -1,12 +1,39 @@
-// Build trigger 2026-06-23: redeploy for contact email pipeline fix.
 // Cloudflare Pages Function — handles AHoosh contact form
 // Delivery: FormSubmit.co (keyless relay to hesamjafarzadeh@gmail.com).
 // No API key / env var required. Restores the working pre-2026-06-13 delivery
 // path after the Resend migration silently broke email (missing RESEND_API_KEY).
-
-import { isSameOrigin, isValidEmail } from './_guard.js';
+// Self-contained: no imports (the _guard.js helper does not exist on main).
 
 const NOTIFY_TO = 'hesamjafarzadeh@gmail.com';
+const ALLOWED_ORIGINS = new Set(['https://ahoosh.ai', 'https://www.ahoosh.ai']);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  try {
+    const host = new URL(origin).host;
+    return host === 'ahoosh-site.pages.dev' || host.endsWith('.ahoosh-site.pages.dev');
+  } catch {
+    return false;
+  }
+}
+
+function isSameOrigin(request) {
+  const origin = request.headers.get('Origin');
+  if (origin) return isAllowedOrigin(origin);
+  const referer = request.headers.get('Referer');
+  if (referer) {
+    try { return isAllowedOrigin(new URL(referer).origin); } catch { return false; }
+  }
+  return false;
+}
+
+function isValidEmail(email) {
+  if (typeof email !== 'string') return false;
+  const e = email.trim();
+  if (e.length < 5 || e.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+}
 
 export async function onRequestPost({ request }) {
   // Block cross-site form posts (CSRF / spam relay).
@@ -24,7 +51,6 @@ export async function onRequestPost({ request }) {
     const honeypot    = (formData.get('_honey')        || '').toString().trim();
 
     // Honeypot: real users never fill the hidden "_honey" field. Bots do.
-    // Pretend success so the bot moves on, but send nothing.
     if (honeypot) {
       return Response.redirect('https://ahoosh.ai/thank-you', 302);
     }
@@ -33,7 +59,6 @@ export async function onRequestPost({ request }) {
       return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
     }
 
-    // Cap lengths to keep emails sane and limit abuse payloads.
     const safeName    = name.slice(0, 120);
     const safeCompany = company.slice(0, 160);
     const safeMessage = message.slice(0, 5000);
@@ -75,8 +100,6 @@ export async function onRequestPost({ request }) {
       body,
     });
 
-    // FormSubmit returns 200 on accepted submissions. Detect the known
-    // not-activated / blocked responses and surface them instead of faking success.
     let ok = res.ok;
     if (ok) {
       try {
@@ -86,9 +109,7 @@ export async function onRequestPost({ request }) {
             text.includes('activate your form')) {
           ok = false;
         }
-      } catch (e) {
-        // If body can't be read, trust the HTTP status.
-      }
+      } catch (e) { /* trust status */ }
     }
 
     if (!ok) {
