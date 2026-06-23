@@ -685,7 +685,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   NAMED.forEach(c=>c.named=true);
   const CITIES=NAMED.concat(AMB);
   const ARCS=[]; const arc=(a,b)=>{if(a&&b&&a!==b)ARCS.push({sLat:a.lat,sLng:a.lng,eLat:b.lat,eLng:b.lng});};
-  CITIES.forEach(function(c,i){var nn=1+Math.floor(Math.random()*2);var used={};used[i]=1;for(var k=0;k<nn;k++){var j,t=0;do{j=Math.floor(Math.random()*CITIES.length);t++;}while(used[j]&&t<10);used[j]=1;arc(c,CITIES[j]);}});
+  var TEHRAN=CITIES.filter(function(x){return x.name==='Tehran';})[0]||NAMED[2];CITIES.forEach(function(c){if(c!==TEHRAN){arc(c,TEHRAN);arc(TEHRAN,c);}});
   /* mesh above replaces the nearest-hub funnel */
   const RINGS=CITIES.map(c=>({lat:c.lat,lng:c.lng,named:c.named}));
   const COUNTRIES=window.AHOOSH_COUNTRIES||{features:[]};
@@ -697,7 +697,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
     .pointsData(CITIES).pointLat("lat").pointLng("lng").pointColor(d=>d.named?HOT:GOLD).pointAltitude(d=>d.named?0.02:0.008).pointRadius(d=>d.named?0.34:0.2).pointResolution(12).pointsMerge(false)
     .arcsData(ARCS).arcStartLat("sLat").arcStartLng("sLng").arcEndLat("eLat").arcEndLng("eLng")
       .arcColor(()=>["rgba(255,225,150,0.04)","rgba(255,231,170,0.9)","rgba(255,225,150,0.04)"]).arcStroke(0.5).arcAltitudeAutoScale(0.45)
-      .arcDashLength(0.38).arcDashGap(0.7).arcDashInitialGap(()=>Math.random()).arcDashAnimateTime(1900)
+      .arcDashLength(0.38).arcDashGap(0.7).arcDashInitialGap(()=>Math.random()).arcDashAnimateTime(3400)
     .ringsData(RINGS).ringLat("lat").ringLng("lng").ringColor(()=>t=>`rgba(224,169,63,${Math.sqrt(1-t)})`).ringMaxRadius(d=>d.named?4:2.4).ringPropagationSpeed(2).ringRepeatPeriod(d=>d.named?1200:1800)
     .htmlElementsData(CITIES).htmlLat("lat").htmlLng("lng").htmlAltitude(0.012)
       .htmlElement(d=>{const el=document.createElement("div");el.className="city-pill named";el.textContent=d.name;el.style.position="absolute";return el;});
@@ -966,7 +966,7 @@ document.querySelectorAll('[data-count]').forEach(el=>{
 #globeViz canvas{pointer-events:none}
 </style>
 <style>
-#orbStage{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;z-index:1!important;pointer-events:none!important;aspect-ratio:auto!important;filter:none!important;transform:translateY(0)}
+#orbStage{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;z-index:1!important;pointer-events:none!important;aspect-ratio:auto!important;filter:none!important;transform:translateY(7vh)}
 #orbTilt{position:absolute!important;inset:0!important;transform:none!important}
 #globeViz{width:100%!important;height:100%!important}
 #globeViz canvas{pointer-events:none!important}
