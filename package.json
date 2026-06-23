@@ -12,7 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^6.0.2",
+    "@astrojs/mdx": "^7.0.0",
     "@astrojs/sitemap": "^3.7.3",
     "@studio-freight/lenis": "^1.0.42",
     "@tailwindcss/vite": "^4.3.0",
