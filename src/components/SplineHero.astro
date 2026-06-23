@@ -1,0 +1,182 @@
+---
+/**
+ * SplineHero.astro — AHoosh.ai "Interactive 3D" hero.
+ *
+ * Native-Astro port of a React/shadcn component (Card + Spotlight + Spline scene).
+ * Faithful to the original layout, but:
+ *   - No React / no framer-motion. Reuses the locked no-React Spline embed
+ *     (SplineObject.astro -> <spline-viewer> web component, lazy + reduced-motion aware).
+ *   - Spotlight is the original aceternity SVG, animated with pure CSS (@keyframes
+ *     spotlight lives in styles/effects.css).
+ *   - Palette retokenised from generic shadcn black/white to AHoosh navy/gold.
+ *
+ * Props:
+ *   scene  — hosted Spline scene URL (.splinecode). Required.
+ *   title  — heading text.
+ *   body   — paragraph text.
+ *   class  — extra classes on the outer card.
+ *
+ * Usage:
+ *   <SplineHero scene="https://prod.spline.design/XXXX/scene.splinecode" />
+ */
+import SplineObject from './SplineObject.astro';
+
+interface Props {
+  scene: string;
+  title?: string;
+  body?: string;
+  class?: string;
+}
+
+const {
+  scene,
+  title = 'Interactive 3D',
+  body =
+    'Bring your decisions to life with immersive 3D. AHoosh turns AI, market data, and research into experiences that hold attention and sharpen judgment.',
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['spline-hero', className]}>
+  {/* Spotlight — original aceternity SVG, CSS-animated via .animate-spotlight */}
+  <svg
+    class="spline-hero__spotlight animate-spotlight"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 3787 2842"
+    fill="none"
+    aria-hidden="true"
+  >
+    <g filter="url(#spline-hero-spotlight-filter)">
+      <ellipse
+        cx="1924.71"
+        cy="273.501"
+        rx="1924.71"
+        ry="273.501"
+        transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)"
+        fill="var(--gold-bright, #FFE9A2)"
+        fill-opacity="0.18"></ellipse>
+    </g>
+    <defs>
+      <filter
+        id="spline-hero-spotlight-filter"
+        x="0.860352"
+        y="0.838989"
+        width="3785.16"
+        height="2840.26"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
+        <feGaussianBlur stdDeviation="151" result="effect1_foregroundBlur"></feGaussianBlur>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="spline-hero__grid">
+    {/* Left content */}
+    <div class="spline-hero__content">
+      <h1 class="spline-hero__title">{title}</h1>
+      <p class="spline-hero__body">{body}</p>
+    </div>
+
+    {/* Right content — the 3D scene */}
+    <div class="spline-hero__scene">
+      <SplineObject scene={scene} class="spline-hero__viewer" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .spline-hero {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid rgba(240, 242, 245, 0.08);
+    /* near-black navy, echoing the original bg-black/[0.96] but on-brand */
+    background: #02060f;
+    box-shadow: var(--shadow-card, 0 2px 8px rgba(0, 0, 0, 0.45));
+  }
+
+  .spline-hero__spotlight {
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+    height: 169%;
+    width: 138%;
+    top: -160px;
+    left: 0;
+    opacity: 0;
+  }
+
+  .spline-hero__grid {
+    display: flex;
+    height: 100%;
+  }
+
+  .spline-hero__content {
+    flex: 1;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .spline-hero__title {
+    font-family: var(--font-head, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    background: linear-gradient(180deg, var(--silver, #f0f2f5) 0%, var(--silver-muted, #8e939e) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .spline-hero__body {
+    margin-top: 1rem;
+    max-width: 32rem;
+    color: var(--silver-dim, rgba(240, 242, 245, 0.65));
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .spline-hero__scene {
+    flex: 1;
+    position: relative;
+  }
+
+  .spline-hero :global(.spline-hero__viewer) {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Stack on small screens; keep the scene visible below the copy */
+  @media (max-width: 768px) {
+    .spline-hero {
+      height: auto;
+      min-height: 560px;
+    }
+    .spline-hero__grid {
+      flex-direction: column;
+    }
+    .spline-hero__scene {
+      min-height: 280px;
+    }
+    .spline-hero__spotlight {
+      width: 200%;
+      left: -40px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spline-hero__spotlight {
+      animation: none;
+      opacity: 1;
+    }
+  }
+</style>

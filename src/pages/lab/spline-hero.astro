@@ -1,0 +1,33 @@
+---
+/**
+ * /lab/spline-hero — isolated preview for the SplineHero component.
+ *
+ * Lives under /lab so it can be reviewed on staging without touching the live
+ * homepage. The scene URL below is the Spline DEMO scene (the robot) used only
+ * as a placeholder — swap it for a hosted AHoosh scene before this goes near a
+ * real page.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SplineHero from '../../components/SplineHero.astro';
+
+const DEMO_SCENE = 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode';
+---
+
+<BaseLayout
+  title="Lab — Spline Hero Preview"
+  description="Isolated preview of the SplineHero 3D component."
+>
+  <main style="max-width: 1100px; margin: 0 auto; padding: 96px 24px;">
+    <p style="font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.12em; font-size: 12px; color: var(--silver-muted); margin-bottom: 16px;">
+      Component preview · /lab
+    </p>
+
+    <SplineHero scene={DEMO_SCENE} />
+
+    <p style="margin-top: 24px; color: var(--silver-dim); font-size: 14px; line-height: 1.6;">
+      Placeholder scene is Spline's demo robot. Replace <code>DEMO_SCENE</code> with a
+      hosted AHoosh <code>.splinecode</code> URL, then drop
+      <code>&lt;SplineHero scene="…" /&gt;</code> onto the target page.
+    </p>
+  </main>
+</BaseLayout>

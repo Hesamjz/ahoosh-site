@@ -764,8 +764,8 @@ function fetchMarkets() {
     // FX
     var fxHtml = '';
     if (mkt.irr) {
-      if (mkt.irr.usd) fxHtml += mktRow('USD / Toman', fmtNum(mkt.irr.usd.price, 0)+' T', mkt.irr.usd.change);
-      if (mkt.irr.eur) fxHtml += mktRow('EUR / Toman', fmtNum(mkt.irr.eur.price, 0)+' T', mkt.irr.eur.change);
+      if (mkt.irr.usd) fxHtml += mktRow('USD / Rial', fmtNum(mkt.irr.usd.price, 0)+' R', mkt.irr.usd.change);
+      if (mkt.irr.eur) fxHtml += mktRow('EUR / Rial', fmtNum(mkt.irr.eur.price, 0)+' R', mkt.irr.eur.change);
     }
     if (mkt.eur_rsd) fxHtml += mktRow('EUR / RSD', fmtNum(mkt.eur_rsd.price, 2), mkt.eur_rsd.change);
     document.getElementById('mkt-fx').innerHTML = fxHtml ||
