@@ -984,7 +984,7 @@
   function fetchNews(){
     fetch('/api/news?lang=en',{cache:'no-cache'}).then(function(r){ return r.json(); }).then(function(d){
       var raw = (d && Array.isArray(d.articles)) ? d.articles : [];
-      raw = raw.filter(function(a){ return a && a.title; });
+      raw = raw.filter(function(a){ return a && a.title; }); raw.sort(function(a,b){ return new Date(b.pubDate||0).getTime() - new Date(a.pubDate||0).getTime(); });
       if(!raw.length) return; // keep sample fallback
       var mapped = raw.map(function(a){
         var c = classify(a);
