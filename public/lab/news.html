@@ -499,7 +499,15 @@
   /* Weather */
   .nd-wx-now{display:flex;align-items:center;gap:16px;padding:16px}
   .nd-wx-temp{font-family:'Montserrat',sans-serif;font-weight:800;font-size:2.8rem;color:#fff;line-height:1}
-  .nd-wx-ico{width:54px;height:54px;flex:0 0 auto}
+  .nd-wx-ico{width:54px;height:54px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:42px;line-height:1}
+  .nd-wx-search{position:relative;padding:0 16px 4px}
+  .nd-wx-input{width:100%;box-sizing:border-box;background:rgba(8,16,34,.6);border:1px solid rgba(224,169,63,.22);border-radius:10px;color:var(--silver);font-family:'Montserrat',sans-serif;font-size:.72rem;letter-spacing:.04em;padding:9px 12px;outline:none}
+  .nd-wx-input::placeholder{color:var(--dim)}
+  .nd-wx-input:focus{border-color:rgba(224,169,63,.5);box-shadow:0 0 0 2px rgba(224,169,63,.12)}
+  .nd-wx-sug{display:none;position:absolute;left:16px;right:16px;top:100%;z-index:30;background:#0a1530;border:1px solid rgba(224,169,63,.3);border-radius:10px;box-shadow:0 18px 44px rgba(0,0,0,.55);overflow:hidden;max-height:240px;overflow-y:auto}
+  .nd-wx-sug-item{padding:10px 13px;font-size:.74rem;color:var(--silver);cursor:pointer;border-bottom:1px solid rgba(224,169,63,.08)}
+  .nd-wx-sug-item:last-child{border-bottom:none}
+  .nd-wx-sug-item:hover{background:rgba(224,169,63,.16);color:#fff}
   .nd-wx-meta .c{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.66rem;color:var(--gold)}
   .nd-wx-meta .d{font-size:.78rem;color:var(--silver);margin-top:2px}
   .nd-wx-meta .w{font-size:.68rem;color:var(--dim);margin-top:1px}
@@ -522,11 +530,6 @@
   .nd-cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:.74rem;color:var(--silver);border-radius:8px;font-variant-numeric:tabular-nums}
   .nd-cal-cell.empty{color:transparent}
   .nd-cal-cell.today{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--navy);font-weight:800;box-shadow:0 6px 16px -6px rgba(224,169,63,.6)}
-
-  /* container-scroll news card — desktop no-op (mobile-only feature) */
-  .nd-cscroll{display:contents}
-  .nd-cscroll-card{display:contents}
-  .nd-restore{display:none}
 
   @media (max-width:980px){
     .nd-wrap .container{padding:0 18px}
@@ -552,12 +555,12 @@
     .nd-rail{position:static;top:auto}
     /* FIX5: flattened grid children full width; video fills 16/9 like the live */
     .nd-grid>*{width:100%;max-width:100%}
-    .nd-tv,.nd-cscroll,.nd-cal,.nd-wx{width:100%;max-width:100%}
+    .nd-tv,.nd-cal,.nd-wx{width:100%;max-width:100%}
     .nd-tv,.nd-screen{width:100%}
     .nd-screen{position:relative;width:100%;aspect-ratio:16/9;height:auto;overflow:hidden;border-radius:14px;margin:0 16px}
     .nd-tv-media{position:absolute;inset:0;width:100%;height:100%}
     /* FIX6: news feed as one fixed-height internal scroll box (~4-5 items) */
-    .nd-feed{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(224,169,63,.18);border-radius:16px;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(224,169,63,.32) transparent}
+    .nd-feed{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(224,169,63,.18);border-radius:16px;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(224,169,63,.32) transparent}
     .nd-feed::-webkit-scrollbar{width:6px}
     .nd-feed::-webkit-scrollbar-thumb{background:rgba(224,169,63,.32);border-radius:6px}
     /* FIX6: keep calendar header uncrowded */
@@ -598,15 +601,6 @@
     .nd-wx-day .dn{font-size:.52rem}
     .nd-wx-day .di{font-size:1.05rem;margin:4px 0 2px}
     .nd-wx-day .dt{font-size:.66rem}
-  
-    /* === MOBILE container-scroll news card (Aceternity-style) === */
-    .nd-cscroll{display:block;perspective:1200px;margin:6px 0 22px}
-    .nd-cscroll-card{display:block;transform-origin:center top;transform:rotateX(28deg) scale(.9);will-change:transform,opacity;border:1px solid rgba(224,169,63,.28);border-radius:22px;background:rgba(8,16,34,.55);box-shadow:inset 0 0 0 1px rgba(224,169,63,.10),0 30px 80px rgba(0,0,0,.5),0 0 0 4px rgba(224,169,63,.06);padding:12px 12px 6px;touch-action:pan-y}
-    .nd-cscroll-card.dismissed{transform:translateX(120%) rotate(3deg)!important;opacity:0;max-height:0;padding:0;margin:0;border-width:0;overflow:hidden;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .35s,max-height .4s,padding .4s}
-    .nd-restore{display:none}
-    .nd-restore.show{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:11px 20px;border-radius:40px;background:linear-gradient(135deg,#e0a93f,#f4d98b);color:#0a1733;font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:.1em;font-size:.72rem;border:0}
-    .nd-cscroll{order:2}
-    .nd-restore{order:2}
   }
   @media (prefers-reduced-motion:reduce){
     .nd-track{animation:none!important;padding-left:120px}
@@ -640,8 +634,6 @@
 
       <!-- LEFT: News feed -->
       <div class="nd-main">
-        <div class="nd-cscroll">
-        <div class="nd-cscroll-card" id="ndNewsCard">
         <div class="nd-pills" id="ndPills">
           <button class="nd-pill on" data-f="all">All</button>
           <button class="nd-pill" data-f="persian">Persian</button>
@@ -651,9 +643,6 @@
           <button class="nd-pill" data-f="sport">Sport</button>
         </div>
         <div class="nd-feed" id="ndFeed"></div>
-        </div>
-        </div>
-        <button class="nd-restore" id="ndNewsRestore" type="button">▸ Show news</button>
       </div>
 
       <!-- RIGHT: Rail -->
@@ -685,14 +674,18 @@
 
         <!-- Weather -->
         <div class="nd-card nd-wx">
-          <div class="nd-card-h"><span class="label">Weather</span><span class="nd-mini">Belgrade, RS</span></div>
+          <div class="nd-card-h"><span class="label">Weather</span><span class="nd-mini" id="ndWxCity">Belgrade, RS</span></div>
+          <div class="nd-wx-search">
+            <input id="ndWxInput" class="nd-wx-input" type="text" placeholder="Change city&hellip;" autocomplete="off" />
+            <div class="nd-wx-sug" id="ndWxSug"></div>
+          </div>
           <div class="nd-wx-now">
-            <svg class="nd-wx-ico" viewBox="0 0 64 64" fill="none"><circle cx="24" cy="26" r="11" fill="#f4d98b"/><path d="M40 44a9 9 0 0 0-1.2-17.9 13 13 0 0 0-24.6 4A8 8 0 0 0 16 46h24Z" fill="#cdd6e6" opacity=".9"/></svg>
-            <div class="nd-wx-temp">29&deg;</div>
+            <div class="nd-wx-ico" id="ndWxIco">⛅</div>
+            <div class="nd-wx-temp" id="ndWxTemp">29&deg;</div>
             <div class="nd-wx-meta">
-              <div class="c">Belgrade</div>
-              <div class="d">Partly cloudy</div>
-              <div class="w">Wind 12 km/h &middot; Humidity 41%</div>
+              <div class="c" id="ndWxCityLbl">Belgrade</div>
+              <div class="d" id="ndWxDesc">Partly cloudy</div>
+              <div class="w" id="ndWxWind">Wind 12 km/h &middot; Humidity 41%</div>
             </div>
           </div>
           <div class="nd-wx-fc" id="ndWx"></div>
@@ -1238,14 +1231,106 @@
   }
   try{ fetchMarkets(); setInterval(fetchMarkets, 60000); }catch(e){}
 
-  /* ---------- Weather forecast ---------- */
-  var WX = [['Mon','☀️','30','19'],['Tue','⛅','28','18'],['Wed','☁️','25','17'],['Thu','🌦️','23','16'],['Fri','☀️','27','18']];
-  var wx = document.getElementById('ndWx');
-  if(wx){
-    wx.innerHTML = WX.map(function(d){
-      return '<div class="nd-wx-day"><div class="dn">'+d[0]+'</div><div class="di">'+d[1]+'</div><div class="dt"><b>'+d[2]+'°</b> '+d[3]+'°</div></div>';
-    }).join('');
+  /* ---------- Weather — LIVE via Open-Meteo (free, no key) + geolocation + city search ---------- */
+  var WMO_ICONS = { 0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈' };
+  var WMO_DESC  = { 0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Foggy',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Showers',82:'Heavy showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm' };
+  var DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  function loadWeather(lat, lon, city){
+    fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true&hourly=relative_humidity_2m&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=6')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var cw = data.current_weather; if(!cw) return;
+        var code = cw.weathercode;
+        // humidity at the hour matching current_weather.time
+        var hum = null;
+        try{
+          var hh = data.hourly || {};
+          if(hh.time && hh.relative_humidity_2m){
+            var hi = hh.time.indexOf(cw.time);
+            if(hi < 0){ var pre = cw.time.slice(0,13); for(var k=0;k<hh.time.length;k++){ if(hh.time[k].slice(0,13)===pre){ hi=k; break; } } }
+            if(hi >= 0) hum = hh.relative_humidity_2m[hi];
+          }
+        }catch(e){}
+        var ico = document.getElementById('ndWxIco');
+        var temp= document.getElementById('ndWxTemp');
+        var desc= document.getElementById('ndWxDesc');
+        var wind= document.getElementById('ndWxWind');
+        var lbl = document.getElementById('ndWxCityLbl');
+        var mini= document.getElementById('ndWxCity');
+        if(ico)  ico.textContent  = WMO_ICONS[code] || '🌡';
+        if(temp) temp.innerHTML   = Math.round(cw.temperature) + '&deg;';
+        if(desc) desc.textContent = WMO_DESC[code] || '';
+        if(lbl)  lbl.textContent  = city;
+        if(mini) mini.textContent = city;
+        if(wind) wind.innerHTML   = 'Wind ' + Math.round(cw.windspeed) + ' km/h' + (hum!=null ? ' &middot; Humidity ' + Math.round(hum) + '%' : '');
+        var daily = data.daily || {};
+        var wxEl = document.getElementById('ndWx');
+        if(wxEl && daily.time){
+          var fh = '';
+          for(var i=1;i<Math.min(6, daily.time.length);i++){
+            var dt = new Date(daily.time[i]+'T12:00:00');
+            var dc = daily.weathercode[i];
+            fh += '<div class="nd-wx-day"><div class="dn">'+DAY_NAMES[dt.getDay()]+'</div><div class="di">'+(WMO_ICONS[dc]||'🌡')+'</div><div class="dt"><b>'+Math.round(daily.temperature_2m_max[i])+'°</b> '+Math.round(daily.temperature_2m_min[i])+'°</div></div>';
+          }
+          wxEl.innerHTML = fh;
+        }
+      })
+      .catch(function(){ /* keep existing sample/“Unavailable” gracefully */ });
   }
+
+  /* city search via Open-Meteo geocoding */
+  (function(){
+    var wxTimer = null;
+    var input = document.getElementById('ndWxInput');
+    var sug   = document.getElementById('ndWxSug');
+    if(input && sug){
+      input.addEventListener('input', function(){
+        clearTimeout(wxTimer);
+        var q = this.value.trim();
+        if(q.length < 2){ sug.style.display='none'; return; }
+        wxTimer = setTimeout(function(){
+          fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=6&language=en&format=json')
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+              var results = data.results || [];
+              if(!results.length){ sug.style.display='none'; return; }
+              sug.innerHTML = '';
+              results.forEach(function(r){
+                var label = r.name + (r.admin1 ? ', '+r.admin1 : '') + ', ' + r.country;
+                var item = document.createElement('div');
+                item.className = 'nd-wx-sug-item';
+                item.textContent = label;
+                item.addEventListener('click', function(){
+                  input.value = r.name + ', ' + r.country;
+                  sug.style.display = 'none';
+                  loadWeather(r.latitude, r.longitude, r.name + ', ' + r.country);
+                });
+                sug.appendChild(item);
+              });
+              sug.style.display = 'block';
+            })
+            .catch(function(){ sug.style.display='none'; });
+        }, 350);
+      });
+      document.addEventListener('click', function(e){
+        if(!sug.contains(e.target) && e.target !== input) sug.style.display='none';
+      });
+    }
+  })();
+
+  /* initial load: geolocation → Belgrade fallback */
+  try{
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        function(pos){ loadWeather(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4), 'Your location'); },
+        function(){ loadWeather(44.8, 20.5, 'Belgrade'); },
+        { timeout: 6000 }
+      );
+    } else {
+      loadWeather(44.8, 20.5, 'Belgrade');
+    }
+  }catch(e){ loadWeather(44.8, 20.5, 'Belgrade'); }
 
   /* ---------- Calendar (June 2026) ---------- */
   var cal = document.getElementById('ndCal');
@@ -1262,100 +1347,6 @@
 })();
 </script>
 
-  <!-- MOBILE-ONLY: container-scroll news card (reveal tilt + swipe-right dismiss) -->
-  <script>
-  (function(){
-    var mq = window.matchMedia('(max-width:980px)');
-    if(!mq.matches) return; // mobile only — desktop untouched
-
-    var card    = document.getElementById('ndNewsCard');
-    var restore = document.getElementById('ndNewsRestore');
-    var feed    = document.getElementById('ndFeed');
-    if(!card || !restore) return;
-
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // ---- (a) SCROLL REVEAL: rotateX 28->0, scale .9->1 as card enters viewport ----
-    var ticking = false;
-    function reveal(){
-      ticking = false;
-      if(card.classList.contains('dismissed')) return;
-      if(reduce){ card.style.transform = 'rotateX(0deg) scale(1)'; return; }
-      var r  = card.getBoundingClientRect();
-      var vh = window.innerHeight || document.documentElement.clientHeight;
-      // progress 0 when card top at viewport bottom, 1 when top reaches ~58% vh (flat from there up)
-      var p = (vh - r.top) / (vh - vh*0.58);
-      if(p < 0) p = 0; if(p > 1) p = 1;
-      var rx = 28 - 28*p;            // 28deg -> 0 (clamped flat)
-      var sc = 0.9 + 0.1*p;          // .9 -> 1
-      if(rx < 0) rx = 0; if(sc > 1) sc = 1;
-      card.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
-    }
-    function onScroll(){
-      if(!ticking){ ticking = true; window.requestAnimationFrame(reveal); }
-    }
-    window.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', onScroll, {passive:true});
-    reveal();
-
-    // ---- (b) SWIPE-RIGHT TO DISMISS ----
-    var startX=0, startY=0, dx=0, dy=0, horizontal=false, dragging=false;
-
-    card.addEventListener('touchstart', function(e){
-      if(card.classList.contains('dismissed')) return;
-      var t = e.touches[0];
-      startX = t.clientX; startY = t.clientY;
-      dx = 0; dy = 0; horizontal = false; dragging = true;
-    }, {passive:true});
-
-    card.addEventListener('touchmove', function(e){
-      if(!dragging || card.classList.contains('dismissed')) return;
-      var t = e.touches[0];
-      dx = t.clientX - startX;
-      dy = t.clientY - startY;
-      if(!horizontal && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) && dx > 0){
-        horizontal = true; // lock to a right-swipe gesture
-      }
-      if(horizontal){
-        e.preventDefault();               // stop vertical hijack on this gesture
-        card.style.transition = 'none';
-        card.style.transform = 'translateX(' + dx + 'px) rotate(' + (dx*0.02).toFixed(2) + 'deg)';
-        card.style.opacity = String(Math.max(0, 1 - dx/300));
-      }
-    }, {passive:false}); // non-passive so preventDefault works on the horizontal branch
-
-    function endSwipe(){
-      if(!dragging) return;
-      dragging = false;
-      if(horizontal && dx > 80){
-        card.style.transition = '';
-        card.style.transform = '';
-        card.style.opacity = '';
-        card.classList.add('dismissed');
-        restore.classList.add('show');
-      } else {
-        // snap back
-        card.style.transition = 'transform .25s ease, opacity .25s ease';
-        card.style.transform = '';
-        card.style.opacity = '';
-        setTimeout(function(){ card.style.transition=''; reveal(); }, 260);
-      }
-      horizontal = false;
-    }
-    card.addEventListener('touchend', endSwipe, {passive:true});
-    card.addEventListener('touchcancel', endSwipe, {passive:true});
-
-    // ---- (c) RESTORE ----
-    restore.addEventListener('click', function(){
-      card.classList.remove('dismissed');
-      restore.classList.remove('show');
-      card.style.transition='';
-      card.style.transform='';
-      card.style.opacity='';
-      reveal();
-    });
-  })();
-  </script>
 
 
 </main>
