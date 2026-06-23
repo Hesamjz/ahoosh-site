@@ -75,6 +75,21 @@
   nav.main a:not(.pill)::after{content:'';position:absolute;left:0;bottom:-6px;width:0;height:1.5px;background:var(--gold);transition:width .35s var(--ease)}
   nav.main a:not(.pill):hover{color:#fff}
   nav.main a:not(.pill):hover::after{width:100%}
+  /* Consulting -> Assess dropdown */
+  .nav-dd{position:relative;display:inline-flex;align-items:center}
+  .nav-dd::after{content:'';position:absolute;left:-12px;right:-12px;top:100%;height:18px}
+  .nav-dd-car{font-style:normal;font-size:.6em;opacity:.65;margin-left:5px}
+  .nav-dd-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);min-width:172px;display:flex;flex-direction:column;background:rgba(8,16,34,.97);border:1px solid rgba(224,169,63,.22);border-radius:14px;padding:8px;opacity:0;visibility:hidden;transition:opacity .25s,transform .25s;box-shadow:0 24px 60px rgba(0,0,0,.55);z-index:130}
+  .nav-dd:hover .nav-dd-menu,.nav-dd:focus-within .nav-dd-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(6px)}
+  .nav-dd-menu a{padding:11px 14px;border-radius:10px;font-size:.68rem!important;white-space:nowrap;color:var(--silver)}
+  .nav-dd-menu a::after{display:none!important}
+  .nav-dd-menu a:hover{background:rgba(224,169,63,.12);color:#fff}
+  .nav-dd-gold{color:var(--gold)!important}.nav-dd-gold:hover{color:var(--gold-lt)!important}
+  nav.main.open .nav-dd{display:contents}
+  nav.main.open .nav-dd-menu{display:contents;visibility:visible;opacity:1}
+  nav.main.open .nav-dd-car{display:none}
+  nav.main.open .nav-dd-menu a:first-child{display:none}
+
   .pill{padding:12px 26px;border-radius:40px;background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--navy)!important;letter-spacing:.12em!important;
     box-shadow:0 6px 24px rgba(224,169,63,.3);transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
   .pill:hover{transform:translateY(-2px);box-shadow:0 10px 34px rgba(224,169,63,.5)}
@@ -380,7 +395,7 @@
     <nav class="main" id="nav">
       <a href="/news" data-cursor>News</a>
       <a href="/articles" data-cursor>Articles</a>
-      <a href="/consulting" data-cursor>Consulting</a>
+      <span class="nav-dd"><a href="/consulting" class="nav-dd-top" data-cursor>Consulting<i class="nav-dd-car">▾</i></a><span class="nav-dd-menu"><a href="/consulting" data-cursor>Consulting</a><a href="/assess" class="nav-dd-gold" data-cursor>Assess ✦</a></span></span>
       <a href="/about" data-cursor>About</a>
       <a href="/contact" class="pill" data-cursor>Book a call</a>
     </nav>
@@ -980,9 +995,9 @@ b.addEventListener('mouseleave',function(){b.style.transform='';}); }); })();</s
       </div>
       <div class="foot-col">
         <h4>Connect</h4>
-        <a href="/contact" data-cursor>Email</a>
-        <a href="/contact" data-cursor>LinkedIn</a>
-        <a href="/contact" data-cursor>Telegram</a>
+        <a href="mailto:contact@ahoosh.ai" data-cursor>Email</a>
+        <a href="https://linkedin.com/company/ahoosh" target="_blank" rel="noopener" data-cursor>LinkedIn</a>
+        <a href="https://t.me/ahooshai" target="_blank" rel="noopener" data-cursor>Telegram</a>
       </div>
     </div>
     <div class="foot-bottom">
