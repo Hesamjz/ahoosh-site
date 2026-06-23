@@ -695,9 +695,9 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
     .hexPolygonsData(COUNTRIES.features).hexPolygonResolution(3).hexPolygonMargin(0.28).hexPolygonUseDots(true).hexPolygonAltitude(0.003)
     .hexPolygonColor(()=>`rgba(224,169,63,${(0.38+Math.random()*0.32).toFixed(2)})`)
     .pointsData(CITIES).pointLat("lat").pointLng("lng").pointColor(d=>d.named?HOT:GOLD).pointAltitude(d=>d.named?0.02:0.008).pointRadius(d=>d.named?0.34:0.2).pointResolution(12).pointsMerge(false)
-    .arcsData(ARCS).arcStartLat("sLat").arcStartLng("sLng").arcEndLat("eLat").arcEndLng("eLng")
+    .arcsData([]).arcStartLat("sLat").arcStartLng("sLng").arcEndLat("eLat").arcEndLng("eLng")
       .arcColor(()=>["rgba(255,225,150,0.04)","rgba(255,231,170,0.9)","rgba(255,225,150,0.04)"]).arcStroke(0.5).arcAltitudeAutoScale(0.45)
-      .arcDashLength(0.3).arcDashGap(2.6).arcDashInitialGap(()=>Math.random()).arcDashAnimateTime(3400)
+      .arcDashLength(0.4).arcDashGap(2).arcDashInitialGap(1).arcDashAnimateTime(2400)
     .ringsData(RINGS).ringLat("lat").ringLng("lng").ringColor(()=>t=>`rgba(224,169,63,${Math.sqrt(1-t)})`).ringMaxRadius(d=>d.named?4:2.4).ringPropagationSpeed(2).ringRepeatPeriod(d=>d.named?1200:1800)
     .htmlElementsData(CITIES).htmlLat("lat").htmlLng("lng").htmlAltitude(0.012)
       .htmlElement(d=>{const el=document.createElement("div");el.className="city-pill named";el.textContent=d.name;el.style.position="absolute";return el;});
@@ -715,6 +715,15 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   const MOB=window.matchMedia('(max-width:820px)').matches;
   world.pointOfView({lat:6,lng:51.4,altitude:(window.matchMedia('(max-width:820px)').matches?3.0:1.85)},0);
   stage.style.opacity='1';
+  /* travelling signals: random city -> city (Tehran is just one of them), a few at a time, slow */
+  if(!reduce){ (function(){ var FLIGHT=2400, live=[];
+    function pick(){ return CITIES[(Math.random()*CITIES.length)|0]; }
+    function emit(){ var a=pick(), b=pick(), g=0; while(b===a && g++<6) b=pick();
+      var o={sLat:a.lat,sLng:a.lng,eLat:b.lat,eLng:b.lng}; live.push(o); if(live.length>5) live.shift();
+      world.arcsData(live.slice());
+      setTimeout(function(){ var i=live.indexOf(o); if(i>-1){ live.splice(i,1); world.arcsData(live.slice()); } }, FLIGHT);
+      setTimeout(emit, 700+Math.random()*1500); }
+    setTimeout(emit, 900); })(); }
   let paused=false, fStart=innerHeight*0.85, fEnd=innerHeight*5;
   function calcFade(){ const fr=document.querySelector('.frames'); fStart=(fr?fr.offsetTop:innerHeight)-innerHeight*0.1; fEnd=fr?(fr.offsetTop+fr.offsetHeight*0.9):innerHeight*5; }
   calcFade(); addEventListener('resize',calcFade); addEventListener('load',calcFade); setTimeout(calcFade,600);
