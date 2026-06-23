@@ -467,7 +467,7 @@
   .nd-sel-wrap label{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.54rem;color:var(--dim)}
   .nd-sel{appearance:none;-webkit-appearance:none;width:100%;background:rgba(4,8,18,.8) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%23e0a93f' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 11px center;border:1px solid rgba(224,169,63,.2);border-radius:9px;color:var(--silver);font-size:.76rem;padding:9px 28px 9px 11px;cursor:pointer;font-family:'Inter',sans-serif}
   .nd-sel:focus{outline:none;border-color:var(--gold)}
-  .nd-screen{position:relative;aspect-ratio:16/9;margin:0 16px;border-radius:12px;overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,rgba(224,169,63,.16),transparent 55%),linear-gradient(160deg,#0a1430,#03060f 75%);border:1px solid rgba(224,169,63,.2);display:flex;align-items:center;justify-content:center}
+  .nd-screen{position:relative;width:auto;aspect-ratio:16/9;height:auto;margin:0 16px;border-radius:14px;overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,rgba(224,169,63,.16),transparent 55%),linear-gradient(160deg,#0a1430,#03060f 75%);border:1px solid rgba(224,169,63,.2);display:flex;align-items:center;justify-content:center}
   .nd-screen::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);pointer-events:none}
   .nd-tv-media{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:cover;z-index:1}
   .nd-screen.playing .nd-play{display:none}
@@ -523,14 +523,19 @@
   .nd-cal-cell.empty{color:transparent}
   .nd-cal-cell.today{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--navy);font-weight:800;box-shadow:0 6px 16px -6px rgba(224,169,63,.6)}
 
+  /* container-scroll news card — desktop no-op (mobile-only feature) */
+  .nd-cscroll{display:contents}
+  .nd-cscroll-card{display:contents}
+  .nd-restore{display:none}
+
   @media (max-width:980px){
     .nd-wrap .container{padding:0 18px}
     .nd-wrap{padding:118px 0 60px}
 
     /* CLOCKS — small, ~4 across, horizontal scroll-snap swipe row */
-    .nd-clocks{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;gap:10px;padding:6px 2px 12px;scrollbar-width:none}
+    .nd-clocks{display:flex;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x;scroll-snap-type:x mandatory;gap:10px;padding:6px 2px 12px;scrollbar-width:none}
     .nd-clocks::-webkit-scrollbar{display:none}
-    .nd-clock{scroll-snap-align:center;width:calc((100% - 30px)/4);min-width:78px;max-width:96px}
+    .nd-clock{scroll-snap-align:center;flex:0 0 calc((100% - 30px)/4);width:calc((100% - 30px)/4);min-width:0;max-width:none}
     .nd-clock svg{width:100%;height:auto}
     .nd-clock .city{font-size:.5rem;letter-spacing:.1em;margin-top:6px}
     .nd-clock .meta{font-size:.46rem;margin-top:1px}
@@ -542,16 +547,17 @@
     .nd-tk{font-size:.68rem;gap:5px}
 
     /* flatten the grid so feed + rail widgets become reorderable siblings */
-    .nd-grid{display:flex;flex-direction:column;gap:22px}
+    .nd-grid{display:flex;flex-direction:column;gap:22px;align-items:stretch}
     .nd-main,.nd-rail{display:contents}
     .nd-rail{position:static;top:auto}
     /* FIX5: flattened grid children full width; video fills 16/9 like the live */
     .nd-grid>*{width:100%;max-width:100%}
+    .nd-tv,.nd-cscroll,.nd-cal,.nd-wx{width:100%;max-width:100%}
     .nd-tv,.nd-screen{width:100%}
-    .nd-screen{margin:0 16px;aspect-ratio:16/9;height:auto}
-    .nd-tv-media{width:100%;height:100%}
+    .nd-screen{position:relative;width:100%;aspect-ratio:16/9;height:auto;overflow:hidden;border-radius:14px;margin:0 16px}
+    .nd-tv-media{position:absolute;inset:0;width:100%;height:100%}
     /* FIX6: news feed as one fixed-height internal scroll box (~4-5 items) */
-    .nd-feed{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(224,169,63,.18);border-radius:16px;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(224,169,63,.32) transparent}
+    .nd-feed{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(224,169,63,.18);border-radius:16px;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(224,169,63,.32) transparent}
     .nd-feed::-webkit-scrollbar{width:6px}
     .nd-feed::-webkit-scrollbar-thumb{background:rgba(224,169,63,.32);border-radius:6px}
     /* FIX6: keep calendar header uncrowded */
@@ -592,6 +598,15 @@
     .nd-wx-day .dn{font-size:.52rem}
     .nd-wx-day .di{font-size:1.05rem;margin:4px 0 2px}
     .nd-wx-day .dt{font-size:.66rem}
+  
+    /* === MOBILE container-scroll news card (Aceternity-style) === */
+    .nd-cscroll{display:block;perspective:1200px;margin:6px 0 22px}
+    .nd-cscroll-card{display:block;transform-origin:center top;transform:rotateX(28deg) scale(.9);will-change:transform,opacity;border:1px solid rgba(224,169,63,.28);border-radius:22px;background:rgba(8,16,34,.55);box-shadow:inset 0 0 0 1px rgba(224,169,63,.10),0 30px 80px rgba(0,0,0,.5),0 0 0 4px rgba(224,169,63,.06);padding:12px 12px 6px;touch-action:pan-y}
+    .nd-cscroll-card.dismissed{transform:translateX(120%) rotate(3deg)!important;opacity:0;max-height:0;padding:0;margin:0;border-width:0;overflow:hidden;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .35s,max-height .4s,padding .4s}
+    .nd-restore{display:none}
+    .nd-restore.show{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:11px 20px;border-radius:40px;background:linear-gradient(135deg,#e0a93f,#f4d98b);color:#0a1733;font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:.1em;font-size:.72rem;border:0}
+    .nd-cscroll{order:2}
+    .nd-restore{order:2}
   }
   @media (prefers-reduced-motion:reduce){
     .nd-track{animation:none!important;padding-left:120px}
@@ -625,6 +640,8 @@
 
       <!-- LEFT: News feed -->
       <div class="nd-main">
+        <div class="nd-cscroll">
+        <div class="nd-cscroll-card" id="ndNewsCard">
         <div class="nd-pills" id="ndPills">
           <button class="nd-pill on" data-f="all">All</button>
           <button class="nd-pill" data-f="persian">Persian</button>
@@ -634,6 +651,9 @@
           <button class="nd-pill" data-f="sport">Sport</button>
         </div>
         <div class="nd-feed" id="ndFeed"></div>
+        </div>
+        </div>
+        <button class="nd-restore" id="ndNewsRestore" type="button">▸ Show news</button>
       </div>
 
       <!-- RIGHT: Rail -->
@@ -751,36 +771,28 @@
                '<rect x="'+(ir-0.65).toFixed(2)+'" y="'+(iy-4.3).toFixed(2)+'" width="1.3" height="8.6" rx="0.4" fill="#eef4ff"/></g>';
         }
       }
-      // ---- faint sunburst rays for the metallic blue sheen ----
-      var rays='';
-      for(var k2=0;k2<120;k2++){
-        var ra=(k2/120)*2*Math.PI, rp=pt(50,ra);
-        rays+='<line x1="60" y1="60" x2="'+rp[0].toFixed(2)+'" y2="'+rp[1].toFixed(2)+'" stroke="rgba(255,255,255,'+(k2%2?'.04':'.09')+')" stroke-width="0.5"/>';
-      }
       var s='<svg viewBox="0 0 120 120" role="img" aria-label="analogue clock">'+
         '<defs>'+
-          '<radialGradient id="face'+id+'" cx="42%" cy="34%" r="80%">'+
-            '<stop offset="0%" stop-color="#5f86d8"/><stop offset="40%" stop-color="#2c57b6"/><stop offset="76%" stop-color="#143c92"/><stop offset="100%" stop-color="#0b2666"/></radialGradient>'+
+          '<radialGradient id="face'+id+'" cx="50%" cy="50%" r="80%">'+
+            '<stop offset="0%" stop-color="#0d1c3e"/><stop offset="100%" stop-color="#0d1c3e"/></radialGradient>'+
           '<linearGradient id="flL'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7f9fc"/><stop offset="50%" stop-color="#d2d9e3"/><stop offset="100%" stop-color="#aeb6c2"/></linearGradient>'+
           '<linearGradient id="flD'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8d96a4"/><stop offset="55%" stop-color="#646c79"/><stop offset="100%" stop-color="#444b56"/></linearGradient>'+
           '<linearGradient id="stk'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="45%" stop-color="#cfd8e4"/><stop offset="100%" stop-color="#9aa4b4"/></linearGradient>'+
           '<linearGradient id="ring'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7f9fc"/><stop offset="50%" stop-color="#aeb6c2"/><stop offset="100%" stop-color="#6c7480"/></linearGradient>'+
-          '<radialGradient id="gloss'+id+'" cx="34%" cy="22%" r="62%"><stop offset="0%" stop-color="rgba(255,255,255,.30)"/><stop offset="42%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient>'+
           '<clipPath id="clip'+id+'"><circle cx="60" cy="60" r="50"/></clipPath>'+
         '</defs>'+
         '<circle cx="60" cy="60" r="59" fill="url(#ring'+id+')"/>'+
         flut+
         '<circle cx="60" cy="60" r="51.8" fill="url(#ring'+id+')"/>'+
         '<circle cx="60" cy="60" r="50" fill="url(#face'+id+')"/>'+
-        '<g clip-path="url(#clip'+id+')">'+rays+'</g>'+
-        '<circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>'+
+        '<circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>'+
         ticks+idx+
         '<text x="60.8" y="45" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="3.6" letter-spacing="1.6" fill="rgba(228,237,252,.7)">AHOOSH</text>'+
         // Mercedes hour hand (baton with open circle near tip) + lume
         '<g class="ndh-hour" id="h'+id+'" transform="rotate(0 60 60)">'+
           '<rect x="58.7" y="34" width="2.6" height="30" rx="1.1" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".5"/>'+
           '<circle cx="60" cy="42" r="3.1" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".5"/>'+
-          '<circle cx="60" cy="42" r="1.5" fill="#1a3a86"/></g>'+
+          '<circle cx="60" cy="42" r="1.5" fill="#0d1c3e"/></g>'+
         // baton minute hand + lume
         '<g class="ndh-min" id="m'+id+'" transform="rotate(0 60 60)">'+
           '<rect x="59.1" y="20" width="1.8" height="44.5" rx="0.8" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".45"/></g>'+
@@ -790,9 +802,7 @@
           '<circle cx="60" cy="71" r="2.4" fill="#dfe7f4"/></g>'+
         // silver center cap
         '<circle cx="60" cy="60" r="2.6" fill="url(#stk'+id+')" stroke="#33405a" stroke-width=".5"/>'+
-        '<circle cx="60" cy="60" r="0.9" fill="#0b2666"/>'+
-        // faint glass gloss
-        '<path d="M16 42 A50 50 0 0 1 92 25 Q66 48 26 66 Z" fill="url(#gloss'+id+')" clip-path="url(#clip'+id+')"/>'+
+        '<circle cx="60" cy="60" r="0.9" fill="#0d1c3e"/>'+
         '</svg>';
       return s;
     }
@@ -1251,6 +1261,102 @@
   }
 })();
 </script>
+
+  <!-- MOBILE-ONLY: container-scroll news card (reveal tilt + swipe-right dismiss) -->
+  <script>
+  (function(){
+    var mq = window.matchMedia('(max-width:980px)');
+    if(!mq.matches) return; // mobile only — desktop untouched
+
+    var card    = document.getElementById('ndNewsCard');
+    var restore = document.getElementById('ndNewsRestore');
+    var feed    = document.getElementById('ndFeed');
+    if(!card || !restore) return;
+
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---- (a) SCROLL REVEAL: rotateX 28->0, scale .9->1 as card enters viewport ----
+    var ticking = false;
+    function reveal(){
+      ticking = false;
+      if(card.classList.contains('dismissed')) return;
+      if(reduce){ card.style.transform = 'rotateX(0deg) scale(1)'; return; }
+      var r  = card.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      // progress 0 when card top at viewport bottom, 1 when top reaches ~58% vh (flat from there up)
+      var p = (vh - r.top) / (vh - vh*0.58);
+      if(p < 0) p = 0; if(p > 1) p = 1;
+      var rx = 28 - 28*p;            // 28deg -> 0 (clamped flat)
+      var sc = 0.9 + 0.1*p;          // .9 -> 1
+      if(rx < 0) rx = 0; if(sc > 1) sc = 1;
+      card.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+    }
+    function onScroll(){
+      if(!ticking){ ticking = true; window.requestAnimationFrame(reveal); }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll, {passive:true});
+    reveal();
+
+    // ---- (b) SWIPE-RIGHT TO DISMISS ----
+    var startX=0, startY=0, dx=0, dy=0, horizontal=false, dragging=false;
+
+    card.addEventListener('touchstart', function(e){
+      if(card.classList.contains('dismissed')) return;
+      var t = e.touches[0];
+      startX = t.clientX; startY = t.clientY;
+      dx = 0; dy = 0; horizontal = false; dragging = true;
+    }, {passive:true});
+
+    card.addEventListener('touchmove', function(e){
+      if(!dragging || card.classList.contains('dismissed')) return;
+      var t = e.touches[0];
+      dx = t.clientX - startX;
+      dy = t.clientY - startY;
+      if(!horizontal && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) && dx > 0){
+        horizontal = true; // lock to a right-swipe gesture
+      }
+      if(horizontal){
+        e.preventDefault();               // stop vertical hijack on this gesture
+        card.style.transition = 'none';
+        card.style.transform = 'translateX(' + dx + 'px) rotate(' + (dx*0.02).toFixed(2) + 'deg)';
+        card.style.opacity = String(Math.max(0, 1 - dx/300));
+      }
+    }, {passive:false}); // non-passive so preventDefault works on the horizontal branch
+
+    function endSwipe(){
+      if(!dragging) return;
+      dragging = false;
+      if(horizontal && dx > 80){
+        card.style.transition = '';
+        card.style.transform = '';
+        card.style.opacity = '';
+        card.classList.add('dismissed');
+        restore.classList.add('show');
+      } else {
+        // snap back
+        card.style.transition = 'transform .25s ease, opacity .25s ease';
+        card.style.transform = '';
+        card.style.opacity = '';
+        setTimeout(function(){ card.style.transition=''; reveal(); }, 260);
+      }
+      horizontal = false;
+    }
+    card.addEventListener('touchend', endSwipe, {passive:true});
+    card.addEventListener('touchcancel', endSwipe, {passive:true});
+
+    // ---- (c) RESTORE ----
+    restore.addEventListener('click', function(){
+      card.classList.remove('dismissed');
+      restore.classList.remove('show');
+      card.style.transition='';
+      card.style.transform='';
+      card.style.opacity='';
+      reveal();
+    });
+  })();
+  </script>
+
 
 </main>
 
