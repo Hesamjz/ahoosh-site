@@ -15,11 +15,11 @@ interface Env {
   DB: D1Database;
 }
 
-const LANGS = ["en", "fa", "de", "sr"] as const;
+const LANGS = ["en"] as const; // English-only (2026-06-22): no translation step
 type Lang = (typeof LANGS)[number];
 
-const FETCH_N = 18;     // rotating window of sources per ingest run
-const MAX_NEW = 12;     // new items stored per run (Cowork translates them hourly)
+const FETCH_N = 30;     // rotating window of sources per ingest run (~100 EN sources)
+const MAX_NEW = 25;     // new items stored per run — shown immediately (English, no translation)
 
 type Candidate = { url: string; title: string; summary: string; source: string; src_lang: Lang; published: string | null };
 
@@ -42,6 +42,9 @@ async function fetchSource(s: Source): Promise<Candidate[]> {
 // Ingest only — no AI. Store raw source text + needs_tr=1 for Cowork/Claude to translate.
 async function runIngest(env: Env): Promise<Record<string, unknown>> {
   try {
+    // English-only: nothing needs translation. Surface any rows previously stuck hidden
+    // behind the old needs_tr=1 (Cowork-translate) gate — clears the 3-day backlog.
+    await env.DB.prepare("UPDATE news_items SET needs_tr = 0 WHERE needs_tr = 1").run();
     const settled = await Promise.allSettled(pool().map(fetchSource));
     const all = settled.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
 
@@ -65,13 +68,13 @@ async function runIngest(env: Env): Promise<Record<string, unknown>> {
 
     let inserted = 0;
     for (const { c, cat } of fresh) {
-      // Raw source text goes into title_en/summary_en as a staging buffer (NOT NULL),
-      // needs_tr=1. Cowork/Claude overwrites all language columns and clears the flag.
+      // English source text IS the display text — store it directly as title_en/summary_en
+      // with needs_tr=0 so /api/news serves it immediately (no translation step).
       try {
         await env.DB.prepare(
           `INSERT OR IGNORE INTO news_items
            (url, source, src_lang, category, title_en, summary_en, published_at, needs_tr)
-           VALUES (?,?,?,?,?,?,?,1)`
+           VALUES (?,?,?,?,?,?,?,0)`
         ).bind(c.url, c.source, c.src_lang, cat, c.title, (c.summary || "").slice(0, 600), c.published).run();
         inserted++;
       } catch { /* skip */ }

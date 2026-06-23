@@ -1,37 +1,121 @@
-// Source POOL — deliberately broad and business-weighted. Per Hesam: the list
-// itself doesn't matter; the business-relevance gate (relevance.ts) decides what
-// survives. Drawn from _publishing_rules/news_sources_200.md. Add/remove freely.
-export type Source = { url: string; name: string; lang: "en" | "fa" };
+// AHoosh news sources — LOCKED English-only pool (2026-06-22, Hesam strategy reset).
+// Scope: business, strategy, technology, AI, ICT/telecom companies, politics —
+// regions Europe, Middle East, US, Iran, Asia. English sources ONLY (no translation
+// step → the worker serves ingested news directly, no Cowork/Mac dependency).
+// The relevance gate (relevance.ts) is the quality filter; dead feeds fail safe (skipped).
+export type Source = { url: string; name: string; lang: "en" };
 
 export const SOURCES: Source[] = [
-  // EN — markets/business/economy/trade/crypto/ai
+  // ── Business / Economy / Markets / Strategy (global) ──
   { url: "https://feeds.bloomberg.com/markets/news.rss", name: "Bloomberg Markets", lang: "en" },
   { url: "https://feeds.bloomberg.com/economics/news.rss", name: "Bloomberg Economics", lang: "en" },
+  { url: "https://feeds.bloomberg.com/technology/news.rss", name: "Bloomberg Technology", lang: "en" },
+  { url: "https://feeds.bloomberg.com/politics/news.rss", name: "Bloomberg Politics", lang: "en" },
   { url: "https://feeds.a.dj.com/rss/RSSMarketsMain.xml", name: "WSJ Markets", lang: "en" },
-  { url: "https://feeds.marketwatch.com/marketwatch/topstories/", name: "MarketWatch", lang: "en" },
+  { url: "https://feeds.a.dj.com/rss/RSSWorldNews.xml", name: "WSJ World", lang: "en" },
+  { url: "https://feeds.a.dj.com/rss/RSSWSJD.xml", name: "WSJ Tech", lang: "en" },
+  { url: "https://www.cnbc.com/id/100003114/device/rss/rss.html", name: "CNBC Top News", lang: "en" },
   { url: "https://www.cnbc.com/id/20910258/device/rss/rss.html", name: "CNBC Markets", lang: "en" },
+  { url: "https://www.cnbc.com/id/10001147/device/rss/rss.html", name: "CNBC Business", lang: "en" },
+  { url: "https://www.cnbc.com/id/19854910/device/rss/rss.html", name: "CNBC Technology", lang: "en" },
+  { url: "https://feeds.marketwatch.com/marketwatch/topstories/", name: "MarketWatch", lang: "en" },
+  { url: "https://www.ft.com/rss/home", name: "Financial Times", lang: "en" },
+  { url: "https://www.economist.com/finance-and-economics/rss.xml", name: "Economist Finance", lang: "en" },
+  { url: "https://www.economist.com/business/rss.xml", name: "Economist Business", lang: "en" },
+  { url: "https://www.theguardian.com/uk/business/rss", name: "Guardian Business", lang: "en" },
+  { url: "https://www.theguardian.com/world/rss", name: "Guardian World", lang: "en" },
+  { url: "https://www.theguardian.com/uk/technology/rss", name: "Guardian Technology", lang: "en" },
+  { url: "https://feeds.bbci.co.uk/news/business/rss.xml", name: "BBC Business", lang: "en" },
+  { url: "https://feeds.bbci.co.uk/news/world/rss.xml", name: "BBC World", lang: "en" },
+  { url: "https://feeds.bbci.co.uk/news/technology/rss.xml", name: "BBC Technology", lang: "en" },
+  { url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml", name: "NYT Business", lang: "en" },
+  { url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", name: "NYT World", lang: "en" },
+  { url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml", name: "NYT Technology", lang: "en" },
+  { url: "https://feeds.washingtonpost.com/rss/business", name: "WaPo Business", lang: "en" },
+  { url: "https://feeds.washingtonpost.com/rss/world", name: "WaPo World", lang: "en" },
+  { url: "https://feeds.washingtonpost.com/rss/business/technology", name: "WaPo Tech", lang: "en" },
+  { url: "https://feeds.npr.org/1006/rss.xml", name: "NPR Business", lang: "en" },
+  { url: "https://feeds.npr.org/1017/rss.xml", name: "NPR Economy", lang: "en" },
+  { url: "https://fortune.com/feed/", name: "Fortune", lang: "en" },
+  { url: "https://www.forbes.com/business/feed/", name: "Forbes Business", lang: "en" },
+  { url: "https://www.businessinsider.com/rss", name: "Business Insider", lang: "en" },
+  { url: "https://qz.com/rss", name: "Quartz", lang: "en" },
+  { url: "https://www.fastcompany.com/latest/rss", name: "Fast Company", lang: "en" },
+  { url: "https://www.inc.com/rss", name: "Inc.", lang: "en" },
+  { url: "https://hbr.org/feed", name: "Harvard Business Review", lang: "en" },
+  { url: "https://finance.yahoo.com/news/rssindex", name: "Yahoo Finance", lang: "en" },
   { url: "https://www.investing.com/rss/news.rss", name: "Investing.com", lang: "en" },
   { url: "https://seekingalpha.com/feed.xml", name: "Seeking Alpha", lang: "en" },
-  { url: "https://feeds.bbci.co.uk/news/business/rss.xml", name: "BBC Business", lang: "en" },
-  { url: "https://www.theguardian.com/uk/business/rss", name: "Guardian Business", lang: "en" },
-  { url: "https://feeds.npr.org/1006/rss.xml", name: "NPR Business", lang: "en" },
+  { url: "https://www.cnbc.com/id/15839135/device/rss/rss.html", name: "CNBC World Economy", lang: "en" },
   { url: "https://www.supplychaindive.com/feeds/news/", name: "Supply Chain Dive", lang: "en" },
   { url: "https://www.freightwaves.com/news/feed", name: "FreightWaves", lang: "en" },
+  { url: "https://www.cnbc.com/id/10000664/device/rss/rss.html", name: "CNBC Economy", lang: "en" },
+
+  // ── Technology / AI / ICT / Telecom (companies) ──
   { url: "https://techcrunch.com/feed/", name: "TechCrunch", lang: "en" },
+  { url: "https://techcrunch.com/category/artificial-intelligence/feed/", name: "TechCrunch AI", lang: "en" },
+  { url: "https://www.theverge.com/rss/index.xml", name: "The Verge", lang: "en" },
+  { url: "https://feeds.arstechnica.com/arstechnica/index", name: "Ars Technica", lang: "en" },
+  { url: "https://www.wired.com/feed/rss", name: "Wired", lang: "en" },
+  { url: "https://www.wired.com/feed/category/business/latest/rss", name: "Wired Business", lang: "en" },
+  { url: "https://venturebeat.com/feed/", name: "VentureBeat", lang: "en" },
   { url: "https://venturebeat.com/category/ai/feed/", name: "VentureBeat AI", lang: "en" },
-  { url: "https://www.coindesk.com/arc/outboundfeeds/rss/", name: "CoinDesk", lang: "en" },
-  { url: "https://cointelegraph.com/rss", name: "Cointelegraph", lang: "en" },
+  { url: "https://www.technologyreview.com/feed/", name: "MIT Technology Review", lang: "en" },
+  { url: "https://spectrum.ieee.org/rss/fulltext", name: "IEEE Spectrum", lang: "en" },
+  { url: "https://www.zdnet.com/news/rss.xml", name: "ZDNet", lang: "en" },
+  { url: "https://www.cnet.com/rss/news/", name: "CNET", lang: "en" },
+  { url: "https://www.engadget.com/rss.xml", name: "Engadget", lang: "en" },
+  { url: "https://www.theregister.com/headlines.atom", name: "The Register", lang: "en" },
+  { url: "https://www.techradar.com/rss", name: "TechRadar", lang: "en" },
+  { url: "https://thenextweb.com/feed", name: "The Next Web", lang: "en" },
+  { url: "https://restofworld.org/feed/latest/", name: "Rest of World", lang: "en" },
+  { url: "https://hnrss.org/frontpage", name: "Hacker News", lang: "en" },
+  { url: "https://the-decoder.com/feed/", name: "The Decoder (AI)", lang: "en" },
+  { url: "https://blogs.nvidia.com/feed/", name: "NVIDIA Blog", lang: "en" },
+  { url: "https://news.mit.edu/rss/topic/artificial-intelligence2", name: "MIT News AI", lang: "en" },
+  { url: "https://syncedreview.com/feed/", name: "Synced (AI)", lang: "en" },
+  { url: "https://openai.com/blog/rss.xml", name: "OpenAI Blog", lang: "en" },
+  { url: "https://www.lightreading.com/rss_simple.asp", name: "Light Reading (telecom)", lang: "en" },
+  { url: "https://www.telecoms.com/feed/", name: "Telecoms.com", lang: "en" },
+  { url: "https://www.datacenterdynamics.com/en/rss/", name: "Data Center Dynamics", lang: "en" },
+  { url: "https://www.rcrwireless.com/feed", name: "RCR Wireless (5G/telecom)", lang: "en" },
+  { url: "https://www.computerworld.com/feed/", name: "Computerworld", lang: "en" },
+
+  // ── Politics / Geopolitics — Europe ──
+  { url: "https://www.politico.eu/feed/", name: "Politico Europe", lang: "en" },
+  { url: "https://www.euractiv.com/feed/", name: "Euractiv", lang: "en" },
+  { url: "https://euobserver.com/rss", name: "EUobserver", lang: "en" },
+  { url: "https://rss.dw.com/rdf/rss-en-all", name: "DW (English)", lang: "en" },
+  { url: "https://www.france24.com/en/rss", name: "France 24 (English)", lang: "en" },
+  { url: "https://www.euronews.com/rss", name: "Euronews", lang: "en" },
+
+  // ── Politics / Geopolitics — Middle East ──
+  { url: "https://www.aljazeera.com/xml/rss/all.xml", name: "Al Jazeera English", lang: "en" },
+  { url: "https://www.al-monitor.com/rss", name: "Al-Monitor", lang: "en" },
+  { url: "https://www.middleeasteye.net/rss", name: "Middle East Eye", lang: "en" },
   { url: "https://www.arabnews.com/rss.xml", name: "Arab News", lang: "en" },
-  // FA — economy/markets/bourse/business
-  { url: "https://www.tejaratnews.com/feed", name: "Tejarat News", lang: "fa" },
-  { url: "https://donya-e-eqtesad.com/feeds", name: "Donya-e-Eqtesad", lang: "fa" },
-  { url: "https://www.eghtesadonline.com/rss", name: "Eghtesad Online", lang: "fa" },
-  { url: "https://www.boursenews.ir/fa/rss/allnews", name: "Bourse News", lang: "fa" },
-  { url: "https://www.isna.ir/rss", name: "ISNA", lang: "fa" },
-  { url: "https://www.mehrnews.com/rss", name: "Mehr News", lang: "fa" },
-  { url: "https://www.zoomit.ir/feed/", name: "Zoomit", lang: "fa" },
-  { url: "https://digiato.com/feed", name: "Digiato", lang: "fa" },
-  { url: "https://www.iranintl.com/feed/economy", name: "Iran Intl Economy", lang: "fa" },
-  // DE — wirtschaft/börse/finance/tech
-  // SR — business/economy (light)
+  { url: "https://www.thenationalnews.com/rss", name: "The National (UAE)", lang: "en" },
+  { url: "https://www.timesofisrael.com/feed/", name: "Times of Israel", lang: "en" },
+
+  // ── Politics / Geopolitics — US ──
+  { url: "https://thehill.com/rss/syndicator/19110", name: "The Hill", lang: "en" },
+  { url: "https://www.politico.com/rss/politicopicks.xml", name: "Politico (US)", lang: "en" },
+  { url: "https://api.axios.com/feed/", name: "Axios", lang: "en" },
+  { url: "https://feeds.npr.org/1014/rss.xml", name: "NPR Politics", lang: "en" },
+  { url: "https://www.theatlantic.com/feed/channel/politics/", name: "The Atlantic Politics", lang: "en" },
+
+  // ── Politics / Geopolitics — Iran ──
+  { url: "https://www.iranintl.com/en/rss", name: "Iran International (EN)", lang: "en" },
+  { url: "https://www.tehrantimes.com/rss", name: "Tehran Times", lang: "en" },
+  { url: "https://en.radiofarda.com/api/zrqiteuuyq", name: "Radio Farda (EN)", lang: "en" },
+  { url: "https://iranwire.com/en/feed/", name: "IranWire (EN)", lang: "en" },
+
+  // ── Politics / Geopolitics + Business — Asia ──
+  { url: "https://asia.nikkei.com/rss/feed/nar", name: "Nikkei Asia", lang: "en" },
+  { url: "https://www.scmp.com/rss/91/feed", name: "South China Morning Post", lang: "en" },
+  { url: "https://thediplomat.com/feed/", name: "The Diplomat", lang: "en" },
+  { url: "https://www.channelnewsasia.com/rssfeeds/8395986", name: "Channel NewsAsia", lang: "en" },
+  { url: "https://www.straitstimes.com/news/business/rss.xml", name: "Straits Times Business", lang: "en" },
+  { url: "https://asiatimes.com/feed/", name: "Asia Times", lang: "en" },
+  { url: "https://www.caixinglobal.com/rss/news.xml", name: "Caixin Global", lang: "en" },
 ];

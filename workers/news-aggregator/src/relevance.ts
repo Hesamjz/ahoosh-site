@@ -1,11 +1,9 @@
-// Business-relevance gate — the core rule: keep an item ONLY if it's about
-// business/markets/economy/finance/trade/companies/crypto/AI-as-business.
-// Everything else (general politics, sport, culture, crime, lifestyle) is dropped.
-// Politics counts ONLY if it carries market/economic signal.
-//
-// v1 is a multilingual keyword classifier (free, in-Worker, fast). It can be
-// tightened later with a Workers AI confirm pass on borderline items, but the
-// lexicon already removes the bulk of non-business noise.
+// Relevance gate — LOCKED scope (2026-06-22, Hesam): keep an item only if it's about
+// business, strategy, economy/markets/finance, technology, AI, ICT/telecom companies,
+// or politics/geopolitics for Europe · Middle East · US · Iran · Asia.
+// Everything else (sport, celebrity, entertainment, lifestyle, crime, weather) is dropped.
+// English-only keyword classifier (free, in-Worker, fast). Sources are pre-curated, so
+// this mostly removes incidental noise and tags a category.
 
 export type Category =
   | "markets"
@@ -13,72 +11,87 @@ export type Category =
   | "finance"
   | "business"
   | "trade-supply"
-  | "crypto"
-  | "ai-tech"
+  | "tech"
+  | "ai"
+  | "ict-telecom"
+  | "politics"
   | null;
 
-// Strong business signals (EN + FA + DE + SR). Lowercased substring match.
 const LEX: Record<Exclude<Category, null>, string[]> = {
   markets: [
-    "stock", "shares", "equit", "index", "s&p", "nasdaq", "dow", "dax", "ftse", "bourse",
-    "yield", "bond", "treasur", "oil price", "brent", "gold price", "commodit", "futures",
-    "بورس", "سهام", "شاخص", "بازار سرمایه", "طلا", "نفت", "aktie", "börse", "akcij", "berza",
+    "stock", "shares", "equit", "index", "s&p", "nasdaq", "dow ", "ftse", "dax", "nikkei", "bourse",
+    "yield", "bond", "treasur", "oil price", "brent", "crude", "gold price", "commodit", "futures", "etf",
   ],
   economy: [
-    "econom", "gdp", "inflation", "recession", "unemployment", "interest rate", "central bank",
-    "fed ", "ecb", "imf", "tariff", "budget deficit", "fiscal", "monetary",
-    "اقتصاد", "تورم", "نرخ بهره", "بانک مرکزی", "wirtschaft", "konjunktur", "zins", "privreda", "inflacij",
+    "econom", "gdp", "inflation", "deflation", "recession", "unemployment", "jobs report", "interest rate",
+    "central bank", "federal reserve", "the fed", "ecb", "imf", "world bank", "tariff", "deficit", "fiscal",
+    "monetary", "stimulus", "sanction", "trade war", "supply", "cost of living",
   ],
   finance: [
-    "bank", "lending", "loan", "credit", "fund", "investor", "investment", "valuation",
-    "ipo", "earnings", "revenue", "profit", "dividend", "merger", "acquisition", "buyout",
-    "currency", "forex", "exchange rate", "بانک", "ارز", "سرمایه‌گذاری", "وام", "finanz", "finansij",
+    "bank", "lending", "loan", "credit", "fund", "investor", "investment", "valuation", "venture",
+    "ipo", "earnings", "revenue", "profit", "dividend", "merger", "acquisition", "buyout", "funding round",
+    "currency", "forex", "exchange rate", "bitcoin", "ethereum", "crypto", "blockchain", "stablecoin",
   ],
   business: [
-    "company", "ceo", "startup", "firm", "corporate", "factory", "manufactur", "retail",
-    "شرکت", "کسب‌وکار", "استارتاپ", "صنعت", "unternehmen", "konzern", "kompanij", "biznis", "preduzeć",
+    "company", "ceo", "cfo", "startup", "founder", "firm", "corporate", "enterprise", "factory",
+    "manufactur", "retail", "ecommerce", "e-commerce", "strategy", "market share", "layoff", "hiring",
+    "expansion", "partnership", "deal", "contract", "revenue model", "business model", "smb", "sme",
   ],
   "trade-supply": [
-    "trade", "export", "import", "supply chain", "logistic", "freight", "shipping", "cargo",
-    "port ", "tariff", "customs", "chamber of commerce", "تجارت", "صادرات", "واردات", "گمرک",
-    "handel", "export", "lieferkette", "logistik", "trgovin", "izvoz", "uvoz",
+    "trade", "export", "import", "supply chain", "logistic", "freight", "shipping", "cargo", "port ",
+    "customs", "chamber of commerce", "tariff", "sanctions", "embargo", "manufacturing",
   ],
-  crypto: [
-    "bitcoin", "ethereum", "crypto", "blockchain", "stablecoin", "token", "defi",
-    "بیت‌کوین", "ارز دیجیتال", "رمزارز", "krypto", "kripto",
+  tech: [
+    "tech", "software", "hardware", "app ", "platform", "cloud", "cyber", "data center", "datacenter",
+    "quantum", "robot", "automation", "gadget", "device", "internet", "digital", "saas", "developer",
   ],
-  "ai-tech": [
-    "ai ", "artificial intelligence", "openai", "anthropic", "nvidia", "chip", "semiconductor",
-    "tech funding", "saas", "هوش مصنوعی", "künstliche intelligenz", "veštačka inteligencij",
+  ai: [
+    "ai ", " ai", "a.i.", "artificial intelligence", "machine learning", "deep learning", "neural",
+    "openai", "anthropic", "deepmind", "gemini", "chatgpt", "llm", "generative", "nvidia", "gpu",
+    "chip", "semiconductor", "model", "agent", "copilot",
+  ],
+  "ict-telecom": [
+    "telecom", "5g", "6g", "broadband", "fiber", "spectrum", "carrier", "operator", "network",
+    "ericsson", "nokia", "huawei", "vodafone", "at&t", "verizon", "isp", "satellite", "starlink",
+  ],
+  politics: [
+    "election", "parliament", "congress", "senate", "government", "minister", "president", "prime minister",
+    "policy", "regulation", "regulator", "antitrust", "diplomac", "summit", "treaty", "war", "ceasefire",
+    "geopolit", "foreign policy", "eu ", "european union", "nato", "white house", "kremlin",
+    // regional anchors (Europe / Middle East / US / Iran / Asia)
+    "europe", "brussels", "germany", "france", "uk ", "britain",
+    "middle east", "israel", "gaza", "saudi", "uae", "qatar", "turkey", "egypt",
+    "iran", "tehran", "irgc",
+    "united states", "washington", "u.s.", "america",
+    "china", "beijing", "india", "japan", "korea", "asia", "taiwan", "asean",
   ],
 };
 
-// Hard vetoes — if the title is dominated by these and has no business term, drop.
+// Hard vetoes — drop if dominated by these and no business/econ/tech term present.
 const VETO = [
-  "football", "soccer", "match", "goal", "tournament", "olympic", "celebrity", "movie", "film",
-  "actor", "singer", "recipe", "horoscope", "weather", "obituary",
-  "فوتبال", "بازیکن", "سینما", "فیلم", "fußball", "spiel", "fudbal", "utakmic",
+  "football", "soccer", "match ", "goal ", "tournament", "olympic", "world cup", "nba", "nfl", "cricket",
+  "celebrity", "movie", "film ", "box office", "actor", "actress", "singer", "album", "concert",
+  "recipe", "horoscope", "weather", "obituary", "royal family", "kardashian", "fashion week", "gossip",
 ];
 
 function hay(title: string, summary: string): string {
   return `${title} ${summary}`.toLowerCase();
 }
 
-// Returns the matched business category, or null if not business-relevant.
+// Returns the matched category, or null if out of locked scope.
 export function classify(title: string, summary = ""): Category {
   const h = hay(title, summary);
   let matched: Category = null;
   for (const [cat, terms] of Object.entries(LEX) as [Exclude<Category, null>, string[]][]) {
-    if (terms.some((t) => h.includes(t))) {
-      matched = cat;
-      break;
-    }
+    if (terms.some((t) => h.includes(t))) { matched = cat; break; }
   }
   if (!matched) return null;
-  // a clearly-sport/entertainment headline with an incidental business word still drops
+  // A clearly sport/entertainment headline with only an incidental keyword still drops,
+  // unless it carries a strong money/market/AI term in the TITLE itself.
   const vetoed = VETO.some((v) => h.includes(v));
-  if (vetoed && !LEX.markets.concat(LEX.finance, LEX.crypto).some((t) => title.toLowerCase().includes(t))) {
-    return null;
+  if (vetoed) {
+    const strong = LEX.markets.concat(LEX.finance, LEX.ai, LEX.economy);
+    if (!strong.some((t) => title.toLowerCase().includes(t))) return null;
   }
   return matched;
 }
