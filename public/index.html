@@ -78,6 +78,7 @@
   nav.main a:not(.pill):hover::after{width:100%}
   /* Consulting -> Assess dropdown */
   .nav-dd{position:relative;display:inline-flex;align-items:center}
+  .nav-dd::after{content:'';position:absolute;left:-12px;right:-12px;top:100%;height:18px}
   .nav-dd-car{font-style:normal;font-size:.6em;opacity:.65;margin-left:5px}
   .nav-dd-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);min-width:172px;display:flex;flex-direction:column;background:rgba(8,16,34,.97);border:1px solid rgba(224,169,63,.22);border-radius:14px;padding:8px;opacity:0;visibility:hidden;transition:opacity .25s,transform .25s;box-shadow:0 24px 60px rgba(0,0,0,.55);z-index:130}
   .nav-dd:hover .nav-dd-menu,.nav-dd:focus-within .nav-dd-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(6px)}
