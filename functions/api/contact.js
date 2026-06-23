@@ -55,6 +55,30 @@ export async function onRequestPost({ request, env }) {
       return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
     }
 
+    // ── Cloudflare Turnstile verification (enforced when TURNSTILE_SECRET is set) ──
+    const turnstileSecret = env.TURNSTILE_SECRET;
+    if (turnstileSecret) {
+      const token = (formData.get('cf-turnstile-response') || '').toString();
+      if (!token) {
+        console.error('Contact: missing Turnstile token');
+        return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+      }
+      const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          secret: turnstileSecret,
+          response: token,
+          remoteip: request.headers.get('CF-Connecting-IP') || '',
+        }),
+      });
+      const outcome = await verify.json().catch(() => ({ success: false }));
+      if (!outcome.success) {
+        console.error('Contact: Turnstile failed', JSON.stringify(outcome['error-codes'] || []));
+        return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+      }
+    }
+
     // Cap lengths to keep emails sane and limit abuse payloads.
     const safeName    = name.slice(0, 120);
     const safeCompany = company.slice(0, 160);
