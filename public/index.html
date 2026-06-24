@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><!-- redeploy 2026-06-23: restore production after rollback -->
+<head>
+<!-- perf: preconnect + preload heavy 3D libs so they download immediately in parallel -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/globe.gl@2.34.4/dist/globe.gl.min.js">
+<!-- redeploy 2026-06-23: restore production after rollback -->
 
   <base href="/lab/">
 <meta charset="UTF-8" />
