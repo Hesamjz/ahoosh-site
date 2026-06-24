@@ -855,7 +855,7 @@ document.querySelectorAll('[data-count]').forEach(el=>{
     gsap.set(frames,{autoAlpha:0,yPercent:6});
     gsap.set(frames[0],{autoAlpha:1,yPercent:0});
     if(rail[0]) rail[0].classList.add('on');
-    const ft=gsap.timeline({scrollTrigger:{trigger:'.frames',start:'top top',end:'bottom bottom',scrub:0.3,snap:{snapTo:1/(frames.length-1),duration:{min:0.25,max:0.6},ease:'power2.inOut'},
+    const ft=gsap.timeline({scrollTrigger:{trigger:'.frames',start:'top top',end:'bottom bottom',scrub:0.15,snap:{snapTo:1/(frames.length-1),duration:{min:0.25,max:0.6},ease:'power2.inOut'},
       onUpdate:self=>{const idx=Math.min(frames.length-1,Math.floor(self.progress*frames.length+0.0001));
         rail.forEach((r,i)=>r.classList.toggle('on',i===idx));}}});
     for(let i=1;i<frames.length;i++){
