@@ -727,12 +727,14 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
 /* ===== Background Earth globe (globe.gl) — large, persistent, mouse-reactive, behind content ===== */
 (function(){
   const stage=document.getElementById('orbStage'), host=document.getElementById('globeViz');
-  if(!stage||!host||typeof Globe==='undefined') return;
+  if(!stage||!host||typeof Globe==='undefined') return; stage.style.transition='opacity .9s ease'; stage.style.opacity='0';
   const GOLD="#e0a93f", GOLDL="#f2cd84", HOT="#fff3d0";
   const NAMED=[{name:"London",lat:51.5074,lng:-0.1278},{name:"New York",lat:40.7128,lng:-74.0060},{name:"Tehran",lat:35.6892,lng:51.3890},{name:"Paris",lat:48.8566,lng:2.3522}];
   const AMB=[["Tokyo",35.68,139.69],["Dubai",25.20,55.27],["Singapore",1.35,103.82],["São Paulo",-23.55,-46.63],["Los Angeles",34.05,-118.24],["Istanbul",41.01,28.98],["Mumbai",19.07,72.87],["Moscow",55.75,37.62],["Lagos",6.52,3.37],["Sydney",-33.87,151.21],["Berlin",52.52,13.40],["Toronto",43.65,-79.38],["Nairobi",-1.29,36.82],["Hong Kong",22.32,114.17],["Frankfurt",50.11,8.68],["Vancouver",49.28,-123.12],["Mexico City",19.43,-99.13],["Buenos Aires",-34.60,-58.38],["Bogot\u00e1",4.71,-74.07],["Santiago",-33.45,-70.67],["Lima",-12.05,-77.04],["Rio de Janeiro",-22.91,-43.17],["San Jos\u00e9",9.93,-84.08],["Cairo",30.04,31.24],["Cape Town",-33.92,18.42],["Casablanca",33.57,-7.59],["Johannesburg",-26.20,28.05],["Accra",5.60,-0.19],["Addis Ababa",9.03,38.74]].map(a=>({name:a[0],lat:a[1],lng:a[2]}));
   NAMED.forEach(c=>c.named=true);
   const CITIES=NAMED.concat(AMB);
+  var LABEL_NAMES=['Tehran','London','New York','Paris','Dubai','Tokyo','Singapore','Istanbul','Frankfurt','Toronto'];
+  const LABELS=CITIES.filter(function(c){return LABEL_NAMES.indexOf(c.name)>-1;});
   const ARCS=[]; const arc=(a,b)=>{if(a&&b&&a!==b)ARCS.push({sLat:a.lat,sLng:a.lng,eLat:b.lat,eLng:b.lng});};
   var TEHRAN=CITIES.filter(function(x){return x.name==='Tehran';})[0]||NAMED[2];var OTH=CITIES.filter(function(c){return c!==TEHRAN;});OTH.forEach(function(c){arc(c,TEHRAN);});for(var s=OTH.length-1;s>0;s--){var r=Math.floor(Math.random()*(s+1));var tm=OTH[s];OTH[s]=OTH[r];OTH[r]=tm;}for(var h=0;h<Math.min(4,OTH.length);h++){arc(TEHRAN,OTH[h]);}for(var x=0;x<2&&x+1<OTH.length;x++){arc(OTH[x],OTH[OTH.length-1-x]);}
   /* mesh above replaces the nearest-hub funnel */
@@ -748,7 +750,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
       .arcColor(()=>["rgba(255,225,150,0.04)","rgba(255,231,170,0.9)","rgba(255,225,150,0.04)"]).arcStroke(0.5).arcAltitudeAutoScale(0.45)
       .arcDashLength(0.4).arcDashGap(2).arcDashInitialGap(1).arcDashAnimateTime(2400)
     .ringsData(RINGS).ringLat("lat").ringLng("lng").ringColor(()=>t=>`rgba(224,169,63,${Math.sqrt(1-t)})`).ringMaxRadius(d=>d.named?4:2.4).ringPropagationSpeed(2).ringRepeatPeriod(d=>d.named?1200:1800)
-    .htmlElementsData(CITIES).htmlLat("lat").htmlLng("lng").htmlAltitude(0.012)
+    .htmlElementsData(LABELS).htmlLat("lat").htmlLng("lng").htmlAltitude(0.012)
       .htmlElement(d=>{const el=document.createElement("div");el.className="city-pill named";el.textContent=d.name;el.style.position="absolute";return el;});
   if(typeof world.htmlElementVisibilityModifier==="function") world.htmlElementVisibilityModifier((el,v)=>{el.style.opacity=v?"":"0";});
   try{const m=world.globeMaterial();m.color.set("#070d1a");m.emissive.set("#040a14");m.emissiveIntensity=0.16;m.shininess=6;}catch(e){}
@@ -790,7 +792,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   addEventListener('scroll',function(){ scrolling=true; clearTimeout(_scrTO); _scrTO=setTimeout(function(){ scrolling=false; },140); },{passive:true});
   (function loop(){ requestAnimationFrame(loop);
     const p=(fEnd>fStart)?Math.max(0,Math.min(1,(scrollY-fStart)/(fEnd-fStart))):0;
-    if(MOB){ var fo=Math.max(0,Math.min(1,1-scrollY/(innerHeight*0.72))); stage.style.opacity=fo.toFixed(3); stage.style.transform='translateY(0px)'; visible = fo>0.02; }
+    if(MOB){ stage.style.transform='translateY('+(-scrollY).toFixed(1)+'px)'; visible = scrollY < innerHeight*1.15; }
     else { visible = (p<1); stage.style.transform='translateY('+(p*innerHeight*1.12).toFixed(1)+'px)'; }
     const active = visible && (!scrolling || dragging);
     if(active){
