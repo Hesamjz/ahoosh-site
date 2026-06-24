@@ -226,7 +226,7 @@
   .feed-item .fi-more ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
   .feed-item .fi-more li{position:relative;padding-left:16px;color:var(--silver);font-size:.85rem;line-height:1.45}
   .feed-item .fi-more li::before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--gold)}
-  @media (hover:hover) and (pointer:fine){.feed-item:hover .fi-more,.feed-item:focus-within .fi-more{max-height:340px;opacity:1;margin-top:14px}.feed-item:hover .fi-toggle,.feed-item:focus-within .fi-toggle{transform:rotate(45deg)}}
+  @media (hover:hover) and (pointer:fine){.feed-item .fi-toggle{display:none}.feed-item:hover .fi-more,.feed-item:focus-within .fi-more{max-height:340px;opacity:1;margin-top:14px}.feed-item:hover .fi-toggle,.feed-item:focus-within .fi-toggle{transform:rotate(45deg)}}
 
   /* ===== Stats ===== */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:center;border-top:1px solid rgba(224,169,63,.14);border-bottom:1px solid rgba(224,169,63,.14);padding:70px 0}
