@@ -1000,6 +1000,16 @@
   // type 'youtube' has vid (video id) OR sources[{type:'youtube',list:'UU…'}] (playlist);
   // type 'hls' has src (.m3u8). lang is en|fa|sport|tech; topic tags language-specific sport.
   var CHANNELS = [
+    { id:'itc-en', name:'ITC', lang:'en',
+      sources:[
+        { type:'hls',    src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/manifest/video.m3u8' },
+        { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/iframe' }
+      ] },
+    { id:'itc-fa', name:'ITC', lang:'fa',
+      sources:[
+        { type:'hls',    src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/manifest/video.m3u8' },
+        { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/iframe' }
+      ] },
     // English — News
     { id:'france24-en', name:'France 24',   lang:'en', type:'youtube', vid:'HvZt-nh9sGg' },
     { id:'aljazeera',   name:'Al Jazeera',  lang:'en', type:'hls',     src:'https://live-hls-web-aje-gcp.thehlive.com/AJE/index.m3u8' },
@@ -1010,11 +1020,6 @@
     { id:'euronews-en', name:'Euronews EN', lang:'en', type:'youtube', vid:'pykpO5kQJ98' },
     { id:'cbs',         name:'CBS News',    lang:'en', type:'youtube', vid:'khdVidn7AfQ' },
     // Persian — Sport (HLS primary, iframe fallback)
-    { id:'itc', name:'ITC', lang:'fa', topic:'sport',
-      sources:[
-        { type:'hls',    src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/manifest/video.m3u8' },
-        { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/iframe' }
-      ] },
     // Persian — News
     { id:'bbc-fa',   name:'BBC Persian', lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
     { id:'iranintl', name:'Iran Intl',   lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
@@ -1130,7 +1135,7 @@
       var list = channelsFor(L, C);
       selCh.innerHTML = list.map(function(c){ return '<option value="'+c.id+'">'+c.name+'</option>'; }).join('');
       if(tvCount) tvCount.textContent = list.length + ' channels';
-      var preferred = { news:'euronews-en', sport:'redbull-tv', tech:'nasa-tv' };
+      var preferred = { news:'itc-en', sport:'redbull-tv', tech:'nasa-tv' };
       var defId = preferred[C];
       var def = (defId && list.filter(function(c){return c.id===defId;})[0]) || list[0];
       if(def){ selCh.value = def.id; setChannel(def); }
