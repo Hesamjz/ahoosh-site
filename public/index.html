@@ -770,7 +770,7 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   addEventListener('pointerup',onUp,{passive:true}); addEventListener('pointercancel',onUp,{passive:true});
   // Freeze the globe render while actively scrolling so the slide transitions get the GPU; resume on scroll-stop.
   let scrolling=false, _scrTO=0;
-  addEventListener('scroll',function(){ scrolling=true; clearTimeout(_scrTO); _scrTO=setTimeout(function(){ scrolling=false; },450); },{passive:true});
+  addEventListener('scroll',function(){ scrolling=true; clearTimeout(_scrTO); _scrTO=setTimeout(function(){ scrolling=false; },140); },{passive:true});
   (function loop(){ requestAnimationFrame(loop);
     const p=(fEnd>fStart)?Math.max(0,Math.min(1,(scrollY-fStart)/(fEnd-fStart))):0;
     if(MOB){ var fo=Math.max(0,Math.min(1,1-scrollY/(innerHeight*0.72))); stage.style.opacity=fo.toFixed(3); stage.style.transform='translateY(0px)'; visible = fo>0.02; }
@@ -861,10 +861,10 @@ document.querySelectorAll('[data-count]').forEach(el=>{
     gsap.set(frames,{autoAlpha:0,yPercent:6});
     gsap.set(frames[0],{autoAlpha:1,yPercent:0});
     if(rail[0]) rail[0].classList.add('on');
-    const ft=gsap.timeline({scrollTrigger:{trigger:'.frames',start:'top top',end:'bottom bottom',scrub:0.15,snap:{snapTo:1/(frames.length-1),duration:0.3,ease:'power2.out',inertia:false},
+    const ft=gsap.timeline({scrollTrigger:{trigger:'.frames',start:'top top',end:'bottom bottom',scrub:0.15,
       onUpdate:self=>{const idx=Math.min(frames.length-1,Math.floor(self.progress*frames.length+0.0001));
         rail.forEach((r,i)=>r.classList.toggle('on',i===idx));}}});
-    var FADE=0.3;  // quick crossfade at slide boundaries; rest of each slide's slot is a full-opacity HOLD so snap settles clean (no half-fade)
+    var FADE=0.2;  // quick crossfade at slide boundaries; rest of each slide's slot is a full-opacity HOLD so snap settles clean (no half-fade)
     for(let i=1;i<frames.length;i++){
       var at=(i-0.5)-FADE/2;
       ft.to(frames[i-1],{autoAlpha:0,yPercent:-6,duration:FADE},at);
