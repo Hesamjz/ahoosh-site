@@ -768,16 +768,22 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   addEventListener('pointerdown',onDown,{passive:false});
   addEventListener('pointermove',onMove,{passive:true});
   addEventListener('pointerup',onUp,{passive:true}); addEventListener('pointercancel',onUp,{passive:true});
+  // Freeze the globe render while actively scrolling so the slide transitions get the GPU; resume on scroll-stop.
+  let scrolling=false, _scrTO=0;
+  addEventListener('scroll',function(){ scrolling=true; clearTimeout(_scrTO); _scrTO=setTimeout(function(){ scrolling=false; },150); },{passive:true});
   (function loop(){ requestAnimationFrame(loop);
     const p=(fEnd>fStart)?Math.max(0,Math.min(1,(scrollY-fStart)/(fEnd-fStart))):0;
     if(MOB){ var fo=Math.max(0,Math.min(1,1-scrollY/(innerHeight*0.72))); stage.style.opacity=fo.toFixed(3); stage.style.transform='translateY(0px)'; visible = fo>0.02; }
     else { visible = (p<1); stage.style.transform='translateY('+(p*innerHeight*1.12).toFixed(1)+'px)'; }
-    if(!dragging && !reduce && visible) lng+=0.02;  // very slow, smooth idle rotation (starts at Tehran)
-    cLng+=(lng-cLng)*0.12; cLat+=(lat-cLat)*0.12;
-    world.pointOfView({lat:cLat,lng:cLng,altitude:(window.matchMedia('(max-width:820px)').matches?3.0:1.85)},0);
-    if(dir&&cam) dir.position.copy(cam.position);
-    if(!visible&&!paused){paused=true; world.pauseAnimation&&world.pauseAnimation();}
-    else if(visible&&paused){paused=false; world.resumeAnimation&&world.resumeAnimation();}
+    const active = visible && (!scrolling || dragging);
+    if(active){
+      if(!dragging && !reduce) lng+=0.02;  // very slow, smooth idle rotation (starts at Tehran)
+      cLng+=(lng-cLng)*0.12; cLat+=(lat-cLat)*0.12;
+      world.pointOfView({lat:cLat,lng:cLng,altitude:(window.matchMedia('(max-width:820px)').matches?3.0:1.85)},0);
+      if(dir&&cam) dir.position.copy(cam.position);
+    }
+    if(!active&&!paused){paused=true; world.pauseAnimation&&world.pauseAnimation();}
+    else if(active&&paused){paused=false; world.resumeAnimation&&world.resumeAnimation();}
   })();
 })();
 
