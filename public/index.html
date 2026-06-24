@@ -207,7 +207,7 @@
   .chapter h2{font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;font-size:clamp(2.4rem,6vw,5rem);line-height:.95;color:#fff;margin-bottom:24px}
   .chapter h2 .ghost{color:transparent;-webkit-text-stroke:1.3px var(--gold)}
   .chapter p{color:var(--silver);font-size:1.1rem;max-width:440px;margin-bottom:30px}
-  .feed{display:grid;grid-template-rows:repeat(3,1fr);gap:16px;height:clamp(420px,55vh,510px)}
+  .feed{display:flex;flex-direction:column;gap:16px}
   .feed-item{border:1px solid rgba(205,214,230,.12);border-radius:14px;padding:20px 24px;background:rgba(10,20,48,.4);backdrop-filter:blur(6px);display:flex;flex-direction:column;justify-content:center}
   .feed.anim .feed-item{opacity:0;transform:translateY(30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
   .feed.anim.in .feed-item{opacity:1;transform:none}
@@ -226,6 +226,7 @@
   .feed-item .fi-more ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
   .feed-item .fi-more li{position:relative;padding-left:16px;color:var(--silver);font-size:.85rem;line-height:1.45}
   .feed-item .fi-more li::before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+  @media (hover:hover) and (pointer:fine){.feed-item:hover .fi-more,.feed-item:focus-within .fi-more{max-height:340px;opacity:1;margin-top:14px}.feed-item:hover .fi-toggle,.feed-item:focus-within .fi-toggle{transform:rotate(45deg)}}
 
   /* ===== Stats ===== */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:center;border-top:1px solid rgba(224,169,63,.14);border-bottom:1px solid rgba(224,169,63,.14);padding:70px 0}
@@ -284,7 +285,8 @@
   .sweep-pin{position:sticky;top:0;height:100vh;overflow:hidden}
   .sweep-row{display:flex;width:300vw;height:100vh;will-change:transform}
   .panel{width:100vw;height:100vh;flex:none;display:flex;align-items:center}
-  .panel.about-panel{align-items:flex-start;padding-top:clamp(110px,15vh,150px);padding-bottom:40px}
+  .panel.about-panel{align-items:flex-start;padding-top:clamp(92px,12vh,128px);padding-bottom:36px}
+  .panel.about-panel .panel-inner{align-items:start}
   .panel-inner{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
   .live-embed{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;border:1px solid rgba(224,169,63,.3);box-shadow:0 30px 80px rgba(0,0,0,.55)}
   .live-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
