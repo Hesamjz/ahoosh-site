@@ -752,9 +752,9 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
   const COUNTRIES=window.AHOOSH_COUNTRIES||{features:[]};
   const world=Globe()(host)
     .backgroundColor("rgba(0,0,0,0)")
-    .showAtmosphere(true).atmosphereColor(GOLDL).atmosphereAltitude(0.22).showGraticules(false)
+    .showAtmosphere(true).atmosphereColor(GOLDL).atmosphereAltitude(0.18).showGraticules(false)
     .hexPolygonsData(COUNTRIES.features).hexPolygonResolution(3).hexPolygonMargin(0.28).hexPolygonUseDots(true).hexPolygonAltitude(0.003)
-    .hexPolygonColor(()=>`rgba(224,169,63,${(0.55+Math.random()*0.40).toFixed(2)})`)
+    .hexPolygonColor(()=>`rgba(224,169,63,${(0.38+Math.random()*0.32).toFixed(2)})`)
     .pointsData(CITIES).pointLat("lat").pointLng("lng").pointColor(d=>d.named?HOT:GOLD).pointAltitude(d=>d.named?0.02:0.008).pointRadius(d=>d.named?0.34:0.2).pointResolution(12).pointsMerge(false)
     .arcsData([]).arcStartLat("sLat").arcStartLng("sLng").arcEndLat("eLat").arcEndLng("eLng")
       .arcColor(()=>["rgba(255,225,150,0.04)","rgba(255,231,170,0.9)","rgba(255,225,150,0.04)"]).arcStroke(0.5).arcAltitudeAutoScale(0.45)
@@ -763,10 +763,10 @@ if(!reduce && window.gsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTr
     .htmlElementsData(window.matchMedia('(max-width:820px)').matches?[]:CITIES).htmlLat("lat").htmlLng("lng").htmlAltitude(0.012)
       .htmlElement(d=>{const el=document.createElement("div");el.className="city-pill named";el.textContent=d.name;el.style.position="absolute";return el;});
   if(typeof world.htmlElementVisibilityModifier==="function") world.htmlElementVisibilityModifier((el,v)=>{el.style.opacity=v?"":"0";});
-  try{const m=world.globeMaterial();m.color.set("#0d1832");m.emissive.set("#0c1730");m.emissiveIntensity=0.32;m.shininess=6;}catch(e){}
+  try{const m=world.globeMaterial();m.color.set("#070d1a");m.emissive.set("#040a14");m.emissiveIntensity=0.16;m.shininess=6;}catch(e){}
   try{world.renderer().setPixelRatio(Math.min(devicePixelRatio||1,window.matchMedia('(max-width:820px)').matches?1:1.5));}catch(e){}
   // front light follows the camera: the face toward the viewer = day, limb = night
-  let dir=null; try{const ls=world.lights()||[];ls.forEach(l=>{if(/Ambient/i.test(l.type))l.intensity=0.24;if(/Directional/i.test(l.type)){l.intensity=1.22;dir=l;}});if(!dir&&ls.length){ls[ls.length-1].intensity=1.05;dir=ls[ls.length-1];}world.lights(ls);}catch(e){}
+  let dir=null; try{const ls=world.lights()||[];ls.forEach(l=>{if(/Ambient/i.test(l.type))l.intensity=0.14;if(/Directional/i.test(l.type)){l.intensity=1.05;dir=l;}});if(!dir&&ls.length){ls[ls.length-1].intensity=1.05;dir=ls[ls.length-1];}world.lights(ls);}catch(e){}
   const cam=world.camera();
   function size(){world.width(innerWidth);world.height(innerHeight);}
   size(); var _lw=innerWidth;
