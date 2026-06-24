@@ -4,6 +4,7 @@
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1X8JHR84R"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z1X8JHR84R');</script>
+  <script>document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';var t=(a.textContent||'').trim();if(/\/contact/.test(h)&&(a.classList.contains('pill')||/book|call/i.test(t))){if(window.gtag)gtag('event','book_a_call',{link_text:t.slice(0,40)});}else if(/\/assess/.test(h)){if(window.gtag)gtag('event','assessment_start',{link_url:h});}},true);</script>
   <base href="/lab/">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1003,6 +1004,11 @@
   // type 'youtube' has vid (video id) OR sources[{type:'youtube',list:'UU…'}] (playlist);
   // type 'hls' has src (.m3u8). lang is en|fa|sport|tech; topic tags language-specific sport.
   var CHANNELS = [
+    { id:'itc', name:'ITC', lang:'sport',
+      sources:[
+        { type:'hls',    src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/manifest/video.m3u8' },
+        { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/206463b5cd3531892c9bf8e69735d316/iframe' }
+      ] },
     // English — News
     { id:'france24-en', name:'France 24',   lang:'en', type:'youtube', vid:'HvZt-nh9sGg' },
     { id:'aljazeera',   name:'Al Jazeera',  lang:'en', type:'hls',     src:'https://live-hls-web-aje-gcp.thehlive.com/AJE/index.m3u8' },
@@ -1013,11 +1019,6 @@
     { id:'euronews-en', name:'Euronews EN', lang:'en', type:'youtube', vid:'pykpO5kQJ98' },
     { id:'cbs',         name:'CBS News',    lang:'en', type:'youtube', vid:'khdVidn7AfQ' },
     // Persian — Sport (HLS primary, iframe fallback)
-    { id:'shabakeh3', name:'90', lang:'fa', topic:'sport',
-      sources:[
-        { type:'hls',    src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/manifest/video.m3u8' },
-        { type:'iframe', src:'https://customer-gbrbp7ltq327hpsu.cloudflarestream.com/9b5be6d9ebdfce62a3eeb49a43cb1479/iframe' }
-      ] },
     // Persian — News
     { id:'bbc-fa',   name:'BBC Persian', lang:'fa', type:'youtube', vid:'XRHV-9m_WO4' },
     { id:'iranintl', name:'Iran Intl',   lang:'fa', type:'youtube', vid:'5JDxjsAVaGk' },
@@ -1133,7 +1134,7 @@
       var list = channelsFor(L, C);
       selCh.innerHTML = list.map(function(c){ return '<option value="'+c.id+'">'+c.name+'</option>'; }).join('');
       if(tvCount) tvCount.textContent = list.length + ' channels';
-      var preferred = { news:'euronews-en', sport:'redbull-tv', tech:'nasa-tv' };
+      var preferred = { news:'euronews-en', sport:'itc', tech:'nasa-tv' };
       var defId = preferred[C];
       var def = (defId && list.filter(function(c){return c.id===defId;})[0]) || list[0];
       if(def){ selCh.value = def.id; setChannel(def); }

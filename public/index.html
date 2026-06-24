@@ -1,14 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<<<<<<< HEAD
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1X8JHR84R"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z1X8JHR84R');</script>
+  <script>document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';var t=(a.textContent||'').trim();if(/\/contact/.test(h)&&(a.classList.contains('pill')||/book|call/i.test(t))){if(window.gtag)gtag('event','book_a_call',{link_text:t.slice(0,40)});}else if(/\/assess/.test(h)){if(window.gtag)gtag('event','assessment_start',{link_url:h});}},true);</script>
+=======
+<!-- perf: preconnect + preload heavy 3D libs so they download immediately in parallel -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/globe.gl@2.34.4/dist/globe.gl.min.js">
+<!-- redeploy 2026-06-23: restore production after rollback -->
+
+>>>>>>> origin/main
   <base href="/lab/">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AHoosh.ai — Markets, News & Research, clear enough to act on</title>
 <meta name="description" content="AI-powered business intelligence and consulting. Live markets, business news, deep research, free AI diagnostics, and founder-led consulting." />
+  <!-- Open Graph / social link preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="AHoosh.ai" />
+  <meta property="og:title" content="AHoosh.ai — Markets, News & Research, clear enough to act on" />
+  <meta property="og:description" content="AI-powered business intelligence and consulting. Live markets, business news, deep research, free AI diagnostics, and founder-led consulting." />
+  <meta property="og:url" content="https://ahoosh.ai/" />
+  <meta property="og:image" content="https://ahoosh.ai/assets/og-image.png" />
+  <meta property="og:image:secure_url" content="https://ahoosh.ai/assets/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="AHoosh.ai — Markets, News, Deep Research, AI Consulting" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AHoosh.ai — Markets, News & Research, clear enough to act on" />
+  <meta name="twitter:description" content="AI-powered business intelligence and consulting. Live markets, business news, deep research, free AI diagnostics, and founder-led consulting." />
+  <meta name="twitter:image" content="https://ahoosh.ai/assets/og-image.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
