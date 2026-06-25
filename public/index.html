@@ -60,11 +60,12 @@
     --ease:cubic-bezier(.22,1,.36,1);
   }
   *{margin:0;padding:0;box-sizing:border-box}
+  html{overflow-x:clip}
   body{
     font-family:'Inter',system-ui,sans-serif;
     background:var(--navy);
     color:#fff;
-    overflow-x:clip;            /* clip (not hidden) — does not break vertical scroll or position:sticky */
+    overflow-x:visible;         /* clip moved to <html> (body-level clip broke position:sticky on some Windows Chrome) */
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
