@@ -17,8 +17,8 @@
   --font-display:'Montserrat',sans-serif; --font-body:'Inter',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
-body{background:var(--navy);color:#fff;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+html{scroll-behavior:auto}
+body{background:var(--navy);color:#fff;font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 
 /* ---------- Loader ---------- */
@@ -44,6 +44,7 @@ a{color:inherit;text-decoration:none}
 #canvas{width:100%;height:100%;display:block}
 #scrim{position:fixed;inset:0;z-index:2;pointer-events:none;
   background:radial-gradient(120% 90% at 50% 40%,rgba(3,6,15,0) 40%,rgba(3,6,15,.5) 100%)}
+#scroll{position:relative;z-index:0;height:760vh}
 
 /* ---------- Hero ---------- */
 .hero{position:fixed;top:0;left:0;right:0;z-index:5;height:62vh;min-height:470px;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);background:linear-gradient(180deg,var(--navy2) 0%,var(--navy) 48%,rgba(3,6,15,.55) 82%,rgba(3,6,15,0) 100%);
@@ -153,7 +154,7 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <!-- Beats -->
-<section class="sec left" id="secA">
+<section class="sec left" id="secA" data-enter="5" data-leave="16">
   <div class="inner">
     <div class="num">01 · START HERE</div>
     <h2>Start with an honest diagnosis</h2>
@@ -162,7 +163,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec right" id="secB">
+<section class="sec right" id="secB" data-enter="24" data-leave="36">
   <div class="inner">
     <div class="num">02 · CONSULTING &amp; ADVISORY</div>
     <h2>Then a plan, built on the Growth Map</h2>
@@ -175,7 +176,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec left" id="secC">
+<section class="sec left" id="secC" data-enter="50" data-leave="62">
   <div class="inner">
     <div class="num">03 · WEBSITES &amp; ONLINE STORES</div>
     <h2>Get online and sell</h2>
@@ -187,7 +188,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec right" id="secD">
+<section class="sec right" id="secD" data-enter="65" data-leave="76">
   <div class="inner">
     <div class="num">04 · SEO, MARKETING &amp; CONTENT</div>
     <h2>Get found. Get customers.</h2>
@@ -199,7 +200,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec left" id="secE">
+<section class="sec left" id="secE" data-enter="78" data-leave="87">
   <div class="inner">
     <div class="num">05 · AI &amp; AUTOMATION</div>
     <h2>Run smarter with AI</h2>
@@ -209,7 +210,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec cta" id="secF">
+<section class="sec cta" id="secF" data-enter="90" data-leave="100" data-persist="true">
   <div class="inner">
     <div class="num">BUILT TO GROW</div>
     <h2>Ready to build what's next?</h2>
@@ -222,31 +223,18 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
+<!-- scroll length for the smooth scrub -->
+<div id="scroll"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 <script>
 const FRAME_COUNT = 240;
 const FRAME_PATH = i => `fr_A_web/f_${String(i+1).padStart(4,'0')}.jpg`;
 const IMAGE_SCALE = 1.0;
 
-/* Each stop = a scene frame + the text element to show. Tune frames to taste. */
-const STOPS = [
-  { frame: 8,   el: null },                              // 0  hero / spark
-  { frame: 24,  el: document.getElementById('secA') },  // 1  diagnose (fire, before the build)
-  { frame: 42,  el: null },                              // 2  scene · blueprint starts
-  { frame: 58,  el: null },                              // 3  scene · blueprint
-  { frame: 76,  el: document.getElementById('secB') },  // 4  growth map (structure rising)
-  { frame: 92,  el: null },                              // 5  scene · structure
-  { frame: 108, el: null },                              // 6  scene · the office builds
-  { frame: 124, el: null },                              // 7  scene · monitors form
-  { frame: 138, el: document.getElementById('secC') },  // 8  websites (monitors, after the cut)
-  { frame: 152, el: null },                              // 9  scene · into the room
-  { frame: 167, el: document.getElementById('secD') },  // 10 marketing (the meeting + growth chart)
-  { frame: 182, el: null },                              // 11 scene · the chart climbs
-  { frame: 198, el: document.getElementById('secE') },  // 12 AI
-  { frame: 213, el: null },                              // 13 scene · pull back
-  { frame: 227, el: null },                              // 14 scene · the tower emerges
-  { frame: 238, el: document.getElementById('secF') },  // 15 CTA / tower
-];
+const FRAME_SPEED = 1.0;   // full scroll plays the full film (tune so the tower lands on the CTA)
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', {alpha:false});
@@ -289,74 +277,52 @@ function loadFrame(i){
   });
 }
 
-/* ---------- Pager ---------- */
-const header=document.getElementById('header'), hero=document.getElementById('hero'),
-      firewrap=document.getElementById('firewrap');
-let idx=0, locked=false, enabled=false;
-
-function setChrome(t){
-  const atHero = (t===0);
+/* ---------- Smooth continuous scrub (Lenis + ScrollTrigger) + section beats ---------- */
+const hero=document.getElementById('hero'), firewrap=document.getElementById('firewrap');
+const secs=[...document.querySelectorAll('.sec')].map(sec=>({
+  el:sec,
+  enter:parseFloat(sec.dataset.enter)/100,
+  leave:parseFloat(sec.dataset.leave)/100,
+  persist:sec.dataset.persist==='true',
+  shown:false
+}));
+function update(p){
+  // continuous frame scrub
+  const acc=Math.min(p*FRAME_SPEED,1);
+  const fr=Math.min(Math.floor(acc*FRAME_COUNT), FRAME_COUNT-1);
+  drawFrame(fr);
+  // beats — one at a time, by scroll range (positions set per-section; easy to retune)
+  secs.forEach(s=>{
+    const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
+    if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
+  });
+  // hero + fire only at the very top
+  const atHero = p<0.04;
   hero.classList.toggle('hide', !atHero);
   firewrap.classList.toggle('hide', !atHero);
-  header.classList.toggle('show', !atHero);
 }
 
-function goTo(t){
-  t = Math.max(0, Math.min(STOPS.length-1, t));
-  if(t===idx || locked || !enabled) return;
-  locked = true;
-  const from = STOPS[idx].frame, to = STOPS[t].frame;
-  const prevEl = STOPS[idx].el, nextEl = STOPS[t].el;
-  if(prevEl) prevEl.classList.remove('on');     // fade current text out
-  setChrome(t);                                  // header/hero/fire
-  idx = t;
-  const dist = Math.abs(to-from);
-  const dur = Math.min(3.0, Math.max(1.5, dist/12));   // ~2s per step (near natural speed), proportional
-  const o = {f: from};
-  gsap.to(o, { f: to, duration: dur, ease:'power1.inOut',
-    onUpdate:()=>{ drawFrame(Math.round(o.f)); }});
-  if(nextEl) gsap.delayedCall(dur*0.5, ()=> nextEl.classList.add('on'));  // fade next text in
-  gsap.delayedCall(dur+0.12, ()=> locked=false);
+function startScroll(){
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis=new Lenis({ duration:1.1, easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)), smoothWheel:true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t=>lenis.raf(t*1000));
+  gsap.ticker.lagSmoothing(0);
+  ScrollTrigger.create({
+    trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:true,
+    onUpdate:self=> update(self.progress)
+  });
+  ScrollTrigger.refresh();
 }
-
-// input — one gesture = one step
-let wheelGuard=false;
-window.addEventListener('wheel', e=>{
-  e.preventDefault();
-  if(!enabled || locked || wheelGuard) return;
-  if(Math.abs(e.deltaY) < 4) return;
-  wheelGuard = true;
-  goTo(idx + (e.deltaY>0 ? 1 : -1));
-  setTimeout(()=> wheelGuard=false, 260);
-}, {passive:false});
-
-window.addEventListener('keydown', e=>{
-  if(!enabled) return;
-  if(['ArrowDown','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(idx+1); }
-  else if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); goTo(idx-1); }
-  else if(e.key==='Home'){ goTo(0); } else if(e.key==='End'){ goTo(STOPS.length-1); }
-});
-
-let ty=null;
-window.addEventListener('touchstart', e=>{ ty=e.touches[0].clientY; }, {passive:true});
-window.addEventListener('touchmove', e=>{ e.preventDefault(); }, {passive:false});
-window.addEventListener('touchend', e=>{
-  if(ty==null || !enabled) return;
-  const dy = ty - e.changedTouches[0].clientY;
-  if(Math.abs(dy) > 45) goTo(idx + (dy>0 ? 1 : -1));
-  ty=null;
-});
 
 async function init(){
-  // load the first stretch in parallel, reveal fast, then stream the rest in the background
   const firstN = Math.min(54, FRAME_COUNT);
   const head=[]; for(let i=0;i<firstN;i++) head.push(loadFrame(i));
   await Promise.all(head);
   resize();
-  drawFrame(STOPS[0].frame, true);
-  setChrome(0);
+  drawFrame(0, true);
   loader.classList.add('hide');
-  enabled = true;
+  startScroll();
   for(let i=firstN;i<FRAME_COUNT;i++) loadFrame(i);   // background, parallel
 }
 init();
