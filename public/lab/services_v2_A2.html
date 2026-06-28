@@ -32,7 +32,7 @@ a{color:inherit;text-decoration:none}
 .site-header{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,4vw,56px);background:linear-gradient(180deg,rgba(3,6,15,.88),rgba(3,6,15,0));
   opacity:0;transform:translateY(-12px);pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
 .site-header.show{opacity:1;transform:none;pointer-events:auto}
-.brand img{height:34px;width:auto;display:block}
+.brand img{height:52px;width:auto;display:block}
 .nav{display:flex;align-items:center;gap:clamp(14px,2vw,30px)}
 .nav a{font-size:12.5px;font-weight:600;letter-spacing:.14em;color:var(--silver);transition:color .25s}
 .nav a:hover,.nav a.active{color:#fff}
@@ -124,7 +124,7 @@ a{color:inherit;text-decoration:none}
 
 <!-- Header (logo left; fades in after the hero) -->
 <header class="site-header" id="header">
-  <a class="brand" href="home_v3.html"><img src="Ahoosh_Vectore_Logo.png" alt="AHOOSH"></a>
+  <a class="brand" href="home_v3.html" aria-label="AHoosh home"><img src="/assets/logo.png" alt="AHoosh"></a>
   <nav class="nav">
     <a href="home_v3.html">HOME</a>
     <a href="#" class="active">SERVICES</a>
@@ -222,24 +222,21 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<!-- Section dots -->
-<div class="dots" id="dots"></div>
-
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
 <script>
-const FRAME_COUNT = 231;
+const FRAME_COUNT = 240;
 const FRAME_PATH = i => `fr_A_web/f_${String(i+1).padStart(4,'0')}.jpg`;
 const IMAGE_SCALE = 1.0;
 
 /* Each stop = a scene frame + the text element to show. Tune frames to taste. */
 const STOPS = [
-  { frame: 6,   el: null },                              // 0 hero / spark
-  { frame: 30,  el: document.getElementById('secA') },  // 1 diagnose
-  { frame: 70,  el: document.getElementById('secB') },  // 2 growth map
-  { frame: 110, el: document.getElementById('secC') },  // 3 websites
-  { frame: 150, el: document.getElementById('secD') },  // 4 marketing
-  { frame: 190, el: document.getElementById('secE') },  // 5 AI
-  { frame: 230, el: document.getElementById('secF') },  // 6 CTA / tower
+  { frame: 8,   el: null },                              // 0 hero / spark
+  { frame: 22,  el: document.getElementById('secA') },  // 1 diagnose (just the fire, before the build)
+  { frame: 78,  el: document.getElementById('secB') },  // 2 growth map
+  { frame: 135, el: document.getElementById('secC') },  // 3 websites (clean, after the cut)
+  { frame: 165, el: document.getElementById('secD') },  // 4 marketing
+  { frame: 200, el: document.getElementById('secE') },  // 5 AI
+  { frame: 238, el: document.getElementById('secF') },  // 6 CTA / tower
 ];
 
 const canvas = document.getElementById('canvas');
@@ -285,20 +282,14 @@ function loadFrame(i){
 
 /* ---------- Pager ---------- */
 const header=document.getElementById('header'), hero=document.getElementById('hero'),
-      firewrap=document.getElementById('firewrap'), dotsWrap=document.getElementById('dots');
+      firewrap=document.getElementById('firewrap');
 let idx=0, locked=false, enabled=false;
-
-// build dots
-STOPS.forEach((s,i)=>{ const b=document.createElement('button'); b.dataset.i=i;
-  b.addEventListener('click',()=>goTo(i)); dotsWrap.appendChild(b); });
-function paintDots(){ [...dotsWrap.children].forEach((b,i)=>b.classList.toggle('active', i===idx)); }
 
 function setChrome(t){
   const atHero = (t===0);
   hero.classList.toggle('hide', !atHero);
   firewrap.classList.toggle('hide', !atHero);
   header.classList.toggle('show', !atHero);
-  dotsWrap.classList.toggle('show', !atHero);
 }
 
 function goTo(t){
