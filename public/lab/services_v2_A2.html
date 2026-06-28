@@ -11,13 +11,13 @@
 <style>
 :root{
   --navy:#03060f; --navy2:#0a1430; --gold:#e0a93f; --gold-lt:#f4d98b;
-  --silver:#cdd6e6; --dim:#828ca2; --maxw:1280px;
+  --silver:#cdd6e6; --dim:#828ca2;
   --ease:cubic-bezier(.22,1,.36,1);
   --font-display:'Montserrat',sans-serif; --font-body:'Inter',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:auto}
-body{background:var(--navy);color:#fff;font-family:var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden}
+body{background:var(--navy);color:#fff;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 
 /* ---------- Loader ---------- */
@@ -28,10 +28,11 @@ a{color:inherit;text-decoration:none}
 #loader-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-lt))}
 #loader-percent{font-size:12px;letter-spacing:.2em;color:var(--dim)}
 
-/* ---------- Header ---------- */
-.site-header{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(20px,4vw,56px);background:linear-gradient(180deg,rgba(3,6,15,.85),rgba(3,6,15,0))}
-.brand{font-family:var(--font-display);font-weight:800;letter-spacing:.3em;font-size:17px;color:#fff;padding-left:.3em}
-.brand b{color:var(--gold)}
+/* ---------- Header (hidden on hero, fades in after) ---------- */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,4vw,56px);background:linear-gradient(180deg,rgba(3,6,15,.88),rgba(3,6,15,0));
+  opacity:0;transform:translateY(-12px);pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.site-header.show{opacity:1;transform:none;pointer-events:auto}
+.brand img{height:34px;width:auto;display:block}
 .nav{display:flex;align-items:center;gap:clamp(14px,2vw,30px)}
 .nav a{font-size:12.5px;font-weight:600;letter-spacing:.14em;color:var(--silver);transition:color .25s}
 .nav a:hover,.nav a.active{color:#fff}
@@ -43,20 +44,21 @@ a{color:inherit;text-decoration:none}
 #canvas-wrap{position:fixed;inset:0;z-index:1}
 #canvas{width:100%;height:100%;display:block}
 #scrim{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(120% 90% at 50% 40%,rgba(3,6,15,0) 40%,rgba(3,6,15,.55) 100%)}
+  background:radial-gradient(120% 90% at 50% 40%,rgba(3,6,15,0) 40%,rgba(3,6,15,.5) 100%)}
 
 /* ---------- Hero ---------- */
-.hero{position:fixed;top:0;left:0;right:0;z-index:5;height:62vh;min-height:470px;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);background:linear-gradient(180deg,var(--navy2) 0%,var(--navy) 48%,rgba(3,6,15,.55) 82%,rgba(3,6,15,0) 100%)}
+.hero{position:fixed;top:0;left:0;right:0;z-index:5;height:62vh;min-height:470px;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);background:linear-gradient(180deg,var(--navy2) 0%,var(--navy) 48%,rgba(3,6,15,.55) 82%,rgba(3,6,15,0) 100%);
+  transition:opacity .55s var(--ease);pointer-events:none}
+.hero.hide{opacity:0}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.32em;color:var(--gold);margin-bottom:26px}
 .hero h1{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,8vw,108px);line-height:.96;letter-spacing:-.01em;max-width:14ch}
 .hero h1 .ln{display:block;overflow:hidden}
 .hero h1 .ln span{display:inline-block}
 .hero p{margin-top:30px;max-width:46ch;font-size:clamp(15px,1.5vw,19px);line-height:1.65;color:var(--silver)}
-.scroll-cue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--dim);font-size:11px;letter-spacing:.25em}
-.scroll-cue .ar{width:1px;height:38px;background:linear-gradient(var(--gold),transparent);animation:cue 1.8s var(--ease) infinite}
-@keyframes cue{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
 /* ---------- Fire scroll CTA (over the opening spark) ---------- */
+.fire-wrap{transition:opacity .55s var(--ease)}
+.fire-wrap.hide{opacity:0;pointer-events:none}
 .fire-zone{position:fixed;left:50%;top:66%;transform:translate(-50%,-50%);width:180px;height:180px;z-index:6}
 .fire-glow{position:absolute;top:50%;left:50%;width:130px;height:130px;transform:translate(-50%,-50%);border-radius:50%;
   background:radial-gradient(circle,rgba(255,190,110,.6) 0%,rgba(255,130,45,.3) 36%,rgba(255,100,35,0) 70%);
@@ -68,14 +70,13 @@ a{color:inherit;text-decoration:none}
 .fire-cue2 .chev{width:12px;height:12px;border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(45deg);animation:chevbob 1.8s var(--ease) infinite}
 @keyframes chevbob{0%,100%{transform:rotate(45deg) translate(-2px,-2px)}50%{transform:rotate(45deg) translate(2px,2px)}}
 
-/* ---------- Scroll sections (fixed beats, one at a time) ---------- */
-#scroll{position:relative;z-index:5;height:760vh}
+/* ---------- Beats (fixed; shown one at a time by the pager) ---------- */
 .sec{position:fixed;inset:0;z-index:6;display:flex;align-items:center;
   padding:0 clamp(24px,6vw,96px);opacity:0;pointer-events:none;
-  transition:opacity .55s var(--ease)}
+  transition:opacity .5s var(--ease)}
 .sec.on{opacity:1}
 .sec .inner{max-width:440px;position:relative;
-  transform:translateY(34px);transition:transform .8s var(--ease);pointer-events:none}
+  transform:translateY(34px);transition:transform .7s var(--ease);pointer-events:none}
 .sec.on .inner{transform:translateY(0)}
 .sec.left{justify-content:flex-start}
 .sec.right{justify-content:flex-end}
@@ -90,25 +91,26 @@ a{color:inherit;text-decoration:none}
 .chip span{color:var(--silver);font-size:11.5px;letter-spacing:.04em}
 .reveal-line{font-size:12.5px;color:var(--silver);line-height:1.5;margin-top:14px}
 .reveal-line em{color:var(--gold-lt);font-style:normal}
-/* text legibility backdrop — stronger, side-anchored */
 .sec .inner::before{content:"";position:absolute;inset:-40px -60px;z-index:-1;border-radius:26px;
   background:radial-gradient(110% 120% at 22% 45%,rgba(3,6,15,.9),rgba(3,6,15,.5) 45%,rgba(3,6,15,0) 78%)}
 .sec.right .inner::before{background:radial-gradient(110% 120% at 78% 45%,rgba(3,6,15,.9),rgba(3,6,15,.5) 45%,rgba(3,6,15,0) 78%)}
 
-/* CTA */
-.sec.cta{justify-content:center}
-.sec.cta .inner{max-width:640px;text-align:center}
-.sec.cta .inner::before{background:radial-gradient(80% 130% at 50% 50%,rgba(3,6,15,.92),rgba(3,6,15,.55) 55%,rgba(3,6,15,0) 85%)}
+/* CTA — content sits low so the building + AHOOSH logo stay visible above it */
+.sec.cta{justify-content:center;align-items:flex-end}
+.sec.cta .inner{max-width:660px;text-align:center;margin-bottom:6vh}
+.sec.cta .inner::before{background:radial-gradient(95% 120% at 50% 100%,rgba(3,6,15,.94),rgba(3,6,15,.55) 58%,rgba(3,6,15,0) 92%)}
 .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:26px;pointer-events:auto}
 .btn{padding:15px 30px;border-radius:40px;font-weight:600;font-size:14px;letter-spacing:.06em;transition:transform .25s var(--ease),filter .25s}
 .btn:hover{transform:translateY(-2px)}
 .btn-gold{background:linear-gradient(180deg,var(--gold-lt),var(--gold));color:#1a1205}
 .btn-ghost{border:1px solid rgba(205,214,230,.4);color:#fff}
+.cta-foot{margin-top:30px;color:var(--dim);font-size:11.5px;line-height:1.5}
 
-/* footer (after scroll) */
-.foot{position:relative;z-index:5;background:var(--navy);padding:60px clamp(20px,6vw,90px) 50px;border-top:1px solid rgba(255,255,255,.08)}
-.foot .note{color:var(--dim);font-size:12.5px;max-width:60ch;line-height:1.6}
-.foot .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;margin-top:28px;color:var(--dim);font-size:12px;letter-spacing:.08em}
+/* ---------- Section dots ---------- */
+.dots{position:fixed;right:clamp(14px,2vw,30px);top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:13px;opacity:0;transition:opacity .5s var(--ease);pointer-events:none}
+.dots.show{opacity:1;pointer-events:auto}
+.dots button{width:9px;height:9px;border-radius:50%;border:1px solid rgba(205,214,230,.5);background:transparent;cursor:pointer;padding:0;transition:transform .3s var(--ease),background .3s,border-color .3s}
+.dots button.active{background:var(--gold);border-color:var(--gold);transform:scale(1.3)}
 </style>
 </head>
 <body>
@@ -120,16 +122,16 @@ a{color:inherit;text-decoration:none}
   <div id="loader-percent">0%</div>
 </div>
 
-<!-- Header -->
-<header class="site-header">
-  <div class="brand">AH<b>OO</b>SH</div>
+<!-- Header (logo left; fades in after the hero) -->
+<header class="site-header" id="header">
+  <a class="brand" href="home_v3.html"><img src="Ahoosh_Vectore_Logo.png" alt="AHOOSH"></a>
   <nav class="nav">
     <a href="home_v3.html">HOME</a>
     <a href="#" class="active">SERVICES</a>
     <a href="#">GROWTH ASSESSMENT</a>
     <a href="#">INSIGHTS</a>
     <a href="#">ABOUT</a>
-    <a href="#book" class="btn-gold">BOOK A CALL</a>
+    <a href="#" class="btn-gold">BOOK A CALL</a>
   </nav>
 </header>
 
@@ -137,119 +139,113 @@ a{color:inherit;text-decoration:none}
 <div id="canvas-wrap"><canvas id="canvas"></canvas></div>
 <div id="scrim"></div>
 
-<!-- Hero -->
-<section class="hero">
+<!-- Hero (stop 0) -->
+<section class="hero" id="hero">
   <div class="eyebrow">SERVICES</div>
   <h1><span class="ln"><span>Let's</span></span><span class="ln"><span>fire it up.</span></span></h1>
   <p>Every business starts with a spark. We help small businesses and startups get online, sell more, and run smarter — we diagnose what to fix, then advise or build it. Scroll, and watch one take shape.</p>
 </section>
 
-<!-- Fire scroll CTA over the opening spark -->
-<div class="fire-zone"><div class="fire-glow"></div><div class="fire-hot"></div></div>
-<div class="fire-cue2"><span>SCROLL</span><span class="chev"></span></div>
-
-<!-- Scroll-driven sections -->
-<div id="scroll">
-
-  <!-- A · Diagnose -->
-  <section class="sec left" data-enter="9" data-leave="20" data-anim="left">
-    <div class="inner">
-      <div class="num">01 · START HERE</div>
-      <h2>Start with an honest diagnosis</h2>
-      <p>Before anyone builds anything, we find where your business is leaking growth — and what to fix first. Three short diagnostics, one ranked report.</p>
-      <div class="price-row">
-        <span class="chip"><b>€0</b><span>FREE GROWTH ASSESSMENT</span></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- B · Plan / Consulting -->
-  <section class="sec right" data-enter="21" data-leave="34" data-anim="right">
-    <div class="inner">
-      <div class="num">02 · CONSULTING &amp; ADVISORY</div>
-      <h2>Then a plan, built on the Growth Map</h2>
-      <p>Diagnose → Plan → Build → Run. A clear plan for presence, sales, operations and AI — from a quick strategy call to an ongoing fractional operator.</p>
-      <div class="price-row">
-        <span class="chip"><b>€149</b><span>STRATEGY CALL</span></span>
-        <span class="chip"><b>€499</b><span>AI READINESS SPRINT</span></span>
-        <span class="chip"><b>€1,500+</b><span>FRACTIONAL / MO</span></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- C · Online -->
-  <section class="sec left" data-enter="38" data-leave="51" data-anim="left">
-    <div class="inner">
-      <div class="num">03 · WEBSITES &amp; ONLINE STORES</div>
-      <h2>Get online and sell</h2>
-      <p>A site that looks the part and brings in enquiries — or a real online store you can run: catalog, checkout and payments that just work. Built by an operator who has run one.</p>
-      <div class="price-row">
-        <span class="chip"><b>from €450</b><span>WEBSITES</span></span>
-        <span class="chip"><b>from €1,500</b><span>ONLINE STORES</span></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- D · Grow -->
-  <section class="sec right" data-enter="55" data-leave="68" data-anim="right">
-    <div class="inner">
-      <div class="num">04 · SEO, MARKETING &amp; CONTENT</div>
-      <h2>Get found. Get customers.</h2>
-      <p>Show up where buyers are looking and keep showing up — SEO, social and paid ads, plus content that brings the right people in and explains why you're worth choosing.</p>
-      <div class="price-row">
-        <span class="chip"><b>from €300</b><span>SEO &amp; MARKETING</span></span>
-        <span class="chip"><b>from €120</b><span>CONTENT</span></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- E · Run smarter -->
-  <section class="sec left" data-enter="72" data-leave="83" data-anim="left">
-    <div class="inner">
-      <div class="num">05 · AI &amp; AUTOMATION</div>
-      <h2>Run smarter with AI</h2>
-      <p>Put AI to work on the repetitive parts — chat, workflows and follow-up — integrated with the tools you already use. The same engine the big players have, priced for you.</p>
-      <div class="price-row">
-        <span class="chip"><b>from €400</b><span>AI &amp; AUTOMATION</span></span>
-      </div>
-      <div class="reveal-line">A Big-4 readiness engagement runs <em>€15–25k</em> and takes weeks. Ours is <em>€499</em>, and we can build the fix.</div>
-    </div>
-  </section>
-
-  <!-- F · CTA (persist) -->
-  <section class="sec cta" id="book" data-enter="87" data-leave="100" data-anim="up" data-persist="true">
-    <div class="inner">
-      <div class="num">BUILT TO GROW</div>
-      <h2>Ready to build what's next?</h2>
-      <p>Start with the free Growth Assessment — it tells us both where to begin. No call required, no obligation.</p>
-      <div class="btns">
-        <a href="#" class="btn btn-gold">Take the assessment</a>
-        <a href="#" class="btn btn-ghost">Book a call</a>
-      </div>
-    </div>
-  </section>
-
+<!-- Fire CTA over the opening spark (stop 0) -->
+<div class="fire-wrap" id="firewrap">
+  <div class="fire-zone"><div class="fire-glow"></div><div class="fire-hot"></div></div>
+  <div class="fire-cue2"><span>SCROLL</span><span class="chev"></span></div>
 </div>
 
-<!-- Footer -->
-<footer class="foot">
-  <div class="note">All prices shown are launch prices — held for our first clients on each line, then raised. Ad spend, where relevant, is always the client's and billed separately.</div>
-  <div class="row"><span>AHOOSH</span><span>Business, digital &amp; AI consulting for European small businesses.</span></div>
-</footer>
+<!-- Beats -->
+<section class="sec left" id="secA">
+  <div class="inner">
+    <div class="num">01 · START HERE</div>
+    <h2>Start with an honest diagnosis</h2>
+    <p>Before anyone builds anything, we find where your business is leaking growth — and what to fix first. Three short diagnostics, one ranked report.</p>
+    <div class="price-row"><span class="chip"><b>€0</b><span>FREE GROWTH ASSESSMENT</span></span></div>
+  </div>
+</section>
 
-<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<section class="sec right" id="secB">
+  <div class="inner">
+    <div class="num">02 · CONSULTING &amp; ADVISORY</div>
+    <h2>Then a plan, built on the Growth Map</h2>
+    <p>Diagnose → Plan → Build → Run. A clear plan for presence, sales, operations and AI — from a quick strategy call to an ongoing fractional operator.</p>
+    <div class="price-row">
+      <span class="chip"><b>€149</b><span>STRATEGY CALL</span></span>
+      <span class="chip"><b>€499</b><span>AI READINESS SPRINT</span></span>
+      <span class="chip"><b>€1,500+</b><span>FRACTIONAL / MO</span></span>
+    </div>
+  </div>
+</section>
+
+<section class="sec left" id="secC">
+  <div class="inner">
+    <div class="num">03 · WEBSITES &amp; ONLINE STORES</div>
+    <h2>Get online and sell</h2>
+    <p>A site that looks the part and brings in enquiries — or a real online store you can run: catalog, checkout and payments that just work. Built by an operator who has run one.</p>
+    <div class="price-row">
+      <span class="chip"><b>from €450</b><span>WEBSITES</span></span>
+      <span class="chip"><b>from €1,500</b><span>ONLINE STORES</span></span>
+    </div>
+  </div>
+</section>
+
+<section class="sec right" id="secD">
+  <div class="inner">
+    <div class="num">04 · SEO, MARKETING &amp; CONTENT</div>
+    <h2>Get found. Get customers.</h2>
+    <p>Show up where buyers are looking and keep showing up — SEO, social and paid ads, plus content that brings the right people in and explains why you're worth choosing.</p>
+    <div class="price-row">
+      <span class="chip"><b>from €300</b><span>SEO &amp; MARKETING</span></span>
+      <span class="chip"><b>from €120</b><span>CONTENT</span></span>
+    </div>
+  </div>
+</section>
+
+<section class="sec left" id="secE">
+  <div class="inner">
+    <div class="num">05 · AI &amp; AUTOMATION</div>
+    <h2>Run smarter with AI</h2>
+    <p>Put AI to work on the repetitive parts — chat, workflows and follow-up — integrated with the tools you already use. The same engine the big players have, priced for you.</p>
+    <div class="price-row"><span class="chip"><b>from €400</b><span>AI &amp; AUTOMATION</span></span></div>
+    <div class="reveal-line">A Big-4 readiness engagement runs <em>€15–25k</em> and takes weeks. Ours is <em>€499</em>, and we can build the fix.</div>
+  </div>
+</section>
+
+<section class="sec cta" id="secF">
+  <div class="inner">
+    <div class="num">BUILT TO GROW</div>
+    <h2>Ready to build what's next?</h2>
+    <p>Start with the free Growth Assessment — it tells us both where to begin. No call required, no obligation.</p>
+    <div class="btns">
+      <a href="#" class="btn btn-gold">Take the assessment</a>
+      <a href="#" class="btn btn-ghost">Book a call</a>
+    </div>
+    <div class="cta-foot">All prices shown are launch prices — held for our first clients on each line, then raised. Ad spend, where relevant, is always the client's and billed separately.</div>
+  </div>
+</section>
+
+<!-- Section dots -->
+<div class="dots" id="dots"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 <script>
 const FRAME_COUNT = 231;
 const FRAME_PATH = i => `fr_A_web/f_${String(i+1).padStart(4,'0')}.jpg`;
-const FRAME_SPEED = 1.12;        // video completes ~ when CTA appears
-const IMAGE_SCALE = 1.0;         // cover-fill viewport
+const IMAGE_SCALE = 1.0;
+
+/* Each stop = a scene frame + the text element to show. Tune frames to taste. */
+const STOPS = [
+  { frame: 6,   el: null },                              // 0 hero / spark
+  { frame: 30,  el: document.getElementById('secA') },  // 1 diagnose
+  { frame: 70,  el: document.getElementById('secB') },  // 2 growth map
+  { frame: 110, el: document.getElementById('secC') },  // 3 websites
+  { frame: 150, el: document.getElementById('secD') },  // 4 marketing
+  { frame: 190, el: document.getElementById('secE') },  // 5 AI
+  { frame: 230, el: document.getElementById('secF') },  // 6 CTA / tower
+];
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', {alpha:false});
 const frames = new Array(FRAME_COUNT);
-let currentFrame = -1, bgColor = '#05080f', dpr = Math.min(window.devicePixelRatio||1, 2);
+let cur = -1, bgColor = '#05080f', dpr = Math.min(window.devicePixelRatio||1, 2);
 
 function resize(){
   dpr = Math.min(window.devicePixelRatio||1, 2);
@@ -257,102 +253,115 @@ function resize(){
   canvas.height = Math.floor(innerHeight*dpr);
   canvas.style.width = innerWidth+'px';
   canvas.style.height = innerHeight+'px';
-  if(currentFrame>=0) drawFrame(currentFrame);
+  if(cur>=0) drawFrame(cur, true);
 }
-function sampleBg(img){
-  try{
-    const t=document.createElement('canvas');t.width=t.height=8;
-    const tc=t.getContext('2d');tc.drawImage(img,0,0,8,8);
-    const d=tc.getData?null:tc.getImageData(0,0,8,8).data;
-    if(d){let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++}
-      bgColor=`rgb(${r/n|0},${g/n|0},${b/n|0})`}
-  }catch(e){}
-}
-function drawFrame(index){
+function drawFrame(index, force){
   const img = frames[index];
   if(!img) return;
-  const cw=canvas.width, ch=canvas.height, iw=img.naturalWidth, ih=img.naturalHeight;
+  if(index===cur && !force) return;
+  cur = index;
+  const cw=canvas.width, ch=canvas.height, iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
   const scale=Math.max(cw/iw, ch/ih)*IMAGE_SCALE;
   const dw=iw*scale, dh=ih*scale, dx=(cw-dw)/2, dy=(ch-dh)/2;
   ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
   ctx.fillStyle=bgColor; ctx.fillRect(0,0,cw,ch);
   ctx.drawImage(img,dx,dy,dw,dh);
 }
+window.addEventListener('resize', resize);
 
-// ---- Preload ----
+/* ---------- Preload EVERY frame (so playback is smooth, never half-loaded) ---------- */
 const bar=document.getElementById('loader-bar'), pct=document.getElementById('loader-percent'), loader=document.getElementById('loader');
 let loaded=0;
-function load(i){
+function loadFrame(i){
   return new Promise(res=>{
     const img=new Image();
-    img.onload=img.onerror=()=>{ frames[i]=img; loaded++;
-      const p=Math.round(loaded/FRAME_COUNT*100);
-      bar.style.width=p+'%'; pct.textContent=p+'%';
-      if(i===0){sampleBg(img); resize(); drawFrame(0); currentFrame=0;}
-      res();
-    };
+    const done=()=>{ frames[i]=img; loaded++; const p=Math.round(loaded/FRAME_COUNT*100);
+      bar.style.width=p+'%'; pct.textContent=p+'%'; res(); };
+    img.onload=()=>{ (img.decode?img.decode().then(done).catch(done):done()); };
+    img.onerror=done;
     img.src=FRAME_PATH(i);
   });
 }
-async function preload(){
-  // load the first chunk, reveal early, then stream the rest in the background
-  const head=[];for(let i=0;i<24;i++) head.push(load(i));
-  await Promise.all(head);
-  loader.classList.add('hide');
-  ScrollTrigger.refresh();
-  for(let i=24;i<FRAME_COUNT;i++) load(i);   // background stream
+
+/* ---------- Pager ---------- */
+const header=document.getElementById('header'), hero=document.getElementById('hero'),
+      firewrap=document.getElementById('firewrap'), dotsWrap=document.getElementById('dots');
+let idx=0, locked=false, enabled=false;
+
+// build dots
+STOPS.forEach((s,i)=>{ const b=document.createElement('button'); b.dataset.i=i;
+  b.addEventListener('click',()=>goTo(i)); dotsWrap.appendChild(b); });
+function paintDots(){ [...dotsWrap.children].forEach((b,i)=>b.classList.toggle('active', i===idx)); }
+
+function setChrome(t){
+  const atHero = (t===0);
+  hero.classList.toggle('hide', !atHero);
+  firewrap.classList.toggle('hide', !atHero);
+  header.classList.toggle('show', !atHero);
+  dotsWrap.classList.toggle('show', !atHero);
 }
 
-window.addEventListener('resize', resize);
+function goTo(t){
+  t = Math.max(0, Math.min(STOPS.length-1, t));
+  if(t===idx || locked || !enabled) return;
+  locked = true;
+  const from = STOPS[idx].frame, to = STOPS[t].frame;
+  const prevEl = STOPS[idx].el, nextEl = STOPS[t].el;
+  if(prevEl) prevEl.classList.remove('on');     // fade current text out
+  setChrome(t);                                  // header/hero/fire/dots
+  idx = t; paintDots();
+  const dist = Math.abs(to-from);
+  const dur = Math.min(1.4, Math.max(0.7, dist/115));
+  const o = {f: from};
+  gsap.to(o, { f: to, duration: dur, ease:'power2.inOut',
+    onUpdate:()=>{ drawFrame(Math.round(o.f)); }});
+  if(nextEl) gsap.delayedCall(dur*0.5, ()=> nextEl.classList.add('on'));  // fade next text in
+  gsap.delayedCall(dur+0.12, ()=> locked=false);
+}
 
-// ---- Lenis + GSAP ----
-const lenis=new Lenis({duration:1.15, easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)), smoothWheel:true});
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add(t=>lenis.raf(t*1000));
-gsap.ticker.lagSmoothing(0);
-gsap.registerPlugin(ScrollTrigger);
+// input — one gesture = one step
+let wheelGuard=false;
+window.addEventListener('wheel', e=>{
+  e.preventDefault();
+  if(!enabled || locked || wheelGuard) return;
+  if(Math.abs(e.deltaY) < 4) return;
+  wheelGuard = true;
+  goTo(idx + (e.deltaY>0 ? 1 : -1));
+  setTimeout(()=> wheelGuard=false, 260);
+}, {passive:false});
 
-// frame binding + snap to beats (scroll lands on a section, never rests in empty gaps)
-ScrollTrigger.create({
-  trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:true,
-  snap:{ snapTo:[0, 0.105, 0.275, 0.445, 0.615, 0.775, 0.935, 1],
-         duration:{min:0.25, max:0.75}, delay:0.04, ease:'power2.inOut', directional:true },
-  onUpdate:self=>{
-    const acc=Math.min(self.progress*FRAME_SPEED,1);
-    const idx=Math.min(Math.floor(acc*FRAME_COUNT), FRAME_COUNT-1);
-    if(idx!==currentFrame){currentFrame=idx; requestAnimationFrame(()=>drawFrame(idx));}
-  }
+window.addEventListener('keydown', e=>{
+  if(!enabled) return;
+  if(['ArrowDown','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(idx+1); }
+  else if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); goTo(idx-1); }
+  else if(e.key==='Home'){ goTo(0); } else if(e.key==='End'){ goTo(STOPS.length-1); }
 });
 
-// hero + fire CTA fade fast on first scroll, then fully hide so they never overlap the beats
-const heroEl=document.querySelector('.hero');
-gsap.to('.hero',{opacity:0, ease:'none',
-  scrollTrigger:{trigger:'#scroll', start:'top top', end:'5% top', scrub:true,
-    onLeave:()=>heroEl.style.visibility='hidden',
-    onEnterBack:()=>heroEl.style.visibility='visible'}});
-gsap.to('.fire-zone, .fire-cue2',{opacity:0, ease:'none',
-  scrollTrigger:{trigger:'#scroll', start:'top top', end:'5% top', scrub:true}});
-
-// section reveals — fixed beats, only one visible per scroll range
-const secs=[...document.querySelectorAll('.sec')].map(sec=>({
-  el:sec,
-  enter:parseFloat(sec.dataset.enter)/100,
-  leave:parseFloat(sec.dataset.leave)/100,
-  persist:sec.dataset.persist==='true',
-  shown:false
-}));
-ScrollTrigger.create({
-  trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:false,
-  onUpdate:self=>{
-    const p=self.progress;
-    secs.forEach(s=>{
-      const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
-      if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on', active); }
-    });
-  }
+let ty=null;
+window.addEventListener('touchstart', e=>{ ty=e.touches[0].clientY; }, {passive:true});
+window.addEventListener('touchmove', e=>{ e.preventDefault(); }, {passive:false});
+window.addEventListener('touchend', e=>{
+  if(ty==null || !enabled) return;
+  const dy = ty - e.changedTouches[0].clientY;
+  if(Math.abs(dy) > 45) goTo(idx + (dy>0 ? 1 : -1));
+  ty=null;
 });
 
-preload();
+async function init(){
+  // load in small batches so the progress bar moves and the network isn't hammered
+  const BATCH=12;
+  for(let i=0;i<FRAME_COUNT;i+=BATCH){
+    const group=[];
+    for(let j=i;j<Math.min(i+BATCH,FRAME_COUNT);j++) group.push(loadFrame(j));
+    await Promise.all(group);
+  }
+  resize();
+  drawFrame(STOPS[0].frame, true);
+  setChrome(0); paintDots();
+  loader.classList.add('hide');
+  enabled = true;
+}
+init();
 </script>
 </body>
 </html>
