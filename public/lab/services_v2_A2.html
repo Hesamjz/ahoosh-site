@@ -232,12 +232,15 @@ const IMAGE_SCALE = 1.0;
 /* Each stop = a scene frame + the text element to show. Tune frames to taste. */
 const STOPS = [
   { frame: 8,   el: null },                              // 0 hero / spark
-  { frame: 22,  el: document.getElementById('secA') },  // 1 diagnose (just the fire, before the build)
-  { frame: 78,  el: document.getElementById('secB') },  // 2 growth map
-  { frame: 135, el: document.getElementById('secC') },  // 3 websites (clean, after the cut)
-  { frame: 165, el: document.getElementById('secD') },  // 4 marketing
-  { frame: 200, el: document.getElementById('secE') },  // 5 AI
-  { frame: 238, el: document.getElementById('secF') },  // 6 CTA / tower
+  { frame: 28,  el: document.getElementById('secA') },  // 1 diagnose (fire, before the build)
+  { frame: 58,  el: null },                              // 2 scene · blueprint forming
+  { frame: 85,  el: document.getElementById('secB') },  // 3 growth map (structure)
+  { frame: 110, el: null },                              // 4 scene · the office builds
+  { frame: 135, el: document.getElementById('secC') },  // 5 websites (monitors, after the cut)
+  { frame: 162, el: document.getElementById('secD') },  // 6 marketing (the deal)
+  { frame: 188, el: null },                              // 7 scene · the team at work
+  { frame: 210, el: document.getElementById('secE') },  // 8 AI
+  { frame: 238, el: document.getElementById('secF') },  // 9 CTA / tower
 ];
 
 const canvas = document.getElementById('canvas');
@@ -303,9 +306,9 @@ function goTo(t){
   setChrome(t);                                  // header/hero/fire
   idx = t;
   const dist = Math.abs(to-from);
-  const dur = Math.min(2.0, Math.max(0.8, dist/28));   // proportional → smooth, uses the full footage
+  const dur = Math.min(3.0, Math.max(1.5, dist/12));   // ~2s per step (near natural speed), proportional
   const o = {f: from};
-  gsap.to(o, { f: to, duration: dur, ease:'power2.inOut',
+  gsap.to(o, { f: to, duration: dur, ease:'power1.inOut',
     onUpdate:()=>{ drawFrame(Math.round(o.f)); }});
   if(nextEl) gsap.delayedCall(dur*0.5, ()=> nextEl.classList.add('on'));  // fade next text in
   gsap.delayedCall(dur+0.12, ()=> locked=false);
