@@ -47,7 +47,8 @@ a{color:inherit;text-decoration:none}
 #scroll{position:relative;z-index:0;height:760vh}
 
 /* ---------- Hero ---------- */
-.hero{position:fixed;top:0;left:0;right:0;z-index:5;height:62vh;min-height:470px;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);background:linear-gradient(180deg,var(--navy2) 0%,var(--navy) 48%,rgba(3,6,15,.55) 82%,rgba(3,6,15,0) 100%);
+.hero{position:fixed;top:0;left:0;right:0;z-index:5;height:62vh;min-height:470px;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);
+  background:radial-gradient(ellipse 130% 72% at 50% -8%, #0d2444 0%, transparent 62%), linear-gradient(180deg,#03142E 0%,rgba(3,6,15,.5) 72%,rgba(3,6,15,0) 100%);
   transition:opacity .55s var(--ease);pointer-events:none}
 .hero.hide{opacity:0}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.32em;color:var(--gold);margin-bottom:26px}
@@ -59,14 +60,14 @@ a{color:inherit;text-decoration:none}
 /* ---------- Fire scroll CTA (over the opening spark) ---------- */
 .fire-wrap{transition:opacity .55s var(--ease)}
 .fire-wrap.hide{opacity:0;pointer-events:none}
-.fire-zone{position:fixed;left:50%;top:66%;transform:translate(-50%,-50%);width:120px;height:120px;z-index:6}
+.fire-zone{position:fixed;left:50%;top:70%;transform:translate(-50%,-50%);width:150px;height:150px;z-index:6}
 .fire-glow{position:absolute;top:50%;left:50%;width:80px;height:80px;transform:translate(-50%,-50%);border-radius:50%;
   background:radial-gradient(circle,rgba(255,140,55,.7) 0%,rgba(255,85,22,.34) 42%,rgba(255,65,12,0) 70%);
   opacity:.35;pointer-events:none;mix-blend-mode:screen;
   transition:opacity .3s var(--ease),width .3s var(--ease),height .3s var(--ease),filter .3s var(--ease)}
 .fire-hot{position:absolute;inset:0;border-radius:50%;cursor:pointer;pointer-events:auto}
 .fire-zone:hover .fire-glow{opacity:1;width:116px;height:116px;filter:brightness(1.65) saturate(1.3)}
-.fire-cue2{position:fixed;left:50%;top:73.5%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;color:#ffb070;font-size:11px;letter-spacing:.34em;text-shadow:0 0 12px rgba(255,120,40,.6);opacity:0;transition:opacity .3s var(--ease)}
+.fire-cue2{position:fixed;left:50%;top:78%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;color:#ffb070;font-size:11px;letter-spacing:.34em;text-shadow:0 0 12px rgba(255,120,40,.6);opacity:0;transition:opacity .3s var(--ease)}
 .fire-zone:hover ~ .fire-cue2{opacity:1}
 .fire-cue2 .chev{width:12px;height:12px;border-right:2px solid #ff9a40;border-bottom:2px solid #ff9a40;transform:rotate(45deg);animation:chevbob 1.8s var(--ease) infinite}
 @keyframes chevbob{0%,100%{transform:rotate(45deg) translate(-2px,-2px)}50%{transform:rotate(45deg) translate(2px,2px)}}
@@ -142,7 +143,6 @@ a{color:inherit;text-decoration:none}
 
 <!-- Hero (stop 0) -->
 <section class="hero" id="hero">
-  <div class="eyebrow">SERVICES</div>
   <h1><span class="ln"><span>Let's</span></span><span class="ln"><span>fire it up.</span></span></h1>
   <p>Every business starts with a spark. We help small businesses and startups get online, sell more, and run smarter — we diagnose what to fix, then advise or build it. Scroll, and watch one take shape.</p>
 </section>
@@ -154,7 +154,7 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <!-- Beats -->
-<section class="sec left" id="secA" data-enter="5" data-leave="16">
+<section class="sec left" id="secA" data-enter="4" data-leave="19">
   <div class="inner">
     <div class="num">01 · START HERE</div>
     <h2>Start with an honest diagnosis</h2>
@@ -163,7 +163,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec right" id="secB" data-enter="24" data-leave="36">
+<section class="sec right" id="secB" data-enter="20" data-leave="40">
   <div class="inner">
     <div class="num">02 · CONSULTING &amp; ADVISORY</div>
     <h2>Then a plan, built on the Growth Map</h2>
