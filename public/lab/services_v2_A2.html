@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Services — AHoosh (A2 · fire it up)</title>
 <meta name="description" content="AHoosh helps European small businesses get online, sell more, and run smarter. Advice first, then build — consulting plus done-for-you websites, marketing, and AI.">
+<link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,7 +24,7 @@ a{color:inherit;text-decoration:none}
 /* ---------- Loader ---------- */
 #loader{position:fixed;inset:0;z-index:100;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .8s var(--ease)}
 #loader.hide{opacity:0;pointer-events:none}
-.loader-brand{font-family:var(--font-display);font-weight:800;letter-spacing:.35em;font-size:18px;color:var(--gold-lt);padding-left:.35em}
+.loader-logo{height:54px;width:auto;display:block}
 .loader-track{width:200px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
 #loader-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-lt))}
 #loader-percent{font-size:12px;letter-spacing:.2em;color:var(--dim)}
@@ -117,7 +118,7 @@ a{color:inherit;text-decoration:none}
 
 <!-- Loader -->
 <div id="loader">
-  <div class="loader-brand">AHOOSH</div>
+  <img class="loader-logo" src="/assets/logo.png" alt="AHoosh">
   <div class="loader-track"><div id="loader-bar"></div></div>
   <div id="loader-percent">0%</div>
 </div>
@@ -299,10 +300,10 @@ function goTo(t){
   const from = STOPS[idx].frame, to = STOPS[t].frame;
   const prevEl = STOPS[idx].el, nextEl = STOPS[t].el;
   if(prevEl) prevEl.classList.remove('on');     // fade current text out
-  setChrome(t);                                  // header/hero/fire/dots
-  idx = t; paintDots();
+  setChrome(t);                                  // header/hero/fire
+  idx = t;
   const dist = Math.abs(to-from);
-  const dur = Math.min(1.4, Math.max(0.7, dist/115));
+  const dur = Math.min(2.0, Math.max(0.8, dist/28));   // proportional → smooth, uses the full footage
   const o = {f: from};
   gsap.to(o, { f: to, duration: dur, ease:'power2.inOut',
     onUpdate:()=>{ drawFrame(Math.round(o.f)); }});
@@ -339,18 +340,16 @@ window.addEventListener('touchend', e=>{
 });
 
 async function init(){
-  // load in small batches so the progress bar moves and the network isn't hammered
-  const BATCH=12;
-  for(let i=0;i<FRAME_COUNT;i+=BATCH){
-    const group=[];
-    for(let j=i;j<Math.min(i+BATCH,FRAME_COUNT);j++) group.push(loadFrame(j));
-    await Promise.all(group);
-  }
+  // load the first stretch in parallel, reveal fast, then stream the rest in the background
+  const firstN = Math.min(54, FRAME_COUNT);
+  const head=[]; for(let i=0;i<firstN;i++) head.push(loadFrame(i));
+  await Promise.all(head);
   resize();
   drawFrame(STOPS[0].frame, true);
-  setChrome(0); paintDots();
+  setChrome(0);
   loader.classList.add('hide');
   enabled = true;
+  for(let i=firstN;i<FRAME_COUNT;i++) loadFrame(i);   // background, parallel
 }
 init();
 </script>
