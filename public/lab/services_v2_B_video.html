@@ -203,7 +203,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec left" id="secC" data-enter="54" data-leave="67">
+<section class="sec left" id="secC" data-enter="53" data-leave="67">
   <div class="inner">
     <div class="num">03 · WEBSITES &amp; ONLINE STORES</div>
     <h2>Get online and sell</h2>
@@ -333,6 +333,7 @@ video.addEventListener('progress', function(){
 });
 video.addEventListener('loadeddata', reveal);
 video.addEventListener('canplay', reveal);
+(function(){ var _small = window.matchMedia("(max-width:760px)").matches || ("ontouchstart" in window); if(_small){ try{ var _s=video.getAttribute("src"); if(_s && _s.indexOf("_mobile")<0){ video.setAttribute("src", _s.replace(".mp4","_mobile.mp4")); video.load(); } }catch(e){} } })();
 video.muted = true; video.playsInline = true;
 const pp = video.play(); if(pp && pp.then){ pp.then(function(){ try{ video.pause(); }catch(e){} }).catch(function(){}); }
 setTimeout(function(){ if(!vidReady && video.readyState>=2) reveal(); }, 4000);
