@@ -50,7 +50,7 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- Canvas ---------- */
 #canvas-wrap{position:fixed;inset:0;z-index:1}
-#scrubvid{width:100%;height:100%;object-fit:cover;display:block;background:#05080f}
+#scrubvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}#canvas{position:absolute;inset:0;width:100%;height:100%;display:block;background:#05080f}
 /* full-screen dark-blue glass layer (between video and text/cards) */
 #scrim{position:fixed;inset:0;z-index:2;pointer-events:none;
   background:linear-gradient(rgba(8,14,30,.42),rgba(8,14,30,.42)), radial-gradient(125% 95% at 50% 38%,rgba(3,6,15,0) 46%,rgba(3,6,15,.42) 100%)}
@@ -171,7 +171,7 @@ a{color:inherit;text-decoration:none}
 </header>
 
 <!-- Canvas journey -->
-<div id="canvas-wrap"><video id="scrubvid" muted playsinline webkit-playsinline preload="auto" src="/lab/services_A.mp4"></video></div>
+<div id="canvas-wrap"><video id="scrubvid" muted playsinline webkit-playsinline preload="auto" src="/lab/services_A.mp4"></video><canvas id="canvas"></canvas></div>
 <div id="scrim"></div>
 
 <!-- Hero (stop 0) -->
@@ -249,8 +249,9 @@ a{color:inherit;text-decoration:none}
 <script>
 const IMAGE_SCALE = 1.0;
 const video = document.getElementById('scrubvid');
-const SCRUB = window.matchMedia('(pointer:fine)').matches && !('ontouchstart' in window);
-let dur = 20, vidReady = false, targetT = 0, dispT = 0;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', {alpha:false});
+let dur = 20, vidReady = false, targetT = 0, dispT = 0, dpr = Math.min(window.devicePixelRatio||1, 2);
 
 const SPARK_FX = 960, SPARK_FY = 665;
 const fireZoneEl = document.querySelector('.fire-zone'), fireCueEl = document.querySelector('.fire-cue2');
@@ -262,24 +263,40 @@ function positionFire(){
   if(fireZoneEl){ fireZoneEl.style.left=sx+'px'; fireZoneEl.style.top=sy+'px'; }
   if(fireCueEl){ fireCueEl.style.left=sx+'px'; fireCueEl.style.top=(sy+72)+'px'; }
 }
-window.addEventListener('resize', positionFire);
+function resize(){
+  dpr=Math.min(window.devicePixelRatio||1, 2);
+  canvas.width=Math.floor(innerWidth*dpr); canvas.height=Math.floor(innerHeight*dpr);
+  canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px';
+  positionFire(); draw();
+}
+function draw(){
+  const cw=canvas.width, ch=canvas.height, iw=video.videoWidth||1920, ih=video.videoHeight||1080;
+  if(!iw || !ih) return;
+  const s=Math.max(cw/iw, ch/ih)*IMAGE_SCALE;
+  const dw=iw*s, dh=ih*s, dx=(cw-dw)/2, dy=(ch-dh)/2;
+  ctx.fillStyle='#05080f'; ctx.fillRect(0,0,cw,ch);
+  try{ ctx.drawImage(video, dx, dy, dw, dh); }catch(e){}
+}
+window.addEventListener('resize', resize);
 
 const secs=[...document.querySelectorAll('.sec')].map(function(sec){return {
   el:sec, enter:parseFloat(sec.dataset.enter)/100, leave:parseFloat(sec.dataset.leave)/100,
   persist:sec.dataset.persist==='true', shown:false };});
 function update(p){
-  if(SCRUB) targetT = Math.min(Math.max(p,0),1)*dur;
+  targetT = Math.min(Math.max(p,0),1)*dur;
+  var _d=document.getElementById("dbg"); if(_d) _d.textContent="scroll "+Math.round(p*100)+"%";
   secs.forEach(function(s){
     const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
     if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
   });
 }
 function renderLoop(){
-  if(vidReady && SCRUB){
+  if(vidReady){
     dispT += (targetT - dispT)*0.16;
-    if(Math.abs(targetT-dispT) < 0.005) dispT = targetT;
+    if(Math.abs(targetT-dispT) < 0.004) dispT = targetT;
     const t = Math.min(Math.max(dispT,0), Math.max(dur-0.05,0));
     if(Math.abs((video.currentTime||0) - t) > 0.012){ try{ video.currentTime = t; }catch(e){} }
+    draw();
   }
   requestAnimationFrame(renderLoop);
 }
@@ -298,23 +315,25 @@ const loader=document.getElementById('loader'), bar=document.getElementById('loa
 function reveal(){
   if(vidReady) return;
   vidReady = true; dur = video.duration || 20;
-  positionFire();
-  if(SCRUB){
-    try{ video.pause(); video.currentTime = 0; }catch(e){}
-  } else {
-    try{ video.loop = true; video.muted = true; video.play(); }catch(e){}
-  }
+  resize();
+  try{ video.pause(); video.currentTime = 0; }catch(e){}
+  draw();
   if(loader) loader.classList.add('hide');
   startScroll();
+  if('requestVideoFrameCallback' in HTMLVideoElement.prototype){
+    var rvfc=function(){ draw(); try{ video.requestVideoFrameCallback(rvfc); }catch(e){} };
+    try{ video.requestVideoFrameCallback(rvfc); }catch(e){}
+  }
   requestAnimationFrame(renderLoop);
 }
+video.addEventListener('seeked', draw);
 video.addEventListener('progress', function(){
   try{ if(video.buffered.length){ const p=Math.round(video.buffered.end(0)/(video.duration||20)*100); if(bar) bar.style.width=p+'%'; if(pct) pct.textContent=p+'%'; } }catch(e){}
 });
 video.addEventListener('loadeddata', reveal);
 video.addEventListener('canplay', reveal);
 video.muted = true; video.playsInline = true;
-const pp = video.play(); if(pp && pp.then){ pp.then(function(){ if(SCRUB){ try{ video.pause(); }catch(e){} } }).catch(function(){}); }
+const pp = video.play(); if(pp && pp.then){ pp.then(function(){ try{ video.pause(); }catch(e){} }).catch(function(){}); }
 setTimeout(function(){ if(!vidReady && video.readyState>=2) reveal(); }, 4000);
 setTimeout(function(){ if(!vidReady) reveal(); }, 9000);
 
