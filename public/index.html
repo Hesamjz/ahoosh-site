@@ -1681,7 +1681,7 @@ document.querySelectorAll('[data-count]').forEach(el=>{
   var barsEl=document.getElementById('oppBars'), srcEl=document.getElementById('oppSrc');
   var foot=document.getElementById('oppFoot');
   if(!panel||!numEl||!lblEl||!barsEl||!srcEl) return;
-  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches || (window.matchMedia&&window.matchMedia('(max-width:820px)').matches);
 
   /* The four verified stats — one per rotating card. Each carries the HONEST bar(s) for its figure:
      bar length encodes the real percentage; no random heights. */
