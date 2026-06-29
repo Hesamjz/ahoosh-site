@@ -43,8 +43,6 @@ a{color:inherit;text-decoration:none}
 /* ---------- Canvas ---------- */
 #canvas-wrap{position:fixed;inset:0;z-index:1}
 #canvas{width:100%;height:100%;display:block}
-#poster{position:fixed;inset:0;z-index:3;width:100%;height:100%;object-fit:cover;object-position:center;transition:opacity .6s ease;pointer-events:none}
-#poster.gone{opacity:0}
 /* full-screen dark-blue glass layer (between video and text/cards) */
 #scrim{position:fixed;inset:0;z-index:2;pointer-events:none;
   background:linear-gradient(rgba(8,14,30,.42),rgba(8,14,30,.42)), radial-gradient(125% 95% at 50% 38%,rgba(3,6,15,0) 46%,rgba(3,6,15,.42) 100%)}
@@ -166,7 +164,6 @@ a{color:inherit;text-decoration:none}
 
 <!-- Canvas journey -->
 <div id="canvas-wrap"><canvas id="canvas"></canvas></div>
-<img id="poster" src="/lab/fr_A_web/f_0001.webp" alt="" aria-hidden="true">
 <div id="scrim"></div>
 
 <!-- Hero (stop 0) -->
@@ -248,27 +245,10 @@ const IMAGE_SCALE = 1.0;
 
 const FRAME_SPEED = 1.0;   // full 20s plays across the whole scroll (no early freeze)
 
-/* ---- Mobile path: a phone can't hold 240 decoded 1080p frames (~2GB) — that OOM-crashed the tab
-   ("Can't open this page"). On mobile we load a strided subset, reveal instantly behind a first-frame
-   poster, and draw the nearest loaded frame. Desktop is unchanged (still loads all 240). ---- */
-const MOB = !!(window.matchMedia && (matchMedia('(max-width:820px)').matches || matchMedia('(pointer:coarse)').matches));
-const STRIDE = MOB ? 16 : 1;                      // mobile ~= 16 frames instead of 240 (lighter)
-const LOAD_IDX = [];
-for(let i=0;i<FRAME_COUNT;i+=STRIDE) LOAD_IDX.push(i);
-if(LOAD_IDX[LOAD_IDX.length-1] !== FRAME_COUNT-1) LOAD_IDX.push(FRAME_COUNT-1);  // always include the final AHOOSH-tower frame
-
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', {alpha:false});
 const frames = new Array(FRAME_COUNT);
-let cur = -1, bgColor = '#05080f', dpr = Math.min(window.devicePixelRatio||1, MOB?1:2);
-function nearestLoaded(index){
-  if(frames[index]) return frames[index];
-  for(let d=1; d<FRAME_COUNT; d++){
-    if(index-d>=0 && frames[index-d]) return frames[index-d];
-    if(index+d<FRAME_COUNT && frames[index+d]) return frames[index+d];
-  }
-  return null;
-}
+let cur = -1, bgColor = '#05080f', dpr = Math.min(window.devicePixelRatio||1, 2);
 
 /* lock the fire hover-zone onto the actual spark inside the frame, on any viewport */
 const SPARK_FX=960, SPARK_FY=665;   // spark position within the 1920x1080 frame
@@ -282,7 +262,7 @@ function positionFire(){
   if(fireCueEl){ fireCueEl.style.left=sx+'px'; fireCueEl.style.top=(sy+72)+'px'; }
 }
 function resize(){
-  dpr = Math.min(window.devicePixelRatio||1, MOB?1:2);
+  dpr = Math.min(window.devicePixelRatio||1, 2);
   canvas.width = Math.floor(innerWidth*dpr);
   canvas.height = Math.floor(innerHeight*dpr);
   canvas.style.width = innerWidth+'px';
@@ -291,14 +271,14 @@ function resize(){
   if(cur>=0) drawFrame(cur, true);
 }
 function drawFrame(index, force){
-  const img = frames[index] || nearestLoaded(index);
+  const img = frames[index];
   if(!img) return;
   if(index===cur && !force) return;
   cur = index;
   const cw=canvas.width, ch=canvas.height, iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
   const scale=Math.max(cw/iw, ch/ih)*IMAGE_SCALE;
   const dw=iw*scale, dh=ih*scale, dx=(cw-dw)/2, dy=(ch-dh)/2;
-  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality=MOB?'low':'high';
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
   ctx.fillStyle=bgColor; ctx.fillRect(0,0,cw,ch);
   ctx.drawImage(img,dx,dy,dw,dh);
 }
@@ -327,22 +307,10 @@ const secs=[...document.querySelectorAll('.sec')].map(sec=>({
   persist:sec.dataset.persist==='true',
   shown:false
 }));
-/* Mobile: load frames lazily in a small window around the scroll position (not all upfront) —
-   keeps first load light and memory low. Desktop already preloads everything. */
-const _req = new Set();
-function ensureMobileFrames(fr){
-  const base = Math.round(fr/STRIDE)*STRIDE;
-  for(let k=-1;k<=2;k++){
-    let idx = base + k*STRIDE;
-    if(idx<0) idx=0; else if(idx>FRAME_COUNT-1) idx=FRAME_COUNT-1;
-    if(!frames[idx] && !_req.has(idx)){ _req.add(idx); loadFrame(idx); }
-  }
-}
 function update(p){
   // continuous frame scrub
   const acc=Math.min(p*FRAME_SPEED,1);
   const fr=Math.min(Math.floor(acc*FRAME_COUNT), FRAME_COUNT-1);
-  if(MOB) ensureMobileFrames(fr);
   drawFrame(fr);
   // beats — one at a time, by scroll range (positions set per-section; easy to retune)
   secs.forEach(s=>{
@@ -367,29 +335,15 @@ function startScroll(){
   ScrollTrigger.refresh();
 }
 
-function hidePoster(){ if(frames[0]){ var pe=document.getElementById('poster'); if(pe) pe.classList.add('gone'); } }
-function revealOnce(){ loader.classList.add('hide'); }
 async function init(){
+  const firstN = Math.min(54, FRAME_COUNT);
+  const head=[]; for(let i=0;i<firstN;i++) head.push(loadFrame(i));
+  await Promise.all(head);
   resize();
-  setTimeout(revealOnce, 3500);                 // hard fallback: never let the loader trap the page
-  if(MOB){
-    // poster <img> already paints the first frame — reveal instantly and stream frames on scroll
-    var pe=document.getElementById('poster');
-    if(pe && !pe.complete){ pe.addEventListener('load',revealOnce,{once:true}); pe.addEventListener('error',revealOnce,{once:true}); }
-    else revealOnce();
-    startScroll();
-    loadFrame(0).then(function(){ drawFrame(0,true); hidePoster(); });
-    ensureMobileFrames(0);          // warm the opening couple of frames
-    loadFrame(FRAME_COUNT-1);       // prefetch the ending AHOOSH-tower frame
-  } else {
-    const firstN = Math.min(54, FRAME_COUNT);
-    const head=[]; for(let i=0;i<firstN;i++) head.push(loadFrame(i));
-    await Promise.all(head);
-    drawFrame(0, true); hidePoster();
-    revealOnce();
-    startScroll();
-    for(let i=firstN;i<FRAME_COUNT;i++) loadFrame(i);   // background, parallel
-  }
+  drawFrame(0, true);
+  loader.classList.add('hide');
+  startScroll();
+  for(let i=firstN;i<FRAME_COUNT;i++) loadFrame(i);   // background, parallel
 }
 init();
 </script>
