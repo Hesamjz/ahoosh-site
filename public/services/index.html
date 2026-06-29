@@ -37,12 +37,11 @@ a{color:inherit;text-decoration:none}
 .nav a:hover,.nav a.active{color:#fff}
 .nav .btn-gold{background:linear-gradient(180deg,var(--gold-lt),var(--gold));color:#1a1205;padding:11px 22px;border-radius:40px;letter-spacing:.1em}
 .nav .btn-gold:hover{color:#1a1205;filter:brightness(1.06)}
-.nav-ins{position:relative;display:inline-flex;align-items:center}.nav-ins>a{display:inline-flex;align-items:center}.nav-ins-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(8px);min-width:150px;display:flex;flex-direction:column;gap:2px;background:rgba(3,6,15,.97);border:1px solid rgba(224,169,63,.25);border-radius:12px;padding:8px;opacity:0;visibility:hidden;transition:opacity .2s var(--ease),transform .2s var(--ease);box-shadow:0 20px 50px rgba(0,0,0,.5);z-index:70}.nav-ins:hover .nav-ins-menu,.nav-ins:focus-within .nav-ins-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(4px)}.nav-ins-menu a{padding:9px 12px;border-radius:8px;font-size:11.5px;letter-spacing:.1em}.nav-ins-menu a:hover{background:rgba(224,169,63,.12);color:#fff}
 @media(max-width:860px){.nav a:not(.btn-gold){display:none}}
 
 /* ---------- Canvas ---------- */
 #canvas-wrap{position:fixed;inset:0;z-index:1}
-#canvas{width:100%;height:100%;display:block}
+#scrubvid{width:100%;height:100%;object-fit:cover;display:block;background:#05080f}
 /* full-screen dark-blue glass layer (between video and text/cards) */
 #scrim{position:fixed;inset:0;z-index:2;pointer-events:none;
   background:linear-gradient(rgba(8,14,30,.42),rgba(8,14,30,.42)), radial-gradient(125% 95% at 50% 38%,rgba(3,6,15,0) 46%,rgba(3,6,15,.42) 100%)}
@@ -118,7 +117,7 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- Mobile (<=640px): one left-aligned column + flat readable panel ---------- */
 @media(max-width:640px){
-  .sec{padding:0 20px;align-items:flex-end;padding-bottom:16vh}
+  .sec{padding:0 20px 16vh;align-items:flex-end}
   .sec.left,.sec.right{justify-content:flex-start}
   .sec .inner{max-width:100%}
   .sec.right .inner{text-align:left}
@@ -151,19 +150,19 @@ a{color:inherit;text-decoration:none}
 
 <!-- Header (logo left; fades in after the hero) -->
 <header class="site-header" id="header">
-  <a class="brand" href="/" aria-label="AHoosh home"><img src="/assets/logo.png" alt="AHoosh"></a>
+  <a class="brand" href="home_v3.html" aria-label="AHoosh home"><img src="/assets/logo.png" alt="AHoosh"></a>
   <nav class="nav">
-    <a href="/">HOME</a>
-    <a href="/services" class="active">SERVICES</a>
-    <a href="/assess">GROWTH ASSESSMENT</a>
-    <span class="nav-ins"><a href="/news">INSIGHTS<i style="font-style:normal;font-size:.7em;opacity:.7;margin-left:3px">▾</i></a><span class="nav-ins-menu"><a href="/news">News</a><a href="/articles">Articles</a></span></span>
-    <a href="/about">ABOUT</a>
-    <a href="/contact" class="btn-gold">BOOK A CALL</a>
+    <a href="home_v3.html">HOME</a>
+    <a href="#" class="active">SERVICES</a>
+    <a href="#">GROWTH ASSESSMENT</a>
+    <a href="#">INSIGHTS</a>
+    <a href="#">ABOUT</a>
+    <a href="#" class="btn-gold">BOOK A CALL</a>
   </nav>
 </header>
 
 <!-- Canvas journey -->
-<div id="canvas-wrap"><canvas id="canvas"></canvas></div>
+<div id="canvas-wrap"><video id="scrubvid" muted playsinline webkit-playsinline preload="auto" src="/lab/services_A.mp4"></video></div>
 <div id="scrim"></div>
 
 <!-- Hero (stop 0) -->
@@ -225,8 +224,8 @@ a{color:inherit;text-decoration:none}
     <h2>Ready to build what's next?</h2>
     <p>Start with the free Growth Assessment — it tells us both where to begin. No call required, no obligation.</p>
     <div class="btns">
-      <a href="/assess" class="btn btn-gold">Take the assessment</a>
-      <a href="/contact" class="btn btn-ghost">Book a call</a>
+      <a href="#" class="btn btn-gold">Take the assessment</a>
+      <a href="#" class="btn btn-ghost">Book a call</a>
     </div>
     <div class="cta-foot">All prices shown are launch prices — held for our first clients on each line, then raised. Ad spend, where relevant, is always the client's and billed separately.</div>
   </div>
@@ -239,20 +238,12 @@ a{color:inherit;text-decoration:none}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 <script>
-const FRAME_COUNT = 240;
-const FRAME_PATH = i => `/lab/fr_A_web/f_${String(i+1).padStart(4,'0')}.webp`;
 const IMAGE_SCALE = 1.0;
+const video = document.getElementById('scrubvid');
+let dur = 20, vidReady = false, targetT = 0, dispT = 0;
 
-const FRAME_SPEED = 1.0;   // full 20s plays across the whole scroll (no early freeze)
-
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', {alpha:false});
-const frames = new Array(FRAME_COUNT);
-let cur = -1, bgColor = '#05080f', dpr = Math.min(window.devicePixelRatio||1, 2);
-
-/* lock the fire hover-zone onto the actual spark inside the frame, on any viewport */
-const SPARK_FX=960, SPARK_FY=665;   // spark position within the 1920x1080 frame
-const fireZoneEl=document.querySelector('.fire-zone'), fireCueEl=document.querySelector('.fire-cue2');
+const SPARK_FX = 960, SPARK_FY = 665;
+const fireZoneEl = document.querySelector('.fire-zone'), fireCueEl = document.querySelector('.fire-cue2');
 function positionFire(){
   const iw=1920, ih=1080;
   const s=Math.max(innerWidth/iw, innerHeight/ih)*IMAGE_SCALE;
@@ -261,91 +252,61 @@ function positionFire(){
   if(fireZoneEl){ fireZoneEl.style.left=sx+'px'; fireZoneEl.style.top=sy+'px'; }
   if(fireCueEl){ fireCueEl.style.left=sx+'px'; fireCueEl.style.top=(sy+72)+'px'; }
 }
-function resize(){
-  dpr = Math.min(window.devicePixelRatio||1, 2);
-  canvas.width = Math.floor(innerWidth*dpr);
-  canvas.height = Math.floor(innerHeight*dpr);
-  canvas.style.width = innerWidth+'px';
-  canvas.style.height = innerHeight+'px';
-  positionFire();
-  if(cur>=0) drawFrame(cur, true);
-}
-function drawFrame(index, force){
-  const img = frames[index];
-  if(!img) return;
-  if(index===cur && !force) return;
-  cur = index;
-  const cw=canvas.width, ch=canvas.height, iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
-  const scale=Math.max(cw/iw, ch/ih)*IMAGE_SCALE;
-  const dw=iw*scale, dh=ih*scale, dx=(cw-dw)/2, dy=(ch-dh)/2;
-  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
-  ctx.fillStyle=bgColor; ctx.fillRect(0,0,cw,ch);
-  ctx.drawImage(img,dx,dy,dw,dh);
-}
-window.addEventListener('resize', resize);
+window.addEventListener('resize', positionFire);
 
-/* ---------- Preload EVERY frame (so playback is smooth, never half-loaded) ---------- */
-const bar=document.getElementById('loader-bar'), pct=document.getElementById('loader-percent'), loader=document.getElementById('loader');
-let loaded=0;
-function loadFrame(i){
-  return new Promise(res=>{
-    const img=new Image();
-    const done=()=>{ frames[i]=img; loaded++; const p=Math.round(loaded/FRAME_COUNT*100);
-      bar.style.width=p+'%'; pct.textContent=p+'%'; res(); };
-    img.onload=()=>{ (img.decode?img.decode().then(done).catch(done):done()); };
-    img.onerror=done;
-    img.src=FRAME_PATH(i);
-  });
-}
-
-/* ---------- Smooth continuous scrub (Lenis + ScrollTrigger) + section beats ---------- */
-const hero=document.getElementById('hero'), firewrap=document.getElementById('firewrap');
-const secs=[...document.querySelectorAll('.sec')].map(sec=>({
-  el:sec,
-  enter:parseFloat(sec.dataset.enter)/100,
-  leave:parseFloat(sec.dataset.leave)/100,
-  persist:sec.dataset.persist==='true',
-  shown:false
-}));
+const secs=[...document.querySelectorAll('.sec')].map(function(sec){return {
+  el:sec, enter:parseFloat(sec.dataset.enter)/100, leave:parseFloat(sec.dataset.leave)/100,
+  persist:sec.dataset.persist==='true', shown:false };});
 function update(p){
-  // continuous frame scrub
-  const acc=Math.min(p*FRAME_SPEED,1);
-  const fr=Math.min(Math.floor(acc*FRAME_COUNT), FRAME_COUNT-1);
-  drawFrame(fr);
-  // beats — one at a time, by scroll range (positions set per-section; easy to retune)
-  secs.forEach(s=>{
+  targetT = Math.min(Math.max(p,0),1)*dur;
+  secs.forEach(function(s){
     const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
     if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
   });
 }
 
+function renderLoop(){
+  if(vidReady){
+    dispT += (targetT - dispT)*0.16;
+    if(Math.abs(targetT-dispT) < 0.005) dispT = targetT;
+    const t = Math.min(Math.max(dispT,0), Math.max(dur-0.05,0));
+    if(Math.abs((video.currentTime||0) - t) > 0.015){ try{ video.currentTime = t; }catch(e){} }
+  }
+  requestAnimationFrame(renderLoop);
+}
+
 function startScroll(){
   gsap.registerPlugin(ScrollTrigger);
-  const lenis=new Lenis({ duration:1.15, easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)), smoothWheel:true });
+  const lenis=new Lenis({ duration:1.15, easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));}, smoothWheel:true });
   lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(t=>lenis.raf(t*1000));
+  gsap.ticker.add(function(t){ lenis.raf(t*1000); });
   gsap.ticker.lagSmoothing(0);
-  ScrollTrigger.create({
-    trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:true,
-    onUpdate:self=> update(self.progress)
-  });
-  // hero scrolls up (in-flow) AND fades — exactly like v2_A; the fire fades with it
+  ScrollTrigger.create({ trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:true, onUpdate:function(self){ update(self.progress); } });
   gsap.to('.hero',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'8% top', end:'46% top', scrub:true}});
   gsap.to('.fire-wrap',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'15% top', end:'70% top', scrub:true}});
   ScrollTrigger.refresh();
 }
 
-async function init(){
-  const firstN = Math.min(54, FRAME_COUNT);
-  const head=[]; for(let i=0;i<firstN;i++) head.push(loadFrame(i));
-  await Promise.all(head);
-  resize();
-  drawFrame(0, true);
-  loader.classList.add('hide');
+const loader=document.getElementById('loader'), bar=document.getElementById('loader-bar'), pct=document.getElementById('loader-percent');
+function reveal(){
+  if(vidReady) return;
+  vidReady = true; dur = video.duration || 20;
+  positionFire();
+  try{ video.pause(); video.currentTime = 0; }catch(e){}
+  if(loader) loader.classList.add('hide');
   startScroll();
-  for(let i=firstN;i<FRAME_COUNT;i++) loadFrame(i);   // background, parallel
+  requestAnimationFrame(renderLoop);
 }
-init();
+video.addEventListener('progress', function(){
+  try{ if(video.buffered.length){ const p=Math.round(video.buffered.end(0)/(video.duration||20)*100); if(bar) bar.style.width=p+'%'; if(pct) pct.textContent=p+'%'; } }catch(e){}
+});
+video.addEventListener('loadeddata', reveal);
+video.addEventListener('canplay', reveal);
+video.muted = true; video.playsInline = true;
+const pp = video.play(); if(pp && pp.then){ pp.then(function(){ try{ video.pause(); }catch(e){} }).catch(function(){}); }
+setTimeout(function(){ if(!vidReady && video.readyState>=2) reveal(); }, 4000);
+setTimeout(function(){ if(!vidReady) reveal(); }, 9000);
+
 </script>
 </body>
 </html>
