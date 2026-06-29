@@ -276,7 +276,7 @@ if(LOAD_IDX[LOAD_IDX.length-1] !== FRAME_COUNT-1) LOAD_IDX.push(FRAME_COUNT-1); 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', {alpha:false});
 const frames = new Array(FRAME_COUNT);
-let cur = -1, bgColor = '#05080f', dpr = Math.min(window.devicePixelRatio||1, MOB?1.5:2);
+let cur = -1, bgColor = '#05080f', dpr = Math.min(window.devicePixelRatio||1, MOB?1:2);
 function nearestLoaded(index){
   if(frames[index]) return frames[index];
   for(let d=1; d<FRAME_COUNT; d++){
@@ -298,7 +298,7 @@ function positionFire(){
   if(fireCueEl){ fireCueEl.style.left=sx+'px'; fireCueEl.style.top=(sy+72)+'px'; }
 }
 function resize(){
-  dpr = Math.min(window.devicePixelRatio||1, 2);
+  dpr = Math.min(window.devicePixelRatio||1, MOB?1:2);
   canvas.width = Math.floor(innerWidth*dpr);
   canvas.height = Math.floor(innerHeight*dpr);
   canvas.style.width = innerWidth+'px';
@@ -343,10 +343,22 @@ const secs=[...document.querySelectorAll('.sec')].map(sec=>({
   persist:sec.dataset.persist==='true',
   shown:false
 }));
+/* Mobile: load frames lazily in a small window around the scroll position (not all upfront) —
+   keeps first load light and memory low. Desktop already preloads everything. */
+const _req = new Set();
+function ensureMobileFrames(fr){
+  const base = Math.round(fr/STRIDE)*STRIDE;
+  for(let k=-1;k<=2;k++){
+    let idx = base + k*STRIDE;
+    if(idx<0) idx=0; else if(idx>FRAME_COUNT-1) idx=FRAME_COUNT-1;
+    if(!frames[idx] && !_req.has(idx)){ _req.add(idx); loadFrame(idx); }
+  }
+}
 function update(p){
   // continuous frame scrub
   const acc=Math.min(p*FRAME_SPEED,1);
   const fr=Math.min(Math.floor(acc*FRAME_COUNT), FRAME_COUNT-1);
+  if(MOB) ensureMobileFrames(fr);
   drawFrame(fr);
   // beats — one at a time, by scroll range (positions set per-section; easy to retune)
   secs.forEach(s=>{
@@ -377,11 +389,14 @@ async function init(){
   resize();
   setTimeout(revealOnce, 3500);                 // hard fallback: never let the loader trap the page
   if(MOB){
-    await loadFrame(0);                          // reveal as soon as the first frame is ready - don't block on dozens
-    drawFrame(0, true); hidePoster();
-    revealOnce();
+    // poster <img> already paints the first frame — reveal instantly and stream frames on scroll
+    var pe=document.getElementById('poster');
+    if(pe && !pe.complete){ pe.addEventListener('load',revealOnce,{once:true}); pe.addEventListener('error',revealOnce,{once:true}); }
+    else revealOnce();
     startScroll();
-    for(const i of LOAD_IDX){ if(i!==0) loadFrame(i); }   // strided subset, progressive
+    loadFrame(0).then(function(){ drawFrame(0,true); hidePoster(); });
+    ensureMobileFrames(0);          // warm the opening couple of frames
+    loadFrame(FRAME_COUNT-1);       // prefetch the ending AHOOSH-tower frame
   } else {
     const firstN = Math.min(54, FRAME_COUNT);
     const head=[]; for(let i=0;i<firstN;i++) head.push(loadFrame(i));

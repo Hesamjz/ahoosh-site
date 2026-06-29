@@ -1681,7 +1681,8 @@ document.querySelectorAll('[data-count]').forEach(el=>{
   var barsEl=document.getElementById('oppBars'), srcEl=document.getElementById('oppSrc');
   var foot=document.getElementById('oppFoot');
   if(!panel||!numEl||!lblEl||!barsEl||!srcEl) return;
-  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches || (window.matchMedia&&window.matchMedia('(max-width:820px)').matches);
+  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var MOB=!!(window.matchMedia&&window.matchMedia('(max-width:820px)').matches);
 
   /* The four verified stats — one per rotating card. Each carries the HONEST bar(s) for its figure:
      bar length encodes the real percentage; no random heights. */
@@ -1762,6 +1763,13 @@ document.querySelectorAll('[data-count]').forEach(el=>{
      timeline never initialises (reduced motion / no GSAP). */
   window.__oppLayer01={ play:run, reset:reset };
   if(reduce || !window.gsap || !window.ScrollTrigger){ run(); }
+  else if(MOB){
+    /* Mobile: the frames scroll-timeline (which calls play()) is disabled, so cycle the three
+       stats from an IntersectionObserver - start when the panel is on-screen, reset when it leaves. */
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){ es.forEach(function(e){ e.isIntersecting?run():reset(); }); },{threshold:.3}).observe(panel);
+    } else { run(); }
+  }
 })();
 </script>
 
