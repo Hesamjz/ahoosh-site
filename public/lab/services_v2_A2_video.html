@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services — AHoosh (A2 · fire it up)</title>
+<meta name="description" content="AHoosh helps European small businesses get online, sell more, and run smarter. Advice first, then build — consulting plus done-for-you websites, marketing, and AI.">
+<link rel="icon" type="image/png" href="/assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#03060f; --navy2:#03142E; --gold:#e0a93f; --gold-lt:#f4d98b;
+  --silver:#cdd6e6; --dim:#828ca2;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font-display:'Montserrat',sans-serif; --font-body:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{background:var(--navy);color:#fff;font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ---------- Loader ---------- */
+#loader{position:fixed;inset:0;z-index:100;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .8s var(--ease)}
+#loader.hide{opacity:0;pointer-events:none}
+.loader-logo{height:54px;width:auto;display:block}
+.loader-track{width:200px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+#loader-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-lt))}
+#loader-percent{font-size:12px;letter-spacing:.2em;color:var(--dim)}
+
+/* ---------- Header (hidden on hero, fades in after) ---------- */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,4vw,56px);background:linear-gradient(180deg,rgba(3,6,15,.88),rgba(3,6,15,0))}
+.brand img{height:52px;width:auto;display:block}
+.nav{display:flex;align-items:center;gap:clamp(14px,2vw,30px)}
+.nav a{font-size:12.5px;font-weight:600;letter-spacing:.14em;color:var(--silver);transition:color .25s}
+.nav a:hover,.nav a.active{color:#fff}
+.nav .btn-gold{background:linear-gradient(180deg,var(--gold-lt),var(--gold));color:#1a1205;padding:11px 22px;border-radius:40px;letter-spacing:.1em}
+.nav .btn-gold:hover{color:#1a1205;filter:brightness(1.06)}
+@media(max-width:860px){.nav a:not(.btn-gold){display:none}}
+
+/* ---------- Canvas ---------- */
+#canvas-wrap{position:fixed;inset:0;z-index:1}
+#scrubvid{width:100%;height:100%;object-fit:cover;display:block;background:#05080f}
+/* full-screen dark-blue glass layer (between video and text/cards) */
+#scrim{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(8,14,30,.42),rgba(8,14,30,.42)), radial-gradient(125% 95% at 50% 38%,rgba(3,6,15,0) 46%,rgba(3,6,15,.42) 100%)}
+#scroll{position:relative;z-index:0;height:760vh}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);
+  background:linear-gradient(180deg,#03050f 0%,#03050f 26%,rgba(3,6,15,.55) 50%,rgba(3,6,15,0) 70%);
+  pointer-events:none}
+.hero.hide{opacity:0}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.32em;color:var(--gold);margin-bottom:26px}
+.hero h1{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,8vw,108px);line-height:.96;letter-spacing:-.01em;max-width:14ch}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .ln span{display:inline-block}
+.hero p{margin-top:30px;max-width:46ch;font-size:clamp(15px,1.5vw,19px);line-height:1.65;color:var(--silver)}
+
+/* ---------- Fire scroll CTA (over the opening spark) ---------- */
+.fire-wrap{transition:opacity .55s var(--ease)}
+.fire-wrap.hide{opacity:0;pointer-events:none}
+.fire-zone{position:fixed;left:50%;top:67%;transform:translate(-50%,-50%);width:110px;height:110px;z-index:6}
+.fire-glow{position:absolute;top:50%;left:50%;width:42px;height:42px;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,160,70,.85) 0%,rgba(255,100,30,.42) 34%,rgba(255,70,15,0) 64%);
+  opacity:0;pointer-events:none;mix-blend-mode:screen;
+  transition:opacity .3s var(--ease),width .3s var(--ease),height .3s var(--ease),filter .3s var(--ease)}
+.fire-hot{position:absolute;inset:0;border-radius:50%;cursor:pointer;pointer-events:auto}
+.fire-zone:hover .fire-glow{opacity:1;width:68px;height:68px;filter:brightness(1.7) saturate(1.35)}
+.fire-cue2{position:fixed;left:50%;top:75%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;color:#ffb070;font-size:11px;letter-spacing:.34em;text-shadow:0 0 12px rgba(255,120,40,.6);opacity:0;transition:opacity .3s var(--ease)}
+.fire-zone:hover ~ .fire-cue2{opacity:1}
+.fire-cue2 .chev{width:12px;height:12px;border-right:2px solid #ff9a40;border-bottom:2px solid #ff9a40;transform:rotate(45deg);animation:chevbob 1.8s var(--ease) infinite}
+@keyframes chevbob{0%,100%{transform:rotate(45deg) translate(-2px,-2px)}50%{transform:rotate(45deg) translate(2px,2px)}}
+
+/* ---------- Beats (fixed; shown one at a time by the pager) ---------- */
+.sec{position:fixed;inset:0;z-index:6;display:flex;align-items:center;
+  padding:0 clamp(24px,6vw,96px);opacity:0;pointer-events:none;
+  transition:opacity .5s var(--ease)}
+.sec.on{opacity:1}
+.sec .inner{max-width:440px;position:relative;
+  transform:translateY(34px);transition:transform .7s var(--ease);pointer-events:none}
+.sec.on .inner{transform:translateY(0)}
+.sec.left{justify-content:flex-start}
+.sec.right{justify-content:flex-end}
+.sec.right .inner{text-align:right}
+.sec .num{font-family:var(--font-display);font-weight:800;font-size:13px;letter-spacing:.3em;color:var(--gold)}
+.sec h2{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.2vw,56px);line-height:1.03;margin:16px 0 18px;letter-spacing:-.01em}
+.sec p{font-size:clamp(14px,1.35vw,17px);line-height:1.6;color:#e7ecf5;margin-bottom:22px}
+.price-row{display:flex;flex-wrap:wrap;gap:10px 12px;margin-bottom:8px}
+.sec.right .price-row{justify-content:flex-end}
+.chip{display:inline-flex;align-items:baseline;gap:7px;border:1px solid rgba(224,169,63,.45);background:rgba(6,11,28,.62);backdrop-filter:blur(6px);padding:8px 14px;border-radius:30px;font-size:13px;pointer-events:auto}
+.chip b{font-family:var(--font-display);font-weight:800;color:var(--gold-lt);font-size:15px}
+.chip span{color:var(--silver);font-size:11.5px;letter-spacing:.04em}
+.reveal-line{font-size:12.5px;color:var(--silver);line-height:1.5;margin-top:14px}
+.reveal-line em{color:var(--gold-lt);font-style:normal}
+.sec .inner::before{content:"";position:absolute;inset:-40px -60px;z-index:-1;border-radius:26px;
+  background:radial-gradient(110% 120% at 22% 45%,rgba(3,6,15,.9),rgba(3,6,15,.5) 45%,rgba(3,6,15,0) 78%)}
+.sec.right .inner::before{background:radial-gradient(110% 120% at 78% 45%,rgba(3,6,15,.9),rgba(3,6,15,.5) 45%,rgba(3,6,15,0) 78%)}
+
+/* CTA — content sits low so the building + AHOOSH logo stay visible above it */
+.sec.cta{justify-content:center;align-items:flex-end}
+.sec.cta .inner{max-width:660px;text-align:center;margin-bottom:6vh}
+.sec.cta .inner::before{background:radial-gradient(95% 120% at 50% 100%,rgba(3,6,15,.94),rgba(3,6,15,.55) 58%,rgba(3,6,15,0) 92%)}
+.btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:26px;pointer-events:auto}
+.btn{padding:15px 30px;border-radius:40px;font-weight:600;font-size:14px;letter-spacing:.06em;transition:transform .25s var(--ease),filter .25s}
+.btn:hover{transform:translateY(-2px)}
+.btn-gold{background:linear-gradient(180deg,var(--gold-lt),var(--gold));color:#1a1205}
+.btn-ghost{border:1px solid rgba(205,214,230,.4);color:#fff}
+.cta-foot{margin-top:30px;color:var(--dim);font-size:11.5px;line-height:1.5}
+
+/* ---------- Section dots ---------- */
+.dots{position:fixed;right:clamp(14px,2vw,30px);top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:13px;opacity:0;transition:opacity .5s var(--ease);pointer-events:none}
+.dots.show{opacity:1;pointer-events:auto}
+.dots button{width:9px;height:9px;border-radius:50%;border:1px solid rgba(205,214,230,.5);background:transparent;cursor:pointer;padding:0;transition:transform .3s var(--ease),background .3s,border-color .3s}
+.dots button.active{background:var(--gold);border-color:var(--gold);transform:scale(1.3)}
+
+/* ---------- Mobile (<=640px): one left-aligned column + flat readable panel ---------- */
+@media(max-width:640px){
+  .sec{padding:0 20px 16vh;align-items:flex-end}
+  .sec.left,.sec.right{justify-content:flex-start}
+  .sec .inner{max-width:100%}
+  .sec.right .inner{text-align:left}
+  .sec.right .price-row{justify-content:flex-start}
+  .sec .num{font-size:12px;letter-spacing:.16em}
+  .sec h2{font-size:clamp(24px,6.6vw,34px);margin:12px 0 14px}
+  .sec p{font-size:15px;line-height:1.55;margin-bottom:18px}
+  /* flat dark panel behind text so white copy stays legible over bright frames */
+  .sec .inner::before,.sec.right .inner::before{
+    inset:-22px -20px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(3,6,15,.82),rgba(3,6,15,.62))}
+  /* CTA centered vertically so headline/buttons/disclaimer don't crowd the bottom */
+  .sec.cta{align-items:center}
+  .sec.cta .inner{max-width:100%;margin-bottom:0}
+  .sec.cta .inner::before{inset:-22px -18px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(3,6,15,.84),rgba(3,6,15,.6))}
+  .cta-foot{margin-top:20px;font-size:11px}
+  .dots{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  <img class="loader-logo" src="/assets/logo.png" alt="AHoosh">
+  <div class="loader-track"><div id="loader-bar"></div></div>
+  <div id="loader-percent">0%</div>
+</div>
+
+<!-- Header (logo left; fades in after the hero) -->
+<header class="site-header" id="header">
+  <a class="brand" href="home_v3.html" aria-label="AHoosh home"><img src="/assets/logo.png" alt="AHoosh"></a>
+  <nav class="nav">
+    <a href="home_v3.html">HOME</a>
+    <a href="#" class="active">SERVICES</a>
+    <a href="#">GROWTH ASSESSMENT</a>
+    <a href="#">INSIGHTS</a>
+    <a href="#">ABOUT</a>
+    <a href="#" class="btn-gold">BOOK A CALL</a>
+  </nav>
+</header>
+
+<!-- Canvas journey -->
+<div id="canvas-wrap"><video id="scrubvid" muted playsinline webkit-playsinline preload="auto" src="services_A.mp4"></video></div>
+<div id="scrim"></div>
+
+<!-- Hero (stop 0) -->
+<section class="hero" id="hero">
+  <h1><span class="ln"><span>Let's</span></span><span class="ln"><span>fire it up.</span></span></h1>
+  <p>Every business starts with a spark. We help small businesses and startups get online, sell more, and run smarter — we diagnose what to fix, then advise or build it. Scroll, and watch one take shape.</p>
+</section>
+
+<!-- Fire CTA over the opening spark (stop 0) -->
+<div class="fire-wrap" id="firewrap">
+  <div class="fire-zone"><div class="fire-glow"></div><div class="fire-hot"></div></div>
+  <div class="fire-cue2"><span>SCROLL</span><span class="chev"></span></div>
+</div>
+
+<!-- Beats -->
+<section class="sec left" id="secA" data-enter="1" data-leave="12">
+  <div class="inner">
+    <div class="num">01 · START HERE</div>
+    <h2>Start with an honest diagnosis</h2>
+    <p>Before anyone builds anything, we find where your business is leaking growth — and what to fix first. Three short diagnostics, one ranked report.</p>
+  </div>
+</section>
+
+<section class="sec right" id="secB" data-enter="12" data-leave="41">
+  <div class="inner">
+    <div class="num">02 · CONSULTING &amp; ADVISORY</div>
+    <h2>Then a plan, built on the Growth Map</h2>
+    <p>Diagnose → Plan → Build → Run. A clear plan for presence, sales, operations and AI — from a quick strategy call to an ongoing fractional operator.</p>
+  </div>
+</section>
+
+<section class="sec left" id="secC" data-enter="41" data-leave="67">
+  <div class="inner">
+    <div class="num">03 · WEBSITES &amp; ONLINE STORES</div>
+    <h2>Get online and sell</h2>
+    <p>A site that looks the part and brings in enquiries — or a real online store you can run: catalog, checkout and payments that just work. Built by an operator who has run one.</p>
+  </div>
+</section>
+
+<section class="sec right" id="secD" data-enter="67" data-leave="78">
+  <div class="inner">
+    <div class="num">04 · SEO, MARKETING &amp; CONTENT</div>
+    <h2>Get found. Get customers.</h2>
+    <p>Show up where buyers are looking and keep showing up — SEO, social and paid ads, plus content that brings the right people in and explains why you're worth choosing.</p>
+  </div>
+</section>
+
+<section class="sec left" id="secE" data-enter="78" data-leave="92">
+  <div class="inner">
+    <div class="num">05 · AI &amp; AUTOMATION</div>
+    <h2>Run smarter with AI</h2>
+    <p>Put AI to work on the repetitive parts — chat, workflows and follow-up — integrated with the tools you already use. The same engine the big players have, priced for you.</p>
+  </div>
+</section>
+
+<section class="sec cta" id="secF" data-enter="92" data-leave="100" data-persist="true">
+  <div class="inner">
+    <div class="num">BUILT TO GROW</div>
+    <h2>Ready to build what's next?</h2>
+    <p>Start with the free Growth Assessment — it tells us both where to begin. No call required, no obligation.</p>
+    <div class="btns">
+      <a href="#" class="btn btn-gold">Take the assessment</a>
+      <a href="#" class="btn btn-ghost">Book a call</a>
+    </div>
+    <div class="cta-foot">All prices shown are launch prices — held for our first clients on each line, then raised. Ad spend, where relevant, is always the client's and billed separately.</div>
+  </div>
+</section>
+
+<!-- scroll length for the smooth scrub -->
+<div id="scroll"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script>
+const IMAGE_SCALE = 1.0;
+const video = document.getElementById('scrubvid');
+let dur = 20, vidReady = false, targetT = 0, dispT = 0;
+
+const SPARK_FX = 960, SPARK_FY = 665;
+const fireZoneEl = document.querySelector('.fire-zone'), fireCueEl = document.querySelector('.fire-cue2');
+function positionFire(){
+  const iw=1920, ih=1080;
+  const s=Math.max(innerWidth/iw, innerHeight/ih)*IMAGE_SCALE;
+  const dx=(innerWidth-iw*s)/2, dy=(innerHeight-ih*s)/2;
+  const sx=dx+SPARK_FX*s, sy=dy+SPARK_FY*s;
+  if(fireZoneEl){ fireZoneEl.style.left=sx+'px'; fireZoneEl.style.top=sy+'px'; }
+  if(fireCueEl){ fireCueEl.style.left=sx+'px'; fireCueEl.style.top=(sy+72)+'px'; }
+}
+window.addEventListener('resize', positionFire);
+
+const secs=[...document.querySelectorAll('.sec')].map(function(sec){return {
+  el:sec, enter:parseFloat(sec.dataset.enter)/100, leave:parseFloat(sec.dataset.leave)/100,
+  persist:sec.dataset.persist==='true', shown:false };});
+function update(p){
+  targetT = Math.min(Math.max(p,0),1)*dur;
+  secs.forEach(function(s){
+    const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
+    if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
+  });
+}
+
+function renderLoop(){
+  if(vidReady){
+    dispT += (targetT - dispT)*0.16;
+    if(Math.abs(targetT-dispT) < 0.005) dispT = targetT;
+    const t = Math.min(Math.max(dispT,0), Math.max(dur-0.05,0));
+    if(Math.abs((video.currentTime||0) - t) > 0.015){ try{ video.currentTime = t; }catch(e){} }
+  }
+  requestAnimationFrame(renderLoop);
+}
+
+function startScroll(){
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis=new Lenis({ duration:1.15, easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));}, smoothWheel:true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(function(t){ lenis.raf(t*1000); });
+  gsap.ticker.lagSmoothing(0);
+  ScrollTrigger.create({ trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:true, onUpdate:function(self){ update(self.progress); } });
+  gsap.to('.hero',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'8% top', end:'46% top', scrub:true}});
+  gsap.to('.fire-wrap',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'15% top', end:'70% top', scrub:true}});
+  ScrollTrigger.refresh();
+}
+
+const loader=document.getElementById('loader'), bar=document.getElementById('loader-bar'), pct=document.getElementById('loader-percent');
+function reveal(){
+  if(vidReady) return;
+  vidReady = true; dur = video.duration || 20;
+  positionFire();
+  try{ video.pause(); video.currentTime = 0; }catch(e){}
+  if(loader) loader.classList.add('hide');
+  startScroll();
+  requestAnimationFrame(renderLoop);
+}
+video.addEventListener('progress', function(){
+  try{ if(video.buffered.length){ const p=Math.round(video.buffered.end(0)/(video.duration||20)*100); if(bar) bar.style.width=p+'%'; if(pct) pct.textContent=p+'%'; } }catch(e){}
+});
+video.addEventListener('loadeddata', reveal);
+video.addEventListener('canplay', reveal);
+video.muted = true; video.playsInline = true;
+const pp = video.play(); if(pp && pp.then){ pp.then(function(){ try{ video.pause(); }catch(e){} }).catch(function(){}); }
+setTimeout(function(){ if(!vidReady && video.readyState>=2) reveal(); }, 4000);
+setTimeout(function(){ if(!vidReady) reveal(); }, 9000);
+
+</script>
+</body>
+</html>
