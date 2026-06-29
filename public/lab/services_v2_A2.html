@@ -114,6 +114,29 @@ a{color:inherit;text-decoration:none}
 .dots.show{opacity:1;pointer-events:auto}
 .dots button{width:9px;height:9px;border-radius:50%;border:1px solid rgba(205,214,230,.5);background:transparent;cursor:pointer;padding:0;transition:transform .3s var(--ease),background .3s,border-color .3s}
 .dots button.active{background:var(--gold);border-color:var(--gold);transform:scale(1.3)}
+
+/* ---------- Mobile (<=640px): one left-aligned column + flat readable panel ---------- */
+@media(max-width:640px){
+  .sec{padding:0 20px}
+  .sec.left,.sec.right{justify-content:flex-start}
+  .sec .inner{max-width:100%}
+  .sec.right .inner{text-align:left}
+  .sec.right .price-row{justify-content:flex-start}
+  .sec .num{font-size:12px;letter-spacing:.16em}
+  .sec h2{font-size:clamp(24px,6.6vw,34px);margin:12px 0 14px}
+  .sec p{font-size:15px;line-height:1.55;margin-bottom:18px}
+  /* flat dark panel behind text so white copy stays legible over bright frames */
+  .sec .inner::before,.sec.right .inner::before{
+    inset:-22px -20px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(3,6,15,.82),rgba(3,6,15,.62))}
+  /* CTA centered vertically so headline/buttons/disclaimer don't crowd the bottom */
+  .sec.cta{align-items:center}
+  .sec.cta .inner{max-width:100%;margin-bottom:0}
+  .sec.cta .inner::before{inset:-22px -18px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(3,6,15,.84),rgba(3,6,15,.6))}
+  .cta-foot{margin-top:20px;font-size:11px}
+  .dots{display:none}
+}
 </style>
 </head>
 <body>
