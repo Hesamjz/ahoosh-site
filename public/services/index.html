@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Services — AHoosh (A2 · fire it up)</title>
 <meta name="description" content="AHoosh helps European small businesses get online, sell more, and run smarter. Advice first, then build — consulting plus done-for-you websites, marketing, and AI.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Services — AHoosh">
+<meta property="og:description" content="AHoosh helps European small businesses get online, sell more, and run smarter. Advice first, then build — consulting plus done-for-you websites, marketing, and AI.">
+<meta property="og:image" content="https://ahoosh.ai/assets/og_services.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://ahoosh.ai/services">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ahoosh.ai/assets/og_services.jpg">
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -240,6 +249,7 @@ a{color:inherit;text-decoration:none}
 <script>
 const IMAGE_SCALE = 1.0;
 const video = document.getElementById('scrubvid');
+const SCRUB = window.matchMedia('(pointer:fine)').matches && !('ontouchstart' in window);
 let dur = 20, vidReady = false, targetT = 0, dispT = 0;
 
 const SPARK_FX = 960, SPARK_FY = 665;
@@ -258,23 +268,21 @@ const secs=[...document.querySelectorAll('.sec')].map(function(sec){return {
   el:sec, enter:parseFloat(sec.dataset.enter)/100, leave:parseFloat(sec.dataset.leave)/100,
   persist:sec.dataset.persist==='true', shown:false };});
 function update(p){
-  targetT = Math.min(Math.max(p,0),1)*dur;
+  if(SCRUB) targetT = Math.min(Math.max(p,0),1)*dur;
   secs.forEach(function(s){
     const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
     if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
   });
 }
-
 function renderLoop(){
-  if(vidReady){
+  if(vidReady && SCRUB){
     dispT += (targetT - dispT)*0.16;
     if(Math.abs(targetT-dispT) < 0.005) dispT = targetT;
     const t = Math.min(Math.max(dispT,0), Math.max(dur-0.05,0));
-    if(Math.abs((video.currentTime||0) - t) > 0.015){ try{ video.currentTime = t; }catch(e){} }
+    if(Math.abs((video.currentTime||0) - t) > 0.012){ try{ video.currentTime = t; }catch(e){} }
   }
   requestAnimationFrame(renderLoop);
 }
-
 function startScroll(){
   gsap.registerPlugin(ScrollTrigger);
   const lenis=new Lenis({ duration:1.15, easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));}, smoothWheel:true });
@@ -286,13 +294,16 @@ function startScroll(){
   gsap.to('.fire-wrap',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'15% top', end:'70% top', scrub:true}});
   ScrollTrigger.refresh();
 }
-
 const loader=document.getElementById('loader'), bar=document.getElementById('loader-bar'), pct=document.getElementById('loader-percent');
 function reveal(){
   if(vidReady) return;
   vidReady = true; dur = video.duration || 20;
   positionFire();
-  try{ video.pause(); video.currentTime = 0; }catch(e){}
+  if(SCRUB){
+    try{ video.pause(); video.currentTime = 0; }catch(e){}
+  } else {
+    try{ video.loop = true; video.muted = true; video.play(); }catch(e){}
+  }
   if(loader) loader.classList.add('hide');
   startScroll();
   requestAnimationFrame(renderLoop);
@@ -303,7 +314,7 @@ video.addEventListener('progress', function(){
 video.addEventListener('loadeddata', reveal);
 video.addEventListener('canplay', reveal);
 video.muted = true; video.playsInline = true;
-const pp = video.play(); if(pp && pp.then){ pp.then(function(){ try{ video.pause(); }catch(e){} }).catch(function(){}); }
+const pp = video.play(); if(pp && pp.then){ pp.then(function(){ if(SCRUB){ try{ video.pause(); }catch(e){} } }).catch(function(){}); }
 setTimeout(function(){ if(!vidReady && video.readyState>=2) reveal(); }, 4000);
 setTimeout(function(){ if(!vidReady) reveal(); }, 9000);
 
