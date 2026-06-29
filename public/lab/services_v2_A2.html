@@ -47,9 +47,9 @@ a{color:inherit;text-decoration:none}
 #scroll{position:relative;z-index:0;height:760vh}
 
 /* ---------- Hero ---------- */
-.hero{position:fixed;top:0;left:0;right:0;z-index:5;height:62vh;min-height:470px;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);
-  background:radial-gradient(ellipse 130% 72% at 50% -8%, #0d2444 0%, transparent 62%), linear-gradient(180deg,#03142E 0%,rgba(3,6,15,.5) 72%,rgba(3,6,15,0) 100%);
-  transition:opacity .55s var(--ease);pointer-events:none}
+.hero{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);
+  background:linear-gradient(180deg,#0d2444 0%,#081c38 18%,#06152b 38%,rgba(3,6,15,.5) 56%,rgba(3,6,15,0) 72%);
+  pointer-events:none}
 .hero.hide{opacity:0}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.32em;color:var(--gold);margin-bottom:26px}
 .hero h1{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,8vw,108px);line-height:.96;letter-spacing:-.01em;max-width:14ch}
@@ -231,10 +231,10 @@ a{color:inherit;text-decoration:none}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 <script>
 const FRAME_COUNT = 240;
-const FRAME_PATH = i => `fr_A_web/f_${String(i+1).padStart(4,'0')}.jpg`;
+const FRAME_PATH = i => `fr_A_web/f_${String(i+1).padStart(4,'0')}.webp`;
 const IMAGE_SCALE = 1.0;
 
-const FRAME_SPEED = 1.12;   // EXACT same as v2_A
+const FRAME_SPEED = 1.0;   // full 20s plays across the whole scroll (no early freeze)
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', {alpha:false});
@@ -308,10 +308,6 @@ function update(p){
     const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
     if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
   });
-  // hero + fire only at the very top
-  const atHero = p<0.04;
-  hero.classList.toggle('hide', !atHero);
-  firewrap.classList.toggle('hide', !atHero);
 }
 
 function startScroll(){
@@ -324,6 +320,9 @@ function startScroll(){
     trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:true,
     onUpdate:self=> update(self.progress)
   });
+  // hero scrolls up (in-flow) AND fades — exactly like v2_A; the fire fades with it
+  gsap.to('.hero',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'28% top', end:'bottom top', scrub:true}});
+  gsap.to('.fire-wrap',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'15% top', end:'70% top', scrub:true}});
   ScrollTrigger.refresh();
 }
 
