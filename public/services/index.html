@@ -332,6 +332,7 @@ video.addEventListener('progress', function(){
 });
 video.addEventListener('loadeddata', reveal);
 video.addEventListener('canplay', reveal);
+(function(){ var _small = window.matchMedia("(max-width:760px)").matches || ("ontouchstart" in window); if(_small){ try{ var _s=video.getAttribute("src"); if(_s && _s.indexOf("_mobile")<0){ video.setAttribute("src", _s.replace(".mp4","_mobile.mp4")); video.load(); } }catch(e){} } })();
 video.muted = true; video.playsInline = true;
 const pp = video.play(); if(pp && pp.then){ pp.then(function(){ try{ video.pause(); }catch(e){} }).catch(function(){}); }
 setTimeout(function(){ if(!vidReady && video.readyState>=2) reveal(); }, 4000);
