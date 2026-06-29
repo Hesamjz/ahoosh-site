@@ -173,6 +173,7 @@ a{color:inherit;text-decoration:none}
 <!-- Canvas journey -->
 <div id="canvas-wrap"><video id="scrubvid" muted playsinline webkit-playsinline preload="auto" src="services_B.mp4"></video><canvas id="canvas"></canvas></div>
 <div id="scrim"></div>
+<div id="cutfade" style="position:fixed;inset:0;z-index:3;background:#03060f;opacity:0;pointer-events:none;transition:opacity .05s linear"></div>
 
 <!-- Hero (stop 0) -->
 <section class="hero" id="hero">
@@ -195,7 +196,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<section class="sec right" id="secB" data-enter="12" data-leave="44">
+<section class="sec right" id="secB" data-enter="12" data-leave="41">
   <div class="inner">
     <div class="num">02 · CONSULTING &amp; ADVISORY</div>
     <h2>Then a plan, built on the Growth Map</h2>
@@ -286,6 +287,7 @@ const secs=[...document.querySelectorAll('.sec')].map(function(sec){return {
 function update(p){
   targetT = Math.min(Math.max(p,0),1)*dur;
   var _d=document.getElementById("dbg"); if(_d) _d.textContent="scroll "+Math.round(p*100)+"%";
+  var _cf=document.getElementById("cutfade"); if(_cf){ var _dd=Math.abs(p-0.475); _cf.style.opacity = _dd<0.035 ? (0.7*(1-_dd/0.035)).toFixed(3) : 0; }
   secs.forEach(function(s){
     const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
     if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
