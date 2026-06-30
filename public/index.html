@@ -485,6 +485,8 @@
     .ac-ico{width:46px;height:46px;font-size:20px}
   }
 </style>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body>
 
@@ -565,7 +567,7 @@
 <section class="hero">
   <h1 class="display">
     <span class="line-static"><span class="hw">AI</span> <span class="hw">for your</span></span>
-    <span class="line1"><span class="tcycle"><span class="tc-inner" id="tcInner">Growth</span></span></span>
+    <span class="line1"><span class="tcycle"><span class="tc-inner" id="tcInner">Business</span></span></span>
     <span class="line2">Clear Enough to Act On</span>
   </h1>
 
@@ -1330,11 +1332,25 @@ document.querySelectorAll('[data-count]').forEach(el=>{
 (function(){
   var inner=document.getElementById('tcInner'); if(!inner) return;
   var wrap=inner.parentNode;
-  /* Headline locked to a single static word: AI FOR YOUR GROWTH. No cycling. */
+  var words=['Business','Customers','Sales','Margins','Pricing','Growth','Decisions','Next Move'];
+  var i=0;
   function setW(){ wrap.style.width=inner.offsetWidth+'px'; }
   function init(){ setW(); }
   if(document.fonts && document.fonts.ready){ document.fonts.ready.then(init); }
   setTimeout(init,400); setTimeout(init,900);
+  setInterval(function(){
+    inner.style.transition='transform .42s cubic-bezier(.7,0,.3,1),opacity .4s ease';
+    inner.style.transform='translateY(-115%)'; inner.style.opacity='0';
+    setTimeout(function(){
+      i=(i+1)%words.length; inner.textContent=words[i];
+      inner.style.transition='none'; inner.style.transform='translateY(115%)'; inner.style.opacity='0';
+      wrap.style.width=inner.offsetWidth+'px';
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        inner.style.transition='transform .42s cubic-bezier(.7,0,.3,1),opacity .4s ease';
+        inner.style.transform='translateY(0)'; inner.style.opacity='1';
+      });});
+    }, 430);
+  }, 2600);
 })();
 </script>
 <style id="tk-logo-style">
