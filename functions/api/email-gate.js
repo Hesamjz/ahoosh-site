@@ -1,12 +1,22 @@
 // Cloudflare Pages Function — POST /api/email-gate
-// Captures email from the Assess Hub PDF gate.
-// Fire-and-forget: always returns {ok:true} so the PDF download is never blocked.
+// Captures email from the Assess Hub gates (results gate + PDF gate).
+// Fire-and-forget philosophy: always returns ok:true so results/PDF are never blocked.
 //
-// Required env vars (set in Cloudflare Pages → Settings → Environment Variables):
-//   BREVO_API_KEY  — Brevo (Sendinblue) API key for contact creation
-//   BREVO_LIST_ID  — numeric list ID to add contacts to (optional, defaults to no list)
+// Accepted JSON payload:
+//   email    (required)  — respondent email
+//   name     (optional)  — respondent name
+//   source   (optional)  — where the capture happened (default 'assess_report_pdf')
+//   track    (optional)  — assessment track, e.g. 'personality' | 'business' | 'website'
+//   score    (optional)  — overall 0–100 score for that track
+//   consent  (optional)  — boolean, GDPR opt-in checkbox state
 //
-// Without BREVO_API_KEY the function still returns ok:true (PDF unlocks, no CRM capture).
+// Env vars (Cloudflare Pages → Settings → Environment Variables):
+//   BREVO_API_KEY  — Brevo API key for contact upsert (without it: clear no-op status)
+//   BREVO_LIST_ID  — numeric list ID to add contacts to (optional)
+// Bindings (Cloudflare Pages → Settings → Bindings):
+//   ASSESS_DB      — D1 database "ahoosh-assess" (optional; stores capture in assess_sessions)
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -15,42 +25,76 @@ export async function onRequestPost(context) {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
   };
+  const reply = (body) => new Response(JSON.stringify(body), { headers });
 
-  let email = '';
-  let source = 'assess_report_pdf';
-
+  let body = {};
   try {
-    const body = await request.json();
-    email  = (body.email  || '').trim().toLowerCase();
-    source = (body.source || source);
+    body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ ok: true, captured: false, reason: 'parse_error' }), { headers });
+    return reply({ ok: true, captured: false, status: 'parse_error' });
   }
 
-  // Basic email validation
-  if (!email || !email.includes('@') || email.length < 5) {
-    return new Response(JSON.stringify({ ok: true, captured: false, reason: 'invalid_email' }), { headers });
+  const email = String(body.email || '').trim().toLowerCase();
+  const name = String(body.name || '').trim().slice(0, 100);
+  const source = String(body.source || 'assess_report_pdf').slice(0, 60);
+  const track = String(body.track || '').slice(0, 30);
+  const consent = body.consent === true;
+  const score =
+    typeof body.score === 'number' && isFinite(body.score)
+      ? Math.max(0, Math.min(100, Math.round(body.score)))
+      : null;
+
+  if (!EMAIL_RE.test(email)) {
+    return reply({ ok: true, captured: false, status: 'invalid_email' });
   }
 
-  // If no Brevo key set, return ok without capture
+  // ── Store in D1 when the binding exists (fire-and-forget) ──
+  let stored = false;
+  if (env.ASSESS_DB) {
+    stored = true;
+    const record = { kind: 'email_capture', name, source, track, score, consent };
+    context.waitUntil(
+      env.ASSESS_DB.prepare(
+        `INSERT INTO assess_sessions (id, email, assessments, report, created_at, ip)
+         VALUES (?, ?, ?, ?, ?, ?)`
+      )
+        .bind(
+          crypto.randomUUID(),
+          email,
+          JSON.stringify(record),
+          null,
+          new Date().toISOString(),
+          request.headers.get('CF-Connecting-IP') || null
+        )
+        .run()
+        .catch((e) => console.error('[email-gate] D1 persist failed:', e))
+    );
+  }
+
+  // ── Brevo upsert — clear no-op status when unconfigured ──
   if (!env.BREVO_API_KEY) {
-    return new Response(JSON.stringify({ ok: true, captured: false, reason: 'no_brevo_key' }), { headers });
+    return reply({ ok: true, captured: false, stored, status: 'brevo_not_configured' });
   }
 
-  // Upsert contact in Brevo
   try {
+    const attributes = {
+      SOURCE: source,
+      ASSESS_DATE: new Date().toISOString().split('T')[0],
+      CONSENT: consent,
+    };
+    if (name) attributes.FIRSTNAME = name;
+    if (track) attributes.ASSESS_TRACK = track;
+    if (score !== null) attributes.ASSESS_SCORE = score;
+
     const contactBody = {
       email,
-      attributes: {
-        SOURCE: source,
-        ASSESS_DATE: new Date().toISOString().split('T')[0],
-      },
-      updateEnabled: true,  // update if already exists
+      attributes,
+      updateEnabled: true, // upsert: update if the contact already exists
     };
 
-    // Add to list if configured
     if (env.BREVO_LIST_ID) {
-      contactBody.listIds = [parseInt(env.BREVO_LIST_ID, 10)];
+      const listId = parseInt(env.BREVO_LIST_ID, 10);
+      if (!isNaN(listId)) contactBody.listIds = [listId];
     }
 
     const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
@@ -65,11 +109,14 @@ export async function onRequestPost(context) {
 
     // 201 = created, 204 = updated — both are success
     const captured = brevoRes.status === 201 || brevoRes.status === 204;
-    return new Response(JSON.stringify({ ok: true, captured }), { headers });
-
+    if (!captured) {
+      console.error('[email-gate] Brevo responded', brevoRes.status, await brevoRes.text().catch(() => ''));
+    }
+    return reply({ ok: true, captured, stored, status: captured ? 'captured' : 'brevo_rejected' });
   } catch (e) {
-    // Never block the PDF on a Brevo error
-    return new Response(JSON.stringify({ ok: true, captured: false, reason: 'brevo_error' }), { headers });
+    // Never block results/PDF on a Brevo error
+    console.error('[email-gate] Brevo error:', e);
+    return reply({ ok: true, captured: false, stored, status: 'brevo_error' });
   }
 }
 

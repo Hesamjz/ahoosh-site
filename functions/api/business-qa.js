@@ -1,5 +1,46 @@
 // functions/api/business-qa.js
 // Accepts 10 business Q&A answers → Claude Haiku → structured business analysis
+// Also returns a deterministic 0–100 score + interpretation band (no AI dependency):
+//   0–25 Starting out · 26–50 Developing · 51–75 Established · 76–100 Advanced
+
+const BANDS = [
+  { min: 0,  max: 25,  label: 'Starting out' },
+  { min: 26, max: 50,  label: 'Developing' },
+  { min: 51, max: 75,  label: 'Established' },
+  { min: 76, max: 100, label: 'Advanced' },
+];
+
+const BAND_INTERPRETATIONS = {
+  'Starting out':
+    'You gave us a first sketch of the business, but most of the picture is still blank. ' +
+    'Fill in the basics — customers, revenue, what sets you apart — and the diagnosis gets much sharper.',
+  'Developing':
+    'The outline of your business is clear, but several answers are thin. ' +
+    'More detail on how you win customers and what makes you different would turn this sketch into a plan.',
+  'Established':
+    'You know your business well and it shows in your answers. ' +
+    'The gaps that remain are specific, which means they are fixable.',
+  'Advanced':
+    'Your answers are complete and specific — the mark of an owner who knows the numbers and the customers. ' +
+    'The question now is execution speed, not clarity.',
+};
+
+// Deterministic score: 60% completeness (questions answered) + 40% depth
+// (answers with enough detail to actually diagnose from, >= 40 chars).
+function scoreBusinessAnswers(answers, questionCount) {
+  let answered = 0;
+  let detailed = 0;
+  for (let i = 1; i <= questionCount; i++) {
+    const a = String(answers[i] || '').trim();
+    if (a.length > 2) answered++;
+    if (a.length >= 40) detailed++;
+  }
+  const score = Math.round((answered / questionCount) * 60 + (detailed / questionCount) * 40);
+  const clamped = Math.max(0, Math.min(100, score));
+  const band = BANDS.find(b => clamped >= b.min && clamped <= b.max) || BANDS[0];
+  return { score: clamped, band: band.label, interpretation: BAND_INTERPRETATIONS[band.label] };
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
 
@@ -79,7 +120,8 @@ Rules: Base everything on actual answers. No generic startup advice. No motivati
     if (!jsonMatch) return Response.json({ error: 'Analysis generation failed. Please try again.' }, { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });
 
     const analysis = JSON.parse(jsonMatch[0]);
-    return Response.json({ analysis }, { headers: { 'Access-Control-Allow-Origin': '*' } });
+    const scoring = scoreBusinessAnswers(answers, questions.length);
+    return Response.json({ analysis, scoring }, { headers: { 'Access-Control-Allow-Origin': '*' } });
 
   } catch (err) {
     return Response.json({ error: 'Analysis failed: ' + err.message }, { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });

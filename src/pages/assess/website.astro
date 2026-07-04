@@ -111,6 +111,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .social-score-row { font-size:13px; color:#7a8b9e; margin-left:40px; margin-bottom:32px; }
   .social-score-row span { color:var(--gold); font-weight:700; }
 
+  /* Combined digital score band */
+  .digital-band {
+    background:var(--card-bg); border:1px solid rgba(215,161,61,0.25);
+    border-radius:12px; padding:20px; margin:0 0 32px;
+  }
+  .digital-band-head {
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:14px; font-weight:700; color:#e8eaf0; margin-bottom:8px;
+  }
+  .digital-band-head .band-score { color:var(--gold); font-size:16px; }
+  .digital-band p { font-size:13px; color:#8a9bb0; line-height:1.6; margin:0; }
+
   /* Report button */
   .btn-report {
     display:block; width:100%; padding:16px;
@@ -287,6 +299,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     Social &amp; Content score: <span id="social-score-val">—</span> / 100
   </div>
 
+  <!-- ── Combined Website & Digital score band ── -->
+  <div class="digital-band" id="digital-band" style="display:none;">
+    <div class="digital-band-head">
+      <span>Website &amp; Digital score: <span id="digital-band-label"></span></span>
+      <span class="band-score" id="digital-band-score">—</span>
+    </div>
+    <p id="digital-band-text"></p>
+  </div>
+
   <!-- ── Generate Report ── -->
   <a class="btn-report" href="/assess/report" id="btn-report">
     Generate AI Report →
@@ -294,6 +315,67 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </div>
 
 <script>
+  /* ── Scoring bands (shared scale with the Business track) ── */
+  const DIGITAL_BANDS = [
+    { min: 0,  max: 25,  label: 'Starting out' },
+    { min: 26, max: 50,  label: 'Developing' },
+    { min: 51, max: 75,  label: 'Established' },
+    { min: 76, max: 100, label: 'Advanced' },
+  ];
+  const DIGITAL_INTERPRETATIONS = {
+    'Starting out':
+      'Your digital presence is at an early stage, so most potential customers never find you. ' +
+      'Start with the basics: page speed, one clear call-to-action, and a complete Google Business Profile.',
+    'Developing':
+      'The foundation exists but it is patchy. ' +
+      'Fixing the weakest scores — usually page speed or publishing rhythm — will move you faster than adding anything new.',
+    'Established':
+      'Your website and channels work, and the remaining gaps are polish rather than plumbing. ' +
+      'Regular content and collecting customer reviews are the likely next wins.',
+    'Advanced':
+      'Your digital presence is strong across the board. ' +
+      'Keep the publishing rhythm and focus on converting the traffic you already earn.',
+  };
+
+  function getDigitalBand(score) {
+    const s = Math.max(0, Math.min(100, Math.round(score)));
+    return DIGITAL_BANDS.find(b => s >= b.min && s <= b.max) || DIGITAL_BANDS[0];
+  }
+
+  /* Combined score: 60% PageSpeed average + 40% social self-report.
+     If only one part exists, use it alone. Returns null when neither exists. */
+  function computeDigitalScore() {
+    let ps = null;
+    try {
+      const web = JSON.parse(localStorage.getItem('ahoosh_assess_website') || 'null');
+      if (web && web.scores) {
+        const vals = Object.values(web.scores).filter(v => typeof v === 'number');
+        if (vals.length) ps = vals.reduce((a, b) => a + b, 0) / vals.length;
+      }
+    } catch {}
+    let social = null;
+    const keys = Object.keys(answers);
+    if (keys.length > 0) {
+      const total = keys.reduce((acc, k) => acc + parseInt(answers[k]), 0);
+      social = Math.round(total / 24 * 100);
+    }
+    if (ps !== null && social !== null) return Math.round(0.6 * ps + 0.4 * social);
+    if (ps !== null) return Math.round(ps);
+    if (social !== null) return social;
+    return null;
+  }
+
+  function renderDigitalBand() {
+    const score = computeDigitalScore();
+    const box = document.getElementById('digital-band');
+    if (score === null || !box) return;
+    const band = getDigitalBand(score);
+    document.getElementById('digital-band-score').textContent = score + ' / 100';
+    document.getElementById('digital-band-label').textContent = band.label;
+    document.getElementById('digital-band-text').textContent = DIGITAL_INTERPRETATIONS[band.label];
+    box.style.display = 'block';
+  }
+
   /* ── PageSpeed audit ── */
   const input   = document.getElementById('url-input');
   const btn     = document.getElementById('btn-audit');
@@ -363,6 +445,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       renderOpps(data.opportunities || []);
       results.classList.add('visible');
       status.textContent = '✓ Audit complete. Review your scores below, then fill Step 2.';
+      renderDigitalBand();
     } catch (e) {
       status.textContent = 'Network error — please try again.';
     } finally {
@@ -415,6 +498,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     var scoreRow = document.getElementById('social-score-row');
     document.getElementById('social-score-val').textContent = pct;
     scoreRow.style.display = 'block';
+    renderDigitalBand();
   }
 
   /* Button click handling */
@@ -443,10 +527,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     var keys = Object.keys(answers);
     var total = keys.reduce(function(acc, k) { return acc + parseInt(answers[k]); }, 0);
     var pct   = Math.round(total / 24 * 100);
+    var digitalScore = computeDigitalScore();
     var payload = {
       answers: answers,
       score: pct,
       answered: keys.length,
+      digital_score: digitalScore,
+      digital_band: digitalScore === null ? null : getDigitalBand(digitalScore).label,
       completed_at: new Date().toISOString(),
     };
     try {

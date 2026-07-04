@@ -282,6 +282,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <div class="complete" id="complete">
     <div class="complete-icon">✅</div>
     <h2>Business diagnostic complete</h2>
+    <div id="biz-band" style="display:none; max-width:480px; margin:0 auto 28px; text-align:left;
+         background:var(--card); border:1px solid rgba(215,161,61,0.25); border-radius:12px; padding:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <span style="font-size:14px; font-weight:700; color:#e8eaf0;">
+          Business score: <span id="biz-band-label"></span>
+        </span>
+        <span style="font-size:16px; font-weight:700; color:var(--gold);" id="biz-band-score"></span>
+      </div>
+      <p style="font-size:13px; color:#8a9bb0; line-height:1.6; margin:0;" id="biz-band-text"></p>
+    </div>
     <p>Your answers are saved. The AI report now has your business context, strengths, weaknesses, and customer profile to work with.</p>
     <a href="/assess/report">View my report →</a>
     <a href="/assess" class="back-link">← Back to Assess Hub</a>
@@ -307,9 +317,61 @@ function val(id) {
   return el ? el.value.trim() : '';
 }
 
+/* ── Scoring bands (shared scale with the Website track) ── */
+var BIZ_BANDS = [
+  { min: 0,  max: 25,  label: 'Starting out' },
+  { min: 26, max: 50,  label: 'Developing' },
+  { min: 51, max: 75,  label: 'Established' },
+  { min: 76, max: 100, label: 'Advanced' },
+];
+var BIZ_INTERPRETATIONS = {
+  'Starting out':
+    'You gave us a first sketch of the business, but most of the picture is still blank. ' +
+    'Fill in the basics — customers, revenue, what sets you apart — and the diagnosis gets much sharper.',
+  'Developing':
+    'The outline of your business is clear, but several answers are thin. ' +
+    'More detail on how you win customers and what makes you different would turn this sketch into a plan.',
+  'Established':
+    'You know your business well and it shows in your answers. ' +
+    'The gaps that remain are specific, which means they are fixable.',
+  'Advanced':
+    'Your answers are complete and specific — the mark of an owner who knows the numbers and the customers. ' +
+    'The question now is execution speed, not clarity.',
+};
+
+/* Deterministic score: 60% completeness (all 15 fields) + 40% depth
+   (free-text answers with enough detail to diagnose from, >= 40 chars). */
+function scoreBusinessForm() {
+  var allFields = [
+    's1-description','s1-industry','s1-stage','s1-team','s1-revenue','s1-challenge',
+    's2-strengths','s2-weaknesses','s2-opportunities','s2-threats',
+    's3-customer','s3-problem','s3-solution','s3-differentiation',
+    's4-title','s4-size','s4-pain','s4-current','s4-channel'
+  ];
+  var textFields = [
+    's1-description','s1-challenge',
+    's2-strengths','s2-weaknesses','s2-opportunities','s2-threats',
+    's3-customer','s3-problem','s3-solution','s3-differentiation',
+    's4-pain','s4-current','s4-channel'
+  ];
+  var answered = 0, detailed = 0;
+  allFields.forEach(function(id){ if (val(id).length > 0) answered++; });
+  textFields.forEach(function(id){ if (val(id).length >= 40) detailed++; });
+  var score = Math.round((answered / allFields.length) * 60 + (detailed / textFields.length) * 40);
+  score = Math.max(0, Math.min(100, score));
+  var band = BIZ_BANDS[0];
+  for (var i = 0; i < BIZ_BANDS.length; i++) {
+    if (score >= BIZ_BANDS[i].min && score <= BIZ_BANDS[i].max) { band = BIZ_BANDS[i]; break; }
+  }
+  return { score: score, band: band.label, interpretation: BIZ_INTERPRETATIONS[band.label] };
+}
+
 function saveBusiness() {
+  var scoring = scoreBusinessForm();
   var data = {
     completed_at: new Date().toISOString(),
+    score: scoring.score,
+    band: scoring.band,
     basics: {
       description:  val('s1-description'),
       industry:     val('s1-industry'),
@@ -349,6 +411,16 @@ function saveBusiness() {
     if (s) s.classList.remove('active');
   }
   document.getElementById('complete').classList.add('visible');
+
+  // Show the score band + plain-language interpretation
+  var bandBox = document.getElementById('biz-band');
+  if (bandBox) {
+    document.getElementById('biz-band-label').textContent = scoring.band;
+    document.getElementById('biz-band-score').textContent = scoring.score + ' / 100';
+    document.getElementById('biz-band-text').textContent = scoring.interpretation;
+    bandBox.style.display = 'block';
+  }
+
   document.getElementById('prog').style.width = '100%';
   document.getElementById('prog-label').textContent = 'Complete!';
   window.scrollTo(0, 0);
