@@ -43,13 +43,10 @@ export async function onRequestPost(context) {
     typeof body.score === 'number' && isFinite(body.score)
       ? Math.max(0, Math.min(100, Math.round(body.score)))
       : null;
-<<<<<<< Updated upstream
-=======
   const testTitle = String(body.test_title || '').slice(0, 80);
   const resultType = String(body.result_type || '').slice(0, 20);
   // Full per-dimension scores object (Big Five / DISC / GDMS) or {total,pct,level} for single-scale tests.
   const scores = body.scores && typeof body.scores === 'object' ? body.scores : null;
->>>>>>> Stashed changes
 
   if (!EMAIL_RE.test(email)) {
     return reply({ ok: true, captured: false, status: 'invalid_email' });
@@ -59,11 +56,7 @@ export async function onRequestPost(context) {
   let stored = false;
   if (env.ASSESS_DB) {
     stored = true;
-<<<<<<< Updated upstream
-    const record = { kind: 'email_capture', name, source, track, score, consent };
-=======
     const record = { kind: 'email_capture', name, source, track, test_title: testTitle, result_type: resultType, score, scores, consent };
->>>>>>> Stashed changes
     context.waitUntil(
       env.ASSESS_DB.prepare(
         `INSERT INTO assess_sessions (id, email, assessments, report, created_at, ip)
@@ -123,8 +116,6 @@ export async function onRequestPost(context) {
     if (!captured) {
       console.error('[email-gate] Brevo responded', brevoRes.status, await brevoRes.text().catch(() => ''));
     }
-<<<<<<< Updated upstream
-=======
 
     // ── Send the customer their result (transactional, best-effort, never blocks) ──
     // Requires a verified sender in Brevo. Set BREVO_SENDER (verified email) in Pages env vars.
@@ -158,7 +149,6 @@ export async function onRequestPost(context) {
       );
     }
 
->>>>>>> Stashed changes
     return reply({ ok: true, captured, stored, status: captured ? 'captured' : 'brevo_rejected' });
   } catch (e) {
     // Never block results/PDF on a Brevo error
