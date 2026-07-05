@@ -26,7 +26,8 @@ export async function onRequestPost(context) {
   const name = String(body.name || '').trim().slice(0, 60);
 
   if (!scores) return reply({ ok: false, error: 'no_scores' }, 400);
-  if (!env.ANTHROPIC_API_KEY) return reply({ ok: false, error: 'llm_not_configured' });
+  // Prefer the free Cloudflare Workers AI binding (env.AI); fall back to Anthropic if a key is set.
+  if (!env.AI && !env.ANTHROPIC_API_KEY) return reply({ ok: false, error: 'llm_not_configured' });
 
   // Readable score lines for the prompt.
   const lines = [];
@@ -53,20 +54,25 @@ export async function onRequestPost(context) {
     `Write their character analysis.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+    let text = '';
+    if (env.AI) {
+      // Free Cloudflare Workers AI (Llama) — no per-call cost. Same model your report worker uses.
+      const out = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+        messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }],
         max_tokens: 700,
-        system,
-        messages: [{ role: 'user', content: userMsg }],
-      }),
-      signal: AbortSignal.timeout(25000),
-    });
-    const data = await res.json();
-    const text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text.trim() : '';
-    if (!text) return reply({ ok: false, error: 'empty', detail: data && data.error ? data.error : null });
+      });
+      text = (out && typeof out.response === 'string') ? out.response.trim() : '';
+    } else if (env.ANTHROPIC_API_KEY) {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 700, system, messages: [{ role: 'user', content: userMsg }] }),
+        signal: AbortSignal.timeout(25000),
+      });
+      const data = await res.json();
+      text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text.trim() : '';
+    }
+    if (!text) return reply({ ok: false, error: 'empty' });
     return reply({ ok: true, analysis: text });
   } catch (e) {
     return reply({ ok: false, error: 'llm_error', detail: String(e && e.message || e) });
