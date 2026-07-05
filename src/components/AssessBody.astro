@@ -920,26 +920,62 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     );
   }
 
+  function GateScreen(props){
+    const test=props.test, scores=props.scores, onDone=props.onDone;
+    const[email,setEmail]=useState('');
+    const[name,setName]=useState('');
+    const[busy,setBusy]=useState(false);
+    const[err,setErr]=useState('');
+    function repScore(){
+      if(scores&&typeof scores.pct==='number')return scores.pct;
+      if(scores&&typeof scores==='object'){var v=Object.keys(scores).map(function(k){var x=scores[k];return x&&typeof x.pct==='number'?x.pct:null;}).filter(function(x){return x!=null;});if(v.length)return Math.round(v.reduce(function(a,b){return a+b;},0)/v.length);}
+      return null;
+    }
+    function submit(skip){
+      if(skip){onDone();return;}
+      if(!email||email.indexOf('@')<1){setErr((T.ui&&T.ui.gateInvalid)||'Please enter a valid email.');return;}
+      setBusy(true);
+      fetch('/api/email-gate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.trim(),name:name.trim(),source:'assess_'+test.id,track:test.id,test_title:test.title,score:repScore(),scores:scores,result_type:test.resultType,consent:true})}).catch(function(){}).finally(function(){onDone();});
+    }
+    return h('div',{className:'bg-gray-50 flex items-center justify-center px-4 py-20',style:{minHeight:'70vh'}},
+      h('div',{className:'bg-white rounded-2xl border border-gray-100 shadow-sm p-8 w-full text-center',style:{maxWidth:'420px'}},
+        h('div',{className:'text-4xl mb-3'},'✅'),
+        h('h2',{className:'text-navy text-xl font-bold mb-2'},(T.ui&&T.ui.gateTitle)||'Your results are ready'),
+        h('p',{className:'text-gray-500 text-sm mb-5'},(T.ui&&T.ui.gateSub)||"Enter your email to see your full result — we'll send you a copy too."),
+        h('input',{type:'text',value:name,placeholder:(T.ui&&T.ui.gateName)||'Your name (optional)',onChange:function(e){setName(e.target.value);},className:'w-full mb-3 px-4 py-3 rounded-xl border border-gray-200 text-sm'}),
+        h('input',{type:'email',value:email,placeholder:'you@email.com',onChange:function(e){setEmail(e.target.value);setErr('');},onKeyDown:function(e){if(e.key==='Enter')submit(false);},className:'w-full mb-2 px-4 py-3 rounded-xl border border-gray-200 text-sm'}),
+        err?h('p',{className:'text-red-500 text-xs mb-2'},err):null,
+        h('button',{onClick:function(){submit(false);},disabled:busy,className:'w-full py-3 rounded-xl bg-gold text-navy font-bold text-sm mb-3',style:busy?{opacity:0.5}:{}},busy?'…':((T.ui&&T.ui.gateBtn)||'Show my results →')),
+        h('button',{onClick:function(){submit(true);},className:'text-gray-400 text-xs underline'},(T.ui&&T.ui.gateSkip)||'Skip and view results')
+      )
+    );
+  }
+
   function App(){
-    const[screen,setScreen]=useState(ASSESS_HUB?'survey':'home');
-    const[activeId,setActive]=useState(ASSESS_HUB?'big5':null);
+    // Always start on the test picker (Home) — in hub mode this now offers ALL tests,
+    // not just Big Five. Each test computes real scores and renders ResultsWrapper.
+    const[screen,setScreen]=useState('home');
+    const[activeId,setActive]=useState(null);
     const[scores,setScores]=useState(null);
     const test=TESTS.find(function(t){return t.id===activeId;});
     function selectTest(id){setActive(id);setScreen('survey');window.scrollTo(0,0);}
     function handleComplete(ans){
       const scored=test.score(ans);
       setScores(scored);
-      setScreen('results');
+      // Persist every completed test so a combined profile can be built later.
+      try{
+        var key='ahoosh_assess_'+test.id;
+        localStorage.setItem(key,JSON.stringify({test_id:test.id,title:test.title,resultType:test.resultType,scores:scored,completed_at:new Date().toISOString()}));
+      }catch(e){}
+      // Data capture: gate the result behind an email (collect the lead, then reveal).
+      setScreen('gate');
       window.scrollTo(0,0);
-      if(ASSESS_HUB){
-        var _lsMap={big5:'ahoosh_assess_personality',disc:'ahoosh_assess_disc',gdms:'ahoosh_assess_gdms'};
-        if(_lsMap[test.id]){try{localStorage.setItem(_lsMap[test.id],JSON.stringify({traits:scored,completed_at:new Date().toISOString(),test_id:test.id}));}catch(e){}}
-      }
     }
     function goHome(){setScreen('home');setActive(null);setScores(null);window.scrollTo(0,0);}
     let content;
     if(screen==='home') content=h(Home,{onSelectTest:selectTest});
     else if(screen==='survey') content=h(SurveyRunner,{test,onComplete:handleComplete,onBack:goHome});
+    else if(screen==='gate') content=h(GateScreen,{test,scores,onDone:function(){setScreen('results');window.scrollTo(0,0);}});
     else content=h(ResultsWrapper,{test,scores,onRetake:function(){selectTest(activeId);},onHome:goHome});
     return h('div',{dir:RTL?'rtl':'ltr'},content);
   }

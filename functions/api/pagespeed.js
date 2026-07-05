@@ -30,7 +30,9 @@ export async function onRequestGet(context) {
     (key ? `&key=${key}` : "");
 
   try {
-    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(20000) });
+    // Heavy sites (lots of JS/animation) can take 40-60s for a full 4-category
+    // Lighthouse run, so allow up to 55s before aborting (was 20s → 502 on heavy pages).
+    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(55000) });
     const data = await res.json();
 
     if (!res.ok) {

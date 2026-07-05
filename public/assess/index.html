@@ -1213,9 +1213,11 @@
   [].forEach.call(document.querySelectorAll('.as-card[data-track]'), function(card){
     card.addEventListener('click', function(){
       var tr = card.getAttribute('data-track');
-      if(tr==='personality') openPersonality();
-      else if(tr==='business') openBusiness();
-      else if(tr==='website') openWebsite();
+      // Route to the real AssessBody-powered pages (full scoring + results + capture),
+      // not the in-page preview flow. Big fix: /assess now delivers real results.
+      if(tr==='personality') location.href='/assess/personality';
+      else if(tr==='business') location.href='/assess/business';
+      else if(tr==='website') location.href='/assess/website';
     });
   });
 })();
