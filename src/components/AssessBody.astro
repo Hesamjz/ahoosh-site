@@ -805,6 +805,31 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     );
   }
 
+  function AiAnalysis(props){
+    const test=props.test, scores=props.scores;
+    const st=useState({loading:true,text:''}); const state=st[0], setState=st[1];
+    React.useEffect(function(){
+      var cancelled=false;
+      fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({test_title:test.title,scale_name:test.scaleName||'',result_type:test.resultType,scores:scores})})
+        .then(function(r){return r.json();})
+        .then(function(d){ if(!cancelled) setState({loading:false,text:(d&&d.ok&&d.analysis)?d.analysis:''}); })
+        .catch(function(){ if(!cancelled) setState({loading:false,text:''}); });
+      return function(){cancelled=true;};
+    },[]);
+    const title=(T.ui&&T.ui.analysisTitle)||'Your Character Analysis';
+    if(state.loading){
+      return h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6'},
+        h('h2',{className:'text-navy font-semibold text-sm mb-2'},title),
+        h('p',{className:'text-gray-400 text-sm'},(T.ui&&T.ui.analysisLoading)||'Writing your personalized analysis…'));
+    }
+    if(!state.text) return null; // graceful: hide if the LLM is unavailable
+    return h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6'},
+      h('h2',{className:'text-navy font-semibold text-sm mb-3'},title),
+      state.text.split(/\n\n+/).map(function(p,i){return h('p',{key:i,className:'text-gray-600 text-sm leading-relaxed mb-3'},p);})
+    );
+  }
+
   function ResultsWrapper({test,scores,onRetake,onHome}){
     const ORDER=test.traitOrder||[];
     const backBtn=h('div',{className:'mt-6 bg-navy rounded-2xl p-5 text-center no-print'},
@@ -829,6 +854,7 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
             h('div',{className:'w-full bg-gray-100 rounded-full h-4 mb-4'},h('div',{className:'bar-fill h-4 rounded-full',style:{width:pct+'%',background:color}})),
             h('p',{className:'text-gray-600 text-sm leading-relaxed'},lv.desc)
           ),
+          h(AiAnalysis,{test:test,scores:scores}),
           h('p',{className:'text-gray-400 text-xs text-center mb-4'},test.footer),
           backBtn
         )
@@ -856,6 +882,7 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
             h('h2',{className:'text-navy font-semibold text-sm mb-6'},T.ui.detailedResults),
             ORDER.map(function(k){const t=test.traits[k];const s=scores[k];return h(TraitBar,{key:k,name:t.name,pct:s.pct,level:s.level,color:t.color,bg:t.bg,interpretation:t[s.level]});})
           ),
+          h(AiAnalysis,{test:test,scores:scores}),
           h('p',{className:'text-gray-400 text-xs text-center mb-4'},test.footer),
           ASSESS_HUB && h('a',{href:'/assess/report',className:'block w-full text-center mt-2 mb-6 py-4 rounded-xl font-bold text-base no-print',style:{background:'#D7A13D',color:'#010A18',textDecoration:'none'}},'→ Get your full report'),
           backBtn

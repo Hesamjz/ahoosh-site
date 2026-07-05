@@ -149,6 +149,51 @@ export async function onRequestPost(context) {
       );
     }
 
+    // ── Notify Hesam of every new lead (admin alert with their data, best-effort) ──
+    // Recipient configurable via ADMIN_NOTIFY_EMAIL; sender must be verified in Brevo.
+    {
+      const adminTo = env.ADMIN_NOTIFY_EMAIL || 'hesamjafarzadeh@gmail.com';
+      const adminSender = { email: env.BREVO_SENDER || 'hello@ahoosh.ai', name: 'AHoosh Assessments' };
+      let scoresRows = '';
+      if (scores && typeof scores === 'object') {
+        for (const k of Object.keys(scores)) {
+          const v = scores[k];
+          scoresRows += (v && typeof v === 'object')
+            ? `<tr><td style="padding:2px 10px 2px 0;"><b>${k}</b></td><td>${v.pct != null ? v.pct + '/100' : ''} ${v.level || ''}</td></tr>`
+            : `<tr><td style="padding:2px 10px 2px 0;"><b>${k}</b></td><td>${v}</td></tr>`;
+        }
+      }
+      const adminHtml = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111;">
+        <h2 style="margin:0 0 10px;">New assessment lead</h2>
+        <table style="border-collapse:collapse;font-size:14px;">
+          <tr><td style="padding:2px 10px 2px 0;"><b>Name</b></td><td>${name || '—'}</td></tr>
+          <tr><td style="padding:2px 10px 2px 0;"><b>Email</b></td><td>${email}</td></tr>
+          <tr><td style="padding:2px 10px 2px 0;"><b>Assessment</b></td><td>${testTitle || track || '—'}</td></tr>
+          <tr><td style="padding:2px 10px 2px 0;"><b>Overall</b></td><td>${score != null ? score + '/100' : '—'}</td></tr>
+          <tr><td style="padding:2px 10px 2px 0;"><b>Source</b></td><td>${source}</td></tr>
+          <tr><td style="padding:2px 10px 2px 0;"><b>Consent</b></td><td>${consent ? 'yes' : 'no'}</td></tr>
+          <tr><td style="padding:2px 10px 2px 0;"><b>When</b></td><td>${new Date().toISOString()}</td></tr>
+        </table>
+        ${scoresRows ? `<p style="margin:12px 0 4px;"><b>Scores</b></p><table style="border-collapse:collapse;font-size:14px;">${scoresRows}</table>` : ''}
+        <p style="color:#666;font-size:12px;margin-top:14px;">Saved to Brevo${stored ? ' + D1' : ''}. This is an automated alert.</p>
+      </div>`;
+      context.waitUntil(
+        fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY, accept: 'application/json' },
+          body: JSON.stringify({
+            sender: adminSender,
+            to: [{ email: adminTo }],
+            replyTo: { email },
+            subject: `New assessment lead: ${name || email} — ${testTitle || track || 'assessment'}`,
+            htmlContent: adminHtml,
+          }),
+        })
+          .then(async (r) => { if (r.status >= 300) console.error('[email-gate] admin alert failed', r.status, await r.text().catch(() => '')); })
+          .catch((e) => console.error('[email-gate] admin alert error', e))
+      );
+    }
+
     return reply({ ok: true, captured, stored, status: captured ? 'captured' : 'brevo_rejected' });
   } catch (e) {
     // Never block results/PDF on a Brevo error
