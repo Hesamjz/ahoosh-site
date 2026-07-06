@@ -830,7 +830,42 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     );
   }
 
-  function ResultsWrapper({test,scores,onRetake,onHome}){
+  // Turn a raw answer value into its human label (e.g. 4 -> "Mod. Accurate").
+  function labelText(labels,v){for(var i=0;i<(labels||[]).length;i++){if(labels[i].v===v)return labels[i].s;}return v==null?'':String(v);}
+
+  // Build the full detail payload (answers + per-dimension breakdown + profile summary)
+  // that powers both the on-page "Your answers" section and the report emails.
+  function buildDetail(test,ans,scored){
+    var answers=(test.questions||[]).map(function(q){return {q:q.text,a:labelText(test.labels,ans[q.id])};});
+    var breakdown=[]; var summary='';
+    if(test.resultType==='single'){
+      var lv=(test.levels||{})[scored.level]||{};
+      breakdown=[{label:test.title,pct:scored.pct,level:scored.level,level_label:lv.label||'',interpretation:lv.desc||''}];
+      summary=lv.label||'';
+    } else {
+      var ORDER=test.traitOrder||Object.keys(scored||{});
+      breakdown=ORDER.map(function(k){var t=(test.traits||{})[k]||{};var s=(scored||{})[k]||{};return {label:t.name||k,pct:s.pct,level:s.level,interpretation:t[s.level]||''};}).filter(function(x){return x.pct!=null;});
+      var joiner=LANG==='de'?' und ':LANG==='fa'?' و ':LANG==='sr'?' i ':' and ';
+      var top=ORDER.map(function(k){return[k,(scored||{})[k]];}).filter(function(x){return x[1];}).sort(function(a,b){return b[1].pct-a[1].pct;}).slice(0,2);
+      summary=top.map(function(x){var t=(test.traits||{})[x[0]]||{};return t.name||x[0];}).join(joiner);
+    }
+    return {answers:answers,breakdown:breakdown,summary:summary,overall:(scored&&scored.pct!=null?scored.pct:null),test_title:test.title,scale_name:test.scaleName||'',result_type:test.resultType};
+  }
+
+  // On-page "Your answers" card so respondents can see exactly what they answered.
+  function AnswersCard(props){
+    var answers=(props.detail&&props.detail.answers)||[];
+    if(!answers.length) return null;
+    return h('div',{className:'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6'},
+      h('h2',{className:'text-navy font-semibold text-sm mb-4'},(T.ui&&T.ui.yourAnswers)||'Your answers'),
+      h('div',null,answers.map(function(a,i){return h('div',{key:i,className:'flex items-start justify-between gap-4 text-sm py-2 border-b border-gray-100'},
+        h('span',{className:'text-gray-600 flex-1'},a.q),
+        h('span',{className:'text-navy font-semibold whitespace-nowrap'},a.a)
+      );}))
+    );
+  }
+
+  function ResultsWrapper({test,scores,detail,onRetake,onHome}){
     const ORDER=test.traitOrder||[];
     const backBtn=h('div',{className:'mt-6 bg-navy rounded-2xl p-5 text-center no-print'},
       h('button',{onClick:onHome,className:'bg-gold text-navy font-bold text-sm px-6 py-2 rounded-lg'},T.ui.backToTests)
@@ -855,6 +890,7 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
             h('p',{className:'text-gray-600 text-sm leading-relaxed'},lv.desc)
           ),
           h(AiAnalysis,{test:test,scores:scores}),
+          h(AnswersCard,{detail:detail}),
           h('p',{className:'text-gray-400 text-xs text-center mb-4'},test.footer),
           backBtn
         )
@@ -862,14 +898,15 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     }
 
     if(test.resultType==='big5'){
-      const pMap=T.big5.profile;
+      // profile adjectives exist only for Big Five (E/A/C/N/O); for DISC/GDMS fall back to the dimension name.
+      const pMap=T.big5.profile||{};
       const topTwo=ORDER.map(function(k){return[k,scores[k]];}).sort(function(a,b){return b[1].pct-a[1].pct;}).slice(0,2);
       const joiner=LANG==='de'?' und ':LANG==='fa'?' و ':LANG==='sr'?' i ':' and ';
-      const profileDesc=topTwo.map(function(x){return pMap[x[0]];}).join(joiner);
+      const profileDesc=topTwo.map(function(x){return pMap[x[0]]||((test.traits&&test.traits[x[0]]&&test.traits[x[0]].name)||x[0]);}).join(joiner);
       return h('div',{className:'bg-gray-50'},
-        h(ResultActions,{onRetake,onHome,title:T.big5.title}),
+        h(ResultActions,{onRetake,onHome,title:test.title}),
         h('div',{className:'max-w-2xl mx-auto px-4 py-8'},
-          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold'},T.big5.title+T.ui.resultsSuffix)),
+          h('div',{className:'text-center mb-6'},h('h1',{className:'text-navy text-2xl font-bold'},test.title+T.ui.resultsSuffix)),
           h('div',{className:'bg-navy text-white rounded-2xl p-6 mb-6'},
             h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-2'},T.ui.yourProfile),
             h('p',{className:'font-semibold'},T.ui.characterizedAs,h('span',{className:'text-gold'},profileDesc),'.')
@@ -883,6 +920,7 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
             ORDER.map(function(k){const t=test.traits[k];const s=scores[k];return h(TraitBar,{key:k,name:t.name,pct:s.pct,level:s.level,color:t.color,bg:t.bg,interpretation:t[s.level]});})
           ),
           h(AiAnalysis,{test:test,scores:scores}),
+          h(AnswersCard,{detail:detail}),
           h('p',{className:'text-gray-400 text-xs text-center mb-4'},test.footer),
           ASSESS_HUB && h('a',{href:'/assess/report',className:'block w-full text-center mt-2 mb-6 py-4 rounded-xl font-bold text-base no-print',style:{background:'#D7A13D',color:'#010A18',textDecoration:'none'}},'→ Get your full report'),
           backBtn
@@ -899,6 +937,7 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
           h('h2',{className:'text-navy font-semibold text-sm mb-5'},T.ui.yourScores),
           ORDER.map(function(k){const t=test.traits[k];const s=scores[k];if(!t||!s)return null;return h(TraitBar,{key:k,name:t.name,pct:s.pct,level:s.level,color:t.color,bg:t.bg,interpretation:t[s.level]});})
         ),
+        h(AnswersCard,{detail:detail}),
         h('p',{className:'text-gray-400 text-xs text-center mb-4'},T.ui.forInfoOnly),
         backBtn
       )
@@ -908,13 +947,20 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
   function SurveyRunner({test,onComplete,onBack}){
     const[idx,setIdx]=useState(0);
     const[answers,setAns]=useState({});
+    const lockRef=React.useRef(false);
     const qs=test.questions;
     const q=qs[idx];
+    if(!q) return null; // guard: never dereference an undefined question (prevents white-screen on index overrun)
     function pick(v){
+      if(lockRef.current) return; // debounce rapid/double taps so idx can't overrun the last question
+      lockRef.current=true;
       const next=Object.assign({},answers);next[q.id]=v;setAns(next);
-      setTimeout(function(){if(idx<qs.length-1)setIdx(function(i){return i+1;});else onComplete(next);},280);
+      setTimeout(function(){
+        if(idx<qs.length-1){setIdx(function(i){return i+1;});lockRef.current=false;}
+        else{onComplete(next);}
+      },280);
     }
-    return h(QuestionCard,{question:q,answers,labels:test.labels,onPick:pick,onBack:function(){idx>0?setIdx(function(i){return i-1;}):onBack();},current:idx+1,total:qs.length,testTitle:test.title});
+    return h(QuestionCard,{question:q,answers,labels:test.labels,onPick:pick,onBack:function(){lockRef.current=false;idx>0?setIdx(function(i){return i-1;}):onBack();},current:idx+1,total:qs.length,testTitle:test.title});
   }
 
   function Home({onSelectTest}){
@@ -962,7 +1008,8 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
       if(skip){onDone();return;}
       if(!email||email.indexOf('@')<1){setErr((T.ui&&T.ui.gateInvalid)||'Please enter a valid email.');return;}
       setBusy(true);
-      fetch('/api/email-gate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.trim(),name:name.trim(),source:'assess_'+test.id,track:test.id,test_title:test.title,score:repScore(),scores:scores,result_type:test.resultType,consent:true})}).catch(function(){}).finally(function(){onDone();});
+      var d=props.detail||{};
+      fetch('/api/email-gate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.trim(),name:name.trim(),source:'assess_'+test.id,track:test.id,test_title:test.title,scale_name:test.scaleName||'',score:repScore(),scores:scores,result_type:test.resultType,summary:d.summary||'',breakdown:d.breakdown||[],answers:d.answers||[],consent:true})}).catch(function(){}).finally(function(){onDone();});
     }
     return h('div',{className:'bg-gray-50 flex items-center justify-center px-4 py-20',style:{minHeight:'70vh'}},
       h('div',{className:'bg-white rounded-2xl border border-gray-100 shadow-sm p-8 w-full text-center',style:{maxWidth:'420px'}},
@@ -984,15 +1031,19 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     const[screen,setScreen]=useState('home');
     const[activeId,setActive]=useState(null);
     const[scores,setScores]=useState(null);
+    const[detail,setDetail]=useState(null);
     const test=TESTS.find(function(t){return t.id===activeId;});
     function selectTest(id){setActive(id);setScreen('survey');window.scrollTo(0,0);}
     function handleComplete(ans){
       const scored=test.score(ans);
       setScores(scored);
+      // Capture the full detail (answers + breakdown + summary) once, reuse for gate POST + results page.
+      const d=buildDetail(test,ans,scored);
+      setDetail(d);
       // Persist every completed test so a combined profile can be built later.
       try{
         var key='ahoosh_assess_'+test.id;
-        localStorage.setItem(key,JSON.stringify({test_id:test.id,title:test.title,resultType:test.resultType,scores:scored,completed_at:new Date().toISOString()}));
+        localStorage.setItem(key,JSON.stringify({test_id:test.id,title:test.title,resultType:test.resultType,scores:scored,answers:d.answers,completed_at:new Date().toISOString()}));
       }catch(e){}
       // Data capture: gate the result behind an email (collect the lead, then reveal).
       setScreen('gate');
@@ -1002,8 +1053,8 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     let content;
     if(screen==='home') content=h(Home,{onSelectTest:selectTest});
     else if(screen==='survey') content=h(SurveyRunner,{test,onComplete:handleComplete,onBack:goHome});
-    else if(screen==='gate') content=h(GateScreen,{test,scores,onDone:function(){setScreen('results');window.scrollTo(0,0);}});
-    else content=h(ResultsWrapper,{test,scores,onRetake:function(){selectTest(activeId);},onHome:goHome});
+    else if(screen==='gate') content=h(GateScreen,{test,scores,detail,onDone:function(){setScreen('results');window.scrollTo(0,0);}});
+    else content=h(ResultsWrapper,{test,scores,detail,onRetake:function(){selectTest(activeId);},onHome:goHome});
     return h('div',{dir:RTL?'rtl':'ltr'},content);
   }
 
