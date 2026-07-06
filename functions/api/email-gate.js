@@ -120,7 +120,7 @@ export async function onRequestPost(context) {
     // ── Send the customer their result (transactional, best-effort, never blocks) ──
     // Requires a verified sender in Brevo. Set BREVO_SENDER (verified email) in Pages env vars.
     if (captured) {
-      const sender = { email: env.BREVO_SENDER || 'hello@ahoosh.ai', name: env.BREVO_SENDER_NAME || 'AHoosh' };
+      const sender = { email: env.BREVO_SENDER || 'contact@ahoosh.ai', name: env.BREVO_SENDER_NAME || 'AHoosh' };
       const label = testTitle || 'assessment';
       const scoreLine = score !== null
         ? `<div style="font-size:40px;font-weight:700;color:#D7A13D;margin:6px 0;">${score}<span style="font-size:15px;color:#9FB0C4;"> / 100</span></div>`
@@ -153,7 +153,7 @@ export async function onRequestPost(context) {
     // Recipient configurable via ADMIN_NOTIFY_EMAIL; sender must be verified in Brevo.
     {
       const adminTo = env.ADMIN_NOTIFY_EMAIL || 'hesamjafarzadeh@gmail.com';
-      const adminSender = { email: env.BREVO_SENDER || 'hello@ahoosh.ai', name: 'AHoosh Assessments' };
+      const adminSender = { email: env.BREVO_SENDER || 'contact@ahoosh.ai', name: 'AHoosh Assessments' };
       let scoresRows = '';
       if (scores && typeof scores === 'object') {
         for (const k of Object.keys(scores)) {
