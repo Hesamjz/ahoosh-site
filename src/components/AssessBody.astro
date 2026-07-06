@@ -898,8 +898,9 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     }
 
     if(test.resultType==='big5'){
-      // profile adjectives exist only for Big Five (E/A/C/N/O); for DISC/GDMS fall back to the dimension name.
-      const pMap=T.big5.profile||{};
+      // profile adjectives exist only for Big Five (E/A/C/N/O). Only use them for the actual Big Five test —
+      // otherwise DISC's 'C'/GDMS's 'A' keys collide with Big Five keys. DISC/GDMS use dimension names.
+      const pMap=(test.id==='big5')?(T.big5.profile||{}):{};
       const topTwo=ORDER.map(function(k){return[k,scores[k]];}).sort(function(a,b){return b[1].pct-a[1].pct;}).slice(0,2);
       const joiner=LANG==='de'?' und ':LANG==='fa'?' و ':LANG==='sr'?' i ':' and ';
       const profileDesc=topTwo.map(function(x){return pMap[x[0]]||((test.traits&&test.traits[x[0]]&&test.traits[x[0]].name)||x[0]);}).join(joiner);
