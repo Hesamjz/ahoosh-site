@@ -59,6 +59,11 @@ export async function onRequestPost(context) {
   const scores = body.scores && typeof body.scores === 'object' ? body.scores : null;
   const breakdown = Array.isArray(body.breakdown) ? body.breakdown.slice(0, 12) : [];
   const answers = Array.isArray(body.answers) ? body.answers.slice(0, 80) : [];
+  // Consulting-report fields (business/website track). When execSummary is present we render a
+  // report-style email instead of the personality one.
+  const execSummary = String(body.exec_summary || '').slice(0, 6000);
+  const quickWin = String(body.quick_win || '').slice(0, 1500);
+  const founderNote = String(body.founder_note || '').slice(0, 1500);
 
   if (!EMAIL_RE.test(email)) return reply({ ok: true, captured: false, status: 'invalid_email' });
 
@@ -104,14 +109,18 @@ export async function onRequestPost(context) {
       const label = testTitle || 'assessment';
 
       context.waitUntil((async () => {
-        const advisory = await buildAdvisory(env, { testTitle: label, scaleName, summary, score, breakdown, answers });
+        const isReport = !!execSummary; // consulting report (business/website) vs personality test
+        const advisory = isReport ? '' : await buildAdvisory(env, { testTitle: label, scaleName, summary, score, breakdown, answers });
 
-        // shared HTML fragments
+        // ── shared dark-email fragments ──
         const scoreBlock = score !== null
           ? `<div style="font-size:40px;font-weight:700;color:#D7A13D;line-height:1;margin:6px 0;">${score}<span style="font-size:15px;color:#9FB0C4;"> / 100</span></div>`
           : '';
+        const H3 = 'style="font-size:14px;color:#D7A13D;letter-spacing:1px;text-transform:uppercase;margin:22px 0 8px;"';
+        const P = 'style="color:#C8D4E0;font-size:14px;line-height:1.6;margin:0 0 10px;"';
+        const paras = (t) => t.split(/\n\n+/).map((p) => `<p ${P}>${esc(p)}</p>`).join('');
         const breakdownHtml = breakdown.length
-          ? `<h3 style="font-size:14px;color:#D7A13D;letter-spacing:1px;text-transform:uppercase;margin:22px 0 8px;">Your breakdown</h3>` +
+          ? `<h3 ${H3}>${isReport ? 'Priority areas' : 'Your breakdown'}</h3>` +
             breakdown.map((b) => {
               const pct = (b && b.pct != null) ? `${b.pct}/100` : '';
               const lvl = levelWord(b && b.level);
@@ -120,53 +129,59 @@ export async function onRequestPost(context) {
               return `<div style="margin:0 0 4px;"><b style="color:#F0F2F5;font-size:14px;">${esc(b && b.label)}</b> <span style="color:#9FB0C4;font-size:13px;">${pct}${tag}</span></div>${interp}`;
             }).join('')
           : '';
-        const advisoryHtml = advisory
-          ? `<h3 style="font-size:14px;color:#D7A13D;letter-spacing:1px;text-transform:uppercase;margin:22px 0 8px;">What this means for you</h3>` +
-            advisory.split(/\n\n+/).map((p) => `<p style="color:#C8D4E0;font-size:14px;line-height:1.6;margin:0 0 10px;">${esc(p)}</p>`).join('')
-          : '';
-        const answersHtml = answers.length ? answersTable(answers, true) : '';
+        const execHtml = (isReport && execSummary) ? `<h3 ${H3}>Executive summary</h3>${paras(execSummary)}` : '';
+        const quickWinHtml = (isReport && quickWin) ? `<h3 ${H3}>Quick win — do this week</h3>${paras(quickWin)}` : '';
+        const founderHtml = (isReport && founderNote) ? `<h3 ${H3}>A note for you</h3>${paras(founderNote)}` : '';
+        const advisoryHtml = advisory ? `<h3 ${H3}>What this means for you</h3>${paras(advisory)}` : '';
+        const summaryLine = (summary && !isReport) ? `<p style="color:#F0F2F5;font-size:15px;margin:6px 0 4px;">You are most strongly characterized as <b style="color:#D7A13D;">${esc(summary)}</b>.</p>` : '';
+        const answersHtml = (!isReport && answers.length) ? answersTable(answers, true) : ''; // personality: show their answers to the customer
 
         // ── 1) Customer full-report email ──
         const custHtml = `<div style="background:#03142E;color:#F0F2F5;font-family:Georgia,serif;padding:32px;border-radius:12px;max-width:600px;margin:auto;">
           <div style="color:#D7A13D;letter-spacing:3px;font-size:11px;text-transform:uppercase;">AHoosh &middot; Growth Assessment</div>
-          <h1 style="font-size:22px;margin:10px 0 2px;font-weight:700;">Your ${esc(label)} report</h1>
+          <h1 style="font-size:22px;margin:10px 0 2px;font-weight:700;">Your ${esc(label)}${isReport ? '' : ' report'}</h1>
           ${scaleName ? `<div style="color:#7f92a8;font-size:12px;margin-bottom:6px;">${esc(scaleName)}</div>` : ''}
           ${scoreBlock}
-          ${summary ? `<p style="color:#F0F2F5;font-size:15px;margin:6px 0 4px;">You are most strongly characterized as <b style="color:#D7A13D;">${esc(summary)}</b>.</p>` : ''}
+          ${summaryLine}
+          ${execHtml}
           ${breakdownHtml}
+          ${quickWinHtml}
+          ${founderHtml}
           ${advisoryHtml}
           ${answersHtml}
           <div style="margin-top:22px;padding-top:16px;border-top:1px solid rgba(215,161,61,0.25);">
-            <p style="color:#C8D4E0;font-size:14px;line-height:1.6;margin:0 0 10px;">Want a human read on what this means for your business or career? Book a free 30-minute call &mdash; no pitch.</p>
+            <p ${P}>Want a human read on what this means for your business or career? Book a free 30-minute call &mdash; no pitch.</p>
             <a href="${CAL}" style="display:inline-block;background:#D7A13D;color:#03142E;font-weight:700;text-decoration:none;padding:12px 26px;border-radius:8px;">Book a strategy call &rarr;</a>
           </div>
           <p style="color:#5e6e82;font-size:12px;margin-top:24px;">AHoosh.ai &mdash; AI-augmented consulting &middot; ahoosh.ai. For informational purposes only.</p>
         </div>`;
 
-        await sendBrevo(env, { sender, to: [{ email, name: name || undefined }], subject: `Your ${label} report — AHoosh`, html: custHtml, tag: 'result email' });
+        await sendBrevo(env, { sender, to: [{ email, name: name || undefined }], subject: `Your ${label}${isReport ? '' : ' report'} — AHoosh`, html: custHtml, tag: 'result email' });
 
         // ── 2) Admin lead email — everything Hesam needs to advise ──
         const rows = [
           ['Name', name || '—'], ['Email', email], ['Assessment', testTitle || track || '—'],
-          ['Overall', score != null ? score + '/100' : '—'], ['Profile', summary || '—'],
+          ['Overall', score != null ? score + '/100' : '—'], [isReport ? 'Summary' : 'Profile', summary || (isReport ? 'see below' : '—')],
           ['Source', source], ['Consent', consent ? 'yes' : 'no'], ['When', new Date().toISOString()],
         ].map(([k, v]) => `<tr><td style="padding:2px 12px 2px 0;color:#555;"><b>${esc(k)}</b></td><td>${esc(v)}</td></tr>`).join('');
+        const aH3 = 'style="font-size:13px;color:#111;margin:16px 0 6px;"';
+        const aParas = (t) => t.split(/\n\n+/).map((p) => `<p style="font-size:13px;line-height:1.55;color:#333;margin:0 0 8px;">${esc(p)}</p>`).join('');
+        const adminExec = (isReport && execSummary) ? `<h3 ${aH3}>Executive summary</h3>${aParas(execSummary)}` : '';
         const adminBreakdown = breakdown.length
-          ? `<h3 style="font-size:13px;color:#111;margin:16px 0 6px;">Breakdown</h3><table style="border-collapse:collapse;font-size:13px;">` +
+          ? `<h3 ${aH3}>${isReport ? 'Priority areas' : 'Breakdown'}</h3><table style="border-collapse:collapse;font-size:13px;">` +
             breakdown.map((b) => `<tr><td style="padding:2px 12px 2px 0;"><b>${esc(b && b.label)}</b></td><td>${b && b.pct != null ? esc(b.pct) + '/100' : ''} ${esc(levelWord(b && b.level))}</td></tr><tr><td></td><td style="color:#666;padding-bottom:6px;">${esc(b && b.interpretation)}</td></tr>`).join('') +
             `</table>`
           : '';
-        const adminAdvisory = advisory
-          ? `<h3 style="font-size:13px;color:#111;margin:16px 0 6px;">AI read (for advising)</h3>` +
-            advisory.split(/\n\n+/).map((p) => `<p style="font-size:13px;line-height:1.55;color:#333;margin:0 0 8px;">${esc(p)}</p>`).join('')
-          : '';
+        const adminQuick = (isReport && quickWin) ? `<h3 ${aH3}>Quick win</h3>${aParas(quickWin)}` : '';
+        const adminFounder = (isReport && founderNote) ? `<h3 ${aH3}>Note</h3>${aParas(founderNote)}` : '';
+        const adminAdvisory = advisory ? `<h3 ${aH3}>AI read (for advising)</h3>${aParas(advisory)}` : '';
         const adminAnswers = answers.length
-          ? `<h3 style="font-size:13px;color:#111;margin:16px 0 6px;">Their answers (${answers.length})</h3>` + answersTable(answers, false)
+          ? `<h3 ${aH3}>${isReport ? 'Their inputs' : 'Their answers'} (${answers.length})</h3>` + answersTable(answers, false)
           : '';
         const adminHtml = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111;max-width:640px;">
-          <h2 style="margin:0 0 10px;">New assessment lead</h2>
+          <h2 style="margin:0 0 10px;">New ${isReport ? 'report lead' : 'assessment lead'}</h2>
           <table style="border-collapse:collapse;font-size:14px;">${rows}</table>
-          ${adminBreakdown}${adminAdvisory}${adminAnswers}
+          ${adminExec}${adminBreakdown}${adminQuick}${adminFounder}${adminAdvisory}${adminAnswers}
           <p style="color:#888;font-size:12px;margin-top:16px;">Saved to Brevo${stored ? ' + D1' : ''}. Automated alert from ahoosh.ai/assess.</p>
         </div>`;
 

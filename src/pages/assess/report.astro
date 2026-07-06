@@ -123,6 +123,35 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 <script is:inline>
   const CALENDLY_URL = 'https://calendly.com/ahoosh/strategy';
 
+  // Kept so the email gate can send the FULL report + the person's inputs (not just their email).
+  var LAST_REPORT = null, LAST_INPUTS = [];
+
+  function humanize(k){ return String(k||'').replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }); }
+
+  // Flatten the business + website inputs into a readable Q→A list so Hesam can see what they entered.
+  function buildInputs(a){
+    var out = [];
+    try {
+      if (a.business) {
+        var b = a.business;
+        var bm = { description:'What the business does', industry:'Industry', stage:'Stage', team:'Team size', revenue:'Monthly revenue', challenge:'Biggest challenge' };
+        if (b.basics) Object.keys(b.basics).forEach(function(k){ if (b.basics[k]) out.push({ q: bm[k] || humanize(k), a: b.basics[k] }); });
+        var swot = b.swot || b;
+        ['strengths','weaknesses','opportunities','threats'].forEach(function(k){ if (swot && typeof swot[k] === 'string' && swot[k]) out.push({ q: humanize(k), a: swot[k] }); });
+        ['customer','goal','positioning','offer'].forEach(function(k){ if (typeof b[k] === 'string' && b[k]) out.push({ q: humanize(k), a: b[k] }); });
+      }
+    } catch (e) {}
+    try {
+      if (a.website) {
+        var w = a.website;
+        if (w.url) out.push({ q:'Website', a: w.url });
+        if (w.scores) { var wm = { performance:'Performance', accessibility:'Accessibility', seo:'SEO', best_practices:'Best Practices' }; Object.keys(w.scores).forEach(function(k){ out.push({ q: wm[k] || humanize(k), a: w.scores[k] + '/100' }); }); }
+        if (w.vitals) Object.keys(w.vitals).forEach(function(k){ if (w.vitals[k]) out.push({ q: humanize(k), a: String(w.vitals[k]) }); });
+      }
+    } catch (e) {}
+    return out;
+  }
+
   function openEmailGate() {
     var modal = document.getElementById('email-modal');
     if (modal) { modal.classList.add('open'); document.getElementById('gate-email').focus(); }
@@ -140,10 +169,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     if (submitEl) submitEl.disabled = true;
     if (statusEl) statusEl.textContent = 'Saving…';
 
+    var r = LAST_REPORT || {};
+    var priorities = (r.priorities || []).map(function(p){
+      return { label: p.area, interpretation: [p.finding, p.recommendation].filter(Boolean).join(' — '), pct: null, level: '' };
+    });
     fetch('/api/email-gate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, source: 'assess_report_pdf' }),
+      body: JSON.stringify({
+        email: email, name: '', source: 'assess_report_pdf', track: 'report', test_title: 'Consulting Report',
+        score: (typeof r.overall_score === 'number' ? r.overall_score : null),
+        exec_summary: r.executive_summary || '',
+        quick_win: r.quick_win || '',
+        founder_note: r.founder_note || '',
+        breakdown: priorities,
+        answers: LAST_INPUTS || [],
+        consent: true,
+      }),
     })
     .then(function(r){ return r.json(); })
     .catch(function(){ return { ok: true }; })
@@ -196,6 +238,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       return;
     }
 
+    LAST_INPUTS = buildInputs(assessments); // remember inputs for the email gate
+
     try {
       const res = await fetch('/api/report', {
         method: 'POST',
@@ -225,6 +269,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
 
   function renderReport(r, done) {
+    LAST_REPORT = r; // remember the full report for the email gate
     document.getElementById('loading').style.display = 'none';
     const el = document.getElementById('report');
     el.style.display = 'block';
