@@ -1,0 +1,138 @@
+:root{
+  --bg:#ffffff;
+  --ink:#151515;
+  --muted:#8c8880;
+  --accent:#b39a6b;         /* soft champagne */
+  --hairline:#e8e5df;
+  --font-display:'Cormorant Garamond', Georgia, serif;
+  --font-sans:'Jost', system-ui, sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+canvas{display:block}
+
+/* ---------- Loader ---------- */
+#loader{
+  position:fixed;inset:0;z-index:1000;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+  transition:opacity .8s ease;
+}
+#loader.hidden{opacity:0;pointer-events:none}
+.loader-brand{font-family:var(--font-display);font-size:clamp(2rem,6vw,3.4rem);letter-spacing:.42em;padding-left:.42em;font-weight:400}
+.loader-track{width:min(240px,54vw);height:1px;background:var(--hairline);overflow:hidden}
+#loader-bar{width:0%;height:100%;background:var(--accent);transition:width .25s ease}
+#loader-percent{font-size:.72rem;letter-spacing:.28em;color:var(--muted)}
+
+/* ---------- Header ---------- */
+.site-header{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:26px clamp(20px,5vw,56px);
+  mix-blend-mode:multiply;
+}
+.brand{font-family:var(--font-display);font-size:1.5rem;letter-spacing:.34em;padding-left:.34em}
+.nav{display:flex;gap:clamp(18px,3vw,42px)}
+.nav a{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);opacity:.7;transition:opacity .3s}
+.nav a:hover{opacity:1}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;height:100vh;width:100%;overflow:hidden}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:grab}
+#hero-canvas.grabbing{cursor:grabbing}
+.hero-copy{
+  position:absolute;left:clamp(24px,7vw,110px);top:50%;transform:translateY(-50%);
+  text-align:left;z-index:20;pointer-events:none;max-width:42vw;
+}
+.eyebrow{
+  display:inline-block;font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:16px;
+}
+.hero-title{
+  font-family:var(--font-display);font-weight:400;
+  font-size:clamp(3rem,9vw,7.4rem);line-height:.95;letter-spacing:.14em;
+}
+.hero-tagline{
+  font-family:var(--font-display);font-style:italic;font-weight:300;
+  font-size:clamp(1.05rem,2.4vw,1.7rem);color:var(--muted);margin-top:14px;
+}
+.drag-hint{
+  margin-top:34px;
+  font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:9px;opacity:.85;
+  transition:opacity .5s ease;
+}
+.drag-hint.gone{opacity:0}
+.drag-ico{font-size:1.05rem;color:var(--accent)}
+.scroll-cue{
+  position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:20;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);pointer-events:none;
+}
+.scroll-cue i{width:1px;height:44px;background:linear-gradient(var(--accent),transparent);animation:cue 2s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:scaleY(.4);opacity:.4;transform-origin:top}50%{transform:scaleY(1);opacity:1;transform-origin:top}}
+
+/* ---------- Showcase ---------- */
+.showcase{position:relative}
+#stage{position:fixed;inset:0;width:100%;height:100vh;z-index:5;opacity:0;pointer-events:none}
+#scroll-container{position:relative;height:480vh;z-index:1}
+
+.captions{position:fixed;inset:0;z-index:10;pointer-events:none}
+.caption{
+  position:absolute;top:50%;transform:translateY(calc(-50% + var(--slide,0px)));max-width:min(360px,38vw);
+  opacity:0;will-change:opacity,transform;
+}
+.caption.side-left{left:clamp(24px,6vw,90px);text-align:left}
+.caption.side-right{right:clamp(24px,6vw,90px);text-align:right}
+.cap-index{
+  display:block;font-family:var(--font-display);font-size:1rem;letter-spacing:.3em;
+  color:var(--accent);margin-bottom:10px;
+}
+.cap-name{
+  font-family:var(--font-display);font-weight:400;
+  font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.02;margin-bottom:14px;
+}
+.cap-desc{font-size:.95rem;line-height:1.7;color:var(--muted);font-weight:300}
+
+/* ---------- Outro ---------- */
+.outro{position:relative;z-index:20;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;justify-content:space-between}
+.outro-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px}
+.outro-title{font-family:var(--font-display);font-weight:400;font-size:clamp(2.6rem,7vw,5rem);line-height:1.02;margin:8px 0 20px}
+.outro-desc{max-width:520px;font-size:1rem;line-height:1.8;color:var(--muted);font-weight:300;margin-bottom:38px}
+.outro-cta{
+  display:inline-block;border:1px solid var(--ink);padding:16px 38px;
+  font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;transition:.35s ease;
+}
+.outro-cta:hover{background:var(--ink);color:#fff}
+.site-footer{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:28px clamp(20px,5vw,56px);border-top:1px solid var(--hairline);
+  font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+}
+.site-footer span:first-child{font-family:var(--font-display);letter-spacing:.3em;color:var(--ink)}
+
+/* ---------- Mobile ---------- */
+@media (max-width:768px){
+  .nav{display:none}
+  .site-header{padding:18px 22px}
+  .brand{font-size:1.25rem}
+  #scroll-container{height:440vh}
+  /* caption sits low, product plays in the upper-middle band */
+  .caption,.caption.side-left,.caption.side-right{
+    left:50%;right:auto;max-width:86vw;text-align:center;top:auto;bottom:8%;
+    transform:translate(-50%, var(--slide,0px));
+  }
+  .cap-name{font-size:2rem}
+  .cap-desc{font-size:.9rem}
+  .hero-copy{left:50%;top:11%;transform:translateX(-50%);text-align:center;max-width:90vw}
+  .hero-title{font-size:2.7rem;letter-spacing:.08em}
+  .hero-tagline{font-size:1.05rem}
+  .drag-hint{justify-content:center;margin-top:22px}
+  .scroll-cue{bottom:24px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .scroll-cue i{animation:none}
+}
