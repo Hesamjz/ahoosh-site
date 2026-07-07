@@ -34,8 +34,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Archivo',sans-serif;over
 .ticker span{margin:0 24px}
 
 /* nav */
-nav{position:fixed;top:38px;left:0;right:0;z-index:39;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;mix-blend-mode:difference}
-nav .b{font-family:'Anton';font-style:italic;font-size:24px;transform:skewX(-8deg);letter-spacing:.03em}
+nav{position:fixed;top:38px;left:0;right:0;z-index:39;display:flex;align-items:center;justify-content:space-between;padding:14px 28px}
+nav .b{display:flex;align-items:center}
+nav .b img{height:34px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.55))}
 nav .l{display:flex;gap:24px;font-weight:900;font-size:12px;letter-spacing:.13em;text-transform:uppercase}
 nav .l a{color:var(--ink);text-decoration:none}
 .sound{position:fixed;top:46px;right:22px;z-index:45;font-family:'Archivo Black';font-size:11px;letter-spacing:.1em;text-transform:uppercase;
@@ -149,7 +150,7 @@ footer .fn{align-self:flex-end;color:#6a6a70;font-size:12px;letter-spacing:.1em}
 <body>
 <div class="grain"></div>
 <div class="ticker"><div class="run" id="tk"></div></div>
-<nav><div class="b">ABD</div><div class="l"><a href="#line" data-k="nav_drop">El Drop</a><a href="#line" data-k="nav_line">Línea JDM</a><a href="#line" data-k="nav_cat">Catálogo</a><a href="#" data-k="nav_about">Nosotros</a></div><div class="l"><span id="cartc">CARRITO · 0</span></div></nav>
+<nav><a href="#" class="b" aria-label="ABD"><img src="assets/abd_white.png" alt="ABD"></a><div class="l"><a href="#line" data-k="nav_drop">El Drop</a><a href="#line" data-k="nav_line">Línea JDM</a><a href="#line" data-k="nav_cat">Catálogo</a><a href="#" data-k="nav_about">Nosotros</a></div><div class="l"><span id="cartc">CARRITO · 0</span></div></nav>
 <button class="sound on" id="snd">♪ SONIDO ON</button>
 <div class="langsw"><button class="langbtn on" data-l="es">ES</button><button class="langbtn" data-l="en">EN</button></div>
 
