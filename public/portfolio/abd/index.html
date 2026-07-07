@@ -299,11 +299,22 @@ sndBtn.addEventListener('click',()=>{initAudio();soundOn=!soundOn;sndBtn.classLi
 /* ---------- pedal (hold to rev) ---------- */
 const pedal=document.getElementById('pedal'),pfill=pedal.querySelector('.fill');
 const revAudio=new Audio(window.ABD_REV||'');revAudio.loop=true;revAudio.preload='auto';revAudio.volume=0;
-function revDown(e){e.preventDefault();holding=true;initAudio();if(!soundOn){soundOn=true;sndBtn.classList.add('on');sndBtn.textContent=STR.sound_on[L]}if(AC&&AC.state==='suspended')AC.resume();if(revAudio&&revAudio.paused)revAudio.play().catch(()=>{});}
+let audioUnlocked=false;
+function unlockAudio(){initAudio();if(AC&&AC.state==='suspended')AC.resume();
+  if(!audioUnlocked&&revAudio){const pr=revAudio.play();if(pr&&pr.then)pr.then(()=>{audioUnlocked=true;}).catch(()=>{});else audioUnlocked=true;}}
+function startRev(e){if(e&&e.button!=null&&e.button!==0)return; if(e&&e.cancelable)e.preventDefault();
+  holding=true; unlockAudio();
+  if(!soundOn){soundOn=true;sndBtn.classList.add('on');sndBtn.textContent=STR.sound_on[L];}}
 function revUp(){holding=false;}
-pedal.addEventListener('pointerdown',revDown);
-addEventListener('pointerup',revUp);
-pedal.addEventListener('pointercancel',revUp);
+const revDown=startRev;
+pedal.addEventListener('pointerdown',startRev);
+pedal.addEventListener('mousedown',startRev);
+window.addEventListener('pointerup',revUp);
+window.addEventListener('mouseup',revUp);
+window.addEventListener('pointercancel',revUp);
+window.addEventListener('blur',revUp);
+// unlock audio on the first interaction anywhere (browsers block autoplay until a gesture)
+window.addEventListener('pointerdown',unlockAudio);
 
 /* ================= FX CANVAS (exhaust + backfire + tire marks) ================= */
 const fx=document.getElementById('fx'),fc=fx.getContext('2d');
@@ -374,12 +385,11 @@ function tick(){
   redline=rpm>0.85;
   // pedal fill
   pfill.style.transform=`scaleX(${rpm})`;pedal.classList.toggle('hot',rpm>0.5);
-  // engine sound — real sample: rate + volume follow the throttle, stop on release
+  // engine sound — sample loops once unlocked; only VOLUME + rate follow the throttle (no play/pause thrash)
   if(revAudio){
-    revAudio.playbackRate=0.8+rpm*2.8;
-    revAudio.volume=soundOn?Math.min(1,0.14+rpm*0.95):0;
-    if(soundOn&&(holding||rpm>0.03)){ if(revAudio.paused)revAudio.play().catch(()=>{}); }
-    else if(!revAudio.paused&&rpm<0.03){ revAudio.pause(); }
+    revAudio.playbackRate=0.85+rpm*2.6;
+    revAudio.volume=(soundOn&&audioUnlocked)?Math.min(1,rpm*1.15):0;
+    if(soundOn&&audioUnlocked&&revAudio.paused){ revAudio.play().catch(()=>{}); }
   }
   if(master)master.gain.setTargetAtTime(soundOn?0.8:0,AC.currentTime,0.05); // carries the backfire pops
   // vertical bar
@@ -496,7 +506,8 @@ tick();
 
   // interaction
   let rotY=0,vel=0,drag=false,lastX=0,idle=0;
-  canvas.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;idle=0;canvas.setPointerCapture(e.pointerId)});
+  canvas.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;idle=0;canvas.setPointerCapture(e.pointerId);
+    if(e.button===0||e.button==null){holding=true;unlockAudio();if(!soundOn){soundOn=true;sndBtn.classList.add('on');sndBtn.textContent=STR.sound_on[L];}}});
   canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX;lastX=e.clientX;vel=dx*0.01;rotY+=vel;idle=0});
   canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointerleave',()=>drag=false);
   function resize(){const w=canvas.clientWidth,h=canvas.clientHeight,dpr=Math.min(devicePixelRatio,2);
