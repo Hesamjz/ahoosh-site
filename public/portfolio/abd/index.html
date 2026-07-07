@@ -41,7 +41,7 @@ nav .l a{color:var(--ink);text-decoration:none}
 .sound{position:fixed;top:46px;right:22px;z-index:45;font-family:'Archivo Black';font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   background:transparent;color:var(--ink);border:2px solid var(--ink);padding:7px 12px;cursor:pointer}
 .sound.on{background:var(--red);border-color:var(--red);color:#09090b}
-.langsw{position:fixed;top:46px;right:104px;z-index:45;display:flex;border:2px solid var(--ink)}
+.langsw{position:fixed;top:84px;right:22px;z-index:45;display:flex;border:2px solid var(--ink)}
 .langbtn{font-family:'Archivo Black';font-size:11px;letter-spacing:.05em;padding:7px 9px;background:transparent;color:var(--ink);border:none;cursor:pointer}
 .langbtn.on{background:var(--ink);color:#09090b}
 
@@ -135,7 +135,7 @@ footer .fn{align-self:flex-end;color:#6a6a70;font-size:12px;letter-spacing:.1em}
 <div class="grain"></div>
 <div class="ticker"><div class="run" id="tk"></div></div>
 <nav><div class="b">ABD</div><div class="l"><a href="#line" data-k="nav_drop">El Drop</a><a href="#line" data-k="nav_line">Línea JDM</a><a href="#line" data-k="nav_cat">Catálogo</a><a href="#" data-k="nav_about">Nosotros</a></div><div class="l"><span id="cartc">CARRITO · 0</span></div></nav>
-<button class="sound" id="snd">♪ SONIDO OFF</button>
+<button class="sound on" id="snd">♪ SONIDO ON</button>
 <div class="langsw"><button class="langbtn on" data-l="es">ES</button><button class="langbtn" data-l="en">EN</button></div>
 
 <!-- HERO -->
@@ -276,7 +276,7 @@ setInterval(()=>{ if(rpm<0.02){ // countdown mode only when engine near idle
 }},1000);
 
 /* ================= WEB AUDIO ENGINE ================= */
-let AC=null, master=null, soundOn=false, eng=null;
+let AC=null, master=null, soundOn=true, eng=null; // sound ON by default; SONIDO button fully mutes
 function initAudio(){
   if(AC)return; AC=new (window.AudioContext||window.webkitAudioContext)();
   master=AC.createGain();master.gain.value=0.0;master.connect(AC.destination);
@@ -304,7 +304,9 @@ function unlockAudio(){initAudio();if(AC&&AC.state==='suspended')AC.resume();
   if(!audioUnlocked&&revAudio){const pr=revAudio.play();if(pr&&pr.then)pr.then(()=>{audioUnlocked=true;}).catch(()=>{});else audioUnlocked=true;}}
 function startRev(e){if(e&&e.button!=null&&e.button!==0)return; if(e&&e.cancelable)e.preventDefault();
   holding=true; unlockAudio();
-  if(!soundOn){soundOn=true;sndBtn.classList.add('on');sndBtn.textContent=STR.sound_on[L];}}
+  rpm=Math.max(rpm,0.45);                         // every click = an instant audible rev
+  if(soundOn&&revAudio){try{revAudio.currentTime=0;}catch(_){}}   // replay the rev from the start each click
+}
 function revUp(){holding=false;}
 const revDown=startRev;
 pedal.addEventListener('pointerdown',startRev);
@@ -507,7 +509,7 @@ tick();
   // interaction
   let rotY=0,vel=0,drag=false,lastX=0,idle=0;
   canvas.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;idle=0;canvas.setPointerCapture(e.pointerId);
-    if(e.button===0||e.button==null){holding=true;unlockAudio();if(!soundOn){soundOn=true;sndBtn.classList.add('on');sndBtn.textContent=STR.sound_on[L];}}});
+    if(e.button===0||e.button==null)startRev();});
   canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX;lastX=e.clientX;vel=dx*0.01;rotY+=vel;idle=0});
   canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointerleave',()=>drag=false);
   function resize(){const w=canvas.clientWidth,h=canvas.clientHeight,dpr=Math.min(devicePixelRatio,2);
