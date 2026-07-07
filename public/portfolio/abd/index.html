@@ -69,7 +69,7 @@ nav .l a{color:var(--ink);text-decoration:none}
 /* 3D stage */
 .stage-wrap{position:relative;height:80vh;display:flex;align-items:center;justify-content:center}
 #stage{width:100%;height:100%;cursor:grab}#stage:active{cursor:grabbing}
-.swatches{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:min(90%,420px)}
+.swatches{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:7px;flex-wrap:nowrap;justify-content:center;max-width:none;white-space:nowrap}
 .dpick{position:absolute;left:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:6;width:56px}
 .sidetog{display:flex;gap:4px}
 .stog{flex:1;font-family:'Archivo Black';font-size:9px;letter-spacing:.06em;padding:5px 0;border:2px solid #2a2a30;background:#0d0d10;color:#8a8a90;cursor:pointer;border-radius:5px;text-transform:uppercase}
@@ -144,7 +144,7 @@ footer .fes{max-width:320px;font-family:'Archivo Black';font-style:italic;text-t
 footer .fes b{color:var(--red)}
 footer .fn{align-self:flex-end;color:#6a6a70;font-size:12px;letter-spacing:.1em}
 
-@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:110px}.stage-wrap{height:56vh;order:-1}.vbar{height:auto;flex-direction:row;width:100%}.tube{height:30px;width:auto;flex:1;flex-direction:row}.tube .fill{height:100%!important;transition:width .08s linear}.piece{grid-template-columns:1fr}.piece:nth-child(even) .visual{order:0}nav .l{display:none}.hint{display:none}.stage-wrap{overflow:hidden}.line{overflow-x:hidden}}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:110px}.stage-wrap{height:56vh;order:-1}.vbar{height:auto;flex-direction:row;width:100%}.tube{height:30px;width:auto;flex:1;flex-direction:row}.tube .fill{height:100%!important;transition:width .08s linear}.piece{grid-template-columns:1fr}.piece:nth-child(even) .visual{order:0}nav .l{display:none}.hint{display:none}.stage-wrap{overflow:hidden}.line{overflow-x:hidden}.swatches{flex-wrap:wrap;max-width:92vw;white-space:normal}}
 </style>
 </head>
 <body>
@@ -197,8 +197,7 @@ footer .fn{align-self:flex-end;color:#6a6a70;font-size:12px;letter-spacing:.1em}
 </section>
 
 <footer>
-  <div class="fb">ABD</div>
-  <div class="fes">«LAS MALAS VIBRAS <b>NO VAN</b> CON MI OUTFIT.»<br><img src="assets/abd_q2.png" alt="Q2" style="height:70px;width:auto;display:block;margin-top:12px;opacity:.92"></div>
+  <div class="fes">«LAS MALAS VIBRAS <b>NO VAN</b> CON MI OUTFIT.»<br><span style="font-family:Archivo;font-style:normal;font-weight:700;font-size:12px;letter-spacing:.1em;color:#6a6a70">THR·Q2·M</span></div>
   <div class="fn" data-k="foot"></div>
 </footer>
 
@@ -239,11 +238,11 @@ const STR={
 };
 let L=(function(){try{return localStorage.getItem('abd_lang')||'es';}catch(e){return 'es';}})();
 const prods=[
- {num:"01",t:"SKYLINE SMOKE",price:"€42",img:"assets/models/skyline_smoke.jpg",p2:"assets/designs/skyline_smoke.jpg"},
- {num:"02",t:"NO BAD VIBES",price:"€39",img:"assets/models/no_bad_vibes.jpg",p2:"assets/designs/no_bad_vibes.jpg"},
- {num:"03",t:"TOUGE NIGHTS",price:"€44",img:"assets/models/touge_nights.jpg",p2:"assets/designs/touge_nights.jpg"},
- {num:"04",t:"ROTARY HEART",price:"€42",img:"assets/models/rotary_heart.jpg",p2:"assets/designs/rotary_heart.jpg"},
- {num:"05",t:"KANJO CREW",price:"€49",img:"assets/models/kanjo_crew.jpg",p2:"assets/designs/kanjo_crew.jpg"},
+ {num:"01",t:"SKYLINE SMOKE",price:"€42",img:"assets/models/skyline_smoke.jpg",p2:"assets/designs/skyline_smoke.jpg",p3:"assets/models/front_black.jpg"},
+ {num:"02",t:"NO BAD VIBES",price:"€39",img:"assets/models/no_bad_vibes.jpg",p2:"assets/designs/no_bad_vibes.jpg",p3:"assets/models/front_black.jpg"},
+ {num:"03",t:"TOUGE NIGHTS",price:"€44",img:"assets/models/touge_nights.jpg",p2:"assets/designs/touge_nights.jpg",p3:"assets/models/front_black.jpg"},
+ {num:"04",t:"ROTARY HEART",price:"€42",img:"assets/models/rotary_heart.jpg",p2:"assets/designs/rotary_heart.jpg",p3:"assets/models/front_black.jpg"},
+ {num:"05",t:"KANJO CREW",price:"€49",img:"assets/models/kanjo_crew.jpg",p2:"assets/designs/kanjo_crew.jpg",p3:"assets/models/front_black.jpg"},
  {num:"06",t:"IDLE TEE",price:"€36",img:"assets/models/idle.jpg",p2:"assets/models/idle_2.jpg"}
 ];
 let cart=0;
@@ -252,7 +251,7 @@ function renderMarquee(){const m=STR.marquee[L];let h="";for(let k=0;k<2;k++)m.f
 function renderPieces(){
   document.getElementById('pieces').innerHTML=prods.map((x,i)=>`
    <article class="piece">
-     <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"><div class="pdots"><button class="pdot on" data-src="${x.img}" title="Camiseta / Tee"></button><button class="pdot" data-src="${x.p2}" title="Diseño / Design"></button></div></div>
+     <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"><div class="pdots"><button class="pdot on" data-src="${x.img}" title="Espalda / Back"></button><button class="pdot" data-src="${x.p2}" title="Diseño / Design"></button>${x.p3?`<button class="pdot" data-src="${x.p3}" title="Frente / Front"></button>`:''}</div></div>
      <div class="txt">
        <div class="cat fade">${STR.prod_cat[L][i]}</div>
        <h3 class="fade">${x.t}</h3>
@@ -486,7 +485,7 @@ tick();
   function applyColor(hex){currentHex=hex;modelMats.forEach(m=>{if(m.color)m.color.setHex(hex);});}
   let PDIM={sx:4.1,sy:4.3,sz:0.8}, spinTo=null, activeSide='front';
   // which design (slug or null) sits on each side
-  const zone={front:'idle', back:'skyline_smoke'};
+  const zone={front:'no_bad_vibes', back:'touge_nights'};
   function fit(ar,Wmax,Hmax){let w=Wmax,h=Wmax*ar;if(h>Hmax){h=Hmax;w=Hmax/ar;}return [w,h];}
   // print zones sized to garment-printing standards: chest ~8-10in, back ~12-16in (max area 12x16)
   function zoneBox(side){const sx=PDIM.sx,sy=PDIM.sy,uPI=(sx*0.52)/12;
