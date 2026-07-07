@@ -262,12 +262,26 @@ function renderPieces(){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
   document.querySelectorAll('.fade').forEach(el=>io.observe(el));
   document.querySelectorAll('.atc').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();cart++;const cc=document.getElementById('cartc');if(cc)cc.textContent=STR.cart[L]+' · '+cart;}));
-  // hover to zoom/inspect the tee (magnifier follows the cursor)
-  document.querySelectorAll('.piece .visual').forEach(v=>{const im=v.querySelector('.pimg');
-    v.addEventListener('mousemove',e=>{const r=v.getBoundingClientRect();im.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%';im.style.transform='scale(2.4)';});
-    v.addEventListener('mouseleave',()=>{im.style.transform='';});});
-  // dot toggle: switch between the tee mockup and the flat design file
-  document.querySelectorAll('.pdot').forEach(d=>d.addEventListener('click',ev=>{ev.stopPropagation();const v=d.closest('.visual');v.querySelector('.pimg').src=d.dataset.src;v.querySelectorAll('.pdot').forEach(e=>e.classList.remove('on'));d.classList.add('on');}));
+  // gallery: desktop = hover magnifier; touch = swipe to switch photo, tap to toggle zoom
+  const canHover=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  document.querySelectorAll('.piece .visual').forEach(v=>{
+    const im=v.querySelector('.pimg'), dots=[...v.querySelectorAll('.pdot')];
+    v.dataset.idx='0';
+    function show(i){i=(i+dots.length)%dots.length;im.src=dots[i].dataset.src;dots.forEach(e=>e.classList.remove('on'));dots[i].classList.add('on');v.dataset.idx=String(i);im.style.transform='';}
+    dots.forEach((d,i)=>d.addEventListener('click',ev=>{ev.stopPropagation();show(i);}));
+    if(canHover){
+      v.addEventListener('mousemove',e=>{const r=v.getBoundingClientRect();im.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%';im.style.transform='scale(2.4)';});
+      v.addEventListener('mouseleave',()=>{im.style.transform='';});
+    } else {
+      let sx=0,sy=0,moved=false,zoomed=false;
+      v.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;moved=false;},{passive:true});
+      v.addEventListener('touchmove',e=>{const t=e.touches[0];if(Math.abs(t.clientX-sx)>10||Math.abs(t.clientY-sy)>10)moved=true;},{passive:true});
+      v.addEventListener('touchend',e=>{const t=e.changedTouches&&e.changedTouches[0];const dx=t?t.clientX-sx:0,dy=t?t.clientY-sy:0;
+        if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){show((+v.dataset.idx)+(dx<0?1:-1));zoomed=false;}
+        else if(!moved){zoomed=!zoomed;if(zoomed){const r=v.getBoundingClientRect();im.style.transformOrigin=((sx-r.left)/r.width*100)+'% '+((sy-r.top)/r.height*100)+'%';im.style.transform='scale(2.2)';}else{im.style.transform='';}}
+      },{passive:true});
+    }
+  });
 }
 function setLang(l){
   L=l; try{localStorage.setItem('abd_lang',l);}catch(e){}
