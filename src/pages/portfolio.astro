@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    name: 'ABBASSI',
+    kind: 'Fine Jewellery — Motion Site',
+    blurb: 'A scroll-driven diamond showcase. Grab-and-rotate hero ring, each piece rendered frame-by-frame on canvas, whole-slide transitions.',
+    tags: ['Web Design', 'Motion', 'Canvas'],
+    cover: '/portfolio/abbassi-cover.webp',
+    href: '/portfolio/abbassi/',
+    live: true,
+  },
+  {
+    name: 'ABD',
+    kind: 'JDM Streetwear — 3D Configurator',
+    blurb: 'A tuner-culture tee drop with a live 3D shirt you can spin, recolour and print any design on — plus a hold-to-rev engine, exhaust smoke and a drop countdown.',
+    tags: ['Web Design', 'Three.js', '3D'],
+    cover: '/portfolio/abd-cover.webp',
+    href: '/portfolio/abd/',
+    live: true,
+  },
+  {
+    name: 'In development',
+    kind: 'Coming soon',
+    blurb: 'Next demo in progress.',
+    tags: ['Web Design', 'SEO'],
+    cover: '',
+    href: '',
+    live: false,
+  },
+];
+---
+
+<BaseLayout title="Portfolio — Web Design & SEO" description="Selected web design and motion work by AHoosh — live, interactive demos built for brands.">
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:52px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">Portfolio</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,40px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:12px;">Selected work.<br><em style="font-style:normal;color:var(--gold);">Built to be seen live.</em></h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;max-width:500px;margin:0 auto;">Interactive web design and motion demos. Each one opens as a full, live site — the same thing your visitors would experience.</p>
+  </section>
+
+  <!-- Grid -->
+  <section style="padding:44px 24px 56px;max-width:1080px;margin:0 auto;">
+    <div class="pf-grid">
+      {projects.map((p) => (
+        <article class={`pf-card ${p.live ? 'is-live' : 'is-soon'}`}>
+          <div class="pf-cover" style={p.cover ? `background-image:url('${p.cover}')` : ''}>
+            {!p.live && <span class="pf-soon-badge">In development</span>}
+          </div>
+          <div class="pf-body">
+            <div class="pf-kind">{p.kind}</div>
+            <h2 class="pf-name">{p.name}</h2>
+            <p class="pf-blurb">{p.blurb}</p>
+            <div class="pf-tags">{p.tags.map((tg) => <span class="pf-tag">{tg}</span>)}</div>
+            {p.live
+              ? <a class="pf-link" href={p.href} target="_blank" rel="noopener">View live demo →</a>
+              : <span class="pf-link pf-link-off">Soon</span>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding:8px 24px 60px;text-align:center;">
+    <p style="font-size:14px;color:var(--silver-dim);margin-bottom:20px;">Want something like this for your brand?</p>
+    <a href="/services/web-design" class="btn-primary" style="display:inline-block;min-width:220px;">See Web Design &amp; SEO</a>
+  </section>
+
+  <style>
+    .pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+    .pf-card{background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.14);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:transform 220ms ease,border-color 220ms ease,box-shadow 220ms ease;}
+    .pf-card.is-live:hover{transform:translateY(-4px);border-color:rgba(215,161,61,0.45);box-shadow:0 18px 40px rgba(0,0,0,0.35);}
+    .pf-cover{aspect-ratio:16/10;background-size:cover;background-position:center;background-color:#0a1830;position:relative;border-bottom:1px solid rgba(215,161,61,0.1);}
+    .pf-soon-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-body);font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--silver-dim);}
+    .pf-body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1;}
+    .pf-kind{font-family:var(--font-body);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
+    .pf-name{font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);letter-spacing:0.04em;}
+    .pf-blurb{font-size:13px;line-height:1.6;color:var(--silver-dim);flex:1;}
+    .pf-tags{display:flex;flex-wrap:wrap;gap:6px;}
+    .pf-tag{font-size:11px;color:var(--silver-dim);border:1px solid rgba(215,161,61,0.18);border-radius:999px;padding:3px 10px;}
+    .pf-link{font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.03em;margin-top:4px;}
+    .pf-link-off{color:var(--silver-dim);opacity:0.6;}
+    .is-soon{opacity:0.62;}
+  </style>
+
+</BaseLayout>
