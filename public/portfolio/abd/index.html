@@ -238,12 +238,12 @@ const STR={
 };
 let L=(function(){try{return localStorage.getItem('abd_lang')||'es';}catch(e){return 'es';}})();
 const prods=[
- {num:"01",t:"SKYLINE SMOKE",price:"€42",img:"assets/models/skyline_smoke.jpg"},
- {num:"02",t:"NO BAD VIBES",price:"€39",img:"assets/models/no_bad_vibes.jpg"},
- {num:"03",t:"TOUGE NIGHTS",price:"€44",img:"assets/models/touge_nights.jpg"},
- {num:"04",t:"ROTARY HEART",price:"€42",img:"assets/models/rotary_heart.jpg"},
- {num:"05",t:"KANJO CREW",price:"€49",img:"assets/models/kanjo_crew.jpg"},
- {num:"06",t:"IDLE TEE",price:"€36",img:"assets/models/idle.jpg"}
+ {num:"01",t:"SKYLINE SMOKE",price:"€42",img:"assets/models/skyline_smoke.jpg",p2:"assets/designs/skyline_smoke.jpg"},
+ {num:"02",t:"NO BAD VIBES",price:"€39",img:"assets/models/no_bad_vibes.jpg",p2:"assets/designs/no_bad_vibes.jpg"},
+ {num:"03",t:"TOUGE NIGHTS",price:"€44",img:"assets/models/touge_nights.jpg",p2:"assets/designs/touge_nights.jpg"},
+ {num:"04",t:"ROTARY HEART",price:"€42",img:"assets/models/rotary_heart.jpg",p2:"assets/designs/rotary_heart.jpg"},
+ {num:"05",t:"KANJO CREW",price:"€49",img:"assets/models/kanjo_crew.jpg",p2:"assets/designs/kanjo_crew.jpg"},
+ {num:"06",t:"IDLE TEE",price:"€36",img:"assets/models/idle.jpg",p2:"assets/models/idle_2.jpg"}
 ];
 let cart=0;
 function renderTicker(){const it=STR.ticker[L];let h="";for(let k=0;k<2;k++)it.forEach(t=>h+=`<span>${t}</span><span style="opacity:.5">///</span>`);const el=document.getElementById('tk');if(el)el.innerHTML=h;}
@@ -251,7 +251,7 @@ function renderMarquee(){const m=STR.marquee[L];let h="";for(let k=0;k<2;k++)m.f
 function renderPieces(){
   document.getElementById('pieces').innerHTML=prods.map((x,i)=>`
    <article class="piece">
-     <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"><div class="pdots"><button class="pdot on" data-src="${x.img}" title="Camiseta / Tee"></button><button class="pdot" data-src="${x.img.replace('/models/','/designs/')}" title="Diseño / Design"></button></div></div>
+     <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"><div class="pdots"><button class="pdot on" data-src="${x.img}" title="Camiseta / Tee"></button><button class="pdot" data-src="${x.p2}" title="Diseño / Design"></button></div></div>
      <div class="txt">
        <div class="cat fade">${STR.prod_cat[L][i]}</div>
        <h3 class="fade">${x.t}</h3>
@@ -429,7 +429,7 @@ function tick(){
   // engine sound — sample loops once unlocked; only VOLUME + rate follow the throttle (no play/pause thrash)
   if(revAudio){
     revVol=Math.max(0,revVol-0.0055);              // ~3s tail so a click plays the full rev
-    revAudio.playbackRate=0.85+Math.max(rpm,revVol)*2.2;
+    revAudio.playbackRate=1.0+rpm*0.5;             // natural speed (only mild rise on hard hold) so the full clip is heard
     revAudio.volume=(soundOn&&audioUnlocked)?Math.max(Math.min(1,rpm*1.15),revVol):0;
     if(soundOn&&audioUnlocked&&revAudio.paused){ revAudio.play().catch(()=>{}); }
   }
