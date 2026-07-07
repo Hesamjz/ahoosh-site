@@ -83,6 +83,18 @@ nav .l a{color:var(--ink);text-decoration:none}
 .sw.active{transform:scale(1.25);border-color:var(--ink)}
 .price-tag{position:absolute;top:10%;right:0;font-family:'Anton';font-style:italic;font-size:30px;transform:skewX(-8deg);background:var(--red);color:#09090b;padding:5px 14px}
 .hint{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#7a7a7f;white-space:nowrap}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:200;background:rgba(6,6,8,.97);display:none;flex-direction:column;align-items:center;justify-content:center}
+.lb.open{display:flex}
+.lb-x{position:absolute;top:16px;right:22px;background:none;border:none;color:var(--ink);font-size:34px;line-height:1;cursor:pointer;z-index:3}
+.lb-stage{flex:1;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:56px 20px 8px}
+.lb-img{max-width:min(92vw,720px);max-height:80vh;object-fit:contain;cursor:zoom-in;transition:transform .1s ease-out}
+.lb-img.zoom{cursor:zoom-out}
+.lb-thumbs{display:flex;gap:10px;padding:12px}
+.lb-th{width:60px;height:60px;border:2px solid #2a2a30;background:#0d0d10;cursor:pointer;overflow:hidden;padding:0}
+.lb-th img{width:100%;height:100%;object-fit:cover;display:block}
+.lb-th.on{border-color:var(--red)}
+.lb-hint{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#7a7a7f;padding-bottom:14px}
 
 /* vertical countdown / rpm bar */
 .vbar{position:relative;height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px}
@@ -109,7 +121,10 @@ nav .l a{color:var(--ink);text-decoration:none}
 .visual{position:relative;overflow:hidden;background:#0a0a0b;min-height:60vh}
 .visual .plate{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Anton';font-style:italic;font-size:clamp(70px,12vw,190px);color:#1a1a1f;transform:skewX(-8deg)}
 .visual .plate img{width:52%;opacity:.9;filter:drop-shadow(0 14px 26px rgba(0,0,0,.5))}
-.visual .pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:5%;z-index:0}
+.visual .pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:5%;z-index:0;cursor:zoom-in;transition:transform .12s ease-out}
+.pdots{position:absolute;bottom:16px;left:0;right:0;display:flex;gap:9px;justify-content:center;z-index:3}
+.pdot{width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);background:transparent;cursor:pointer;padding:0}
+.pdot.on{background:var(--red);border-color:var(--red)}
 .visual .num{position:absolute;top:22px;left:24px;font-family:'Anton';font-size:clamp(38px,6vw,88px);color:var(--red);z-index:2}
 .reveal-img{clip-path:inset(0 100% 0 0)}.reveal-img.in{clip-path:inset(0 0 0 0);transition:clip-path 1s cubic-bezier(.16,1,.3,1)}
 .txt{display:flex;flex-direction:column;justify-content:center;padding:8vh 6vw;gap:14px}
@@ -223,12 +238,12 @@ const STR={
 };
 let L=(function(){try{return localStorage.getItem('abd_lang')||'es';}catch(e){return 'es';}})();
 const prods=[
- {num:"01",t:"SKYLINE SMOKE",price:"€42",img:"assets/designs/skyline_smoke.jpg"},
- {num:"02",t:"NO BAD VIBES",price:"€39",img:"assets/designs/no_bad_vibes.jpg"},
- {num:"03",t:"TOUGE NIGHTS",price:"€44",img:"assets/designs/touge_nights.jpg"},
- {num:"04",t:"ROTARY HEART",price:"€42",img:"assets/designs/rotary_heart.jpg"},
- {num:"05",t:"KANJO CREW",price:"€49",img:"assets/designs/kanjo_crew.jpg"},
- {num:"06",t:"IDLE TEE",price:"€36",img:"assets/designs/idle.jpg"}
+ {num:"01",t:"SKYLINE SMOKE",price:"€42",img:"assets/models/skyline_smoke.jpg"},
+ {num:"02",t:"NO BAD VIBES",price:"€39",img:"assets/models/no_bad_vibes.jpg"},
+ {num:"03",t:"TOUGE NIGHTS",price:"€44",img:"assets/models/touge_nights.jpg"},
+ {num:"04",t:"ROTARY HEART",price:"€42",img:"assets/models/rotary_heart.jpg"},
+ {num:"05",t:"KANJO CREW",price:"€49",img:"assets/models/kanjo_crew.jpg"},
+ {num:"06",t:"IDLE TEE",price:"€36",img:"assets/models/idle.jpg"}
 ];
 let cart=0;
 function renderTicker(){const it=STR.ticker[L];let h="";for(let k=0;k<2;k++)it.forEach(t=>h+=`<span>${t}</span><span style="opacity:.5">///</span>`);const el=document.getElementById('tk');if(el)el.innerHTML=h;}
@@ -236,7 +251,7 @@ function renderMarquee(){const m=STR.marquee[L];let h="";for(let k=0;k<2;k++)m.f
 function renderPieces(){
   document.getElementById('pieces').innerHTML=prods.map((x,i)=>`
    <article class="piece">
-     <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"></div>
+     <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"><div class="pdots"><button class="pdot on" data-src="${x.img}" title="Camiseta / Tee"></button><button class="pdot" data-src="${x.img.replace('/models/','/designs/')}" title="Diseño / Design"></button></div></div>
      <div class="txt">
        <div class="cat fade">${STR.prod_cat[L][i]}</div>
        <h3 class="fade">${x.t}</h3>
@@ -247,6 +262,12 @@ function renderPieces(){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
   document.querySelectorAll('.fade').forEach(el=>io.observe(el));
   document.querySelectorAll('.atc').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();cart++;const cc=document.getElementById('cartc');if(cc)cc.textContent=STR.cart[L]+' · '+cart;}));
+  // hover to zoom/inspect the tee (magnifier follows the cursor)
+  document.querySelectorAll('.piece .visual').forEach(v=>{const im=v.querySelector('.pimg');
+    v.addEventListener('mousemove',e=>{const r=v.getBoundingClientRect();im.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%';im.style.transform='scale(2.4)';});
+    v.addEventListener('mouseleave',()=>{im.style.transform='';});});
+  // dot toggle: switch between the tee mockup and the flat design file
+  document.querySelectorAll('.pdot').forEach(d=>d.addEventListener('click',ev=>{ev.stopPropagation();const v=d.closest('.visual');v.querySelector('.pimg').src=d.dataset.src;v.querySelectorAll('.pdot').forEach(e=>e.classList.remove('on'));d.classList.add('on');}));
 }
 function setLang(l){
   L=l; try{localStorage.setItem('abd_lang',l);}catch(e){}
@@ -260,9 +281,27 @@ function setLang(l){
 }
 document.querySelectorAll('.langbtn').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
 
+/* ---------- lightbox: tee mockup + flat design, zoomable ---------- */
+let _lbZoom=false;
+function _lbSet(src){const im=document.getElementById('lb-img');im.src=src;_lbZoom=false;im.classList.remove('zoom');im.style.transform='';}
+function openLightbox(imgs,start){const lb=document.getElementById('lb'),th=document.getElementById('lb-thumbs');
+  const labels=['Camiseta / Tee','Diseño / Design'];
+  th.innerHTML=imgs.map((s,i)=>`<button class="lb-th${i===start?' on':''}" data-i="${i}" title="${labels[i]||''}"><img src="${s}"></button>`).join('');
+  _lbSet(imgs[start]);
+  th.querySelectorAll('.lb-th').forEach(b=>b.onclick=()=>{th.querySelectorAll('.lb-th').forEach(e=>e.classList.remove('on'));b.classList.add('on');_lbSet(imgs[+b.dataset.i]);});
+  lb.classList.add('open');document.body.style.overflow='hidden';}
+function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
+(function(){const lb=document.getElementById('lb');if(!lb)return;const im=document.getElementById('lb-img');
+  document.querySelector('.lb-x').onclick=closeLb;
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLb();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();});
+  im.addEventListener('click',e=>{e.stopPropagation();_lbZoom=!_lbZoom;im.classList.toggle('zoom',_lbZoom);if(!_lbZoom)im.style.transform='';});
+  im.addEventListener('mousemove',e=>{if(!_lbZoom)return;const r=im.getBoundingClientRect();im.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%';im.style.transform='scale(2.6)';});
+})();
+
 
 /* ================= RPM / REV STATE ================= */
-let rpm=0, holding=false, redline=false;
+let rpm=0, holding=false, redline=false, revVol=0;
 
 /* ---------- countdown target (next Friday 20:00) ---------- */
 function nextFriday(){const n=new Date(),d=new Date(n);let add=(5-d.getDay()+7)%7;d.setDate(d.getDate()+add);d.setHours(20,0,0,0);if(d<=n)d.setDate(d.getDate()+7);return d;}
@@ -304,10 +343,10 @@ function unlockAudio(){initAudio();if(AC&&AC.state==='suspended')AC.resume();
   if(!audioUnlocked&&revAudio){const pr=revAudio.play();if(pr&&pr.then)pr.then(()=>{audioUnlocked=true;}).catch(()=>{});else audioUnlocked=true;}}
 function startRev(e){if(e&&e.button!=null&&e.button!==0)return; if(e&&e.cancelable)e.preventDefault();
   holding=true; unlockAudio();
-  rpm=Math.max(rpm,0.45);                         // every click = an instant audible rev
+  rpm=Math.max(rpm,0.45); revVol=1;               // click = a full ~3s rev
   if(soundOn&&revAudio){try{revAudio.currentTime=0;}catch(_){}}   // replay the rev from the start each click
 }
-function revUp(){holding=false;}
+function revUp(){holding=false; revVol=Math.max(revVol,Math.min(1,rpm*1.1));}
 const revDown=startRev;
 pedal.addEventListener('pointerdown',startRev);
 pedal.addEventListener('mousedown',startRev);
@@ -389,8 +428,9 @@ function tick(){
   pfill.style.transform=`scaleX(${rpm})`;pedal.classList.toggle('hot',rpm>0.5);
   // engine sound — sample loops once unlocked; only VOLUME + rate follow the throttle (no play/pause thrash)
   if(revAudio){
-    revAudio.playbackRate=0.85+rpm*2.6;
-    revAudio.volume=(soundOn&&audioUnlocked)?Math.min(1,rpm*1.15):0;
+    revVol=Math.max(0,revVol-0.0055);              // ~3s tail so a click plays the full rev
+    revAudio.playbackRate=0.85+Math.max(rpm,revVol)*2.2;
+    revAudio.volume=(soundOn&&audioUnlocked)?Math.max(Math.min(1,rpm*1.15),revVol):0;
     if(soundOn&&audioUnlocked&&revAudio.paused){ revAudio.play().catch(()=>{}); }
   }
   if(master)master.gain.setTargetAtTime(soundOn?0.8:0,AC.currentTime,0.05); // carries the backfire pops
