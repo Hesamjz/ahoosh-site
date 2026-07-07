@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ABD — Combined v2 (hero 3D + rev + editorial)</title>
+<title>ABD — Camisetas Tuner JDM · Drop 92</title>
+<meta name="description" content="ABD — ropa de cultura tuner JDM. Camiseta 3D interactiva: gírala, cámbiala de color y ponle cualquier diseño. Drop 92, edición limitada.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ABD — Camisetas Tuner JDM · Drop 92">
+<meta property="og:description" content="Ropa de cultura tuner JDM. Camiseta 3D interactiva y drop de edición limitada.">
+<meta property="og:image" content="https://ahoosh.ai/portfolio/abd-cover.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ahoosh.ai/portfolio/abd-cover.webp">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230a0a0b'/%3E%3Ctext x='32' y='46' font-family='Arial' font-weight='900' font-style='italic' font-size='36' fill='%23f4f1ea' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,700;0,900;1,900&family=Archivo+Black&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -11,6 +19,7 @@
 <script src="assets/abd_b64.js"></script>
 <script src="assets/abd_model_raglan.js"></script>
 <script src="assets/abd_designs.js"></script>
+<script src="assets/abd_rev.js"></script>
 <style>
 :root{--bg:#09090b;--ink:#f4f1ea;--red:#ff2323;--mut:#8a8a90}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -32,6 +41,9 @@ nav .l a{color:var(--ink);text-decoration:none}
 .sound{position:fixed;top:46px;right:22px;z-index:45;font-family:'Archivo Black';font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   background:transparent;color:var(--ink);border:2px solid var(--ink);padding:7px 12px;cursor:pointer}
 .sound.on{background:var(--red);border-color:var(--red);color:#09090b}
+.langsw{position:fixed;top:46px;right:104px;z-index:45;display:flex;border:2px solid var(--ink)}
+.langbtn{font-family:'Archivo Black';font-size:11px;letter-spacing:.05em;padding:7px 9px;background:transparent;color:var(--ink);border:none;cursor:pointer}
+.langbtn.on{background:var(--ink);color:#09090b}
 
 /* hero */
 .hero{position:relative;min-height:100vh;display:grid;grid-template-columns:1fr 1fr 70px;gap:10px;align-items:center;padding:120px 28px 30px}
@@ -122,22 +134,23 @@ footer .fn{align-self:flex-end;color:#6a6a70;font-size:12px;letter-spacing:.1em}
 <body>
 <div class="grain"></div>
 <div class="ticker"><div class="run" id="tk"></div></div>
-<nav><div class="b">ABD</div><div class="l"><a href="#line">The Drop</a><a href="#line">JDM Line</a><a href="#">Lookbook</a><a href="#">About</a></div><div class="l"><span id="cartc">CART · 0</span></div></nav>
-<button class="sound" id="snd">♪ SOUND OFF</button>
+<nav><div class="b">ABD</div><div class="l"><a href="#line" data-k="nav_drop">El Drop</a><a href="#line" data-k="nav_line">Línea JDM</a><a href="#line" data-k="nav_cat">Catálogo</a><a href="#" data-k="nav_about">Nosotros</a></div><div class="l"><span id="cartc">CARRITO · 0</span></div></nav>
+<button class="sound" id="snd">♪ SONIDO OFF</button>
+<div class="langsw"><button class="langbtn on" data-l="es">ES</button><button class="langbtn" data-l="en">EN</button></div>
 
 <!-- HERO -->
 <section class="hero" id="hero">
   <canvas id="fx"></canvas>
 
   <div class="hleft">
-    <div class="kick">DROP 92 · JDM SERIES</div>
+    <div class="kick" data-k="kick">DROP 92 · SERIE JDM</div>
     <img class="abdimg" src="assets/abd_white.png" alt="ABD">
-    <p class="sub">Tuner-culture tees for people who redline on the way to the grocery store. Japanese steel, brake-light red, tire-smoke everything.
+    <p class="sub"><span data-k="sub">Camisetas de cultura tuner para quienes van al límite hasta yendo al súper. Acero japonés, rojo de luz de freno y humo de llanta en todo.</span>
       <span class="es">«Las malas vibras <b>no van</b><br>con mi outfit.»</span>
     </p>
     <div class="cta-row">
-      <a class="btn" href="#line"><span>COP THE DROP</span></a>
-      <button class="pedal" id="pedal"><span class="fill"></span><span>HOLD TO REV</span></button>
+      <a class="btn" href="#line"><span data-k="cta_cop">COMPRA EL DROP</span></a>
+      <button class="pedal" id="pedal"><span class="fill"></span><span data-k="cta_rev">MANTÉN PARA ACELERAR</span></button>
     </div>
   </div>
 
@@ -146,59 +159,107 @@ footer .fn{align-self:flex-end;color:#6a6a70;font-size:12px;letter-spacing:.1em}
     <canvas id="stage"></canvas>
     <div class="dpick" id="dpick"></div>
     <div class="swatches" id="swatches"></div>
-    <div class="hint">drag to spin · scroll to zoom · pick a design · tap a color</div>
+    <div class="hint" data-k="hint">arrastrá para girar · scroll para zoom · elegí un diseño · tocá un color</div>
   </div>
 
   <div class="vbar">
-    <div class="cap">Next drop</div>
-    <div class="tube"><div class="redzone"></div><div class="fill" id="vfill"></div><div class="mode" id="vmode">COUNTDOWN</div></div>
-    <div class="val"><span id="vval">--</span><small id="vunit">TO DROP</small></div>
+    <div class="cap" data-k="cap">Próximo drop</div>
+    <div class="tube"><div class="redzone"></div><div class="fill" id="vfill"></div><div class="mode" id="vmode">CUENTA ATRÁS</div></div>
+    <div class="val"><span id="vval">--</span><small id="vunit">AL DROP</small></div>
   </div>
 </section>
 
-<div class="band"><div class="run">
-  <span>NO BAD VIBES</span><span class="r">///</span><span>JDM ONLY</span><span class="r">///</span><span>DRIFT OR DIE</span><span class="r">///</span><span>ABD 92</span><span class="r">///</span>
-  <span>NO BAD VIBES</span><span class="r">///</span><span>JDM ONLY</span><span class="r">///</span><span>DRIFT OR DIE</span><span class="r">///</span><span>ABD 92</span><span class="r">///</span>
+<div class="band"><div class="run" id="marq">
+  <span>SIN MALAS VIBRAS</span><span class="r">///</span><span>SOLO JDM</span><span class="r">///</span><span>DERRAPÁ O MORÍ</span><span class="r">///</span><span>ABD 92</span><span class="r">///</span>
+  <span>SIN MALAS VIBRAS</span><span class="r">///</span><span>SOLO JDM</span><span class="r">///</span><span>DERRAPÁ O MORÍ</span><span class="r">///</span><span>ABD 92</span><span class="r">///</span>
 </div></div>
 
 <!-- EDITORIAL LINE -->
 <section class="line" id="line">
-  <div class="head"><h2>THE 92 LINE</h2><div class="hsub">6 pieces · heavyweight 240gsm · limited run of 200</div></div>
+  <div class="head"><h2 data-k="line_h">LA LÍNEA 92</h2><div class="hsub" data-k="line_sub">6 piezas · algodón pesado 240gsm · edición limitada de 200</div></div>
   <div id="pieces"></div>
 </section>
 
 <footer>
   <div class="fb">ABD</div>
   <div class="fes">«LAS MALAS VIBRAS <b>NO VAN</b> CON MI OUTFIT.»<br><span style="font-family:Archivo;font-style:normal;font-weight:700;font-size:12px;letter-spacing:.1em;color:#6a6a70">THR·Q2·M</span></div>
-  <div class="fn">© ABD 2026 · prototype v2 · not final copy<br>3D tee model: "Male Raglan T-Shirt" via Fab (canerhalavurt) — check listing license</div>
+  <div class="fn" data-k="foot"></div>
 </footer>
 
 <script>
-/* ---------- ticker ---------- */
-(()=>{const it=["NEW DROP FRIDAY 20:00","FREE SHIPPING OVER €50","JDM SERIES 92","LAS MALAS VIBRAS NO VAN CON MI OUTFIT","LIMITED RUN — 200 UNITS"];let h="";for(let k=0;k<2;k++)it.forEach(t=>h+=`<span>${t}</span><span style="opacity:.5">///</span>`);document.getElementById('tk').innerHTML=h;})();
-
-/* ---------- editorial pieces ---------- */
+/* ---------- i18n ---------- */
+const STR={
+ nav_drop:{es:"El Drop",en:"The Drop"},
+ nav_line:{es:"Línea JDM",en:"JDM Line"},
+ nav_cat:{es:"Catálogo",en:"Lookbook"},
+ nav_about:{es:"Nosotros",en:"About"},
+ kick:{es:"DROP 92 · SERIE JDM",en:"DROP 92 · JDM SERIES"},
+ sub:{es:"Camisetas de cultura tuner para quienes van al límite hasta yendo al súper. Acero japonés, rojo de luz de freno y humo de llanta en todo.",en:"Tuner-culture tees for people who redline on the way to the grocery store. Japanese steel, brake-light red, tire-smoke everything."},
+ cta_cop:{es:"COMPRA EL DROP",en:"COP THE DROP"},
+ cta_rev:{es:"MANTÉN PARA ACELERAR",en:"HOLD TO REV"},
+ hint:{es:"arrastrá para girar · scroll para zoom · elegí un diseño · tocá un color",en:"drag to spin · scroll to zoom · pick a design · tap a color"},
+ cap:{es:"Próximo drop",en:"Next drop"},
+ line_h:{es:"LA LÍNEA 92",en:"THE 92 LINE"},
+ line_sub:{es:"6 piezas · algodón pesado 240gsm · edición limitada de 200",en:"6 pieces · heavyweight 240gsm · limited run of 200"},
+ foot:{es:'© 2026 ABD · Hecho con actitud en Costa Rica<br><span style="opacity:.4;font-size:9px">Modelo 3D: canerhalavurt · CC-BY</span>',en:'© 2026 ABD · Made with attitude in Costa Rica<br><span style="opacity:.4;font-size:9px">3D model: canerhalavurt · CC-BY</span>'},
+ sound_on:{es:"♪ SONIDO ON",en:"♪ SOUND ON"},
+ sound_off:{es:"♪ SONIDO OFF",en:"♪ SOUND OFF"},
+ vmode_count:{es:"CUENTA ATRÁS",en:"COUNTDOWN"},
+ vmode_rpm:{es:"RPM",en:"RPM"},
+ vunit_drop:{es:"AL DROP",en:"TO DROP"},
+ vunit_rpm:{es:"×1000 RPM",en:"×1000 RPM"},
+ side_front:{es:"FRENTE",en:"FRONT"},
+ side_back:{es:"ESPALDA",en:"BACK"},
+ cart:{es:"CARRITO",en:"CART"},
+ atc:{es:"Añadir al carrito →",en:"Add to cart →"},
+ ticker:{es:["NUEVO DROP VIERNES 20:00","ENVÍO GRATIS DESDE €50","SERIE JDM 92","LAS MALAS VIBRAS NO VAN CON MI OUTFIT","EDICIÓN LIMITADA — 200 UNIDADES"],
+         en:["NEW DROP FRIDAY 20:00","FREE SHIPPING OVER €50","JDM SERIES 92","LAS MALAS VIBRAS NO VAN CON MI OUTFIT","LIMITED RUN — 200 UNITS"]},
+ marquee:{es:["SIN MALAS VIBRAS","SOLO JDM","DERRAPÁ O MORÍ","ABD 92"],
+          en:["NO BAD VIBES","JDM ONLY","DRIFT OR DIE","ABD 92"]},
+ prod_cat:{es:["La pieza estrella","Camiseta statement","Corrida nocturna","Culto al motor","Crew pesada","Para el diario"],
+           en:["The hero piece","Statement tee","Night run","Engine worship","Crew heavyweight","Everyday"]},
+ prod_p:{es:["Larga exposición de un GT-R haciendo donas, serigrafiado para que el humo se derrame por el borde.","El emblema Q2, oversize. Español al frente, huella de llanta atrás. La que todos preguntan.","Líneas del mapa del touge y luces traseras, con tinta glow que brilla bajo el alumbrado.","Un diagrama despiezado del rotativo donde debería ir el corazón. Para los fieles del 13B.","Crewneck boxy de 320gsm. Energía loop-runner de Osaka. Números en la manga.","Logo ABD limpio al pecho. La que de verdad usás cuatro días a la semana."],
+         en:["A long-exposure of a GT-R doing donuts, screen-printed so the smoke bleeds off the hem.","The Q2 mark, oversized. Spanish on the front, tire tread on the back. The one people ask about.","Mountain-pass map lines and tail-lights, glow-ink that catches under streetlights.","An exploded rotary diagram where the anatomical heart should be. For the 13B faithful.","320gsm boxy crewneck. Osaka loop-runner energy. Numbers on the sleeve.","Clean ABD chest hit. The one you actually wear four days a week."]}
+};
+let L=(function(){try{return localStorage.getItem('abd_lang')||'es';}catch(e){return 'es';}})();
 const prods=[
- {num:"01",cat:"The hero piece",t:"SKYLINE SMOKE",p:"A long-exposure of a GT-R doing donuts, screen-printed so the smoke bleeds off the hem.",price:"€42",img:"assets/designs/skyline_smoke.jpg"},
- {num:"02",cat:"Statement tee",t:"NO BAD VIBES",p:"The Q2 mark, oversized. Spanish on the front, tire tread on the back. The one people ask about.",price:"€39",img:"assets/designs/no_bad_vibes.jpg"},
- {num:"03",cat:"Night run",t:"TOUGE NIGHTS",p:"Mountain-pass map lines and tail-lights, glow-ink that catches under streetlights.",price:"€44",img:"assets/designs/touge_nights.jpg"},
- {num:"04",cat:"Engine worship",t:"ROTARY HEART",p:"An exploded rotary diagram where the anatomical heart should be. For the 13B faithful.",price:"€42",img:"assets/designs/rotary_heart.jpg"},
- {num:"05",cat:"Crew heavyweight",t:"KANJO CREW",p:"320gsm boxy crewneck. Osaka loop-runner energy. Numbers on the sleeve.",price:"€49",img:"assets/designs/kanjo_crew.jpg"},
- {num:"06",cat:"Everyday",t:"IDLE TEE",p:"Clean ABD chest hit. The one you actually wear four days a week.",price:"€36",img:"assets/designs/idle.jpg"}
+ {num:"01",t:"SKYLINE SMOKE",price:"€42",img:"assets/designs/skyline_smoke.jpg"},
+ {num:"02",t:"NO BAD VIBES",price:"€39",img:"assets/designs/no_bad_vibes.jpg"},
+ {num:"03",t:"TOUGE NIGHTS",price:"€44",img:"assets/designs/touge_nights.jpg"},
+ {num:"04",t:"ROTARY HEART",price:"€42",img:"assets/designs/rotary_heart.jpg"},
+ {num:"05",t:"KANJO CREW",price:"€49",img:"assets/designs/kanjo_crew.jpg"},
+ {num:"06",t:"IDLE TEE",price:"€36",img:"assets/designs/idle.jpg"}
 ];
-document.getElementById('pieces').innerHTML=prods.map(x=>`
- <article class="piece">
-   <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"></div>
-   <div class="txt">
-     <div class="cat fade">${x.cat}</div>
-     <h3 class="fade">${x.t}</h3>
-     <p class="fade">${x.p}</p>
-     <div class="foot fade"><span class="price">${x.price}</span><a href="#" class="atc">Add to cart →</a></div>
-   </div>
- </article>`).join('');
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
-document.querySelectorAll('.fade,.reveal-img').forEach(el=>io.observe(el));
-let cart=0;document.querySelectorAll('.atc').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();cart++;document.getElementById('cartc').textContent='CART · '+cart}));
+let cart=0;
+function renderTicker(){const it=STR.ticker[L];let h="";for(let k=0;k<2;k++)it.forEach(t=>h+=`<span>${t}</span><span style="opacity:.5">///</span>`);const el=document.getElementById('tk');if(el)el.innerHTML=h;}
+function renderMarquee(){const m=STR.marquee[L];let h="";for(let k=0;k<2;k++)m.forEach(t=>h+=`<span>${t}</span><span class="r">///</span>`);const el=document.getElementById('marq');if(el)el.innerHTML=h;}
+function renderPieces(){
+  document.getElementById('pieces').innerHTML=prods.map((x,i)=>`
+   <article class="piece">
+     <div class="visual"><div class="num">${x.num}</div><img class="pimg" src="${x.img}" alt="${x.t}"></div>
+     <div class="txt">
+       <div class="cat fade">${STR.prod_cat[L][i]}</div>
+       <h3 class="fade">${x.t}</h3>
+       <p class="fade">${STR.prod_p[L][i]}</p>
+       <div class="foot fade"><span class="price">${x.price}</span><a href="#" class="atc">${STR.atc[L]}</a></div>
+     </div>
+   </article>`).join('');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
+  document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+  document.querySelectorAll('.atc').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();cart++;const cc=document.getElementById('cartc');if(cc)cc.textContent=STR.cart[L]+' · '+cart;}));
+}
+function setLang(l){
+  L=l; try{localStorage.setItem('abd_lang',l);}catch(e){}
+  document.documentElement.lang=l;
+  document.querySelectorAll('[data-k]').forEach(e=>{const v=STR[e.dataset.k]; if(v&&v[l]!=null)e.innerHTML=v[l];});
+  renderTicker(); renderMarquee(); renderPieces();
+  document.querySelectorAll('.stog').forEach(b=>{const sd=STR['side_'+b.dataset.side]; if(sd)b.textContent=sd[l];});
+  const sb=document.getElementById('snd'); if(sb)sb.textContent=(sb.classList.contains('on')?STR.sound_on[l]:STR.sound_off[l]);
+  const cc=document.getElementById('cartc'); if(cc)cc.textContent=STR.cart[l]+' · '+cart;
+  document.querySelectorAll('.langbtn').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+}
+document.querySelectorAll('.langbtn').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
+
 
 /* ================= RPM / REV STATE ================= */
 let rpm=0, holding=false, redline=false;
@@ -222,7 +283,7 @@ function initAudio(){
   // two detuned oscillators through a lowpass = engine
   const o1=AC.createOscillator(),o2=AC.createOscillator(),lp=AC.createBiquadFilter(),g=AC.createGain();
   o1.type='sawtooth';o2.type='square';o2.detune.value=-12;
-  lp.type='lowpass';lp.frequency.value=600;g.gain.value=0.5;
+  lp.type='lowpass';lp.frequency.value=600;g.gain.value=0.0; /* synth muted — real engine sample drives the sound */
   o1.connect(g);o2.connect(g);g.connect(lp);lp.connect(master);o1.start();o2.start();
   eng={o1,o2,lp,g};
 }
@@ -233,11 +294,12 @@ function backfire(){ if(!AC||!soundOn)return;
   n.connect(bp);bp.connect(bg);bg.connect(master);n.start();
 }
 const sndBtn=document.getElementById('snd');
-sndBtn.addEventListener('click',()=>{initAudio();soundOn=!soundOn;sndBtn.classList.toggle('on',soundOn);sndBtn.textContent=soundOn?'♪ SOUND ON':'♪ SOUND OFF';if(AC&&AC.state==='suspended')AC.resume();});
+sndBtn.addEventListener('click',()=>{initAudio();soundOn=!soundOn;sndBtn.classList.toggle('on',soundOn);sndBtn.textContent=soundOn?STR.sound_on[L]:STR.sound_off[L];if(AC&&AC.state==='suspended')AC.resume();});
 
 /* ---------- pedal (hold to rev) ---------- */
 const pedal=document.getElementById('pedal'),pfill=pedal.querySelector('.fill');
-function revDown(e){e.preventDefault();holding=true;initAudio();if(!soundOn){soundOn=true;sndBtn.classList.add('on');sndBtn.textContent='♪ SOUND ON'}if(AC&&AC.state==='suspended')AC.resume();}
+const revAudio=new Audio(window.ABD_REV||'');revAudio.loop=true;revAudio.preload='auto';revAudio.volume=0;
+function revDown(e){e.preventDefault();holding=true;initAudio();if(!soundOn){soundOn=true;sndBtn.classList.add('on');sndBtn.textContent=STR.sound_on[L]}if(AC&&AC.state==='suspended')AC.resume();if(revAudio&&revAudio.paused)revAudio.play().catch(()=>{});}
 function revUp(){holding=false;}
 pedal.addEventListener('pointerdown',revDown);
 addEventListener('pointerup',revUp);
@@ -312,19 +374,20 @@ function tick(){
   redline=rpm>0.85;
   // pedal fill
   pfill.style.transform=`scaleX(${rpm})`;pedal.classList.toggle('hot',rpm>0.5);
-  // engine sound
-  if(eng){const base=55, top=230; const f=base+(top-base)*rpm*rpm;
-    eng.o1.frequency.setTargetAtTime(f,AC.currentTime,0.03);
-    eng.o2.frequency.setTargetAtTime(f*0.5,AC.currentTime,0.03);
-    eng.lp.frequency.setTargetAtTime(500+rpm*3500,AC.currentTime,0.05);
-    master.gain.setTargetAtTime(soundOn?(0.03+rpm*0.22):0.0,AC.currentTime,0.05);
+  // engine sound — real sample: rate + volume follow the throttle, stop on release
+  if(revAudio){
+    revAudio.playbackRate=0.8+rpm*2.8;
+    revAudio.volume=soundOn?Math.min(1,0.14+rpm*0.95):0;
+    if(soundOn&&(holding||rpm>0.03)){ if(revAudio.paused)revAudio.play().catch(()=>{}); }
+    else if(!revAudio.paused&&rpm<0.03){ revAudio.pause(); }
   }
+  if(master)master.gain.setTargetAtTime(soundOn?0.8:0,AC.currentTime,0.05); // carries the backfire pops
   // vertical bar
-  if(rpm>0.03){ vmode.textContent='RPM';vunit.textContent='×1000 RPM';
+  if(rpm>0.03){ vmode.textContent=STR.vmode_rpm[L];vunit.textContent=STR.vunit_rpm[L];
     vfill.style.height=(rpm*100)+'%';
     vval.textContent=(rpm*9).toFixed(1);
     vval.style.color=redline?'#ff2323':'#f4f1ea';
-  } else { vmode.textContent='COUNTDOWN'; vunit.textContent='TO DROP';
+  } else { vmode.textContent=STR.vmode_count[L]; vunit.textContent=STR.vunit_drop[L];
     vfill.style.height='8%'; vval.style.color='#f4f1ea';
   }
   requestAnimationFrame(tick);
@@ -413,7 +476,7 @@ tick();
   // design picker: pick a side (front/back), then a design — sizes auto-adjust per side
   const dp=document.getElementById('dpick');
   const st=document.createElement('div');st.className='sidetog';
-  ['front','back'].forEach(s=>{const bt=document.createElement('button');bt.className='stog'+(s===activeSide?' on':'');bt.dataset.side=s;bt.textContent=s.toUpperCase();
+  ['front','back'].forEach(s=>{const bt=document.createElement('button');bt.className='stog'+(s===activeSide?' on':'');bt.dataset.side=s;bt.textContent=STR['side_'+s][L];
     bt.onclick=()=>{setSide(s);document.querySelectorAll('.stog').forEach(e=>e.classList.toggle('on',e.dataset.side===s));syncThumbs();};st.appendChild(bt);});
   dp.appendChild(st);
   const grid=document.createElement('div');grid.className='dgrid';dp.appendChild(grid);
@@ -449,6 +512,7 @@ tick();
     renderer.render(scene,cam);requestAnimationFrame(loop);}
   loop();
 })();
+setLang(L);
 </script>
 </body>
 </html>

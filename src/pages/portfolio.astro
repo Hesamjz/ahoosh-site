@@ -35,7 +35,7 @@ const projects = [
 <BaseLayout title="Portfolio — Web Design & SEO" description="Selected web design and motion work by AHoosh — live, interactive demos built for brands.">
 
   <!-- Hero -->
-  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:52px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+  <section style="background:transparent;padding:52px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
     <div class="section-eyebrow">Portfolio</div>
     <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,40px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:12px;">Selected work.<br><em style="font-style:normal;color:var(--gold);">Built to be seen live.</em></h1>
     <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;max-width:500px;margin:0 auto;">Interactive web design and motion demos. Each one opens as a full, live site — the same thing your visitors would experience.</p>
@@ -45,7 +45,8 @@ const projects = [
   <section style="padding:44px 24px 56px;max-width:1080px;margin:0 auto;">
     <div class="pf-grid">
       {projects.map((p) => (
-        <article class={`pf-card ${p.live ? 'is-live' : 'is-soon'}`}>
+        <article class={`pf-card ${p.live ? 'is-live' : 'is-soon'}`} style="position:relative;">
+          {p.live && <a href={p.href} target="_blank" rel="noopener" aria-label={`Open ${p.name} demo`} style="position:absolute;inset:0;z-index:4;"></a>}
           <div class="pf-cover" style={p.cover ? `background-image:url('${p.cover}')` : ''}>
             {!p.live && <span class="pf-soon-badge">In development</span>}
           </div>

@@ -185,36 +185,10 @@ const alternates = isLocalized
         </div>
         <a href={`${base}/about`} class="nav-link" style="font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--silver-dim);letter-spacing:0.04em;transition:color 150ms ease;">{t.about}</a>
         <a href={`${base}/contact`} class="btn-primary" style="padding:10px 20px;font-size:12px;min-height:40px;display:inline-flex;align-items:center;">{t.bookCall}</a>
-
-        <!-- Language switcher (desktop) -->
-        <div style="display:flex;gap:2px;border:1px solid rgba(215,161,61,0.25);border-radius:6px;padding:2px;">
-          {LOCALES.map((l) => (
-            <a
-              href={(LOCALE_META[l].base + (isLocalized ? routeKey : '')) || '/'}
-              style={`font-family:var(--font-head);font-size:11px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.02em;${
-                l === locale
-                  ? 'background:var(--gold);color:var(--navy-dark);'
-                  : 'color:var(--silver-dim);'
-              }`}
-            >{LOCALE_META[l].label}</a>
-          ))}
-        </div>
       </nav>
 
-      <!-- Mobile: switcher + hamburger -->
+      <!-- Mobile: hamburger -->
       <div style="display:flex;align-items:center;gap:10px;" id="mobile-controls">
-        <div id="mobile-lang" style="display:flex;gap:2px;border:1px solid rgba(215,161,61,0.25);border-radius:6px;padding:2px;">
-          {LOCALES.map((l) => (
-            <a
-              href={(LOCALE_META[l].base + (isLocalized ? routeKey : '')) || '/'}
-              style={`font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 6px;border-radius:4px;${
-                l === locale
-                  ? 'background:var(--gold);color:var(--navy-dark);'
-                  : 'color:var(--silver-dim);'
-              }`}
-            >{LOCALE_META[l].label}</a>
-          ))}
-        </div>
         <button id="nav-toggle" aria-label="Open menu" style="
           background: none;
           border: none;
