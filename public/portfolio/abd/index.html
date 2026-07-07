@@ -337,16 +337,14 @@ sndBtn.addEventListener('click',()=>{initAudio();soundOn=!soundOn;sndBtn.classLi
 
 /* ---------- pedal (hold to rev) ---------- */
 const pedal=document.getElementById('pedal'),pfill=pedal.querySelector('.fill');
-const revAudio=new Audio(window.ABD_REV||'');revAudio.loop=true;revAudio.preload='auto';revAudio.volume=0;
+const revAudio=new Audio(window.ABD_REV||'');revAudio.loop=false;revAudio.preload='auto';revAudio.volume=1;
 let audioUnlocked=false;
-function unlockAudio(){initAudio();if(AC&&AC.state==='suspended')AC.resume();
-  if(!audioUnlocked&&revAudio){const pr=revAudio.play();if(pr&&pr.then)pr.then(()=>{audioUnlocked=true;}).catch(()=>{});else audioUnlocked=true;}}
+function unlockAudio(){initAudio();if(AC&&AC.state==='suspended')AC.resume();audioUnlocked=true;}
 function startRev(e){if(e&&e.button!=null&&e.button!==0)return; if(e&&e.cancelable)e.preventDefault();
-  holding=true; unlockAudio();
-  rpm=Math.max(rpm,0.45); revVol=1;               // click = a full ~3s rev
-  if(soundOn&&revAudio){try{revAudio.currentTime=0;}catch(_){}}   // replay the rev from the start each click
+  holding=true; unlockAudio(); rpm=Math.max(rpm,0.45);            // visual kick
+  if(soundOn&&revAudio){try{revAudio.currentTime=0;revAudio.play().catch(()=>{});}catch(_){}}  // play the rev ONCE, in full
 }
-function revUp(){holding=false; revVol=Math.max(revVol,Math.min(1,rpm*1.1));}
+function revUp(){holding=false;}   // holding never re-triggers the sound; each click = one play
 const revDown=startRev;
 pedal.addEventListener('pointerdown',startRev);
 pedal.addEventListener('mousedown',startRev);
@@ -428,10 +426,9 @@ function tick(){
   pfill.style.transform=`scaleX(${rpm})`;pedal.classList.toggle('hot',rpm>0.5);
   // engine sound — sample loops once unlocked; only VOLUME + rate follow the throttle (no play/pause thrash)
   if(revAudio){
-    revVol=Math.max(0,revVol-0.0055);              // ~3s tail so a click plays the full rev
-    revAudio.playbackRate=1.0+rpm*0.5;             // natural speed (only mild rise on hard hold) so the full clip is heard
-    revAudio.volume=(soundOn&&audioUnlocked)?Math.max(Math.min(1,rpm*1.15),revVol):0;
-    if(soundOn&&audioUnlocked&&revAudio.paused){ revAudio.play().catch(()=>{}); }
+    revAudio.playbackRate=1.0;                      // natural speed — plays exactly as recorded, once per click
+    revAudio.volume=soundOn?1:0;                    // muting is handled by the SONIDO button
+    if(!soundOn&&!revAudio.paused)revAudio.pause();  // SONIDO OFF stops it immediately
   }
   if(master)master.gain.setTargetAtTime(soundOn?0.8:0,AC.currentTime,0.05); // carries the backfire pops
   // vertical bar
