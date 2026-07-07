@@ -1,9 +1,9 @@
 :root{
   --bg:#ffffff;
-  --ink:#151515;
-  --muted:#8c8880;
+  --ink:#072A20;
+  --muted:#7c847d;
   --accent:#b39a6b;         /* soft champagne */
-  --hairline:#e8e5df;
+  --hairline:#C9CDD3;
   --font-display:'Cormorant Garamond', Georgia, serif;
   --font-sans:'Jost', system-ui, sans-serif;
 }
@@ -136,3 +136,6 @@ canvas{display:block}
 @media (prefers-reduced-motion:reduce){
   .scroll-cue i{animation:none}
 }
+
+/* palette: emerald display headings on white, champagne labels, platinum lines */
+.loader-brand,.brand,.hero-title,.cap-name,.outro-title{color:#0B3D2E}
