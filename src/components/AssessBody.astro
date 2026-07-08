@@ -966,8 +966,8 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
 
   function Home({onSelectTest}){
     const tagColors=T.tags||{};
-    return h('div',{className:'bg-gray-50'},
-      h('div',{className:'bg-navy px-6 py-10 text-center'},
+    return h('div',{style:{background:'transparent'}},
+      h('div',{style:{background:'transparent',padding:'40px 24px 24px'},className:'text-center'},
         h('p',{className:'text-gold text-xs font-semibold uppercase tracking-widest mb-3'},T.ui.kicker),
         h('h1',{className:'text-white text-3xl font-bold mb-3'},T.ui.heroTitle),
         h('p',{className:'text-silver/80 text-base max-w-xl mx-auto'},T.ui.heroSubtitle)
