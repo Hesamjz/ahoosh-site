@@ -976,17 +976,17 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
         h('p',{className:'text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4 text-center'},TESTS.length+' '+T.ui.available),
         h('div',{className:'space-y-4'},
           TESTS.map(function(test){
-            return h('div',{key:test.id,onClick:function(){onSelectTest(test.id);},className:'card-hover bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-4 shadow-sm'},
-              h('div',{className:'w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0',style:{background:'linear-gradient(135deg,'+test.color+'22,'+test.color+'44)'}},test.icon),
-              h('div',{className:'flex-1 min-w-0'},
-                h('div',{className:'flex items-start justify-between gap-2 mb-1'},
-                  h('h3',{className:'text-navy font-bold text-base leading-tight'},test.title),
-                  h('span',{className:'text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 '+(tagColors[test.tagline]||'bg-gray-100 text-gray-600')},test.tagline)
+            return h('div',{key:test.id,onClick:function(){onSelectTest(test.id);},className:'ph-card',style:{background:'rgba(9,17,36,0.72)',border:'1px solid rgba(215,161,61,0.18)',borderRadius:'16px',padding:'20px',display:'flex',alignItems:'flex-start',gap:'16px',cursor:'pointer',boxShadow:'0 10px 30px rgba(0,0,0,0.30)',transition:'transform .2s ease,border-color .2s ease,box-shadow .2s ease'}},
+              h('div',{style:{width:'48px',height:'48px',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'22px',flexShrink:0,background:'rgba(215,161,61,0.10)',border:'1px solid rgba(215,161,61,0.22)'}},test.icon),
+              h('div',{style:{flex:1,minWidth:0}},
+                h('div',{style:{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:'8px',marginBottom:'4px'}},
+                  h('h3',{style:{color:'#F0F2F5',fontWeight:700,fontSize:'16px',lineHeight:1.25,margin:0}},test.title),
+                  h('span',{style:{fontSize:'11px',fontWeight:700,padding:'3px 10px',borderRadius:'999px',flexShrink:0,whiteSpace:'nowrap',color:'#D7A13D',background:'rgba(215,161,61,0.12)',border:'1px solid rgba(215,161,61,0.25)'}},test.tagline)
                 ),
-                h('p',{className:'text-gray-400 text-xs mb-2'},test.subtitle),
-                h('p',{className:'text-gray-600 text-sm leading-relaxed'},test.desc)
+                h('p',{style:{color:'#8E939E',fontSize:'12px',margin:'0 0 8px'}},test.subtitle),
+                h('p',{style:{color:'rgba(240,242,245,0.72)',fontSize:'14px',lineHeight:1.6,margin:0}},test.desc)
               ),
-              h('div',{className:'text-gray-300 text-xl flex-shrink-0 self-center'},'›')
+              h('div',{style:{color:'#D7A13D',fontSize:'20px',flexShrink:0,alignSelf:'center'}},'›')
             );
           })
         )
