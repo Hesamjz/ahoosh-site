@@ -186,9 +186,10 @@ function initShowcase() {
   }
 
   const lenis = new Lenis({
-    duration: 1.2,
+    duration: 1.7,
     easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true
+    smoothWheel: true,
+    wheelMultiplier: 0.85
   });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(time => lenis.raf(time * 1000));
@@ -198,7 +199,7 @@ function initShowcase() {
     trigger: scrollContainer,
     start: 'top top',
     end: 'bottom bottom',
-    scrub: 0.4,                        // light smoothing — responsive, not heavy
+    scrub: 0.9,                        // smoother, slower glide between pieces
     onUpdate: self => {
       const p = self.progress;
       if (p !== lastP) { lastP = p; requestAnimationFrame(() => render(p)); }
