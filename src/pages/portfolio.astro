@@ -56,8 +56,8 @@ const projects = [
             <p class="pf-blurb">{p.blurb}</p>
             <div class="pf-tags">{p.tags.map((tg) => <span class="pf-tag">{tg}</span>)}</div>
             {p.live
-              ? <a class="pf-link" href={p.href} target="_blank" rel="noopener">View live demo →</a>
-              : <span class="pf-link pf-link-off">Soon</span>}
+              ? <a class="btn-primary" href={p.href} target="_blank" rel="noopener" style="margin-top:8px;align-self:flex-start;">View live demo →</a>
+              : <span class="btn-primary" style="margin-top:8px;align-self:flex-start;opacity:0.5;pointer-events:none;">Soon</span>}
           </div>
         </article>
       ))}
