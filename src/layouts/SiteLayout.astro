@@ -489,8 +489,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   body.aa-on .ab-stop.in{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){ body.aa-on .ab-stop{opacity:1!important;transform:none!important} }
 </style>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+  <!-- Backgrounds (site "fluent" background) -->
+  <div class="bg-layers"><div class="bg-glow"></div><div class="bg-photo"></div><div class="bg-vignette"></div><div class="bg-grain"></div></div>
+  <canvas id="bg-canvas"></canvas>
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
 <header id="header">
   <div class="container nav-inner">
     <a href="/" class="logo" data-cursor><img src="/lab/Ahoosh_Vectore_Logo.png" alt="AHoosh.ai" /></a>
