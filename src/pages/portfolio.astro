@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 
 const projects = [
   {
@@ -9,7 +9,6 @@ const projects = [
     tags: ['Web Design', 'Motion', 'Canvas'],
     cover: '/portfolio/abbassi-cover.webp',
     href: '/portfolio/abbassi/',
-    live: true,
   },
   {
     name: 'ABD',
@@ -18,7 +17,6 @@ const projects = [
     tags: ['Web Design', 'Three.js', '3D'],
     cover: '/portfolio/abd-cover.webp',
     href: '/portfolio/abd/',
-    live: true,
   },
   {
     name: 'ProBar',
@@ -27,64 +25,64 @@ const projects = [
     tags: ['Web Design', 'WooCommerce', 'SEO'],
     cover: '/portfolio/probar-cover.webp',
     href: 'https://probar.rs',
-    live: true,
   },
 ];
 ---
 
-<BaseLayout title="Portfolio — Web Design & SEO" description="Selected web design and motion work by AHoosh — live, interactive demos built for brands.">
+<SiteLayout
+  title="Portfolio — AHoosh"
+  description="Selected web design and motion work by AHoosh — live, interactive demos built for brands."
+>
+  <main id="page" class="page-content">
+    <section class="pf-wrap">
+      <div class="pf-eyebrow">Portfolio</div>
+      <h1 class="pf-h1">Selected work.<br /><em>Built to be seen live.</em></h1>
+      <p class="pf-sub">Interactive web design and motion demos. Each one opens as a full, live site — the same thing your visitors would experience.</p>
 
-  <!-- Hero -->
-  <section style="background:transparent;padding:52px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
-    <div class="section-eyebrow">Portfolio</div>
-    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(24px,6vw,40px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:12px;">Selected work.<br><em style="font-style:normal;color:var(--gold);">Built to be seen live.</em></h1>
-    <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;max-width:500px;margin:0 auto;">Interactive web design and motion demos. Each one opens as a full, live site — the same thing your visitors would experience.</p>
-  </section>
+      <div class="pf-grid">
+        {projects.map((p) => (
+          <article class="pf-card">
+            <a href={p.href} target="_blank" rel="noopener" aria-label={`Open ${p.name}`} class="pf-hit"></a>
+            <div class="pf-cover" style={`background-image:url('${p.cover}')`}></div>
+            <div class="pf-body">
+              <div class="pf-kind">{p.kind}</div>
+              <h2 class="pf-name">{p.name}</h2>
+              <p class="pf-blurb">{p.blurb}</p>
+              <div class="pf-tags">{p.tags.map((t) => <span class="pf-tag">{t}</span>)}</div>
+              <a class="pf-btn" href={p.href} target="_blank" rel="noopener">View live demo →</a>
+            </div>
+          </article>
+        ))}
+      </div>
 
-  <!-- Grid -->
-  <section style="padding:44px 24px 56px;max-width:1080px;margin:0 auto;">
-    <div class="pf-grid">
-      {projects.map((p) => (
-        <article class={`pf-card ${p.live ? 'is-live' : 'is-soon'}`} style="position:relative;">
-          {p.live && <a href={p.href} target="_blank" rel="noopener" aria-label={`Open ${p.name} demo`} style="position:absolute;inset:0;z-index:4;"></a>}
-          <div class="pf-cover" style={p.cover ? `background-image:url('${p.cover}')` : ''}>
-            {!p.live && <span class="pf-soon-badge">In development</span>}
-          </div>
-          <div class="pf-body">
-            <div class="pf-kind">{p.kind}</div>
-            <h2 class="pf-name">{p.name}</h2>
-            <p class="pf-blurb">{p.blurb}</p>
-            <div class="pf-tags">{p.tags.map((tg) => <span class="pf-tag">{tg}</span>)}</div>
-            {p.live
-              ? <a class="btn-primary" href={p.href} target="_blank" rel="noopener" style="margin-top:8px;align-self:flex-start;">View live demo →</a>
-              : <span class="btn-primary" style="margin-top:8px;align-self:flex-start;opacity:0.5;pointer-events:none;">Soon</span>}
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section style="padding:8px 24px 60px;text-align:center;">
-    <p style="font-size:14px;color:var(--silver-dim);margin-bottom:20px;">Want something like this for your brand?</p>
-    <a href="/services/web-design" class="btn-primary" style="display:inline-block;min-width:220px;">See Web Design &amp; SEO</a>
-  </section>
+      <div class="pf-cta">
+        <p>Want something like this for your brand?</p>
+        <a class="pf-btn pf-btn-c" href="/services/web-design">See Web Design &amp; SEO</a>
+      </div>
+    </section>
+  </main>
 
   <style>
+    .pf-wrap{max-width:1080px;margin:0 auto;padding:56px 24px 48px;}
+    .pf-eyebrow{font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold,#D7A13D);text-align:center;margin-bottom:14px;}
+    .pf-h1{font-family:'Montserrat',system-ui,sans-serif;font-weight:800;font-size:clamp(26px,6vw,42px);letter-spacing:-0.01em;color:var(--silver,#F0F2F5);text-align:center;line-height:1.1;margin:0 0 12px;}
+    .pf-h1 em{font-style:normal;color:var(--gold,#D7A13D);}
+    .pf-sub{font-family:'Inter',system-ui,sans-serif;font-size:14px;color:var(--silver-dim,rgba(240,242,245,0.65));line-height:1.6;max-width:520px;margin:0 auto 40px;text-align:center;}
     .pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
-    .pf-card{background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.14);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:transform 220ms ease,border-color 220ms ease,box-shadow 220ms ease;}
-    .pf-card.is-live:hover{transform:translateY(-4px);border-color:rgba(215,161,61,0.45);box-shadow:0 18px 40px rgba(0,0,0,0.35);}
-    .pf-cover{aspect-ratio:16/10;background-size:cover;background-position:center;background-color:#0a1830;position:relative;border-bottom:1px solid rgba(215,161,61,0.1);}
-    .pf-soon-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-body);font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--silver-dim);}
+    .pf-card{position:relative;background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.16);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;}
+    .pf-card:hover{transform:translateY(-4px);border-color:rgba(215,161,61,0.45);box-shadow:0 18px 40px rgba(0,0,0,0.35);}
+    .pf-hit{position:absolute;inset:0;z-index:4;}
+    .pf-cover{aspect-ratio:16/10;background-size:cover;background-position:center;background-color:#0a1830;border-bottom:1px solid rgba(215,161,61,0.1);}
     .pf-body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1;}
-    .pf-kind{font-family:var(--font-body);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
-    .pf-name{font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--silver);letter-spacing:0.04em;}
-    .pf-blurb{font-size:13px;line-height:1.6;color:var(--silver-dim);flex:1;}
+    .pf-kind{font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold,#D7A13D);}
+    .pf-name{font-family:'Montserrat',system-ui,sans-serif;font-weight:700;font-size:20px;color:var(--silver,#F0F2F5);letter-spacing:0.04em;}
+    .pf-blurb{font-family:'Inter',system-ui,sans-serif;font-size:13px;line-height:1.6;color:var(--silver-dim,rgba(240,242,245,0.65));flex:1;}
     .pf-tags{display:flex;flex-wrap:wrap;gap:6px;}
-    .pf-tag{font-size:11px;color:var(--silver-dim);border:1px solid rgba(215,161,61,0.18);border-radius:999px;padding:3px 10px;}
-    .pf-link{font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.03em;margin-top:4px;}
-    .pf-link-off{color:var(--silver-dim);opacity:0.6;}
-    .is-soon{opacity:0.62;}
+    .pf-tag{font-family:'Inter',system-ui,sans-serif;font-size:11px;color:var(--silver-dim,rgba(240,242,245,0.65));border:1px solid rgba(215,161,61,0.18);border-radius:999px;padding:3px 10px;}
+    .pf-btn{position:relative;z-index:5;display:inline-block;align-self:flex-start;margin-top:8px;background:linear-gradient(180deg,#F0C060,#D7A13D);color:#03142E;font-family:'Inter',system-ui,sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;padding:12px 22px;min-height:44px;border-radius:3px;box-sizing:border-box;}
+    .pf-btn:hover{filter:brightness(1.05);}
+    .pf-cta{text-align:center;padding:8px 24px 8px;}
+    .pf-cta p{font-family:'Inter',system-ui,sans-serif;font-size:14px;color:var(--silver-dim,rgba(240,242,245,0.65));margin-bottom:20px;}
+    .pf-btn-c{align-self:center;}
   </style>
-
-</BaseLayout>
+</SiteLayout>
