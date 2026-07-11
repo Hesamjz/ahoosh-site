@@ -337,11 +337,6 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   <div class="harrows"><button data-dir="-1">‹</button><button data-dir="1">›</button></div>
   <div class="hdots"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 </div>
-<div class="trustbar">
-  <div><span class="e">🧺</span> 58 domaćih proizvođača</div>
-  <div><span class="e">🚚</span> Dostava širom Srbije</div>
-  <div><span class="e">💳</span> Kartica ili pouzećem</div>
-</div>
 </div></section>
 
 <!-- CATEGORIES (Koncept 1 stil) -->
@@ -393,10 +388,6 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
     <span class="eyebrow">Ukusi prirode</span>
     <h1>Online prodavnica <em>domaćih proizvoda</em> malih proizvođača iz Srbije</h1>
     <p>Na jednom mestu okupljamo <strong>proverene male proizvođače iz cele Srbije</strong> — sveže voće i povrće sa pijace, domaći med, mlečne proizvode, prirodne sokove bez dodatog šećera, kremove i namaze bez aditiva, zdrave poslastice i prirodnu kozmetiku.</p>
-    <p>Poručite online, platite karticom ili pouzećem — <strong>dostava na kućnu adresu širom Srbije</strong>. Za firme pripremamo zdrave poklon pakete sa fakturom na firmu.</p>
-    <div class="kw">
-      <span>Med</span><span>Mlečni proizvodi</span><span>Prirodni sokovi</span><span>Kremovi i namazi</span><span>Prirodna kozmetika</span><span>Zdrave poslastice</span><span>Pijaca</span>
-    </div>
   </div>
   <div class="seostats">
     <div class="st"><b>58</b><span>domaćih proizvođača</span></div>
@@ -406,6 +397,14 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   </div>
 </div>
 </div></section>
+
+<!-- B2B green band — odmah ispod SEO boksa -->
+<section style="padding-top:6px"><div class="wrap"><div class="b2b">
+<div><span class="eyebrow">Za firme</span><h2>Poslovni pokloni koji zrače brigom</h2>
+<p>Zdravi domaći paketi za tim i klijente. Jedan kontakt, faktura na firmu, dostava svuda.</p>
+<a class="btn w">Zatraži ponudu</a></div>
+<div class="basket"><img src="https://media.ukusiprirode.rs/2025/12/Poklon_pakovanje.jpg" alt="Poklon paket u drvenoj kutiji — Ukusi prirode za firme"></div>
+</div></div></section>
 
 <!-- POPULAR PRODUCTS -->
 <section style="padding-top:8px"><div class="wrap"><div class="sec-head left"><h2>Najprodavaniji domaći proizvodi</h2><a>Sve →</a></div>
@@ -446,13 +445,6 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 </script>
 </div></div></section>
 
-<!-- B2B green band (Koncept 2 stil) -->
-<section style="padding-top:8px"><div class="wrap"><div class="b2b">
-<div><span class="eyebrow">Za firme</span><h2>Poslovni pokloni koji zrače brigom</h2>
-<p>Zdravi domaći paketi za tim i klijente. Jedan kontakt, faktura na firmu, dostava svuda.</p>
-<a class="btn w">Zatraži ponudu</a></div>
-<div class="basket"><img src="https://media.ukusiprirode.rs/2025/10/Gift-Box-ukusi-prirode.jpg" alt="Gift Box — zdravi poklon paket za firme, Ukusi prirode"></div>
-</div></div></section>
 
 <style>
 .values{border-top:1px solid var(--line);padding:38px 0}
@@ -548,45 +540,41 @@ footer .lnks a:hover{color:#fff}
 </div></section>
 
 <style>
-.revwrap{background:#fff;border:1px solid var(--line);border-radius:32px;padding:44px}
-.revtop{display:flex;align-items:center;justify-content:center;gap:26px;flex-wrap:wrap;margin-bottom:30px}
-.gscore{display:flex;align-items:center;gap:14px;background:linear-gradient(160deg,#f4f7f0,#eaf2e2);border:1px solid var(--line);border-radius:20px;padding:16px 22px}
-.gscore b{font-size:36px;font-weight:800;color:var(--deep);letter-spacing:-.02em}
-.gscore .st5{color:#f5a623;font-size:16px;letter-spacing:2px}
-.gscore small{display:block;color:var(--muted);font-size:12.5px;font-weight:600}
-.gsoc{display:flex;gap:12px;flex-wrap:wrap}
-.gsoc div{background:#f4f7f0;border:1px solid var(--line);border-radius:14px;padding:12px 18px;text-align:center}
-.gsoc b{display:block;font-size:19px;font-weight:800;color:var(--deep)}
-.gsoc span{font-size:11.5px;color:var(--muted);font-weight:600}
-.revgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.rev{background:#f9fbf7;border:1px solid var(--line);border-radius:20px;padding:24px;transition:.2s}
-.rev:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(5,61,32,.1)}
-.rev .rh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.rav{width:44px;height:44px;border-radius:50%;background:linear-gradient(150deg,var(--g),var(--deep));color:#fff;display:grid;place-items:center;font-weight:800;flex:0 0 auto}
-.rn{font-weight:700;color:var(--deep);font-size:15px}
-.rs{color:#f5a623;font-size:13px;letter-spacing:1px}
-.rev p{color:var(--muted);font-size:15px;line-height:1.6}
-@media(max-width:900px){.revgrid{grid-template-columns:1fr}.revwrap{padding:28px 20px}}
+.revrun .track{animation:runL 95s linear infinite}
+.revrun:hover .track{animation-play-state:paused}
+.rev{width:340px;flex:0 0 auto;white-space:normal;background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:0 6px 16px rgba(5,61,32,.05);transition:.2s}
+.rev:hover{border-color:var(--lime);transform:translateY(-3px)}
+.rev .rh{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.rav{width:40px;height:40px;border-radius:50%;background:linear-gradient(150deg,var(--g),var(--deep));color:#fff;display:grid;place-items:center;font-weight:800;flex:0 0 auto;font-size:15px}
+.rn{font-weight:700;color:var(--deep);font-size:14.5px}
+.rst{color:#f5a623;font-size:12px;letter-spacing:1px}
+.rev p{color:var(--muted);font-size:14px;line-height:1.55}
+.gagg{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:700;color:var(--deep);font-size:14px;margin-top:6px}
+.gagg .s{color:#f5a623;letter-spacing:1px}
 </style>
 
-<!-- GOOGLE RECENZIJE (realni podaci) -->
-<section style="padding-top:8px"><div class="wrap"><div class="revwrap">
-<div class="sec-head"><span class="eyebrow">Recenzije</span><h2>Šta kažu naši kupci</h2><p>Ocene i utisci sa Google-a — pravi ljudi, prave porudžbine.</p></div>
-<div class="revtop">
-  <div class="gscore"><b>4,4</b><div><div class="st5">★★★★☆</div><small>35 Google recenzija</small></div></div>
-  <div class="gsoc">
-    <div><b>15K</b><span>Instagram pratilaca</span></div>
-    <div><b>11,4K</b><span>Facebook pratilaca</span></div>
-  </div>
-</div>
-<div class="revgrid">
-  <div class="rev"><div class="rh"><span class="rav">A</span><div><div class="rn">Aleksandra Stojanović</div><div class="rs">★★★★★</div></div></div>
-  <p>„Mesecima sam oduševljena. Kao mama dvoje male dece, mnogo vodim računa o svojoj i njihovoj ishrani. Svaki put mi ovi divni ljudi dostave neprskano voće i povrće, začine, med, slatkiše, prirodnu i organsku kozmetiku…“</p></div>
-  <div class="rev"><div class="rh"><span class="rav">M</span><div><div class="rn">Mlečni Debeljko</div><div class="rs">★★★★★</div></div></div>
-  <p>„Pravo mesto za domaće sokove i prirodan izbor. Sve preporuke.“</p></div>
-</div>
-<div style="text-align:center;margin-top:26px"><a class="btn lime" href="https://www.google.com/maps/place/Ukusi+Prirode/" target="_blank" rel="noopener">Pogledaj svih 35 recenzija na Google-u →</a></div>
-</div></div></section>
+<!-- GOOGLE RECENZIJE — spori slajder (realne recenzije) -->
+<section style="padding-top:8px">
+<div class="wrap"><div class="sec-head"><span class="eyebrow">Recenzije</span><h2>Šta kažu naši kupci</h2>
+<span class="gagg"><b>4,4</b><span class="s">★★★★☆</span> 35 Google recenzija</span></div></div>
+<div class="runner revrun"><div class="track" id="revTrack"></div></div>
+<script>
+(function(){
+  var R=[
+    ["A","Aleksandra Stojanović","★★★★★","Oduševljena sam već mesecima. Kao mama 2 bebe jako vodim računa o ishrani i svojoj i beba. Svaki put mi ovi divni ljudi dostave neprskano voće i povrće, začine, med, slatkiše, prirodnu i organsku kozmetiku."],
+    ["M","Mlečni Debeljko","★★★★★","Pravo mesto za domaće sokove i prirodne izbore. Sve preporuke."],
+    ["S","Slavica Velimirović","★★★★★","Mala prodavnica sa robom organske proizvodnje. Ljubazni prodavci."],
+    ["K","Katarina Kraus","★★★★★","Sve što ne možete naći u običnim prodavnicama :)"],
+    ["A","Aleksandra Barać","★★★★★","Ne znam šta je lepše, da li sušeni paradajz, ajvar, krem od pistaća… mmmmmm"],
+    ["G","Goran Tošić","★★★★★","Mala ali dobro snabdevena... Ljubazni."],
+    ["G","Goran Kir","★★★★☆","Kao i sve što je prirodno i ovde su cene u cvetanju, ali su zaposleni predusretljivi i fini, a ponuda je super."]
+  ];
+  function card(r){return '<div class="rev"><div class="rh"><span class="rav">'+r[0]+'</span><div><div class="rn">'+r[1]+'</div><div class="rst">'+r[2]+'</div></div></div><p>„'+r[3]+'“</p></div>';}
+  var h=R.map(card).join('');
+  document.getElementById('revTrack').innerHTML=h+h;
+})();
+</script>
+</section>
 
 <!-- VALUES strip (sa njihovog sajta) -->
 <section class="values"><div class="wrap"><div class="vrow">
