@@ -303,7 +303,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 
 <style>
 /* VIDEO BANER — "Od njive do police" */
-.vbanner{position:relative;height:min(62vh,600px);min-height:420px;overflow:hidden;background:var(--deep)}
+.vbanner{position:relative;height:min(78vh,720px);min-height:480px;overflow:hidden;background:var(--deep)}
 .vbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .vscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,61,32,.9) 0%,rgba(5,61,32,.62) 40%,rgba(5,61,32,.14) 70%,rgba(5,61,32,0) 100%)}
 .vbtxt{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;color:#fff}
@@ -313,7 +313,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .vbtxt .cta{display:flex;gap:12px;flex-wrap:wrap}
 @media(max-width:900px){
   .vbanner{height:auto;min-height:0}
-  .vbg{position:relative;width:100%;height:auto;aspect-ratio:16/9}
+  .vbg{position:relative;width:100%;height:auto;aspect-ratio:3/2}
   .vscrim{display:none}
   .vbtxt{display:block;padding:26px 22px 30px;text-align:center;background:linear-gradient(160deg,var(--deep),var(--g))}
   .vbtxt p{margin:0 auto 18px}
@@ -322,7 +322,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 </style>
 <section class="vbanner">
   <video class="vbg" id="heroVid" autoplay muted loop playsinline preload="metadata"
-         poster="ukusiprirode-hero-poster-v3.jpg" aria-hidden="true"></video>
+         poster="ukusiprirode-hero-poster-v4.jpg" aria-hidden="true"></video>
   <div class="vscrim"></div>
   <div class="wrap vbtxt">
     <span class="eyebrow">Iza svakog proizvoda stoji čovek</span>
@@ -341,7 +341,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   }
   // mobilni dobija lakšu verziju (2,4 MB), desktop punu (5,6 MB / 1600×900)
   var small = window.matchMedia && window.matchMedia('(max-width:900px)').matches;
-  v.src = small ? 'ukusiprirode-hero-mobile-v3.mp4' : 'ukusiprirode-hero-v3.mp4';
+  v.src = small ? 'ukusiprirode-hero-mobile-v4.mp4' : 'ukusiprirode-hero-v4.mp4';
   v.load();
   v.play().catch(function(){});
   // štedi bateriju/podatke kad baner nije u vidokrugu
@@ -355,7 +355,6 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 
 <!-- CATEGORIES (Koncept 1 stil) -->
 <section style="padding-top:14px"><div class="wrap">
-<div class="sec-head"><span class="eyebrow">Kategorije</span><h2>Domaći proizvodi po kategorijama</h2><p>Med, mlečni proizvodi, prirodna kozmetika, sokovi, poslastice — od proverenih malih proizvođača.</p></div>
 <style>
 .cchip{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:11px 26px 11px 11px;font-weight:600;font-size:15px;color:var(--deep);box-shadow:0 6px 16px rgba(5,61,32,.05);transition:.2s;cursor:pointer;white-space:nowrap;flex:0 0 auto;scroll-snap-align:start}
 .cchip:hover{border-color:var(--lime);transform:translateY(-3px);box-shadow:0 12px 26px rgba(5,61,32,.12)}
@@ -523,7 +522,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 @media(max-width:1000px){.pkgs{grid-template-columns:repeat(2,1fr)}.b2b.open .pkgs{max-height:1500px}}
 @media(max-width:560px){.pkgs{grid-template-columns:1fr}.b2b.open .pkgs{max-height:2600px}.pkg img{aspect-ratio:16/9}}
 /* PIN: traka se "zakači" na sredini ekrana, prvo se vidi kao baner, pa se tek onda otvara */
-.b2bpin{position:relative;height:210vh}
+.b2bpin{position:relative;height:185vh}
 .b2bsticky{position:sticky;top:0;height:100vh;display:flex;align-items:center}
 .b2bsticky > .wrap{width:100%}
 .b2b .pkg img{aspect-ratio:16/10}
@@ -572,21 +571,17 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 
   // DESKTOP: traka se zakači na sredini ekrana.
   // 0–30% skrola kroz pin = vidiš baner (zatvoren). Preko 30% = otvara se u 4 paketa.
-  var ticking=false;
   function onScroll(){
-    if(ticking) return; ticking=true;
-    requestAnimationFrame(function(){
-      ticking=false;
-      var r=pin.getBoundingClientRect();
-      var travel=pin.offsetHeight - window.innerHeight;      // koliko skrola traje "zakačeno" stanje
-      if(travel<=0) return;
-      var p=(-r.top)/travel;                                  // 0 -> 1 kroz pin
-      if(p>=0.30 && p<=1.02) b.classList.add('open');
-      else b.classList.remove('open');
-    });
+    var r=pin.getBoundingClientRect();
+    var travel=pin.offsetHeight - window.innerHeight;      // koliko skrola traje "zakačeno" stanje
+    if(travel<=0){ b.classList.add('open'); return; }
+    var p=(-r.top)/travel;                                 // 0 -> 1 kroz pin
+    if(p>=0.28 && p<=1.05) b.classList.add('open');
+    else b.classList.remove('open');
   }
   window.addEventListener('scroll', onScroll, {passive:true});
   window.addEventListener('resize', onScroll);
+  document.addEventListener('visibilitychange', onScroll);
   onScroll();
 })();
 </script>
