@@ -320,9 +320,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 </style>
 <section class="vbanner">
   <video class="vbg" id="heroVid" autoplay muted loop playsinline preload="metadata"
-         poster="ukusiprirode-hero-poster.jpg" aria-hidden="true">
-    <source src="ukusiprirode-hero.mp4" type="video/mp4">
-  </video>
+         poster="ukusiprirode-hero-poster.jpg" aria-hidden="true"></video>
   <div class="vscrim"></div>
   <div class="wrap vbtxt">
     <span class="eyebrow">Iza svakog proizvoda stoji čovek</span>
@@ -335,10 +333,15 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 (function(){
   var v=document.getElementById('heroVid');
   if(!v) return;
-  // reduced-motion: prikaži samo poster
+  // reduced-motion: prikaži samo poster, ne učitavaj video uopšte
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    v.removeAttribute('autoplay'); v.pause();
+    v.removeAttribute('autoplay'); return;
   }
+  // mobilni dobija lakšu verziju (2,4 MB), desktop punu (5,6 MB / 1600×900)
+  var small = window.matchMedia && window.matchMedia('(max-width:900px)').matches;
+  v.src = small ? 'ukusiprirode-hero-mobile.mp4' : 'ukusiprirode-hero.mp4';
+  v.load();
+  v.play().catch(function(){});
   // štedi bateriju/podatke kad baner nije u vidokrugu
   if('IntersectionObserver' in window){
     new IntersectionObserver(function(es){
