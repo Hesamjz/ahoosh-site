@@ -299,6 +299,55 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 })();
 </script>
 
+<style>
+/* VIDEO BANER — "Od njive do police" */
+.vbanner{position:relative;height:min(62vh,600px);min-height:420px;overflow:hidden;background:var(--deep)}
+.vbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.vscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,61,32,.9) 0%,rgba(5,61,32,.62) 40%,rgba(5,61,32,.14) 70%,rgba(5,61,32,0) 100%)}
+.vbtxt{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;color:#fff}
+.vbtxt .eyebrow{color:var(--lime)}
+.vbtxt h2{color:#fff;font-size:clamp(30px,4.6vw,56px);margin:10px 0 14px;line-height:1.05}
+.vbtxt p{color:#d5f5e2;max-width:470px;font-size:16.5px;margin-bottom:22px}
+.vbtxt .cta{display:flex;gap:12px;flex-wrap:wrap}
+@media(max-width:900px){
+  .vbanner{height:auto;min-height:0}
+  .vbg{position:relative;width:100%;height:auto;aspect-ratio:16/9}
+  .vscrim{display:none}
+  .vbtxt{display:block;padding:26px 22px 30px;text-align:center;background:linear-gradient(160deg,var(--deep),var(--g))}
+  .vbtxt p{margin:0 auto 18px}
+  .vbtxt .cta{justify-content:center}
+}
+</style>
+<section class="vbanner">
+  <video class="vbg" id="heroVid" autoplay muted loop playsinline preload="metadata"
+         poster="ukusiprirode-hero-poster.jpg" aria-hidden="true">
+    <source src="ukusiprirode-hero.mp4" type="video/mp4">
+  </video>
+  <div class="vscrim"></div>
+  <div class="wrap vbtxt">
+    <span class="eyebrow">Iza svakog proizvoda stoji čovek</span>
+    <h2>Od njive do police</h2>
+    <p>Obilazimo gazdinstva, biramo svaki proizvod svojom rukom i donosimo ga na našu policu — a odatle do tvojih vrata.</p>
+    <div class="cta"><a class="btn lime" href="#prodavnica">U prodavnicu →</a><a class="btn w">Upoznaj proizvođače</a></div>
+  </div>
+</section>
+<script>
+(function(){
+  var v=document.getElementById('heroVid');
+  if(!v) return;
+  // reduced-motion: prikaži samo poster
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    v.removeAttribute('autoplay'); v.pause();
+  }
+  // štedi bateriju/podatke kad baner nije u vidokrugu
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ v.play().catch(function(){}); } else { v.pause(); } });
+    },{threshold:.15}).observe(v);
+  }
+})();
+</script>
+
 <!-- HERO: product + price showcase carousel -->
 <section class="hero"><div class="wrap"><div class="herobox">
   <div class="hstage">
