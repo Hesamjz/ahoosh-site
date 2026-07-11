@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="sr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ukusi prirode — Koncept 5 · Bold App (v2)</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--g:#0aa54d;--lime:#b6f04a;--deep:#053d20;--bg:#f4f7f0;--ink:#0f1a12;--muted:#5f6f62;--line:#e3e9dc;--honey:#e2a13a;--r:26px}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+h1,h2,h3{line-height:1.05;letter-spacing:-.03em;font-weight:700}
+a{text-decoration:none;color:inherit}img{display:block;max-width:100%}
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px}
+.btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:#fff;font-weight:600;padding:15px 26px;border-radius:999px;border:none;cursor:pointer;font-size:15px;transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.lime{background:var(--lime);color:var(--deep)}
+.btn.w{background:#fff;color:var(--ink);box-shadow:0 8px 20px rgba(0,0,0,.06)}
+.eyebrow{font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--g)}
+.demo-bar{background:var(--deep);color:var(--lime);text-align:center;font-size:12.5px;padding:8px;font-weight:600;letter-spacing:.04em}
+/* HEADER — kept as-is per request */
+header{position:sticky;top:0;z-index:40;background:rgba(244,247,240,.9);backdrop-filter:blur(12px)}
+.nav{display:flex;align-items:center;height:74px;gap:22px}
+.logo{font-weight:800;font-size:21px;display:flex;align-items:center;gap:9px;color:var(--deep)}
+.logo .b{width:38px;height:38px;border-radius:12px;background:linear-gradient(140deg,var(--g),var(--lime));display:grid;place-items:center;font-size:20px}
+.nav ul{display:flex;gap:20px;list-style:none;font-weight:600;font-size:15px;margin-left:6px}
+.nav .sp{flex:1}
+.pillbtn{background:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 18px;font-weight:600;font-size:14px}
+.cart{background:var(--ink);color:#fff;border-radius:999px;padding:11px 18px;font-weight:600;font-size:14px}
+
+/* HERO — product showcase carousel, redesigned from the live site */
+.hero{padding:26px 0 18px}
+.herobox{background:linear-gradient(140deg,var(--deep),var(--g) 72%,#12b558);border-radius:34px;color:#fff;position:relative;overflow:hidden;min-height:440px}
+.herobox::after{content:"";position:absolute;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(182,240,74,.45),transparent 65%);top:-140px;right:-90px;pointer-events:none}
+.hstage{position:relative;min-height:440px}
+.hslide{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;padding:38px 48px;opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;pointer-events:none}
+.hslide.on{opacity:1;transform:none;pointer-events:auto}
+.hslide .pic{border-radius:22px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.28);aspect-ratio:16/12;background:#0b3a22}
+.hslide .pic img{width:100%;height:100%;object-fit:cover}
+.hslide .txt .eyebrow{color:var(--lime)}
+.hslide h1{font-size:clamp(30px,4.4vw,50px);color:#fff;margin:8px 0 10px}
+.hslide .price{font-size:clamp(26px,3.6vw,42px);font-weight:800;color:var(--lime);letter-spacing:-.02em}
+.hslide p{color:#d5f5e2;margin:12px 0 20px;max-width:420px;font-size:15.5px}
+.harrows{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);display:flex;justify-content:space-between;padding:0 12px;pointer-events:none}
+.harrows button{pointer-events:auto;width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,.9);color:var(--deep);font-size:20px;cursor:pointer;transition:.2s;box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.harrows button:hover{background:#fff;transform:scale(1.08)}
+.hdots{position:absolute;bottom:20px;left:0;right:0;display:flex;gap:9px;justify-content:center;z-index:3}
+.hdots span{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:.2s}
+.hdots span.on{background:var(--lime);width:26px;border-radius:999px}
+.trustbar{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;padding:18px 0 4px}
+.trustbar div{display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px;color:var(--deep)}
+.trustbar .e{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+
+section{padding:44px 0}
+.sec-head{text-align:center;max-width:620px;margin:0 auto 30px}
+.sec-head h2{font-size:clamp(26px,3.4vw,40px);color:var(--deep);margin:8px 0}
+.sec-head p{color:var(--muted)}
+.sec-head.left{text-align:left;margin:0 0 26px;display:flex;justify-content:space-between;align-items:end;max-width:none}
+.sec-head.left a{font-weight:600;color:var(--g)}
+
+/* CATEGORIES cards (from Koncept 1) */
+.cats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.cat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px 8px;text-align:center;transition:.2s;cursor:pointer}
+.cat:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(5,61,32,.1);border-color:var(--lime)}
+.cat .ic{width:54px;height:54px;margin:0 auto 10px;border-radius:50%;background:linear-gradient(160deg,#eef6ef,#eaf2e2);display:grid;place-items:center;font-size:26px}
+.cat span{font-size:13px;font-weight:600}
+
+/* PRODUCTS grid */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:#fff;border-radius:var(--r);overflow:hidden;transition:.22s;box-shadow:0 6px 18px rgba(0,0,0,.04)}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.12)}
+.frame{aspect-ratio:1/1;overflow:hidden;position:relative;background:#eaf2e2}
+.frame img{width:100%;height:100%;object-fit:cover;transition:.4s}.card:hover .frame img{transform:scale(1.07)}
+.tag{position:absolute;top:12px;left:12px;background:var(--lime);color:var(--deep);font-weight:700;font-size:11px;padding:6px 12px;border-radius:999px}
+.card .b{padding:14px 16px 16px}
+.prodn{font-size:12px;color:var(--g);font-weight:600}
+.card h3{font-size:16px;margin:3px 0 8px;font-weight:600}
+.pr{display:flex;justify-content:space-between;align-items:center}
+.price2{font-weight:800;font-size:18px}
+.add{background:var(--lime);color:var(--deep);border:none;border-radius:14px;width:42px;height:42px;font-size:22px;cursor:pointer;transition:.2s}.add:hover{transform:scale(1.12)}
+
+/* PRODUCERS (from Koncept 1/3) */
+.producers{background:linear-gradient(180deg,#fff,#eef4e8);border-radius:28px;padding:44px 24px}
+.prow{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+.prod{text-align:center}
+.mono{width:80px;height:80px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:25px;color:#fff;box-shadow:0 8px 18px rgba(5,61,32,.14)}
+.prod span{font-size:13px;font-weight:600}.prod small{display:block;color:var(--muted);font-size:11.5px}
+
+/* B2B green band (from Koncept 2) */
+.b2b{background:linear-gradient(135deg,#0f8a3f,#12b04d);border-radius:28px;color:#fff;padding:44px 46px;display:grid;grid-template-columns:1.3fr .7fr;gap:24px;align-items:center;overflow:hidden;position:relative}
+.b2b .eyebrow{color:var(--honey)}
+.b2b h2{color:#fff;font-size:clamp(26px,3.6vw,40px);margin:8px 0 12px}
+.b2b p{color:#dfffe9;margin-bottom:20px;max-width:480px}
+.b2b .basket{font-size:74px;text-align:center}
+
+footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
+.fb{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center}
+.pays span{background:rgba(255,255,255,.1);border-radius:7px;padding:5px 9px;font-size:11px;font-weight:600;margin-right:6px;color:var(--lime)}
+[data-reveal]{opacity:0;transform:translateY(26px);transition:.65s cubic-bezier(.2,.7,.2,1)}[data-reveal].in{opacity:1;transform:none}
+@media(max-width:900px){
+ .hslide{grid-template-columns:1fr;padding:26px 22px 54px;text-align:center}.hslide .pic{order:-1;aspect-ratio:16/10}.hslide p{margin-left:auto;margin-right:auto}
+ .cats{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.prow{grid-template-columns:repeat(3,1fr)}.b2b{grid-template-columns:1fr}.nav ul{display:none}.harrows{display:none}
+}
+@media(max-width:520px){.cats{grid-template-columns:repeat(3,1fr)}.prow{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}[data-reveal]{opacity:1;transform:none}}
+</style></head><body>
+<div class="demo-bar">⚡ KONCEPT 5 — „BOLD / APP" (v2) · demo prezentacija · nije zvanični sajt</div>
+
+<style>
+.nav{gap:18px}
+.nav .logo img{height:46px;width:auto;display:block}
+.nav ul{gap:15px;font-size:14.5px}
+.nav ul>li{position:relative}
+.nav ul>li>a{padding:6px 2px;transition:.2s;cursor:pointer;display:inline-block}
+.nav ul>li>a:hover{color:var(--g)}
+.nav .zf>a,.nav a.zf{border:1.5px dashed var(--g);color:var(--g);border-radius:999px;padding:6px 14px;font-weight:700}
+.hicon{width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:16px;cursor:pointer;transition:.2s}
+.hicon:hover{border-color:var(--g)}
+.nav .icons{display:flex;gap:8px;align-items:center}
+/* mega dropdowns (realni podaci sa sajta) */
+.drop{position:absolute;top:100%;padding-top:16px;opacity:0;visibility:hidden;transform:translateY(8px);transition:.2s;z-index:60}
+.nav ul>li.has:hover .drop{opacity:1;visibility:visible;transform:translateY(0)}
+.drop .panel{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 54px rgba(5,61,32,.18);padding:14px}
+.drop.cats{left:0}.drop.cats .panel{width:240px;max-height:70vh;overflow:auto}
+.drop.cats a{display:block;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer}
+.drop.cats a:hover{background:#eef6ef;color:var(--g)}
+.drop.prod{left:50%;right:auto;transform:translate(-50%,8px)}
+.nav ul>li.has:hover .drop.prod{transform:translate(-50%,0)}
+.drop.prod .panel{width:min(780px,90vw);display:grid;grid-template-columns:repeat(3,1fr);gap:1px 16px;max-height:56vh;overflow:auto}
+.drop.prod a{display:block;padding:6px 8px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
+.drop.prod a:hover{background:#eef6ef;color:var(--g)}
+@media(max-width:1080px){.nav ul{display:none}}
+</style>
+<!-- HEADER — kompletan meni + realni dropdownovi (kategorije + proizvođači) -->
+<header><div class="wrap nav">
+<a class="logo"><img src="https://media.ukusiprirode.rs/2020/08/Ukusi-prirode-logo-u-boji.png" alt="Ukusi prirode"></a>
+<ul>
+<li><a>Početna</a></li>
+<li><a>Naša priča</a></li>
+<li class="zf"><a class="zf">Za firme</a></li>
+<li class="has"><a>Prodavnica ▾</a>
+  <div class="drop cats"><div class="panel">
+    <a>Cenovnik</a><a>Prirodna kozmetika ›</a><a>Cerealije ›</a><a>Testo ›</a><a>Kafe i čajevi ›</a><a>Med ›</a><a>Karafindl ›</a><a>Kremovi i namazi ›</a><a>Gotovi obroci ›</a><a>Sokovi ›</a><a>Pijaca ›</a><a>Poslastice ›</a><a>Mlečni proizvodi</a><a>Meso ›</a><a>Ukusi sveta</a><a>Zamrznuto</a><a>Zdravi napici</a><a>Zdravi suplementi</a><a>Zimnica</a>
+  </div></div>
+</li>
+<li class="has"><a>Proizvođači ▾</a>
+  <div class="drop prod"><div class="panel">
+    <a>Aronica Natural</a><a>Fitaky</a><a>Gana kozmetika</a><a>Majana</a><a>MOBA</a><a>Siempre Viva</a><a>Sofi</a><a>Adonis</a><a>Aleksandrija</a><a>Anđeli Delicije</a><a>Artfood</a><a>Bakaluk</a><a>Beeberry</a><a>Bio Panon Farm</a><a>BUT&amp;CO</a><a>Ćatić</a><a>Chamomilla</a><a>Dedina vodenica 1892</a><a>Eko farma Moravka</a><a>Eko mlekara Preradović</a><a>EtNo.1</a><a>Gazdinstvo Dragićević</a><a>Gazdinstvo Đokić</a><a>Gazdinstvo Krstonošić</a><a>Gazdinstvo Tegeltija</a><a>Kapetan Koko</a><a>LeblebijaNaut</a><a>Mangulina</a><a>Komšinice</a><a>Majkine poslastice</a><a>Mala mlekara Ćuk</a><a>Mlekara Farmer</a><a>Moćno</a><a>Najbolje sa pijace</a><a>Naša granola</a><a>Naša rajska bašta</a><a>Na zrnu</a><a>Nonna supa</a><a>Oro Nero</a><a>Pčelarska farma Mimi i Ivana</a><a>Poljoprivredna škola „Ljubo Mićić“</a><a>Pržioničar</a><a>Real Red</a><a>SD doo</a><a>Slavuj</a><a>Spelta Jevtić</a><a>Sredom i petkom</a><a>Stado moje</a><a>Šopalović Širet</a><a>Umami</a><a>Urmolada</a><a>Vodenica Dren</a><a>Vodenica Stanković</a><a>Zdravarija</a><a>Zdravo kod Rusa</a><a>Zeleni Hit</a><a>Zora</a><a>Žuna</a>
+  </div></div>
+</li>
+<li><a>Blog</a></li>
+<li><a>Kontakt</a></li>
+</ul>
+<div class="sp"></div>
+<div class="icons">
+<span class="hicon" title="Instagram">📷</span>
+<span class="hicon" title="Lista želja">♡</span>
+<span class="hicon" title="Moj nalog">👤</span>
+<span class="hicon" title="Pretraga">🔎</span>
+<span class="cart">🛒 · 2</span>
+</div></div></header>
+
+<!-- HERO: product + price showcase carousel -->
+<section class="hero"><div class="wrap"><div class="herobox">
+  <div class="hstage">
+    <div class="hslide on">
+      <div class="txt"><span class="eyebrow">Sezonski hit 🍉</span><h1>Besemene mini lubenice</h1><div class="price">380 RSD</div>
+      <p>Sveža, slatka i bez semenki — 1 komad (oko 2 kg). Pravo osveženje za leto.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/07/besemena-lubenica-slajder.jpg" alt="Besemene mini lubenice"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Sa pijace</span><h1>Voće 🍒🍓🫐</h1><div class="price">310 – 490 RSD</div>
+      <p>Ribizle, jagode i borovnice — sveže ubrano sa domaćih njiva.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/06/voce-slider.jpg" alt="Voće"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Proizvođač</span><h1>Aronica Natural 🌿</h1><div class="price">670 – 2.690 RSD</div>
+      <p>Prirodna nega i preparati od aronije — od proverenog domaćeg proizvođača.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/06/Aronica-Natural-slider.jpg" alt="Aronica Natural"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Za decu</span><h1>Srberry Kids 🧃🍓</h1><div class="price">510 – 550 RSD</div>
+      <p>Voćni sokovi za najmlađe — bez dodatog šećera i veštačkih boja.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/05/Srberry_Kids_Sokovi.png" alt="Srberry Kids"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Poslastice</span><h1>Kapetan Koko čokolade 🍫</h1><div class="price">690 – 790 RSD</div>
+      <p>Zanatske čokolade punog ukusa — za prave uživaoce.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/04/kapetan-koko.jpg" alt="Kapetan Koko"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Kozmetika</span><h1>Gana kozmetika</h1><div class="price">440 – 2.500 RSD</div>
+      <p>Prirodna nega za lice i telo — od domaćih sastojaka.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/05/gana-slajd.jpg" alt="Gana kozmetika"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Preporuka 🛒</span><h1>Najčešći izbor novih kupaca</h1><div class="price">Bestseleri</div>
+      <p>Najprodavaniji proizvodi — savršen izbor za prvu porudžbinu.</p>
+      <a class="btn lime">Pogledaj izbor →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/02/Najcesci-izbor-novih-kupaca.jpg" alt="Najčešći izbor novih kupaca"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Meso</span><h1>Mangulina</h1><div class="price">570 – 1.280 RSD</div>
+      <p>Suhomesnati proizvodi od mangulice — vrhunski kvalitet i tradicija.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/02/Mangulina-hp-slide.jpg" alt="Mangulina"></div>
+    </div>
+    <div class="hslide">
+      <div class="txt"><span class="eyebrow">Doručak</span><h1>NAŠA Granola 🥣</h1><div class="price">650 – 1.050 RSD</div>
+      <p>Ručno rađena granola, pečena u malim serijama — bez dodatog šećera.</p>
+      <a class="btn lime">U prodavnicu →</a></div>
+      <div class="pic"><img src="https://media.ukusiprirode.rs/2026/04/nasa-granola-karuzel.jpg" alt="NAŠA Granola"></div>
+    </div>
+  </div>
+  <div class="harrows"><button data-dir="-1">‹</button><button data-dir="1">›</button></div>
+  <div class="hdots"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</div>
+<div class="trustbar">
+  <div><span class="e">🧺</span> 60+ proizvođača</div>
+  <div><span class="e">🚚</span> Besplatna dostava iznad 3.000 RSD</div>
+  <div><span class="e">⭐</span> Ocena 4.9/5</div>
+</div>
+</div></section>
+
+<!-- CATEGORIES (Koncept 1 stil) -->
+<section style="padding-top:14px"><div class="wrap">
+<div class="sec-head"><span class="eyebrow">Kategorije</span><h2>Pronađi po ukusu</h2></div>
+<style>
+.cchip{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:11px 26px 11px 11px;font-weight:600;font-size:15px;color:var(--deep);box-shadow:0 6px 16px rgba(5,61,32,.05);transition:.2s;cursor:pointer;white-space:nowrap;flex:0 0 auto;scroll-snap-align:start}
+.cchip:hover{border-color:var(--lime);transform:translateY(-3px);box-shadow:0 12px 26px rgba(5,61,32,.12)}
+.cchip .ce{width:48px;height:48px;border-radius:14px;background:linear-gradient(160deg,#eef6ef,#eaf2e2);display:grid;place-items:center;font-size:24px;flex:0 0 auto}
+.catrow{position:relative;margin-top:14px}
+.catscroll{display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;padding:8px 4px;-ms-overflow-style:none;scrollbar-width:none;cursor:grab}
+.catscroll::-webkit-scrollbar{display:none}
+.catscroll:active{cursor:grabbing}
+.catnav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--deep);font-size:20px;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 16px rgba(5,61,32,.14);z-index:5;transition:.2s}
+.catnav.l{left:0}.catnav.r{right:0}
+.catnav:hover{background:var(--g);color:#fff;border-color:var(--g)}
+</style>
+<style>.catdots{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.catdots span{width:9px;height:9px;border-radius:50%;background:#cdd8cc;cursor:pointer;transition:.2s}
+.catdots span.on{background:var(--g);width:26px;border-radius:999px}</style>
+<div class="catrow">
+  <div class="catscroll" id="cRow"></div>
+</div>
+<div class="catdots" id="cDots"></div>
+<script>
+(function(){
+  var C=[['🥬','Pijaca'],['🍯','Med'],['☕','Kafe i čajevi'],['🧀','Mlečni proizvodi'],['🥣','Cerealije'],['🫙','Kremovi i namazi'],['🌸','Prirodna kozmetika'],['🍫','Poslastice'],['🍖','Meso'],['🧃','Sokovi'],['🥤','Zdravi napici'],['💊','Zdravi suplementi'],['🍲','Gotovi obroci'],['🥟','Testo'],['🥜','Karafindl'],['🌍','Ukusi sveta'],['🧊','Zamrznuto'],['🥫','Zimnica']];
+  var el=document.getElementById('cRow');
+  el.innerHTML=C.map(function(c){return '<span class="cchip"><span class="ce">'+c[0]+'</span>'+c[1]+'</span>';}).join('');
+  document.querySelectorAll('.catnav').forEach(function(b){b.addEventListener('click',function(){el.scrollBy({left:(b.classList.contains('l')?-1:1)*Math.min(el.clientWidth*0.85,520),behavior:'smooth'});});});
+  var down=false,sx=0,sl=0;
+  el.addEventListener('mousedown',function(e){down=true;sx=e.pageX;sl=el.scrollLeft;});
+  window.addEventListener('mouseup',function(){down=false;});
+  el.addEventListener('mouseleave',function(){down=false;});
+  el.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();el.scrollLeft=sl-(e.pageX-sx);});
+  var dots=document.getElementById('cDots');
+  function pages(){return Math.max(1,Math.ceil((el.scrollWidth-4)/el.clientWidth));}
+  function build(){dots.innerHTML='';var n=pages();for(var i=0;i<n;i++){var s=document.createElement('span');if(i===0)s.className='on';(function(i){s.onclick=function(){el.scrollTo({left:i*el.clientWidth,behavior:'smooth'});};})(i);dots.appendChild(s);}}
+  function upd(){var i=Math.round(el.scrollLeft/el.clientWidth);[].forEach.call(dots.children,function(d,k){d.classList.toggle('on',k===i);});}
+  build();el.addEventListener('scroll',upd);window.addEventListener('resize',function(){build();upd();});
+})();
+</script>
+</div></section>
+
+<!-- POPULAR PRODUCTS -->
+<section style="padding-top:8px"><div class="wrap"><div class="sec-head left"><h2>Popularno danas</h2><a>Sve →</a></div>
+<div class="grid">
+<div class="card"><div class="frame"><span class="tag">Pijaca</span><img src="https://media.ukusiprirode.rs/2022/10/Bakaluk-Domaca-jaja.jpg"></div><div class="b"><span class="prodn">Bakaluk</span><h3>Domaća jaja</h3><div class="pr"><span class="price2">390 RSD</span><button class="add">+</button></div></div></div>
+<div class="card"><div class="frame"><span class="tag">Bez šećera</span><img src="https://media.ukusiprirode.rs/2026/06/Urmolada_Kajsija.jpg"></div><div class="b"><span class="prodn">Urmolada</span><h3>Urmolada Kajsija</h3><div class="pr"><span class="price2">750 RSD</span><button class="add">+</button></div></div></div>
+<div class="card"><div class="frame"><span class="tag">Neprskano</span><img src="https://media.ukusiprirode.rs/2025/06/Paradajz-volovsko-srce-pink-1kg.jpg"></div><div class="b"><span class="prodn">Sa pijace</span><h3>Paradajz</h3><div class="pr"><span class="price2">650 RSD</span><button class="add">+</button></div></div></div>
+<div class="card"><div class="frame"><span class="tag">Organsko</span><img src="https://media.ukusiprirode.rs/2026/06/Organsko-kokosovo-ulje.png"></div><div class="b"><span class="prodn">Karafindl</span><h3>Kokosovo ulje</h3><div class="pr"><span class="price2">890 RSD</span><button class="add">+</button></div></div></div>
+<div class="card"><div class="frame"><span class="tag">Novo</span><img src="https://media.ukusiprirode.rs/2026/06/Na_Zrnu_Malina.jpg"></div><div class="b"><span class="prodn">Na zrnu</span><h3>Malina i ovas</h3><div class="pr"><span class="price2">350 RSD</span><button class="add">+</button></div></div></div>
+<div class="card"><div class="frame"><span class="tag">Neprskano</span><img src="https://media.ukusiprirode.rs/2022/06/Tikvice.jpg"></div><div class="b"><span class="prodn">Bio Panon</span><h3>Tikvice</h3><div class="pr"><span class="price2">305 RSD</span><button class="add">+</button></div></div></div>
+<div class="card"><div class="frame"><span class="tag">Pijaca</span><img src="https://media.ukusiprirode.rs/2022/06/Mladi-krompirici-Beli.jpg"></div><div class="b"><span class="prodn">Đokić</span><h3>Mladi krompir</h3><div class="pr"><span class="price2">360 RSD</span><button class="add">+</button></div></div></div>
+<div class="card"><div class="frame"><span class="tag">Prirodno</span><img src="https://media.ukusiprirode.rs/2026/06/Sprej-protiv-insekata.jpg"></div><div class="b"><span class="prodn">Aronica</span><h3>Sprej protiv insekata</h3><div class="pr"><span class="price2">840 RSD</span><button class="add">+</button></div></div></div>
+</div></div></section>
+
+<!-- PRODUCERS (Koncept 1/3 stil) -->
+<section style="padding-top:8px"><div class="wrap"><div class="producers">
+<div class="sec-head"><span class="eyebrow">Iza svakog proizvoda stoji čovek</span><h2>Naši proizvođači</h2><p>Svih 58 domaćih majstora u pokretu — jedinstven vizuelni sistem umesto šarolikih logotipa.</p></div>
+<style>
+.runner{overflow:hidden;padding:6px 0;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.track{display:inline-flex;gap:14px;white-space:nowrap;will-change:transform;animation:runL 130s linear infinite}
+.track.rev{animation:runR 72s linear infinite}
+.runner:hover .track{animation-play-state:paused}
+@keyframes runL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes runR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.pchip{display:inline-flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 22px;font-weight:600;font-size:14.5px;color:var(--deep);box-shadow:0 4px 12px rgba(5,61,32,.05);transition:.2s;cursor:pointer}
+.pchip:hover{border-color:var(--lime);transform:translateY(-2px);box-shadow:0 10px 22px rgba(5,61,32,.12);color:var(--g)}
+.pchip .dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex:0 0 auto}
+@media(prefers-reduced-motion:reduce){.track{animation:none}.runner{overflow:auto}}
+</style>
+<div class="runner"><div class="track" id="rowA"></div></div>
+<script>
+(function(){
+  var P=["Aronica Natural","Fitaky","Gana kozmetika","Majana","MOBA","Siempre Viva","Sofi","Adonis","Aleksandrija","Anđeli Delicije","Artfood","Bakaluk","Beeberry","Bio Panon Farm","BUT&CO","Ćatić","Chamomilla","Dedina vodenica 1892","Eko farma Moravka","Eko mlekara Preradović","EtNo.1","Gazdinstvo Dragićević","Gazdinstvo Đokić","Gazdinstvo Krstonošić","Gazdinstvo Tegeltija","Kapetan Koko","LeblebijaNaut","Mangulina","Komšinice","Majkine poslastice","Mala mlekara Ćuk","Mlekara Farmer","Moćno","Najbolje sa pijace","Naša granola","Naša rajska bašta","Na zrnu","Nonna supa","Oro Nero","Pčelarska farma Mimi i Ivana","Poljoprivredna škola Ljubo Mićić","Pržioničar","Real Red","SD doo","Slavuj","Spelta Jevtić","Sredom i petkom","Stado moje","Šopalović Širet","Umami","Urmolada","Vodenica Dren","Vodenica Stanković","Zdravarija","Zdravo kod Rusa","Zeleni Hit","Zora","Žuna"];
+  function chip(n){return '<span class="pchip"><span class="dot"></span>'+n+'</span>';}
+  var h=P.map(chip).join('');
+  document.getElementById('rowA').innerHTML=h+h;
+})();
+</script>
+</div></div></section>
+
+<!-- B2B green band (Koncept 2 stil) -->
+<section style="padding-top:8px"><div class="wrap"><div class="b2b">
+<div><span class="eyebrow">Za firme</span><h2>Pokloni koji zrače brigom 🎁</h2>
+<p>Zdravi domaći paketi za tim i klijente. Jedan kontakt, faktura na firmu, dostava svuda.</p>
+<a class="btn w">Zatraži ponudu</a></div>
+<div class="basket">🧺</div>
+</div></div></section>
+
+<style>
+.values{border-top:1px solid var(--line);padding:38px 0}
+.vrow{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;text-align:center}
+.v{font-weight:600;font-size:14px;color:var(--deep)}
+.vi{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(160deg,#eef6ef,#eaf2e2);font-size:26px}
+.reband{background:linear-gradient(135deg,#cfe8cd,#bfe3bd);border-radius:24px;padding:30px 40px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.reband h3{color:var(--deep);font-size:clamp(18px,2.2vw,26px);max-width:640px}
+.paybar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.paybar .chip{background:#fff;border-radius:8px;padding:7px 11px;height:36px;display:flex;align-items:center}
+.paybar .chip img{height:20px;width:auto;display:block}
+.fcols{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:28px}
+footer h4{color:#fff;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+footer .lnks{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px}
+footer .lnks a:hover{color:#fff}
+.fbottom{border-top:1px solid rgba(255,255,255,.14);margin-top:30px;padding-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:#9fc2ad}
+@media(max-width:820px){.vrow{grid-template-columns:repeat(2,1fr)}.fcols{grid-template-columns:1fr}}
+</style>
+
+<!-- VALUES strip (sa njihovog sajta) -->
+<section class="values"><div class="wrap"><div class="vrow">
+  <div class="v"><span class="vi">🌿</span>Prirodni proizvodi</div>
+  <div class="v"><span class="vi">✅</span>Sertifikovani proizvođači</div>
+  <div class="v"><span class="vi">🏅</span>Vrhunski kvalitet</div>
+  <div class="v"><span class="vi">⏱️</span>Kupovina koja štedi vreme</div>
+  <div class="v"><span class="vi">🤝</span>Podrška lokalnoj proizvodnji</div>
+</div></div></section>
+
+<!-- PRODUCER RECRUITMENT band (sa njihovog sajta) -->
+<section style="padding-top:0"><div class="wrap"><div class="reband">
+  <h3>Imate zdrav i prirodan proizvod? Učinite ga dostupnim celoj Srbiji!</h3>
+  <a class="btn">Kontaktirajte nas!</a>
+</div></div></section>
+
+<footer><div class="wrap">
+  <div class="fcols">
+    <div>
+      <a class="logo" style="color:#fff"><span class="b">🌿</span>Ukusi prirode</a>
+      <p style="margin:12px 0;font-size:14px;color:#bfe0cc;max-width:320px">Online prodavnica proverenih malih proizvođača iz Srbije. Sveže, zdravo, prirodno.</p>
+      <div class="paybar">
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/maestro_logo.svg" alt="Maestro"></span>
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/mastercard_logo.svg" alt="Mastercard"></span>
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/dina_card_logo.svg" alt="DinaCard"></span>
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/visa_logo.svg" alt="Visa"></span>
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/american_express_logo.svg" alt="Amex"></span>
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/banca-intesa_logo.svg" alt="Banca Intesa"></span>
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/mc_idcheck_logo.svg" alt="MC ID Check"></span>
+        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/visa_secure.svg" alt="Visa Secure"></span>
+      </div>
+    </div>
+    <div><h4>Prodavnica</h4><ul class="lnks"><li><a>Pijaca</a></li><li><a>Med</a></li><li><a>Kozmetika</a></li><li><a>Cenovnik</a></li></ul></div>
+    <div><h4>Ukusi prirode</h4><ul class="lnks"><li><a>Naša priča</a></li><li><a>Proizvođači</a></li><li><a>Za firme</a></li><li><a>Kontakt</a></li></ul></div>
+  </div>
+  <div class="fbottom">
+    <span>© Ukusi prirode 2026 — Sva prava zadržana // Greenation doo</span>
+    <span><a>Uslovi korišćenja</a> · Koncept 5 v2 (demo)</span>
+  </div>
+</div></footer>
+
+<script>
+(function(){
+  // hero carousel
+  var slides=[].slice.call(document.querySelectorAll('.hslide'));
+  var dots=[].slice.call(document.querySelectorAll('.hdots span'));
+  var i=0,timer;
+  function show(n){i=(n+slides.length)%slides.length;slides.forEach(function(s,k){s.classList.toggle('on',k===i)});dots.forEach(function(d,k){d.classList.toggle('on',k===i)});}
+  function next(){show(i+1);}
+  function play(){timer=setInterval(next,4500);} function stop(){clearInterval(timer);}
+  document.querySelectorAll('.harrows button').forEach(function(b){b.onclick=function(){stop();show(i+ (+b.dataset.dir));play();}});
+  dots.forEach(function(d,k){d.onclick=function(){stop();show(k);play();}});
+  play();
+  // scroll reveal
+  var els=[].slice.call(document.querySelectorAll('.sec-head,.cat,.card,.producers,.b2b,.trustbar'));
+  els.forEach(function(e){e.setAttribute('data-reveal','')});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.cats,.grid,.prow').forEach(function(g){[].slice.call(g.children).forEach(function(c,k){c.style.transitionDelay=(k%8*55)+'ms'})});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body></html>
