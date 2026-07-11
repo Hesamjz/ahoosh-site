@@ -118,9 +118,16 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .drop{position:absolute;top:100%;padding-top:16px;opacity:0;visibility:hidden;transform:translateY(8px);transition:.2s;z-index:60}
 .nav ul>li.has:hover .drop{opacity:1;visibility:visible;transform:translateY(0)}
 .drop .panel{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 54px rgba(5,61,32,.18);padding:14px}
-.drop.cats{left:0}.drop.cats .panel{width:240px;max-height:70vh;overflow:auto}
+.drop.cats{left:0}.drop.cats .panel{width:252px;max-height:none;overflow:visible}
 .drop.cats a{display:block;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer}
 .drop.cats a:hover{background:#eef6ef;color:var(--g)}
+.ci{position:relative}
+.ci>a{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ci>a .ar{color:var(--muted);font-size:12px}
+.ci:hover>a{background:#eef6ef;color:var(--g)}
+.sub{position:absolute;left:100%;top:-10px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 22px 48px rgba(5,61,32,.18);padding:10px;min-width:230px;opacity:0;visibility:hidden;transform:translateX(8px);transition:.18s;z-index:70}
+.ci:hover>.sub{opacity:1;visibility:visible;transform:translateX(0)}
+.sub a{font-size:13.5px;font-weight:500}
 .drop.prod{left:50%;right:auto;transform:translate(-50%,8px)}
 .nav ul>li.has:hover .drop.prod{transform:translate(-50%,0)}
 .drop.prod .panel{width:min(780px,90vw);display:grid;grid-template-columns:repeat(3,1fr);gap:1px 16px;max-height:56vh;overflow:auto}
@@ -137,7 +144,22 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 <li class="zf"><a class="zf">Za firme</a></li>
 <li class="has"><a>Prodavnica ▾</a>
   <div class="drop cats"><div class="panel">
-    <a>Cenovnik</a><a>Prirodna kozmetika ›</a><a>Cerealije ›</a><a>Testo ›</a><a>Kafe i čajevi ›</a><a>Med ›</a><a>Karafindl ›</a><a>Kremovi i namazi ›</a><a>Gotovi obroci ›</a><a>Sokovi ›</a><a>Pijaca ›</a><a>Poslastice ›</a><a>Mlečni proizvodi</a><a>Meso ›</a><a>Ukusi sveta</a><a>Zamrznuto</a><a>Zdravi napici</a><a>Zdravi suplementi</a><a>Zimnica</a>
+    <a>Cenovnik</a>
+    <div class="ci"><a>Prirodna kozmetika <span class="ar">›</span></a><div class="sub"><a>Nega lica</a><a>Nega tela</a><a>Nega kose</a><a>Nega usana</a><a>Dezodoransi</a><a>Etarska i biljna ulja</a><a>Kozmetika za bebe i decu</a><a>Kozmetika za trudnice i mame</a></div></div>
+    <div class="ci"><a>Cerealije <span class="ar">›</span></a><div class="sub"><a>Granole</a><a>Žitarice</a></div></div>
+    <div class="ci"><a>Testo <span class="ar">›</span></a><div class="sub"><a>Brašno</a><a>Hleb</a><a>Testenina</a></div></div>
+    <div class="ci"><a>Kafe i čajevi <span class="ar">›</span></a><div class="sub"><a>Kafe</a><a>Čajevi</a></div></div>
+    <div class="ci"><a>Med <span class="ar">›</span></a><div class="sub"><a>Med</a><a>Proizvodi od meda</a></div></div>
+    <div class="ci"><a>Karafindl <span class="ar">›</span></a><div class="sub"><a>Ulje</a><a>Sirće</a><a>Začini</a><a>Zdravi zaslađivači</a></div></div>
+    <div class="ci"><a>Kremovi i namazi <span class="ar">›</span></a><div class="sub"><a>Kremovi</a><a>Džemovi</a><a>Domaći džemovi</a><a>Slani namazi</a><a>Slatki namazi</a><a>Ajvar</a><a>Puter</a><a>Sosevi</a><a>Nadevi</a><a>Slatko</a></div></div>
+    <div class="ci"><a>Gotovi obroci <span class="ar">›</span></a><div class="sub"><a>Slatki obroci</a></div></div>
+    <div class="ci"><a>Sokovi <span class="ar">›</span></a><div class="sub"><a>Prirodni sokovi</a><a>Hladno ceđeni sokovi</a><a>Detoks</a><a>Matični sokovi</a><a>Sirupi</a></div></div>
+    <div class="ci"><a>Pijaca <span class="ar">›</span></a><div class="sub"><a>Povrće</a><a>Voće</a><a>Jaja</a><a>Orašasti plodovi</a><a>Začinsko bilje</a><a>Najbolje sa pijace</a></div></div>
+    <div class="ci"><a>Poslastice <span class="ar">›</span></a><div class="sub"><a>Čokolada</a><a>Kolači i barovi</a><a>Zdrave grickalice</a></div></div>
+    <a>Mlečni proizvodi</a>
+    <div class="ci"><a>Meso <span class="ar">›</span></a><div class="sub"><a>Suhomesnato</a></div></div>
+    <div class="ci"><a>Ukusi sveta <span class="ar">›</span></a><div class="sub"><a>Dodatak ishrani</a><a>Zdravi zaslađivači</a></div></div>
+    <a>Zamrznuto</a><a>Zdravi napici</a><a>Zdravi suplementi</a><a>Zimnica</a>
   </div></div>
 </li>
 <li class="has"><a>Proizvođači ▾</a>
@@ -331,6 +353,79 @@ footer .lnks a:hover{color:#fff}
 .fbottom{border-top:1px solid rgba(255,255,255,.14);margin-top:30px;padding-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:#9fc2ad}
 @media(max-width:820px){.vrow{grid-template-columns:repeat(2,1fr)}.fcols{grid-template-columns:1fr}}
 </style>
+
+<style>
+.catblock{margin-top:36px}
+.catblock .sec-head.left h3{font-size:clamp(20px,2.4vw,26px);color:var(--deep);font-weight:700;letter-spacing:-.02em}
+.bloggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.post{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.04);transition:.22s;display:block;cursor:pointer}
+.post:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.12)}
+.pimg{aspect-ratio:16/10;overflow:hidden;background:#eaf2e2}
+.pimg img{width:100%;height:100%;object-fit:cover;transition:.4s}
+.post:hover .pimg img{transform:scale(1.05)}
+.pb{padding:18px 20px 20px}
+.pdate{font-size:12px;font-weight:700;color:var(--g);letter-spacing:.04em}
+.post h3{font-size:19px;margin:6px 0 10px;color:var(--deep);line-height:1.25}
+.plink{font-weight:600;color:var(--g);font-size:14px}
+@media(max-width:900px){.bloggrid{grid-template-columns:1fr}}
+</style>
+
+<!-- IZDVAJAMO ZA VAS — top prodavano po kategorijama (obrazac sa Probara: duže zadržavanje na strani) -->
+<section style="padding-top:8px"><div class="wrap">
+<div class="sec-head"><span class="eyebrow">Najprodavanije</span><h2>Izdvajamo za vas</h2><p>Top proizvodi iz svake kategorije — sve na početnoj, bez traženja.</p></div>
+
+<div class="catblock">
+  <div class="sec-head left"><h3>🥬 Pijaca</h3><a>Vidi sve →</a></div>
+  <div class="grid">
+    <div class="card"><div class="frame"><span class="tag">Neprskano</span><img src="https://media.ukusiprirode.rs/2024/11/Blitva-veza.jpg" alt="Blitva"></div><div class="b"><span class="prodn">Sa pijace</span><h3>Blitva (veza)</h3><div class="pr"><span class="price2">175 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Sveže</span><img src="https://media.ukusiprirode.rs/2022/06/Sargarepa.jpg" alt="Šargarepa"></div><div class="b"><span class="prodn">Sa pijace</span><h3>Šargarepa</h3><div class="pr"><span class="price2">305 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Domaće</span><img src="https://media.ukusiprirode.rs/2022/10/Bakaluk-Domaca-jaja.jpg" alt="Domaća jaja"></div><div class="b"><span class="prodn">Bakaluk</span><h3>Domaća jaja</h3><div class="pr"><span class="price2">390 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Sveže</span><img src="https://media.ukusiprirode.rs/2022/10/Beli-luk.jpg" alt="Beli luk"></div><div class="b"><span class="prodn">Sa pijace</span><h3>Beli luk</h3><div class="pr"><span class="price2">110 RSD</span><button class="add">+</button></div></div></div>
+  </div>
+</div>
+
+<div class="catblock">
+  <div class="sec-head left"><h3>🫙 Kremovi i namazi</h3><a>Vidi sve →</a></div>
+  <div class="grid">
+    <div class="card"><div class="frame"><span class="tag">Hit</span><img src="https://media.ukusiprirode.rs/2023/04/lesnik-krem-veliki.jpg" alt="Lešnik krem"></div><div class="b"><span class="prodn">Zdravo kod Rusa</span><h3>Lešnik krem veliki</h3><div class="pr"><span class="price2">990 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2023/03/Pistaci-krem.jpg" alt="Pistaći krem"></div><div class="b"><span class="prodn">Zdravo kod Rusa</span><h3>Pistaći krem 70% · 300g</h3><div class="pr"><span class="price2">1.500 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Bez šećera</span><img src="https://media.ukusiprirode.rs/2021/12/beli-lesnik-krem-sa-stevijom-scaled.jpg" alt="Beli lešnik krem sa stevijom"></div><div class="b"><span class="prodn">Zdravo kod Rusa</span><h3>Beli lešnik krem sa stevijom</h3><div class="pr"><span class="price2">1.000 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Posno</span><img src="https://media.ukusiprirode.rs/2023/03/beli-lesnik-krem-posni.jpg" alt="Beli lešnik krem posni"></div><div class="b"><span class="prodn">Zdravo kod Rusa</span><h3>Beli lešnik krem – posni</h3><div class="pr"><span class="price2">990 RSD</span><button class="add">+</button></div></div></div>
+  </div>
+</div>
+
+<div class="catblock">
+  <div class="sec-head left"><h3>🧃 Sokovi</h3><a>Vidi sve →</a></div>
+  <div class="grid">
+    <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2020/08/malina-premium-075.jpg" alt="Malina premium"></div><div class="b"><span class="prodn">Beeberry</span><h3>Malina premium 0.75</h3><div class="pr"><span class="price2">1.100 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2020/08/Crna-ribizla-beeberry-premium-0.2.png" alt="Crna ribizla"></div><div class="b"><span class="prodn">Beeberry</span><h3>Crna ribizla premium 0.2</h3><div class="pr"><span class="price2">240 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2020/08/Jagoda-beeberry-premium-0.2.jpg" alt="Jagoda"></div><div class="b"><span class="prodn">Beeberry</span><h3>Jagoda premium 0.2</h3><div class="pr"><span class="price2">220 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2020/08/Kupina-beeberry-premium-0.2.jpg" alt="Kupina"></div><div class="b"><span class="prodn">Beeberry</span><h3>Kupina premium 0.2</h3><div class="pr"><span class="price2">220 RSD</span><button class="add">+</button></div></div></div>
+  </div>
+</div>
+
+<div class="catblock">
+  <div class="sec-head left"><h3>🍫 Poslastice</h3><a>Vidi sve →</a></div>
+  <div class="grid">
+    <div class="card"><div class="frame"><span class="tag">Hit</span><img src="https://media.ukusiprirode.rs/2023/09/Nugat-cokolada.jpg" alt="Nugat čokolada"></div><div class="b"><span class="prodn">Kapetan Koko</span><h3>Nugat čokolada</h3><div class="pr"><span class="price2">690 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Novo</span><img src="https://media.ukusiprirode.rs/2025/02/Dubai_kuglice_stack.jpg" alt="Dubai kuglice"></div><div class="b"><span class="prodn">Majkine poslastice</span><h3>Dubai kuglice</h3><div class="pr"><span class="price2">80 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Hit</span><img src="https://media.ukusiprirode.rs/2024/01/lomljeni-lesnik-cokolada.jpg" alt="Lomljeni lešnik čokolada"></div><div class="b"><span class="prodn">Kapetan Koko</span><h3>Lomljeni lešnik čokolada</h3><div class="pr"><span class="price2">690 RSD</span><button class="add">+</button></div></div></div>
+    <div class="card"><div class="frame"><span class="tag">Domaće</span><img src="https://media.ukusiprirode.rs/2023/01/Kolac-sa-cokoladom-i-bademom.jpg" alt="Anđeli kolač"></div><div class="b"><span class="prodn">Anđeli Delicije</span><h3>Kolač sa čokoladom i bademom</h3><div class="pr"><span class="price2">140 RSD</span><button class="add">+</button></div></div></div>
+  </div>
+</div>
+
+</div></section>
+
+<!-- BLOG (uz footer) -->
+<section style="padding-top:8px"><div class="wrap">
+<div class="sec-head"><span class="eyebrow">Blog</span><h2>Priče iz prirode</h2><p>Saveti, sezonske liste i priče naših proizvođača.</p></div>
+<div class="bloggrid">
+  <a class="post"><div class="pimg"><img src="https://media.ukusiprirode.rs/2026/05/kako-prepoznati-dobre-jagode.png" alt="Kako prepoznati dobre jagode"></div><div class="pb"><span class="pdate">18. MAJ 2026.</span><h3>Kako prepoznati dobre jagode?</h3><span class="plink">Pročitaj →</span></div></a>
+  <a class="post"><div class="pimg"><img src="https://media.ukusiprirode.rs/2026/05/ChatGPT-Image-May-18-2026-01_51_25-AM.png" alt="Zdrava nedeljna korpa"></div><div class="pb"><span class="pdate">17. MAJ 2026.</span><h3>Zdrava nedeljna korpa</h3><span class="plink">Pročitaj →</span></div></a>
+  <a class="post"><div class="pimg"><img src="https://media.ukusiprirode.rs/2026/05/ChatGPT-Image-May-18-2026-01_14_30-AM.png" alt="Sezonsko voće i povrće u maju"></div><div class="pb"><span class="pdate">17. MAJ 2026.</span><h3>Sezonsko voće i povrće u maju</h3><span class="plink">Pročitaj →</span></div></a>
+</div>
+<div style="text-align:center;margin-top:28px"><a class="btn lime">Svi tekstovi →</a></div>
+</div></section>
 
 <!-- VALUES strip (sa njihovog sajta) -->
 <section class="values"><div class="wrap"><div class="vrow">
