@@ -453,10 +453,15 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .vi{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(160deg,#eef6ef,#eaf2e2);font-size:26px}
 .reband{background:linear-gradient(135deg,#cfe8cd,#bfe3bd);border-radius:24px;padding:30px 40px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
 .reband h3{color:var(--deep);font-size:clamp(18px,2.2vw,26px);max-width:640px}
-.paybar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.paybar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:34px;padding-top:26px;border-top:1px solid rgba(255,255,255,.14)}
 .paybar .chip{background:#fff;border-radius:8px;padding:7px 11px;height:36px;display:flex;align-items:center}
 .paybar .chip img{height:20px;width:auto;display:block}
-.fcols{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:28px}
+.fcols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:26px}
+.fsoc{display:flex;gap:14px}
+.fsoc a{font-size:14px;font-weight:600;color:var(--lime)}
+.fsoc a:hover{color:#fff}
+.fbottom{margin-top:22px;padding-top:18px}
+@media(max-width:1000px){.fcols{grid-template-columns:1fr 1fr}}
 .flogo{display:inline-flex;background:#fff;border-radius:16px;padding:10px 18px}
 .flogo img{height:48px;width:auto;display:block}
 footer h4{color:#fff;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
@@ -617,24 +622,29 @@ footer .lnks a:hover{color:#fff}
   <div class="fcols">
     <div>
       <a class="flogo"><img src="https://media.ukusiprirode.rs/2020/08/Ukusi-prirode-logo-u-boji.png" alt="Ukusi prirode"></a>
-      <p style="margin:12px 0;font-size:14px;color:#bfe0cc;max-width:320px">Online prodavnica proverenih malih proizvođača iz Srbije. Sveže, zdravo, prirodno.</p>
-      <div class="paybar">
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/maestro_logo.svg" alt="Maestro"></span>
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/mastercard_logo.svg" alt="Mastercard"></span>
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/dina_card_logo.svg" alt="DinaCard"></span>
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/visa_logo.svg" alt="Visa"></span>
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/american_express_logo.svg" alt="Amex"></span>
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/banca-intesa_logo.svg" alt="Banca Intesa"></span>
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/mc_idcheck_logo.svg" alt="MC ID Check"></span>
-        <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/visa_secure.svg" alt="Visa Secure"></span>
-      </div>
+      <p style="margin:12px 0;font-size:14px;color:#bfe0cc;max-width:300px">Online prodavnica proverenih malih proizvođača iz Srbije. Sveže, zdravo, prirodno.</p>
     </div>
-    <div><h4>Prodavnica</h4><ul class="lnks"><li><a>Pijaca</a></li><li><a>Med</a></li><li><a>Kozmetika</a></li><li><a>Cenovnik</a></li></ul></div>
-    <div><h4>Ukusi prirode</h4><ul class="lnks"><li><a>Naša priča</a></li><li><a>Proizvođači</a></li><li><a>Za firme</a></li><li><a>Kontakt</a></li></ul></div>
+    <div><h4>Prodavnica</h4><ul class="lnks"><li><a>Pijaca</a></li><li><a>Med</a></li><li><a>Mlečni proizvodi</a></li><li><a>Prirodna kozmetika</a></li><li><a>Kremovi i namazi</a></li><li><a>Sokovi</a></li><li><a>Cenovnik svih proizvoda</a></li></ul></div>
+    <div><h4>Ukusi prirode</h4><ul class="lnks"><li><a>Naša priča</a></li><li><a>Proizvođači</a></li><li><a>Za firme</a></li><li><a>Blog</a></li><li><a>Kontakt</a></li></ul></div>
+    <div><h4>Podrška</h4><ul class="lnks"><li><a>Moj nalog</a></li><li><a>Lista želja</a></li><li><a>Uslovi dostave</a></li><li><a>Uslovi korišćenja</a></li></ul></div>
+    <div><h4>Kontakt</h4>
+      <p style="font-size:14px;color:#bfe0cc;line-height:1.7;margin-bottom:12px">Petra Martinovića 22<br>11030 Beograd, Srbija</p>
+      <div class="fsoc"><a href="https://www.instagram.com/ukusiprirode.rs/" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/ukusiprirode/" target="_blank" rel="noopener">Facebook</a></div>
+    </div>
+  </div>
+  <div class="paybar">
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/maestro_logo.svg" alt="Maestro"></span>
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/mastercard_logo.svg" alt="Mastercard"></span>
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/dina_card_logo.svg" alt="DinaCard"></span>
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/visa_logo.svg" alt="Visa"></span>
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/american_express_logo.svg" alt="American Express"></span>
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/banca-intesa_logo.svg" alt="Banca Intesa"></span>
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/mc_idcheck_logo.svg" alt="Mastercard ID Check"></span>
+    <span class="chip"><img src="https://media.ukusiprirode.rs/2023/12/visa_secure.svg" alt="Visa Secure"></span>
   </div>
   <div class="fbottom">
     <span>© Ukusi prirode 2026 — Sva prava zadržana // Greenation doo</span>
-    <span><a>Uslovi korišćenja</a> · Koncept 5 v2 (demo)</span>
+    <span><a>Uslovi korišćenja</a></span>
   </div>
 </div></footer>
 
