@@ -551,13 +551,16 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 (function(){
   var b=document.getElementById('b2b'); if(!b) return;
   if(!('IntersectionObserver' in window)){ b.classList.add('open'); return; }
+
+  // OTVARA se tek kad traka stigne do SREDINE ekrana (ne čim proviri odozdo)
   new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      // otvara se kad traka uđe u vidokrug, zatvara kad izađe — pa se sledeće sekcije podižu preko nje
-      if(e.isIntersecting && e.intersectionRatio > 0.35) b.classList.add('open');
-      else if(e.intersectionRatio < 0.12) b.classList.remove('open');
-    });
-  },{threshold:[0,.12,.35,.6]}).observe(b);
+    es.forEach(function(e){ if(e.isIntersecting) b.classList.add('open'); });
+  },{rootMargin:'-45% 0px -30% 0px', threshold:0}).observe(b);
+
+  // ZATVARA se tek kad potpuno napusti ekran — bez treperenja dok se skroluje kroz nju
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(!e.isIntersecting) b.classList.remove('open'); });
+  },{threshold:0}).observe(b);
 })();
 </script>
 
