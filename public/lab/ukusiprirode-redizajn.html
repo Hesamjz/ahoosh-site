@@ -490,13 +490,76 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 </div>
 </div></section>
 
-<!-- B2B green band — odmah ispod SEO boksa -->
-<section style="padding-top:6px"><div class="wrap"><div class="b2b">
-<div><span class="eyebrow">Za firme</span><h2>Poslovni pokloni koji zrače brigom</h2>
-<p>Zdravi domaći paketi za tim i klijente. Jedan kontakt, faktura na firmu, dostava svuda.</p>
-<a class="btn w">Zatraži ponudu</a></div>
-<div class="basket"><img src="https://media.ukusiprirode.rs/2025/12/Poklon_pakovanje.jpg" alt="Poklon paket u drvenoj kutiji — Ukusi prirode za firme"></div>
+<!-- B2B green band — otvara se na skrol i pokazuje sva 4 rešenja -->
+<style>
+.b2b.open{grid-template-columns:1fr}
+.b2b .b2bhead{display:grid;grid-template-columns:1.3fr .7fr;gap:24px;align-items:center}
+.b2b.open .b2bhead{grid-template-columns:1fr;text-align:center;justify-items:center}
+.b2b.open .b2bhead p{margin-left:auto;margin-right:auto}
+.b2b .basket{transition:opacity .45s ease, transform .45s ease}
+.b2b.open .basket{opacity:0;transform:scale(.9);pointer-events:none;position:absolute;visibility:hidden}
+/* paketi */
+.pkgs{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+      max-height:0;opacity:0;overflow:hidden;
+      transition:max-height .75s cubic-bezier(.22,.85,.3,1), opacity .5s ease, margin-top .6s ease;margin-top:0}
+.b2b.open .pkgs{max-height:760px;opacity:1;margin-top:30px}
+.pkg{background:#fff;border-radius:20px;overflow:hidden;color:var(--ink);display:flex;flex-direction:column;
+     opacity:0;transform:translateY(26px) scale(.97);
+     transition:opacity .55s ease, transform .55s cubic-bezier(.22,.85,.3,1), box-shadow .25s;
+     box-shadow:0 14px 34px rgba(0,0,0,.18)}
+.b2b.open .pkg{opacity:1;transform:none}
+.b2b.open .pkg:nth-child(1){transition-delay:.10s}
+.b2b.open .pkg:nth-child(2){transition-delay:.20s}
+.b2b.open .pkg:nth-child(3){transition-delay:.30s}
+.b2b.open .pkg:nth-child(4){transition-delay:.40s}
+.pkg:hover{box-shadow:0 22px 48px rgba(0,0,0,.28);transform:translateY(-5px)}
+.pkg img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.pkg .pb{padding:16px 18px 18px;display:flex;flex-direction:column;gap:7px;flex:1}
+.pkg h3{font-size:19px;color:var(--deep);margin:0}
+.pkg p{color:var(--muted);font-size:13.5px;margin:0;flex:1}
+.pkg .plink{font-weight:700;font-size:13.5px;color:#0f8a3f;align-self:flex-start;margin-top:4px}
+@media(max-width:1000px){.pkgs{grid-template-columns:repeat(2,1fr)}.b2b.open .pkgs{max-height:1500px}}
+@media(max-width:560px){.pkgs{grid-template-columns:1fr}.b2b.open .pkgs{max-height:2600px}.pkg img{aspect-ratio:16/9}}
+</style>
+<section style="padding-top:6px"><div class="wrap"><div class="b2b" id="b2b">
+<div class="b2bhead">
+  <div><span class="eyebrow">Za firme</span><h2>Poslovni pokloni koji zrače brigom</h2>
+  <p>Zdravi domaći paketi za tim i klijente. Jedan kontakt, faktura na firmu, dostava svuda.</p>
+  <a class="btn w" href="https://ukusiprirode.rs/zdravi-paketi-za-firme/" target="_blank" rel="noopener">Zatraži ponudu</a></div>
+  <div class="basket"><img src="https://media.ukusiprirode.rs/2025/10/prodavnica-img.jpg" alt="Poklon paket u drvenoj kutiji — Ukusi prirode za firme"></div>
+</div>
+<div class="pkgs">
+  <a class="pkg" href="https://ukusiprirode.rs/zdravi-paketi-za-firme/" target="_blank" rel="noopener">
+    <img src="https://media.ukusiprirode.rs/2025/10/Fresh-Fruit-Box.jpg" alt="Fresh Box — voćni paket za firme" loading="lazy">
+    <div class="pb"><h3>Fresh Box</h3><p>Sveže voće za tim — pakovanja od 5, 8 i 11 kg, po dinamici koja vam odgovara.</p><span class="plink">Kontaktirajte nas →</span></div>
+  </a>
+  <a class="pkg" href="https://ukusiprirode.rs/zdravi-paketi-za-firme/" target="_blank" rel="noopener">
+    <img src="https://media.ukusiprirode.rs/2025/10/Smart-Snack.jpg" alt="Smart Snack — zdrave grickalice za kancelariju" loading="lazy">
+    <div class="pb"><h3>Smart Snack</h3><p>Zdrave grickalice za pauze i sastanke. Više veličina, za svaku priliku.</p><span class="plink">Kontaktirajte nas →</span></div>
+  </a>
+  <a class="pkg" href="https://ukusiprirode.rs/zdravi-paketi-za-firme/" target="_blank" rel="noopener">
+    <img src="https://media.ukusiprirode.rs/2025/10/Gift-Box-ukusi-prirode.jpg" alt="Gift Box — poklon paketi za zaposlene i klijente" loading="lazy">
+    <div class="pb"><h3>Gift Box</h3><p>Poklon paketi za zaposlene, klijente i partnere — kreiramo ih po vašem budžetu.</p><span class="plink">Kontaktirajte nas →</span></div>
+  </a>
+  <a class="pkg" href="https://ukusiprirode.rs/prodavnica/" target="_blank" rel="noopener">
+    <img src="https://media.ukusiprirode.rs/2025/10/prodavnica-img.jpg" alt="Prodavnica — ceo asortiman Ukusi prirode" loading="lazy">
+    <div class="pb"><h3>Prodavnica</h3><p>Puna fleksibilnost — ceo asortiman iz naše online prodavnice, bez paketa.</p><span class="plink">Posetite prodavnicu →</span></div>
+  </a>
+</div>
 </div></div></section>
+<script>
+(function(){
+  var b=document.getElementById('b2b'); if(!b) return;
+  if(!('IntersectionObserver' in window)){ b.classList.add('open'); return; }
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      // otvara se kad traka uđe u vidokrug, zatvara kad izađe — pa se sledeće sekcije podižu preko nje
+      if(e.isIntersecting && e.intersectionRatio > 0.35) b.classList.add('open');
+      else if(e.intersectionRatio < 0.12) b.classList.remove('open');
+    });
+  },{threshold:[0,.12,.35,.6]}).observe(b);
+})();
+</script>
 
 <!-- POPULAR PRODUCTS -->
 <section style="padding-top:8px"><div class="wrap"><div class="sec-head left"><h2>Najprodavaniji domaći proizvodi</h2><a>Sve →</a></div>
