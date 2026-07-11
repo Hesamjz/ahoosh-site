@@ -423,8 +423,10 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 <section style="padding-top:8px"><div class="wrap"><div class="producers">
 <div class="sec-head"><span class="eyebrow">Iza svakog proizvoda stoji čovek</span><h2>Naši domaći proizvođači</h2></div>
 <style>
-.runner{overflow:hidden;padding:6px 0;position:relative}
-.track{display:inline-flex;gap:14px;white-space:nowrap;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:transform}
+.runner{overflow-x:auto;overflow-y:hidden;padding:6px 0;position:relative;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;cursor:grab}
+.runner::-webkit-scrollbar{display:none}
+.runner:active{cursor:grabbing}
+.track{display:inline-flex;gap:14px;white-space:nowrap}
 .track.rev{animation:runR 72s linear infinite}
 .runner:hover .track{animation-play-state:paused}
 @keyframes runL{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
@@ -434,6 +436,11 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .pchip img{max-height:64px;max-width:150px;width:auto;height:auto;object-fit:contain;filter:grayscale(100%);opacity:.78;transition:.25s}
 .pchip:hover img{filter:grayscale(0);opacity:1}
 .pchip .dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex:0 0 auto}
+@media(max-width:900px){
+  .pchip{height:82px;min-width:130px;padding:10px 14px;border-radius:15px;font-size:13px}
+  .pchip img{max-height:50px;max-width:104px;filter:grayscale(0);opacity:1}
+  .runner .track{gap:10px}
+}
 /* traka namerno ostaje u pokretu i uz reduced-motion — spora je (145s) i nije treperava */
 </style>
 <div class="runner"><div class="track" id="rowA"></div></div>
@@ -442,38 +449,41 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   var M='https://media.ukusiprirode.rs/';
   // [naziv, logo] — logotipi preuzeti sa njihovih stranica proizvođača
   var P=[
-   ["Aronica Natural",M+"2026/06/Aronica-logo.png"],["Fitaky",M+"2024/10/fitaky-logo-HR.jpg"],
-   ["Gana kozmetika",M+"2024/03/gana-logo.jpg"],["Majana",M+"2025/06/majana-bee-logo.png"],
-   ["MOBA",M+"2024/10/moba-logo-HR.jpg"],["Siempre Viva",M+"2024/10/SiempreViva_Logo_1@2x.png"],
-   ["Sofi",M+"2024/10/sofi-logo-proizvodjaci.jpg"],["Adonis",M+"2025/12/adonis-logo-crni.png"],
-   ["Aleksandrija",M+"2024/10/Aleksandrija-fruska-gora-logo-HR.jpg"],["Anđeli Delicije",M+"2023/01/andjeli-logo-1.png"],
-   ["Artfood",M+"2024/10/Artfood-logo-HQ.jpg"],["Bakaluk",M+"2022/11/bakaluk-logo.png"],
-   ["Beeberry",M+"2024/12/Beeberry-logo.jpg"],["Bio Panon Farm",M+"2026/01/Bio-Panon-Farm-logo-img.png"],
-   ["BUT&CO",M+"2025/10/BUT-CO-logo.png"],["Chamomilla",M+"2024/10/chamomilla-logo-2-300x168.png"],
-   ["Dedina vodenica 1892",M+"2023/01/Dedina-vodenica-1892-logo.jpg"],["Eko farma Moravka",M+"2025/12/Moravka-logo.png"],
-   ["EtNo.1",M+"2025/10/etno-1-logo.png"],["Gazdinstvo Krstonošić",M+"2023/05/Poljoprivredno-gazdinstvo-Krstonosic-Kikinda-logo.png"],
-   ["Gazdinstvo Tegeltija",M+"2023/11/PG-TEGELTIJA-logo.png"],["Kapetan Koko",M+"2023/09/Kapetan-Koko-logo.png"],
-   ["LeblebijaNaut",M+"2026/03/LeblebijaNaut-logo.png"],["Mangulina",M+"2025/12/Koleba-logo.png"],
-   ["Komšinice",M+"2023/10/komsinice.svg"],["Mlekara Farmer",M+"2025/10/farmer-logo.png"],
-   ["Moćno",M+"2025/12/logo-MOCNO-list.png"],["Naša granola",M+"2024/10/Nasa-granola-logo-HR.jpg"],
-   ["Naša rajska bašta",M+"2026/01/Nasa-rajska-basta-logo-xs.png"],["Na zrnu",M+"2026/06/logo-na-zrni.png"],
-   ["Nonna supa",M+"2026/01/Nonna-supa-logo.png"],["Oro Nero",M+"2023/10/Oro-Nero-logo.jpg"],
-   ["Pčelarska farma Mimi i Ivana",M+"2023/03/Pcelarska-farma-Mimi-i-Ivana-logo.jpg"],["Pržioničar",M+"2023/10/Przionicar-logo.png"],
-   ["Real Red",M+"2025/12/REal-red-logo.png"],["SD doo",M+"2025/12/SD-logo.png"],
-   ["Slavuj",M+"2023/12/slavuj-logo.png"],["Spelta Jevtić",M+"2024/05/spelta-jevtic-logo.jpg"],
-   ["Sredom i petkom",M+"2026/03/Sredom-i-petkom-logo-img.png"],["Stado moje",M+"2026/02/Stado-moje-logo.png"],
-   ["Šopalović Širet",M+"2025/10/sopalovic-siret-logo.png"],["Umami",M+"2021/12/umami-pasta-logo.png"],
-   ["Urmolada",M+"2021/11/urmolada-logo.png"],["Vodenica Dren",M+"2023/10/Vodenica-Dren-logo.png"],
-   ["Vodenica Stanković",M+"2025/12/Vodenica-Stankovic-logo.png"],["Zdravarija",M+"2025/09/zdravarija-logo.png"],
-   ["Zeleni Hit",M+"2025/04/Zeleni-hit.png"],["Zora",M+"2025/12/Zora-logo.png"],["Žuna",M+"2026/02/zuna-logo.png"],
+   ["Aronica Natural",M+"2026/06/Aronica-logo.png","aronica-natural"],["Fitaky",M+"2024/10/fitaky-logo-HR.jpg","fitaky"],
+   ["Gana kozmetika",M+"2024/03/gana-logo.jpg","gana-kozmetika"],["Majana",M+"2025/06/majana-bee-logo.png","majana"],
+   ["MOBA",M+"2024/10/moba-logo-HR.jpg","moba"],["Siempre Viva",M+"2024/10/SiempreViva_Logo_1@2x.png","siempre-viva"],
+   ["Sofi",M+"2024/10/sofi-logo-proizvodjaci.jpg","sofi"],["Adonis",M+"2025/12/adonis-logo-crni.png","adonis"],
+   ["Aleksandrija",M+"2024/10/Aleksandrija-fruska-gora-logo-HR.jpg","aleksandrija"],["Anđeli Delicije",M+"2023/01/andjeli-logo-1.png","andjeli-delicije"],
+   ["Artfood",M+"2024/10/Artfood-logo-HQ.jpg","artfood"],["Bakaluk",M+"2022/11/bakaluk-logo.png","bakaluk"],
+   ["Beeberry",M+"2024/12/Beeberry-logo.jpg","beeberry"],["Bio Panon Farm",M+"2026/01/Bio-Panon-Farm-logo-img.png","bio-panon-farm"],
+   ["BUT&CO",M+"2025/10/BUT-CO-logo.png","but-co"],["Chamomilla",M+"2024/10/chamomilla-logo-2-300x168.png","chamomilla"],
+   ["Dedina vodenica 1892",M+"2023/01/Dedina-vodenica-1892-logo.jpg","dedina-vodenica-1892"],["Eko farma Moravka",M+"2025/12/Moravka-logo.png","eko-farma-moravka"],
+   ["EtNo.1",M+"2025/10/etno-1-logo.png","etno-1"],["Gazdinstvo Krstonošić",M+"2023/05/Poljoprivredno-gazdinstvo-Krstonosic-Kikinda-logo.png","gazdinstvo-krstonosic"],
+   ["Gazdinstvo Tegeltija",M+"2023/11/PG-TEGELTIJA-logo.png","gazdinstvo-tegeltija"],["Kapetan Koko",M+"2023/09/Kapetan-Koko-logo.png","kapetan-koko"],
+   ["LeblebijaNaut",M+"2026/03/LeblebijaNaut-logo.png","leblebijanaut"],["Mangulina",M+"2025/12/Koleba-logo.png","mangulina"],
+   ["Komšinice",M+"2023/10/komsinice.svg","komsinice"],["Mlekara Farmer",M+"2025/10/farmer-logo.png","mlekara-farmer"],
+   ["Moćno",M+"2025/12/logo-MOCNO-list.png","mocno"],["Naša granola",M+"2024/10/Nasa-granola-logo-HR.jpg","nasa-granola"],
+   ["Naša rajska bašta",M+"2026/01/Nasa-rajska-basta-logo-xs.png","nasa-rajska-basta"],["Na zrnu",M+"2026/06/logo-na-zrni.png","na-zrnu"],
+   ["Nonna supa",M+"2026/01/Nonna-supa-logo.png","nonna-supa"],["Oro Nero",M+"2023/10/Oro-Nero-logo.jpg","oro-nero"],
+   ["Pčelarska farma Mimi i Ivana",M+"2023/03/Pcelarska-farma-Mimi-i-Ivana-logo.jpg","pcelarska-farma-mimi-i-ivana"],["Pržioničar",M+"2023/10/Przionicar-logo.png","przionicar-kafa"],
+   ["Real Red",M+"2025/12/REal-red-logo.png","real-red"],["SD doo",M+"2025/12/SD-logo.png","sd"],
+   ["Slavuj",M+"2023/12/slavuj-logo.png","slavuj"],["Spelta Jevtić",M+"2024/05/spelta-jevtic-logo.jpg","spelta-jevtic"],
+   ["Sredom i petkom",M+"2026/03/Sredom-i-petkom-logo-img.png","sredom-i-petkom"],["Stado moje",M+"2026/02/Stado-moje-logo.png","stado-moje"],
+   ["Šopalović Širet",M+"2025/10/sopalovic-siret-logo.png","sopalovic-siret"],["Umami",M+"2021/12/umami-pasta-logo.png","umami"],
+   ["Urmolada",M+"2021/11/urmolada-logo.png","urmolada"],["Vodenica Dren",M+"2023/10/Vodenica-Dren-logo.png","vodenica-dren"],
+   ["Vodenica Stanković",M+"2025/12/Vodenica-Stankovic-logo.png","vodenica-stankovic"],["Zdravarija",M+"2025/09/zdravarija-logo.png","zdravarija"],
+   ["Zeleni Hit",M+"2025/04/Zeleni-hit.png","zeleni-hit"],["Zora",M+"2025/12/Zora-logo.png","zora"],["Žuna",M+"2026/02/zuna-logo.png","zuna"],
    // bez logotipa na njihovom sajtu → ostaje naziv
-   ["Ćatić",""],["Eko mlekara Preradović",""],["Gazdinstvo Dragićević",""],["Gazdinstvo Đokić",""],
-   ["Majkine poslastice",""],["Mala mlekara Ćuk",""],["Najbolje sa pijace",""],
-   ["Poljoprivredna škola Ljubo Mićić",""],["Zdravo kod Rusa",""]
+   ["Ćatić","","catic"],["Eko mlekara Preradović","","eko-mlekara-preradovic"],["Gazdinstvo Dragićević","","gazdinstvo-dragicevic"],["Gazdinstvo Đokić","","gazdinstvo-djokic"],
+   ["Majkine poslastice","","majkine-poslastice"],["Mala mlekara Ćuk","","mala-mlekara-cuk"],["Najbolje sa pijace","","najbolje-sa-pijace"],
+   ["Poljoprivredna škola Ljubo Mićić","","poljoprivredna-skola-ljubo-micic"],["Zdravo kod Rusa","","zdravo-kod-rusa"]
   ];
   function chip(p){
-    if(p[1]) return '<span class="pchip" title="'+p[0]+'"><img src="'+p[1]+'" alt="'+p[0]+'" loading="lazy"></span>';
-    return '<span class="pchip"><span class="dot"></span>'+p[0]+'</span>';
+    var href='https://ukusiprirode.rs/'+(p[2]||'proizvodjaci')+'/';
+    var inner = p[1]
+      ? '<img src="'+p[1]+'" alt="'+p[0]+'" loading="lazy">'
+      : '<span class="dot"></span>'+p[0];
+    return '<a class="pchip" href="'+href+'" target="_blank" rel="noopener" title="'+p[0]+'">'+inner+'</a>';
   }
   var h=P.map(chip).join('');
   document.getElementById('rowA').innerHTML=h+h;
@@ -739,31 +749,39 @@ footer .lnks a:hover{color:#fff}
 <script>
 /* JS marquee — pouzdano na iOS Safari (CSS animacija se tamo odlaže dok se ne dodirne) */
 (function(){
-  function marquee(el, pxPerSec){
-    if(!el) return;
-    var x=0, half=0, paused=false, last=null;
-    var wrap=el.parentNode;
-    wrap.addEventListener('mouseenter',function(){paused=true;});
+  // auto-traka koja se i sama može prevlačiti (scroll-based, radi na iOS-u)
+  function marquee(track, pxPerSec){
+    if(!track) return;
+    var wrap=track.parentNode;              // .runner (scroll kontejner)
+    var paused=false, last=null, acc=0, hold=null;
+    function pause(){ paused=true; clearTimeout(hold); hold=setTimeout(function(){paused=false;}, 3500); }
+    ['touchstart','mousedown','wheel'].forEach(function(ev){ wrap.addEventListener(ev,pause,{passive:true}); });
+    wrap.addEventListener('mouseenter',function(){paused=true; clearTimeout(hold);});
     wrap.addEventListener('mouseleave',function(){paused=false;});
-    function measure(){ half=el.scrollWidth/2; }
-    measure();
-    window.addEventListener('resize',function(){ measure(); });
+    // drag mišem
+    var down=false,sx=0,sl=0;
+    wrap.addEventListener('mousedown',function(e){down=true;sx=e.pageX;sl=wrap.scrollLeft;});
+    window.addEventListener('mouseup',function(){down=false;});
+    wrap.addEventListener('mousemove',function(e){ if(!down)return; e.preventDefault(); wrap.scrollLeft=sl-(e.pageX-sx); });
     function step(now){
       if(last===null) last=now;
-      var dt=(now-last)/1000; last=now;
-      if(dt>0.25) dt=0.25;
-      if(!half) measure();
-      if(!paused && half){
-        x -= pxPerSec*dt;
-        if(-x >= half) x += half;
-        el.style.transform='translate3d('+x.toFixed(2)+'px,0,0)';
+      var dt=(now-last)/1000; last=now; if(dt>0.25) dt=0.25;
+      var half=wrap.scrollWidth/2;
+      if(!paused && half>0){
+        acc += pxPerSec*dt;
+        var whole=Math.floor(acc);
+        if(whole>0){ wrap.scrollLeft += whole; acc -= whole; }
+      }
+      if(half>0){
+        if(wrap.scrollLeft >= half) wrap.scrollLeft -= half;   // petlja napred
+        else if(wrap.scrollLeft <= 0) wrap.scrollLeft += half; // petlja nazad (ručno prevlačenje)
       }
       requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
   }
   function boot(){
-    marquee(document.getElementById('rowA'), 26);      // proizvođači — sporo (recenzije su swipe-karusel)
+    marquee(document.getElementById('rowA'), 38);      // proizvođači — malo brže
   }
   if(document.readyState==='complete') boot();
   else window.addEventListener('load', boot);
