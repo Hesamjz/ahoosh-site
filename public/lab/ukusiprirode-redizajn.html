@@ -309,7 +309,12 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .vbtxt{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;color:#fff}
 .vbtxt .eyebrow{color:var(--lime)}
 .vbtxt h2{color:#fff;font-size:clamp(30px,4.6vw,56px);margin:10px 0 14px;line-height:1.05}
-.vbtxt p{color:#d5f5e2;max-width:470px;font-size:16.5px;margin-bottom:22px}
+.vbtxt p{color:#d5f5e2;max-width:none;font-size:16.5px;margin-bottom:22px}
+/* svaka rečenica u svom redu — i na desktopu i na mobilnom */
+.vlines span{display:block;text-wrap:nowrap}
+.vlines span+span{margin-top:2px}
+@media(max-width:900px){.vlines span{text-wrap:balance;font-size:15px}}
+@media(max-width:420px){.vlines span{font-size:14px}}
 .vbtxt .cta{display:flex;gap:12px;flex-wrap:wrap}
 @media(max-width:900px){
   .vbanner{height:auto;min-height:0}
@@ -327,7 +332,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   <div class="wrap vbtxt">
     <span class="eyebrow">Iza svakog proizvoda stoji čovek</span>
     <h2>Od njive do police</h2>
-    <p>Od malog proizvođača do naše police, bez posrednika. Naša prodavnica: Petra Martinovića 22, Beograd. Odatle — do tvojih vrata.</p>
+    <p class="vlines"><span>Od malog proizvođača do naše police, bez posrednika.</span><span>Naša prodavnica: Petra Martinovića 22, Beograd.</span><span>Odatle — do tvojih vrata.</span></p>
     <div class="cta"><a class="btn lime" href="#prodavnica">U prodavnicu →</a><a class="btn w">Upoznaj proizvođače</a></div>
   </div>
 </section>
