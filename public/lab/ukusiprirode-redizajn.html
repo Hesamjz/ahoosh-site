@@ -52,7 +52,7 @@ header{position:sticky;top:0;z-index:40;background:rgba(244,247,240,.9);backdrop
 .hero{padding:26px 0 18px}
 .herobox{background:linear-gradient(140deg,var(--deep),var(--g) 72%,#12b558);border-radius:34px;color:#fff;position:relative;overflow:hidden;min-height:440px}
 .herobox::after{content:"";position:absolute;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(182,240,74,.45),transparent 65%);top:-140px;right:-90px;pointer-events:none}
-.hstage{position:relative;min-height:440px}
+.hstage{position:relative;min-height:520px}
 .hslide{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;padding:38px 48px;opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;pointer-events:none}
 .hslide.on{opacity:1;transform:none;pointer-events:auto}
 .hslide .pic{border-radius:22px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.28);aspect-ratio:16/12;background:#0b3a22}
@@ -72,7 +72,9 @@ header{position:sticky;top:0;z-index:40;background:rgba(244,247,240,.9);backdrop
 .trustbar .e{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.06)}
 
 section{padding:44px 0}
-.sec-head{text-align:center;max-width:620px;margin:0 auto 30px}
+.sec-head{text-align:center;max-width:900px;margin:0 auto 30px}
+.sec-head h2{text-wrap:balance}
+.sec-head p{text-wrap:balance}
 .sec-head h2{font-size:clamp(26px,3.4vw,40px);color:var(--deep);margin:8px 0}
 .sec-head p{color:var(--muted)}
 .sec-head.left{text-align:left;margin:0 0 26px;display:flex;justify-content:space-between;align-items:end;max-width:none}
@@ -351,6 +353,65 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 })();
 </script>
 
+<!-- CATEGORIES (Koncept 1 stil) -->
+<section style="padding-top:14px"><div class="wrap">
+<div class="sec-head"><span class="eyebrow">Kategorije</span><h2>Domaći proizvodi po kategorijama</h2><p>Med, mlečni proizvodi, prirodna kozmetika, sokovi, poslastice — od proverenih malih proizvođača.</p></div>
+<style>
+.cchip{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:11px 26px 11px 11px;font-weight:600;font-size:15px;color:var(--deep);box-shadow:0 6px 16px rgba(5,61,32,.05);transition:.2s;cursor:pointer;white-space:nowrap;flex:0 0 auto;scroll-snap-align:start}
+.cchip:hover{border-color:var(--lime);transform:translateY(-3px);box-shadow:0 12px 26px rgba(5,61,32,.12)}
+.cchip .ce{width:48px;height:48px;border-radius:14px;background:linear-gradient(160deg,#eef6ef,#eaf2e2);display:grid;place-items:center;font-size:24px;flex:0 0 auto}
+.catrow{position:relative;margin-top:14px}
+.catscroll{display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;padding:8px 4px;-ms-overflow-style:none;scrollbar-width:none;cursor:grab}
+.catscroll::-webkit-scrollbar{display:none}
+.catscroll:active{cursor:grabbing}
+.catnav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--deep);font-size:20px;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 16px rgba(5,61,32,.14);z-index:5;transition:.2s}
+.catnav.l{left:0}.catnav.r{right:0}
+.catnav:hover{background:var(--g);color:#fff;border-color:var(--g)}
+</style>
+<style>.catdots{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.catdots span{width:9px;height:9px;border-radius:50%;background:#cdd8cc;cursor:pointer;transition:.2s}
+.catdots span.on{background:var(--g);width:26px;border-radius:999px}</style>
+<div class="catrow">
+  <div class="catscroll" id="cRow"></div>
+</div>
+<div class="catdots" id="cDots"></div>
+<script>
+(function(){
+  var C=[['🥬','Pijaca'],['🍯','Med'],['☕','Kafe i čajevi'],['🧀','Mlečni proizvodi'],['🥣','Cerealije'],['🫙','Kremovi i namazi'],['🌸','Prirodna kozmetika'],['🍫','Poslastice'],['🍖','Meso'],['🧃','Sokovi'],['🥤','Zdravi napici'],['💊','Zdravi suplementi'],['🍲','Gotovi obroci'],['🥟','Testo'],['🥜','Karafindl'],['🌍','Ukusi sveta'],['🧊','Zamrznuto'],['🥫','Zimnica']];
+  var el=document.getElementById('cRow');
+  el.innerHTML=C.map(function(c){return '<span class="cchip"><span class="ce">'+c[0]+'</span>'+c[1]+'</span>';}).join('');
+  document.querySelectorAll('.catnav').forEach(function(b){b.addEventListener('click',function(){el.scrollBy({left:(b.classList.contains('l')?-1:1)*Math.min(el.clientWidth*0.85,520),behavior:'smooth'});});});
+  var down=false,sx=0,sl=0;
+  el.addEventListener('mousedown',function(e){down=true;sx=e.pageX;sl=el.scrollLeft;});
+  window.addEventListener('mouseup',function(){down=false;});
+  el.addEventListener('mouseleave',function(){down=false;});
+  el.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();el.scrollLeft=sl-(e.pageX-sx);});
+  var dots=document.getElementById('cDots');
+  function maxScroll(){ return Math.max(0, el.scrollWidth - el.clientWidth); }
+  function pages(){ return Math.max(1, Math.ceil(maxScroll()/el.clientWidth) + 1); }
+  function target(i){ return Math.min(i*el.clientWidth, maxScroll()); }   // poslednja "stranica" je delimična → klampujemo
+  function build(){
+    dots.innerHTML='';
+    var n=pages();
+    for(var i=0;i<n;i++){
+      var s=document.createElement('span');
+      if(i===0) s.className='on';
+      (function(i){ s.onclick=function(){ el.scrollTo({left:target(i),behavior:'smooth'}); }; })(i);
+      dots.appendChild(s);
+    }
+  }
+  function upd(){
+    var n=dots.children.length, best=0, bd=Infinity;
+    for(var k=0;k<n;k++){ var d=Math.abs(el.scrollLeft-target(k)); if(d<bd){ bd=d; best=k; } }
+    [].forEach.call(dots.children,function(d,k){ d.classList.toggle('on', k===best); });
+  }
+  build(); upd();
+  el.addEventListener('scroll',upd);
+  window.addEventListener('resize',function(){build();upd();});
+})();
+</script>
+</div></section>
+
 <!-- HERO: product + price showcase carousel -->
 <section class="hero"><div class="wrap"><div class="herobox">
   <div class="hstage">
@@ -412,65 +473,6 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   <div class="harrows"><button data-dir="-1">‹</button><button data-dir="1">›</button></div>
   <div class="hdots"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 </div>
-</div></section>
-
-<!-- CATEGORIES (Koncept 1 stil) -->
-<section style="padding-top:14px"><div class="wrap">
-<div class="sec-head"><span class="eyebrow">Kategorije</span><h2>Domaći proizvodi po kategorijama</h2><p>Med, mlečni proizvodi, prirodna kozmetika, sokovi, poslastice — od proverenih malih proizvođača.</p></div>
-<style>
-.cchip{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:11px 26px 11px 11px;font-weight:600;font-size:15px;color:var(--deep);box-shadow:0 6px 16px rgba(5,61,32,.05);transition:.2s;cursor:pointer;white-space:nowrap;flex:0 0 auto;scroll-snap-align:start}
-.cchip:hover{border-color:var(--lime);transform:translateY(-3px);box-shadow:0 12px 26px rgba(5,61,32,.12)}
-.cchip .ce{width:48px;height:48px;border-radius:14px;background:linear-gradient(160deg,#eef6ef,#eaf2e2);display:grid;place-items:center;font-size:24px;flex:0 0 auto}
-.catrow{position:relative;margin-top:14px}
-.catscroll{display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;padding:8px 4px;-ms-overflow-style:none;scrollbar-width:none;cursor:grab}
-.catscroll::-webkit-scrollbar{display:none}
-.catscroll:active{cursor:grabbing}
-.catnav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--deep);font-size:20px;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 16px rgba(5,61,32,.14);z-index:5;transition:.2s}
-.catnav.l{left:0}.catnav.r{right:0}
-.catnav:hover{background:var(--g);color:#fff;border-color:var(--g)}
-</style>
-<style>.catdots{display:flex;gap:8px;justify-content:center;margin-top:22px}
-.catdots span{width:9px;height:9px;border-radius:50%;background:#cdd8cc;cursor:pointer;transition:.2s}
-.catdots span.on{background:var(--g);width:26px;border-radius:999px}</style>
-<div class="catrow">
-  <div class="catscroll" id="cRow"></div>
-</div>
-<div class="catdots" id="cDots"></div>
-<script>
-(function(){
-  var C=[['🥬','Pijaca'],['🍯','Med'],['☕','Kafe i čajevi'],['🧀','Mlečni proizvodi'],['🥣','Cerealije'],['🫙','Kremovi i namazi'],['🌸','Prirodna kozmetika'],['🍫','Poslastice'],['🍖','Meso'],['🧃','Sokovi'],['🥤','Zdravi napici'],['💊','Zdravi suplementi'],['🍲','Gotovi obroci'],['🥟','Testo'],['🥜','Karafindl'],['🌍','Ukusi sveta'],['🧊','Zamrznuto'],['🥫','Zimnica']];
-  var el=document.getElementById('cRow');
-  el.innerHTML=C.map(function(c){return '<span class="cchip"><span class="ce">'+c[0]+'</span>'+c[1]+'</span>';}).join('');
-  document.querySelectorAll('.catnav').forEach(function(b){b.addEventListener('click',function(){el.scrollBy({left:(b.classList.contains('l')?-1:1)*Math.min(el.clientWidth*0.85,520),behavior:'smooth'});});});
-  var down=false,sx=0,sl=0;
-  el.addEventListener('mousedown',function(e){down=true;sx=e.pageX;sl=el.scrollLeft;});
-  window.addEventListener('mouseup',function(){down=false;});
-  el.addEventListener('mouseleave',function(){down=false;});
-  el.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();el.scrollLeft=sl-(e.pageX-sx);});
-  var dots=document.getElementById('cDots');
-  function maxScroll(){ return Math.max(0, el.scrollWidth - el.clientWidth); }
-  function pages(){ return Math.max(1, Math.ceil(maxScroll()/el.clientWidth) + 1); }
-  function target(i){ return Math.min(i*el.clientWidth, maxScroll()); }   // poslednja "stranica" je delimična → klampujemo
-  function build(){
-    dots.innerHTML='';
-    var n=pages();
-    for(var i=0;i<n;i++){
-      var s=document.createElement('span');
-      if(i===0) s.className='on';
-      (function(i){ s.onclick=function(){ el.scrollTo({left:target(i),behavior:'smooth'}); }; })(i);
-      dots.appendChild(s);
-    }
-  }
-  function upd(){
-    var n=dots.children.length, best=0, bd=Infinity;
-    for(var k=0;k<n;k++){ var d=Math.abs(el.scrollLeft-target(k)); if(d<bd){ bd=d; best=k; } }
-    [].forEach.call(dots.children,function(d,k){ d.classList.toggle('on', k===best); });
-  }
-  build(); upd();
-  el.addEventListener('scroll',upd);
-  window.addEventListener('resize',function(){build();upd();});
-})();
-</script>
 </div></section>
 
 <!-- SEO INTRO — jedini H1 na stranici -->
