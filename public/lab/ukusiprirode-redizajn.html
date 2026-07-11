@@ -577,19 +577,33 @@ footer .lnks a:hover{color:#fff}
   ];
   function card(r){return '<div class="rev"><div class="rh"><span class="rav">'+r[0]+'</span><div><div class="rn">'+r[1]+'</div><div class="rst">'+r[2]+'</div></div></div><p>„'+r[3]+'“</p></div>';}
   var sc=document.getElementById('revScroll');
-  sc.innerHTML=R.map(card).join('');
+  var one=R.map(card).join('');
+  sc.innerHTML=one+one;              // duplirano → beskonačna petlja
 
-  // auto-napredovanje (sporo) + slobodno prevlačenje
+  function half(){ return sc.scrollWidth/2; }
+  function cardW(){ var c=sc.children[0]; return c ? c.getBoundingClientRect().width + 20 : 360; }
+
+  // bešavno umotavanje na oba kraja
+  var wrapping=false;
+  sc.addEventListener('scroll', function(){
+    if(wrapping) return;
+    var h=half();
+    if(!h) return;
+    if(sc.scrollLeft >= h){
+      wrapping=true; sc.style.scrollBehavior='auto'; sc.scrollLeft -= h;
+      sc.style.scrollBehavior='smooth'; wrapping=false;
+    } else if(sc.scrollLeft <= 0){
+      wrapping=true; sc.style.scrollBehavior='auto'; sc.scrollLeft += h;
+      sc.style.scrollBehavior='smooth'; wrapping=false;
+    }
+  }, {passive:true});
+
+  // auto-napredovanje (sporo), nikad se ne zaustavlja
   var timer=null, resume=null;
-  function next(){
-    var c=sc.children[0]; if(!c) return;
-    var w=c.getBoundingClientRect().width+20;
-    if(sc.scrollLeft + sc.clientWidth >= sc.scrollWidth - 12){ sc.scrollTo({left:0,behavior:'smooth'}); }
-    else { sc.scrollBy({left:w,behavior:'smooth'}); }
-  }
+  function next(){ sc.scrollBy({left:cardW(), behavior:'smooth'}); }
   function play(){ stop(); timer=setInterval(next,4500); }
   function stop(){ if(timer){clearInterval(timer); timer=null;} }
-  function hold(){ stop(); clearTimeout(resume); resume=setTimeout(play,7000); }
+  function hold(){ stop(); clearTimeout(resume); resume=setTimeout(play,6000); }
   ['touchstart','wheel','mousedown'].forEach(function(ev){ sc.addEventListener(ev,hold,{passive:true}); });
   sc.addEventListener('mouseenter',stop);
   sc.addEventListener('mouseleave',play);
@@ -598,7 +612,14 @@ footer .lnks a:hover{color:#fff}
   sc.addEventListener('mousedown',function(e){down=true;sx=e.pageX;sl=sc.scrollLeft;});
   window.addEventListener('mouseup',function(){down=false;});
   sc.addEventListener('mousemove',function(e){ if(!down)return; e.preventDefault(); sc.scrollLeft=sl-(e.pageX-sx); });
-  play();
+
+  // start iz sredine (da swipe radi i unazad)
+  window.addEventListener('load', function(){
+    sc.style.scrollBehavior='auto';
+    sc.scrollLeft = 1;
+    sc.style.scrollBehavior='smooth';
+    play();
+  });
 })();
 </script>
 </section>
