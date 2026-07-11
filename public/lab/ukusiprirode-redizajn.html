@@ -429,16 +429,52 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .runner:hover .track{animation-play-state:paused}
 @keyframes runL{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @keyframes runR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
-.pchip{display:inline-flex;align-items:center;gap:11px;flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 22px;font-weight:600;font-size:14.5px;color:var(--deep);box-shadow:0 4px 12px rgba(5,61,32,.05);transition:.2s;cursor:pointer}
-.pchip:hover{border-color:var(--lime);transform:translateY(-2px);box-shadow:0 10px 22px rgba(5,61,32,.12);color:var(--g)}
+.pchip{display:inline-flex;align-items:center;justify-content:center;gap:11px;flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 22px;font-weight:600;font-size:14.5px;color:var(--deep);box-shadow:0 4px 12px rgba(5,61,32,.05);transition:.2s;cursor:pointer;height:104px;min-width:170px}
+.pchip:hover{border-color:var(--lime);transform:translateY(-3px);box-shadow:0 12px 26px rgba(5,61,32,.12)}
+.pchip img{max-height:64px;max-width:150px;width:auto;height:auto;object-fit:contain;filter:grayscale(100%);opacity:.78;transition:.25s}
+.pchip:hover img{filter:grayscale(0);opacity:1}
 .pchip .dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex:0 0 auto}
 /* traka namerno ostaje u pokretu i uz reduced-motion — spora je (145s) i nije treperava */
 </style>
 <div class="runner"><div class="track" id="rowA"></div></div>
 <script>
 (function(){
-  var P=["Aronica Natural","Fitaky","Gana kozmetika","Majana","MOBA","Siempre Viva","Sofi","Adonis","Aleksandrija","Anđeli Delicije","Artfood","Bakaluk","Beeberry","Bio Panon Farm","BUT&CO","Ćatić","Chamomilla","Dedina vodenica 1892","Eko farma Moravka","Eko mlekara Preradović","EtNo.1","Gazdinstvo Dragićević","Gazdinstvo Đokić","Gazdinstvo Krstonošić","Gazdinstvo Tegeltija","Kapetan Koko","LeblebijaNaut","Mangulina","Komšinice","Majkine poslastice","Mala mlekara Ćuk","Mlekara Farmer","Moćno","Najbolje sa pijace","Naša granola","Naša rajska bašta","Na zrnu","Nonna supa","Oro Nero","Pčelarska farma Mimi i Ivana","Poljoprivredna škola Ljubo Mićić","Pržioničar","Real Red","SD doo","Slavuj","Spelta Jevtić","Sredom i petkom","Stado moje","Šopalović Širet","Umami","Urmolada","Vodenica Dren","Vodenica Stanković","Zdravarija","Zdravo kod Rusa","Zeleni Hit","Zora","Žuna"];
-  function chip(n){return '<span class="pchip"><span class="dot"></span>'+n+'</span>';}
+  var M='https://media.ukusiprirode.rs/';
+  // [naziv, logo] — logotipi preuzeti sa njihovih stranica proizvođača
+  var P=[
+   ["Aronica Natural",M+"2026/06/Aronica-logo.png"],["Fitaky",M+"2024/10/fitaky-logo-HR.jpg"],
+   ["Gana kozmetika",M+"2024/03/gana-logo.jpg"],["Majana",M+"2025/06/majana-bee-logo.png"],
+   ["MOBA",M+"2024/10/moba-logo-HR.jpg"],["Siempre Viva",M+"2024/10/SiempreViva_Logo_1@2x.png"],
+   ["Sofi",M+"2024/10/sofi-logo-proizvodjaci.jpg"],["Adonis",M+"2025/12/adonis-logo-crni.png"],
+   ["Aleksandrija",M+"2024/10/Aleksandrija-fruska-gora-logo-HR.jpg"],["Anđeli Delicije",M+"2023/01/andjeli-logo-1.png"],
+   ["Artfood",M+"2024/10/Artfood-logo-HQ.jpg"],["Bakaluk",M+"2022/11/bakaluk-logo.png"],
+   ["Beeberry",M+"2024/12/Beeberry-logo.jpg"],["Bio Panon Farm",M+"2026/01/Bio-Panon-Farm-logo-img.png"],
+   ["BUT&CO",M+"2025/10/BUT-CO-logo.png"],["Chamomilla",M+"2024/10/chamomilla-logo-2-300x168.png"],
+   ["Dedina vodenica 1892",M+"2023/01/Dedina-vodenica-1892-logo.jpg"],["Eko farma Moravka",M+"2025/12/Moravka-logo.png"],
+   ["EtNo.1",M+"2025/10/etno-1-logo.png"],["Gazdinstvo Krstonošić",M+"2023/05/Poljoprivredno-gazdinstvo-Krstonosic-Kikinda-logo.png"],
+   ["Gazdinstvo Tegeltija",M+"2023/11/PG-TEGELTIJA-logo.png"],["Kapetan Koko",M+"2023/09/Kapetan-Koko-logo.png"],
+   ["LeblebijaNaut",M+"2026/03/LeblebijaNaut-logo.png"],["Mangulina",M+"2025/12/Koleba-logo.png"],
+   ["Komšinice",M+"2023/10/komsinice.svg"],["Mlekara Farmer",M+"2025/10/farmer-logo.png"],
+   ["Moćno",M+"2025/12/logo-MOCNO-list.png"],["Naša granola",M+"2024/10/Nasa-granola-logo-HR.jpg"],
+   ["Naša rajska bašta",M+"2026/01/Nasa-rajska-basta-logo-xs.png"],["Na zrnu",M+"2026/06/logo-na-zrni.png"],
+   ["Nonna supa",M+"2026/01/Nonna-supa-logo.png"],["Oro Nero",M+"2023/10/Oro-Nero-logo.jpg"],
+   ["Pčelarska farma Mimi i Ivana",M+"2023/03/Pcelarska-farma-Mimi-i-Ivana-logo.jpg"],["Pržioničar",M+"2023/10/Przionicar-logo.png"],
+   ["Real Red",M+"2025/12/REal-red-logo.png"],["SD doo",M+"2025/12/SD-logo.png"],
+   ["Slavuj",M+"2023/12/slavuj-logo.png"],["Spelta Jevtić",M+"2024/05/spelta-jevtic-logo.jpg"],
+   ["Sredom i petkom",M+"2026/03/Sredom-i-petkom-logo-img.png"],["Stado moje",M+"2026/02/Stado-moje-logo.png"],
+   ["Šopalović Širet",M+"2025/10/sopalovic-siret-logo.png"],["Umami",M+"2021/12/umami-pasta-logo.png"],
+   ["Urmolada",M+"2021/11/urmolada-logo.png"],["Vodenica Dren",M+"2023/10/Vodenica-Dren-logo.png"],
+   ["Vodenica Stanković",M+"2025/12/Vodenica-Stankovic-logo.png"],["Zdravarija",M+"2025/09/zdravarija-logo.png"],
+   ["Zeleni Hit",M+"2025/04/Zeleni-hit.png"],["Zora",M+"2025/12/Zora-logo.png"],["Žuna",M+"2026/02/zuna-logo.png"],
+   // bez logotipa na njihovom sajtu → ostaje naziv
+   ["Ćatić",""],["Eko mlekara Preradović",""],["Gazdinstvo Dragićević",""],["Gazdinstvo Đokić",""],
+   ["Majkine poslastice",""],["Mala mlekara Ćuk",""],["Najbolje sa pijace",""],
+   ["Poljoprivredna škola Ljubo Mićić",""],["Zdravo kod Rusa",""]
+  ];
+  function chip(p){
+    if(p[1]) return '<span class="pchip" title="'+p[0]+'"><img src="'+p[1]+'" alt="'+p[0]+'" loading="lazy"></span>';
+    return '<span class="pchip"><span class="dot"></span>'+p[0]+'</span>';
+  }
   var h=P.map(chip).join('');
   document.getElementById('rowA').innerHTML=h+h;
 })();
