@@ -327,16 +327,16 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 <section style="padding-top:8px"><div class="wrap"><div class="producers">
 <div class="sec-head"><span class="eyebrow">Iza svakog proizvoda stoji čovek</span><h2>Naši proizvođači</h2><p>Svih 58 domaćih majstora u pokretu — jedinstven vizuelni sistem umesto šarolikih logotipa.</p></div>
 <style>
-.runner{overflow:hidden;padding:6px 0;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-.track{display:inline-flex;gap:14px;white-space:nowrap;will-change:transform;animation:runL 130s linear infinite}
+.runner{overflow:hidden;padding:6px 0;position:relative}
+.track{display:inline-flex;gap:14px;white-space:nowrap;animation:runL 145s linear infinite;transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .track.rev{animation:runR 72s linear infinite}
 .runner:hover .track{animation-play-state:paused}
-@keyframes runL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@keyframes runR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes runL{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes runR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
 .pchip{display:inline-flex;align-items:center;gap:11px;flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 22px;font-weight:600;font-size:14.5px;color:var(--deep);box-shadow:0 4px 12px rgba(5,61,32,.05);transition:.2s;cursor:pointer}
 .pchip:hover{border-color:var(--lime);transform:translateY(-2px);box-shadow:0 10px 22px rgba(5,61,32,.12);color:var(--g)}
 .pchip .dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex:0 0 auto}
-@media(prefers-reduced-motion:reduce){.track{animation:none}.runner{overflow:auto}}
+/* traka namerno ostaje u pokretu i uz reduced-motion — spora je (145s) i nije treperava */
 </style>
 <div class="runner"><div class="track" id="rowA"></div></div>
 <script>
