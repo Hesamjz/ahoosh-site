@@ -313,8 +313,12 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 /* svaka rečenica u svom redu — i na desktopu i na mobilnom */
 .vlines span{display:block;text-wrap:nowrap}
 .vlines span+span{margin-top:2px}
-@media(max-width:900px){.vlines span{text-wrap:balance;font-size:15px}}
-@media(max-width:420px){.vlines span{font-size:14px}}
+.mbr{display:none}
+@media(max-width:900px){
+  .vlines span{text-wrap:nowrap;font-size:14.5px}
+  .mbr{display:inline}                 /* prelom tačno posle "police," */
+}
+@media(max-width:400px){.vlines span{font-size:13.5px}}
 .vbtxt .cta{display:flex;gap:12px;flex-wrap:wrap}
 @media(max-width:900px){
   .vbanner{height:auto;min-height:0}
@@ -332,7 +336,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   <div class="wrap vbtxt">
     <span class="eyebrow">Iza svakog proizvoda stoji čovek</span>
     <h2>Od njive do police</h2>
-    <p class="vlines"><span>Od malog proizvođača do naše police, bez posrednika.</span><span>Naša prodavnica: Petra Martinovića 22, Beograd.</span><span>Odatle — do tvojih vrata.</span></p>
+    <p class="vlines"><span>Od malog proizvođača do naše police,<br class="mbr"> bez posrednika.</span><span>Naša prodavnica: Petra Martinovića 22, Beograd.</span><span>Odatle — do tvojih vrata.</span></p>
     <div class="cta"><a class="btn lime" href="#prodavnica">U prodavnicu →</a><a class="btn w">Upoznaj proizvođače</a></div>
   </div>
 </section>
