@@ -373,10 +373,27 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
   el.addEventListener('mouseleave',function(){down=false;});
   el.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();el.scrollLeft=sl-(e.pageX-sx);});
   var dots=document.getElementById('cDots');
-  function pages(){return Math.max(1,Math.ceil((el.scrollWidth-4)/el.clientWidth));}
-  function build(){dots.innerHTML='';var n=pages();for(var i=0;i<n;i++){var s=document.createElement('span');if(i===0)s.className='on';(function(i){s.onclick=function(){el.scrollTo({left:i*el.clientWidth,behavior:'smooth'});};})(i);dots.appendChild(s);}}
-  function upd(){var i=Math.round(el.scrollLeft/el.clientWidth);[].forEach.call(dots.children,function(d,k){d.classList.toggle('on',k===i);});}
-  build();el.addEventListener('scroll',upd);window.addEventListener('resize',function(){build();upd();});
+  function maxScroll(){ return Math.max(0, el.scrollWidth - el.clientWidth); }
+  function pages(){ return Math.max(1, Math.ceil(maxScroll()/el.clientWidth) + 1); }
+  function target(i){ return Math.min(i*el.clientWidth, maxScroll()); }   // poslednja "stranica" je delimična → klampujemo
+  function build(){
+    dots.innerHTML='';
+    var n=pages();
+    for(var i=0;i<n;i++){
+      var s=document.createElement('span');
+      if(i===0) s.className='on';
+      (function(i){ s.onclick=function(){ el.scrollTo({left:target(i),behavior:'smooth'}); }; })(i);
+      dots.appendChild(s);
+    }
+  }
+  function upd(){
+    var n=dots.children.length, best=0, bd=Infinity;
+    for(var k=0;k<n;k++){ var d=Math.abs(el.scrollLeft-target(k)); if(d<bd){ bd=d; best=k; } }
+    [].forEach.call(dots.children,function(d,k){ d.classList.toggle('on', k===best); });
+  }
+  build(); upd();
+  el.addEventListener('scroll',upd);
+  window.addEventListener('resize',function(){build();upd();});
 })();
 </script>
 </div></section>
@@ -433,7 +450,8 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 @keyframes runR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
 .pchip{display:inline-flex;align-items:center;justify-content:center;gap:11px;flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 22px;font-weight:600;font-size:14.5px;color:var(--deep);box-shadow:0 4px 12px rgba(5,61,32,.05);transition:.2s;cursor:pointer;height:104px;min-width:170px}
 .pchip:hover{border-color:var(--lime);transform:translateY(-3px);box-shadow:0 12px 26px rgba(5,61,32,.12)}
-.pchip img{max-height:64px;max-width:150px;width:auto;height:auto;object-fit:contain;filter:grayscale(100%);opacity:.78;transition:.25s}
+.pchip{-webkit-user-drag:none;user-select:none}
+.pchip img{max-height:64px;max-width:150px;width:auto;height:auto;object-fit:contain;filter:grayscale(100%);opacity:.78;transition:.25s;pointer-events:none;-webkit-user-drag:none}
 .pchip:hover img{filter:grayscale(0);opacity:1}
 .pchip .dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex:0 0 auto}
 @media(max-width:900px){
@@ -758,11 +776,19 @@ footer .lnks a:hover{color:#fff}
     ['touchstart','mousedown','wheel'].forEach(function(ev){ wrap.addEventListener(ev,pause,{passive:true}); });
     wrap.addEventListener('mouseenter',function(){paused=true; clearTimeout(hold);});
     wrap.addEventListener('mouseleave',function(){paused=false;});
-    // drag mišem
-    var down=false,sx=0,sl=0;
-    wrap.addEventListener('mousedown',function(e){down=true;sx=e.pageX;sl=wrap.scrollLeft;});
-    window.addEventListener('mouseup',function(){down=false;});
-    wrap.addEventListener('mousemove',function(e){ if(!down)return; e.preventDefault(); wrap.scrollLeft=sl-(e.pageX-sx); });
+    // drag mišem (logotipi su linkovi → sprečavamo native drag i klik posle prevlačenja)
+    var down=false,sx=0,sl=0,moved=0;
+    wrap.addEventListener('dragstart',function(e){ e.preventDefault(); });
+    wrap.addEventListener('mousedown',function(e){ down=true; moved=0; sx=e.pageX; sl=wrap.scrollLeft; e.preventDefault(); });
+    window.addEventListener('mouseup',function(){ down=false; setTimeout(function(){ moved=0; },0); });
+    wrap.addEventListener('mousemove',function(e){
+      if(!down) return;
+      e.preventDefault();
+      var dx=e.pageX-sx;
+      moved=Math.max(moved,Math.abs(dx));
+      wrap.scrollLeft=sl-dx;
+    });
+    wrap.addEventListener('click',function(e){ if(moved>6){ e.preventDefault(); e.stopPropagation(); } },true);
     function step(now){
       if(last===null) last=now;
       var dt=(now-last)/1000; last=now; if(dt>0.25) dt=0.25;
