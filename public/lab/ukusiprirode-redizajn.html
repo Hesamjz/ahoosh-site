@@ -35,7 +35,7 @@ header{position:sticky;top:0;z-index:40;background:rgba(244,247,240,.9);backdrop
 .hslide .pic{border-radius:22px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.28);aspect-ratio:16/12;background:#0b3a22}
 .hslide .pic img{width:100%;height:100%;object-fit:cover}
 .hslide .txt .eyebrow{color:var(--lime)}
-.hslide h1{font-size:clamp(30px,4.4vw,50px);color:#fff;margin:8px 0 10px}
+.hslide h1,.hslide .hname{font-size:clamp(30px,4.4vw,50px);color:#fff;margin:8px 0 10px;font-weight:700;line-height:1.05;letter-spacing:-.03em}
 .hslide .price{font-size:clamp(26px,3.6vw,42px);font-weight:800;color:var(--lime);letter-spacing:-.02em}
 .hslide p{color:#d5f5e2;margin:12px 0 20px;max-width:420px;font-size:15.5px}
 .harrows{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);display:flex;justify-content:space-between;padding:0 12px;pointer-events:none}
@@ -95,8 +95,23 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .pays span{background:rgba(255,255,255,.1);border-radius:7px;padding:5px 9px;font-size:11px;font-weight:600;margin-right:6px;color:var(--lime)}
 [data-reveal]{opacity:0;transform:translateY(26px);transition:.65s cubic-bezier(.2,.7,.2,1)}[data-reveal].in{opacity:1;transform:none}
 @media(max-width:900px){
- .hslide{grid-template-columns:1fr;padding:26px 22px 54px;text-align:center}.hslide .pic{order:-1;aspect-ratio:16/10}.hslide p{margin-left:auto;margin-right:auto}
- .cats{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.prow{grid-template-columns:repeat(3,1fr)}.b2b{grid-template-columns:1fr}.nav ul{display:none}.harrows{display:none}
+ .herobox,.hstage{min-height:680px}
+ .hslide{grid-template-columns:1fr;padding:22px 18px 58px;text-align:center;gap:18px}
+ .hslide .pic{order:-1;aspect-ratio:16/10}
+ .hslide p{margin-left:auto;margin-right:auto}
+ .hslide h1,.hslide .hname{margin-top:4px}
+ .cats{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.b2b{grid-template-columns:1fr}.nav ul{display:none}.harrows{display:none}
+ .nav{gap:10px}.nav .logo img{height:38px}
+ .icons{gap:6px}.hicon{width:34px;height:34px;font-size:14px}
+ .cart{padding:9px 13px;font-size:13px}
+ .trustbar{gap:12px;flex-direction:column;align-items:center}
+ .vrow{grid-template-columns:repeat(2,1fr);gap:22px}
+ .b2b{padding:32px 24px}.b2b .basket{display:none}
+ .reband{padding:26px 22px}
+}
+@media(max-width:520px){
+ .icons .hicon:first-child{display:none}
+ .vrow{grid-template-columns:1fr}
 }
 @media(max-width:520px){.cats{grid-template-columns:repeat(3,1fr)}.prow{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}[data-reveal]{opacity:1;transform:none}}
@@ -182,55 +197,55 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 <section class="hero"><div class="wrap"><div class="herobox">
   <div class="hstage">
     <div class="hslide on">
-      <div class="txt"><span class="eyebrow">Sezonski hit 🍉</span><h1>Besemene mini lubenice</h1><div class="price">380 RSD</div>
+      <div class="txt"><span class="eyebrow">Sezonski hit 🍉</span><div class="hname">Besemene mini lubenice</div><div class="price">380 RSD</div>
       <p>Sveža, slatka i bez semenki — 1 komad (oko 2 kg). Pravo osveženje za leto.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/07/besemena-lubenica-slajder.jpg" alt="Besemene mini lubenice"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Sa pijace</span><h1>Voće 🍒🍓🫐</h1><div class="price">310 – 490 RSD</div>
+      <div class="txt"><span class="eyebrow">Sa pijace</span><div class="hname">Voće 🍒🍓🫐</div><div class="price">310 – 490 RSD</div>
       <p>Ribizle, jagode i borovnice — sveže ubrano sa domaćih njiva.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/06/voce-slider.jpg" alt="Voće"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Proizvođač</span><h1>Aronica Natural 🌿</h1><div class="price">670 – 2.690 RSD</div>
+      <div class="txt"><span class="eyebrow">Proizvođač</span><div class="hname">Aronica Natural 🌿</div><div class="price">670 – 2.690 RSD</div>
       <p>Prirodna nega i preparati od aronije — od proverenog domaćeg proizvođača.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/06/Aronica-Natural-slider.jpg" alt="Aronica Natural"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Za decu</span><h1>Srberry Kids 🧃🍓</h1><div class="price">510 – 550 RSD</div>
+      <div class="txt"><span class="eyebrow">Za decu</span><div class="hname">Srberry Kids 🧃🍓</div><div class="price">510 – 550 RSD</div>
       <p>Voćni sokovi za najmlađe — bez dodatog šećera i veštačkih boja.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/05/Srberry_Kids_Sokovi.png" alt="Srberry Kids"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Poslastice</span><h1>Kapetan Koko čokolade 🍫</h1><div class="price">690 – 790 RSD</div>
+      <div class="txt"><span class="eyebrow">Poslastice</span><div class="hname">Kapetan Koko čokolade 🍫</div><div class="price">690 – 790 RSD</div>
       <p>Zanatske čokolade punog ukusa — za prave uživaoce.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/04/kapetan-koko.jpg" alt="Kapetan Koko"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Kozmetika</span><h1>Gana kozmetika</h1><div class="price">440 – 2.500 RSD</div>
+      <div class="txt"><span class="eyebrow">Kozmetika</span><div class="hname">Gana kozmetika</div><div class="price">440 – 2.500 RSD</div>
       <p>Prirodna nega za lice i telo — od domaćih sastojaka.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/05/gana-slajd.jpg" alt="Gana kozmetika"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Preporuka 🛒</span><h1>Najčešći izbor novih kupaca</h1><div class="price">Bestseleri</div>
+      <div class="txt"><span class="eyebrow">Preporuka 🛒</span><div class="hname">Najčešći izbor novih kupaca</div><div class="price">Bestseleri</div>
       <p>Najprodavaniji proizvodi — savršen izbor za prvu porudžbinu.</p>
       <a class="btn lime">Pogledaj izbor →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/02/Najcesci-izbor-novih-kupaca.jpg" alt="Najčešći izbor novih kupaca"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Meso</span><h1>Mangulina</h1><div class="price">570 – 1.280 RSD</div>
+      <div class="txt"><span class="eyebrow">Meso</span><div class="hname">Mangulina</div><div class="price">570 – 1.280 RSD</div>
       <p>Suhomesnati proizvodi od mangulice — vrhunski kvalitet i tradicija.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/02/Mangulina-hp-slide.jpg" alt="Mangulina"></div>
     </div>
     <div class="hslide">
-      <div class="txt"><span class="eyebrow">Doručak</span><h1>NAŠA Granola 🥣</h1><div class="price">650 – 1.050 RSD</div>
+      <div class="txt"><span class="eyebrow">Doručak</span><div class="hname">NAŠA Granola 🥣</div><div class="price">650 – 1.050 RSD</div>
       <p>Ručno rađena granola, pečena u malim serijama — bez dodatog šećera.</p>
       <a class="btn lime">U prodavnicu →</a></div>
       <div class="pic"><img src="https://media.ukusiprirode.rs/2026/04/nasa-granola-karuzel.jpg" alt="NAŠA Granola"></div>
@@ -248,7 +263,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 
 <!-- CATEGORIES (Koncept 1 stil) -->
 <section style="padding-top:14px"><div class="wrap">
-<div class="sec-head"><span class="eyebrow">Kategorije</span><h2>Pronađi po ukusu</h2></div>
+<div class="sec-head"><span class="eyebrow">Kategorije</span><h2>Domaći proizvodi po kategorijama</h2><p>Med, mlečni proizvodi, prirodna kozmetika, sokovi, poslastice — od proverenih malih proizvođača.</p></div>
 <style>
 .cchip{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:11px 26px 11px 11px;font-weight:600;font-size:15px;color:var(--deep);box-shadow:0 6px 16px rgba(5,61,32,.05);transition:.2s;cursor:pointer;white-space:nowrap;flex:0 0 auto;scroll-snap-align:start}
 .cchip:hover{border-color:var(--lime);transform:translateY(-3px);box-shadow:0 12px 26px rgba(5,61,32,.12)}
@@ -288,8 +303,15 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 </script>
 </div></section>
 
+<!-- SEO INTRO — jedini H1 na stranici -->
+<section style="padding:34px 0 6px"><div class="wrap" style="max-width:920px;text-align:center">
+<h1 style="font-size:clamp(21px,2.6vw,30px);color:var(--deep);margin-bottom:14px;line-height:1.2">Ukusi prirode — online prodavnica domaćih proizvoda malih proizvođača iz Srbije</h1>
+<p style="color:var(--muted);font-size:16px">Na jednom mestu okupljamo proverene male proizvođače iz cele Srbije: sveže voće i povrće sa pijace, domaći med, mlečne proizvode, prirodne sokove bez dodatog šećera, kremove i namaze bez aditiva, zdrave poslastice i prirodnu kozmetiku. Poručite online, platite karticom ili pouzećem — dostava stiže na kućnu adresu širom Srbije.</p>
+<p style="color:var(--muted);font-size:16px;margin-top:12px">Za firme pripremamo <strong>zdrave poklon pakete</strong> — sa fakturom na firmu i isporukom na više adresa.</p>
+</div></section>
+
 <!-- POPULAR PRODUCTS -->
-<section style="padding-top:8px"><div class="wrap"><div class="sec-head left"><h2>Popularno danas</h2><a>Sve →</a></div>
+<section style="padding-top:8px"><div class="wrap"><div class="sec-head left"><h2>Najprodavaniji domaći proizvodi</h2><a>Sve →</a></div>
 <div class="grid">
 <div class="card"><div class="frame"><span class="tag">Pijaca</span><img src="https://media.ukusiprirode.rs/2022/10/Bakaluk-Domaca-jaja.jpg"></div><div class="b"><span class="prodn">Bakaluk</span><h3>Domaća jaja</h3><div class="pr"><span class="price2">390 RSD</span><button class="add">+</button></div></div></div>
 <div class="card"><div class="frame"><span class="tag">Bez šećera</span><img src="https://media.ukusiprirode.rs/2026/06/Urmolada_Kajsija.jpg"></div><div class="b"><span class="prodn">Urmolada</span><h3>Urmolada Kajsija</h3><div class="pr"><span class="price2">750 RSD</span><button class="add">+</button></div></div></div>
@@ -311,7 +333,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 .runner:hover .track{animation-play-state:paused}
 @keyframes runL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @keyframes runR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
-.pchip{display:inline-flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 22px;font-weight:600;font-size:14.5px;color:var(--deep);box-shadow:0 4px 12px rgba(5,61,32,.05);transition:.2s;cursor:pointer}
+.pchip{display:inline-flex;align-items:center;gap:11px;flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:999px;padding:11px 22px;font-weight:600;font-size:14.5px;color:var(--deep);box-shadow:0 4px 12px rgba(5,61,32,.05);transition:.2s;cursor:pointer}
 .pchip:hover{border-color:var(--lime);transform:translateY(-2px);box-shadow:0 10px 22px rgba(5,61,32,.12);color:var(--g)}
 .pchip .dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex:0 0 auto}
 @media(prefers-reduced-motion:reduce){.track{animation:none}.runner{overflow:auto}}
@@ -329,7 +351,7 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 
 <!-- B2B green band (Koncept 2 stil) -->
 <section style="padding-top:8px"><div class="wrap"><div class="b2b">
-<div><span class="eyebrow">Za firme</span><h2>Pokloni koji zrače brigom 🎁</h2>
+<div><span class="eyebrow">Za firme</span><h2>Poslovni pokloni koji zrače brigom</h2>
 <p>Zdravi domaći paketi za tim i klijente. Jedan kontakt, faktura na firmu, dostava svuda.</p>
 <a class="btn w">Zatraži ponudu</a></div>
 <div class="basket">🧺</div>
@@ -374,7 +396,7 @@ footer .lnks a:hover{color:#fff}
 <div class="sec-head"><span class="eyebrow">Najprodavanije</span><h2>Izdvajamo za vas</h2><p>Top proizvodi iz svake kategorije — sve na početnoj, bez traženja.</p></div>
 
 <div class="catblock">
-  <div class="sec-head left"><h3>🥬 Pijaca</h3><a>Vidi sve →</a></div>
+  <div class="sec-head left"><h3>Pijaca — sveže voće i povrće</h3><a>Vidi sve →</a></div>
   <div class="grid">
     <div class="card"><div class="frame"><span class="tag">Neprskano</span><img src="https://media.ukusiprirode.rs/2024/11/Blitva-veza.jpg" alt="Blitva"></div><div class="b"><span class="prodn">Sa pijace</span><h3>Blitva (veza)</h3><div class="pr"><span class="price2">175 RSD</span><button class="add">+</button></div></div></div>
     <div class="card"><div class="frame"><span class="tag">Sveže</span><img src="https://media.ukusiprirode.rs/2022/06/Sargarepa.jpg" alt="Šargarepa"></div><div class="b"><span class="prodn">Sa pijace</span><h3>Šargarepa</h3><div class="pr"><span class="price2">305 RSD</span><button class="add">+</button></div></div></div>
@@ -384,7 +406,7 @@ footer .lnks a:hover{color:#fff}
 </div>
 
 <div class="catblock">
-  <div class="sec-head left"><h3>🫙 Kremovi i namazi</h3><a>Vidi sve →</a></div>
+  <div class="sec-head left"><h3>Kremovi i namazi bez aditiva</h3><a>Vidi sve →</a></div>
   <div class="grid">
     <div class="card"><div class="frame"><span class="tag">Hit</span><img src="https://media.ukusiprirode.rs/2023/04/lesnik-krem-veliki.jpg" alt="Lešnik krem"></div><div class="b"><span class="prodn">Zdravo kod Rusa</span><h3>Lešnik krem veliki</h3><div class="pr"><span class="price2">990 RSD</span><button class="add">+</button></div></div></div>
     <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2023/03/Pistaci-krem.jpg" alt="Pistaći krem"></div><div class="b"><span class="prodn">Zdravo kod Rusa</span><h3>Pistaći krem 70% · 300g</h3><div class="pr"><span class="price2">1.500 RSD</span><button class="add">+</button></div></div></div>
@@ -394,7 +416,7 @@ footer .lnks a:hover{color:#fff}
 </div>
 
 <div class="catblock">
-  <div class="sec-head left"><h3>🧃 Sokovi</h3><a>Vidi sve →</a></div>
+  <div class="sec-head left"><h3>Prirodni sokovi bez dodatog šećera</h3><a>Vidi sve →</a></div>
   <div class="grid">
     <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2020/08/malina-premium-075.jpg" alt="Malina premium"></div><div class="b"><span class="prodn">Beeberry</span><h3>Malina premium 0.75</h3><div class="pr"><span class="price2">1.100 RSD</span><button class="add">+</button></div></div></div>
     <div class="card"><div class="frame"><span class="tag">Premium</span><img src="https://media.ukusiprirode.rs/2020/08/Crna-ribizla-beeberry-premium-0.2.png" alt="Crna ribizla"></div><div class="b"><span class="prodn">Beeberry</span><h3>Crna ribizla premium 0.2</h3><div class="pr"><span class="price2">240 RSD</span><button class="add">+</button></div></div></div>
@@ -404,7 +426,7 @@ footer .lnks a:hover{color:#fff}
 </div>
 
 <div class="catblock">
-  <div class="sec-head left"><h3>🍫 Poslastice</h3><a>Vidi sve →</a></div>
+  <div class="sec-head left"><h3>Zdrave poslastice i čokolade</h3><a>Vidi sve →</a></div>
   <div class="grid">
     <div class="card"><div class="frame"><span class="tag">Hit</span><img src="https://media.ukusiprirode.rs/2023/09/Nugat-cokolada.jpg" alt="Nugat čokolada"></div><div class="b"><span class="prodn">Kapetan Koko</span><h3>Nugat čokolada</h3><div class="pr"><span class="price2">690 RSD</span><button class="add">+</button></div></div></div>
     <div class="card"><div class="frame"><span class="tag">Novo</span><img src="https://media.ukusiprirode.rs/2025/02/Dubai_kuglice_stack.jpg" alt="Dubai kuglice"></div><div class="b"><span class="prodn">Majkine poslastice</span><h3>Dubai kuglice</h3><div class="pr"><span class="price2">80 RSD</span><button class="add">+</button></div></div></div>
@@ -417,7 +439,7 @@ footer .lnks a:hover{color:#fff}
 
 <!-- BLOG (uz footer) -->
 <section style="padding-top:8px"><div class="wrap">
-<div class="sec-head"><span class="eyebrow">Blog</span><h2>Priče iz prirode</h2><p>Saveti, sezonske liste i priče naših proizvođača.</p></div>
+<div class="sec-head"><span class="eyebrow">Blog</span><h2>Blog o zdravoj ishrani i domaćim proizvodima</h2><p>Saveti za kupovinu, sezonske liste voća i povrća i priče naših malih proizvođača iz Srbije.</p></div>
 <div class="bloggrid">
   <a class="post"><div class="pimg"><img src="https://media.ukusiprirode.rs/2026/05/kako-prepoznati-dobre-jagode.png" alt="Kako prepoznati dobre jagode"></div><div class="pb"><span class="pdate">18. MAJ 2026.</span><h3>Kako prepoznati dobre jagode?</h3><span class="plink">Pročitaj →</span></div></a>
   <a class="post"><div class="pimg"><img src="https://media.ukusiprirode.rs/2026/05/ChatGPT-Image-May-18-2026-01_51_25-AM.png" alt="Zdrava nedeljna korpa"></div><div class="pb"><span class="pdate">17. MAJ 2026.</span><h3>Zdrava nedeljna korpa</h3><span class="plink">Pročitaj →</span></div></a>
@@ -478,6 +500,16 @@ footer .lnks a:hover{color:#fff}
   document.querySelectorAll('.harrows button').forEach(function(b){b.onclick=function(){stop();show(i+ (+b.dataset.dir));play();}});
   dots.forEach(function(d,k){d.onclick=function(){stop();show(k);play();}});
   play();
+  // swipe (mobil)
+  var stage=document.querySelector('.hstage'),tx=0,ty=0;
+  if(stage){
+    stage.addEventListener('touchstart',function(e){tx=e.changedTouches[0].clientX;ty=e.changedTouches[0].clientY;stop();},{passive:true});
+    stage.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+      if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)) show(i+(dx<0?1:-1));
+      play();
+    },{passive:true});
+  }
   // scroll reveal
   var els=[].slice.call(document.querySelectorAll('.sec-head,.cat,.card,.producers,.b2b,.trustbar'));
   els.forEach(function(e){e.setAttribute('data-reveal','')});
