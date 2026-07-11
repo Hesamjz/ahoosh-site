@@ -493,26 +493,32 @@ footer{background:var(--deep);color:#bfe0cc;padding:44px 0 26px;margin-top:20px}
 
 <!-- B2B green band — otvara se na skrol i pokazuje sva 4 rešenja -->
 <style>
-.b2b.open{grid-template-columns:1fr}
-.b2b .b2bhead{display:grid;grid-template-columns:1.3fr .7fr;gap:24px;align-items:center}
-.b2b.open .b2bhead{grid-template-columns:1fr;text-align:center;justify-items:center}
-.b2b.open .b2bhead p{margin-left:auto;margin-right:auto}
-.b2b .basket{transition:opacity .45s ease, transform .45s ease}
-.b2b.open .basket{opacity:0;transform:scale(.9);pointer-events:none;position:absolute;visibility:hidden}
+/* BEZ SKAKANJA: raspored se NE menja pri otvaranju — slika ostaje gde jeste,
+   samo se paketi glatko rašire ispod. Ništa se ne zamenjuje i ne nestaje. */
+.b2b{grid-template-columns:1fr}
+.b2b .b2bhead{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:center}
+.b2b .basket{transition:transform .7s cubic-bezier(.22,.85,.3,1)}
+.b2b.open .basket img{transform:rotate(0deg) scale(.96) translateX(6px)}
 /* paketi */
 .pkgs{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
       max-height:0;opacity:0;overflow:hidden;
-      transition:max-height .75s cubic-bezier(.22,.85,.3,1), opacity .5s ease, margin-top .6s ease;margin-top:0}
-.b2b.open .pkgs{max-height:760px;opacity:1;margin-top:30px}
+      transition:max-height .8s cubic-bezier(.33,1,.68,1), opacity .55s ease, margin-top .8s cubic-bezier(.33,1,.68,1);margin-top:0}
+.b2b.open .pkgs{max-height:780px;opacity:1;margin-top:30px}
 .pkg{background:#fff;border-radius:20px;overflow:hidden;color:var(--ink);display:flex;flex-direction:column;
-     opacity:0;transform:translateY(26px) scale(.97);
+     opacity:0;transform:translateY(30px) scale(.90);
      transition:opacity .55s ease, transform .55s cubic-bezier(.22,.85,.3,1), box-shadow .25s;
      box-shadow:0 14px 34px rgba(0,0,0,.18)}
-.b2b.open .pkg{opacity:1;transform:none}
-.b2b.open .pkg:nth-child(1){transition-delay:.10s}
-.b2b.open .pkg:nth-child(2){transition-delay:.20s}
-.b2b.open .pkg:nth-child(3){transition-delay:.30s}
-.b2b.open .pkg:nth-child(4){transition-delay:.40s}
+/* POP jedna po jedna — sa blagim prebačajem (spring), i obrnutim redom pri zatvaranju */
+.b2b.open .pkg{opacity:1;transform:none;
+  transition:opacity .35s ease, transform .55s cubic-bezier(.34,1.56,.64,1), box-shadow .25s}
+.b2b.open .pkg:nth-child(1){transition-delay:.18s}
+.b2b.open .pkg:nth-child(2){transition-delay:.32s}
+.b2b.open .pkg:nth-child(3){transition-delay:.46s}
+.b2b.open .pkg:nth-child(4){transition-delay:.60s}
+.b2b .pkg:nth-child(1){transition-delay:.18s}
+.b2b .pkg:nth-child(2){transition-delay:.12s}
+.b2b .pkg:nth-child(3){transition-delay:.06s}
+.b2b .pkg:nth-child(4){transition-delay:0s}
 .pkg:hover{box-shadow:0 22px 48px rgba(0,0,0,.28);transform:translateY(-5px)}
 .pkg img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 .pkg .pb{padding:16px 18px 18px;display:flex;flex-direction:column;gap:7px;flex:1}
