@@ -1,68 +1,132 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const effective = '12 July 2026';
+const updated = '12 July 2026';
+
+const toc = [
+  ['what-we-offer', 'What we offer'],
+  ['assessments', 'Assessments'],
+  ['digital-products', 'Digital products and refunds'],
+  ['consulting', 'Consulting'],
+  ['licences', 'Licences and intellectual property'],
+  ['acceptable-use', 'Acceptable use'],
+  ['liability', 'Liability and outcomes'],
+  ['law', 'Governing law'],
+  ['changes', 'Changes and questions'],
+];
 ---
 
 <BaseLayout
   title="Terms of Service"
-  description="The terms for using ahoosh.ai: services, assessments, digital products, refunds, licences, and liability — honest and short."
+  description="The terms for using ahoosh.ai: services, assessments, digital products, refunds, licences and liability."
 >
-  <section class="legal-hero">
+  <section class="legal">
     <div class="legal-wrap">
-      <span class="legal-eyebrow">AHoosh.ai — Legal</span>
-      <h1>Terms of Service</h1>
-      <span class="legal-effective">Effective: {effective}</span>
-    </div>
-  </section>
 
-  <section class="legal-body">
-    <div class="legal-wrap">
-      <article>
+      <header class="legal-head">
+        <h1>Terms of Service</h1>
+        <p class="legal-updated">Last updated: {updated}</p>
+      </header>
 
-        <h2>Who we are</h2>
-        <p>AHoosh ("we") is operated by Hesam Jafarzadeh, Belgrade, Serbia. By using ahoosh.ai you agree to these terms. Questions before you agree to anything: <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>.</p>
+      <p class="legal-lede">
+        These terms govern your use of ahoosh.ai. By using the site you accept them. They are written
+        to be read, not to be survived. Questions before you agree to anything:
+        <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>.
+      </p>
 
-        <h2>What we offer</h2>
-        <p>The services are the ones described on this site: business news and research, free assessments and tools, digital products (when they go live), and consulting. Each page says what its offer actually is — we do not sell anything the site does not describe.</p>
+      <nav class="legal-toc" aria-label="On this page">
+        <span class="legal-toc-title">On this page</span>
+        <ol>
+          {toc.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}
+        </ol>
+      </nav>
 
-        <h2>Assessments</h2>
-        <p>Our assessments — personality, leadership, business, and website — are <strong>informational</strong>. They are a structured way to reflect on yourself or your company, nothing more.</p>
-        <div class="legal-note legal-note--flag">
-          <p><strong>The personality and leadership assessments are not a clinical or diagnostic instrument.</strong> They are not psychiatric or medical advice, they do not identify any condition, and no one should be hired, fired, screened, or judged on the basis of them — including by us. If you are worried about your mental health, speak to a qualified professional.</p>
+      <article class="legal-body">
+
+        <h2 id="what-we-offer">What we offer</h2>
+        <p>
+          The services are the ones described on this site: business news and research, free
+          assessments and tools, digital products, and consulting. Each page states what its offer
+          actually is. We do not sell anything the site does not describe.
+        </p>
+
+        <h2 id="assessments">Assessments</h2>
+
+        <div class="legal-callout">
+          <p>
+            <strong>The assessments are informational.</strong> The personality and leadership
+            assessments are not a clinical or diagnostic instrument. They are not medical or
+            psychiatric advice, they do not identify any condition, and no one should be hired, fired,
+            screened or judged on the basis of them — including by us. If you are worried about your
+            mental health, speak to a qualified professional.
+          </p>
         </div>
-        <p>The assessments are also not professional, legal, or financial advice. Results depend on what you enter — honest input gets useful output, thin input gets thin output. Decisions you make from them are yours. How we handle the answers is set out in our <a class="inline" href="/privacy">Privacy Policy</a>.</p>
 
-        <h2>Digital products and refunds</h2>
-        <p>Digital products, once live, are delivered instantly after purchase.</p>
-        <div class="legal-note">
-          <p><strong>Refund policy:</strong> if a product does not work as described, you have <strong>14 days</strong> to get your money back. Contact us first at <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a> — most problems get fixed the same day. Payment disputes are handled by Lemon Squeezy, our merchant of record.</p>
-        </div>
+        <p>
+          The business and website assessments are likewise not professional, legal or financial
+          advice. Results depend on what you enter: honest input produces a useful read, thin input
+          produces a thin one. Decisions you take from them are yours.
+        </p>
+        <p>
+          By submitting your email to receive results, you accept these terms and our
+          <a href="/privacy">Privacy Policy</a>, which sets out exactly how your answers are handled.
+        </p>
 
-        <h2>Consulting</h2>
-        <p>Consulting engagements are governed by their individual agreements. Where an agreement and these terms disagree, the agreement wins for that engagement.</p>
+        <h2 id="digital-products">Digital products and refunds</h2>
+        <p>
+          Digital products are delivered immediately after purchase. Payments are processed by Lemon
+          Squeezy, our merchant of record, who also handle any payment dispute.
+        </p>
+        <p>
+          <strong>If a product does not work as described, you have 14 days to get your money back.</strong>
+          Contact us first at <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a> —
+          most problems are fixed the same day.
+        </p>
 
-        <h2>No guaranteed outcomes</h2>
-        <p>We do not promise specific business results — nobody honestly can. What we promise is simpler: we say what we will do, and we do it.</p>
+        <h2 id="consulting">Consulting</h2>
+        <p>
+          Consulting engagements are governed by their own individual agreements. Where an agreement
+          and these terms disagree, the agreement wins for that engagement.
+        </p>
 
-        <h2>Licences and intellectual property</h2>
-        <ul>
-          <li>Buying a digital product gives you a <strong>personal or single-business-use licence</strong>.</li>
-          <li>It does not include resale, redistribution, or repackaging. An <strong>agency licence</strong> — for using a product on client work — is sold separately.</li>
-          <li>Everything on this site (text, design, code, assessments) belongs to us unless marked otherwise.</li>
-        </ul>
+        <h2 id="licences">Licences and intellectual property</h2>
+        <p>
+          Buying a digital product grants you a <strong>personal or single-business-use licence</strong>.
+          It does not include resale, redistribution or repackaging. An <strong>agency licence</strong>,
+          for using a product on client work, is sold separately. Everything on this site — text,
+          design, code and assessments — belongs to us unless marked otherwise.
+        </p>
 
-        <h2>Acceptable use</h2>
-        <p>Do not attack the site, scrape it wholesale, abuse the tools to attack someone else, or submit someone else's personal data without their permission. We can suspend access if you do.</p>
+        <h2 id="acceptable-use">Acceptable use</h2>
+        <p>
+          Do not attack the site, scrape it wholesale, use the tools to attack anyone else, or submit
+          another person's data without their permission. We may suspend access if you do.
+        </p>
 
-        <h2>Liability</h2>
-        <p>Our liability to you is limited to the amount you actually paid us. Nothing in these terms limits liability where the law does not allow it to be limited.</p>
+        <h2 id="liability">Liability and outcomes</h2>
+        <p>
+          We do not promise specific business results — nobody honestly can. What we promise is
+          simpler: we say what we will do, and we do it.
+        </p>
+        <p>
+          Our liability to you is limited to the amount you actually paid us. Nothing in these terms
+          limits liability where the law does not permit it to be limited.
+        </p>
 
-        <h2>Governing law</h2>
+        <h2 id="law">Governing law</h2>
         <p>These terms are governed by the law of the Republic of Serbia.</p>
 
-        <h2>Changes and contact</h2>
-        <p>If these terms change, we update this page and the effective date at the top. This version is effective <strong>{effective}</strong>. Anything unclear: <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>.</p>
+        <h2 id="changes">Changes and questions</h2>
+        <p>
+          If these terms change we will update this page and change the date at the top, so you can
+          always see which version applies. Anything unclear:
+          <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>.
+        </p>
+
+        <p class="legal-controller">
+          AHoosh, operated by H. Jafarzadeh, Belgrade, Serbia ·
+          <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>
+        </p>
 
       </article>
     </div>
@@ -70,60 +134,72 @@ const effective = '12 July 2026';
 </BaseLayout>
 
 <style>
-  .legal-wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+  .legal { padding: 150px 0 120px; position: relative; z-index: 2; }
+  .legal-wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
 
-  .legal-hero { padding: 150px 0 20px; position: relative; z-index: 2; }
-  .legal-eyebrow {
-    display: block; margin-bottom: 18px;
-    font-family: var(--font-head); font-weight: 700; text-transform: uppercase;
-    letter-spacing: .22em; font-size: .66rem; color: var(--gold);
-  }
-  .legal-hero h1 {
+  .legal-head { border-bottom: 1px solid rgba(240,242,245,.1); padding-bottom: 26px; margin-bottom: 34px; }
+  .legal-head h1 {
     font-family: var(--font-head); font-weight: 800;
-    font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.05;
+    font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.1;
     letter-spacing: -.01em; color: var(--silver); margin: 0;
   }
-  .legal-effective {
-    display: inline-block; margin-top: 22px;
-    font-family: var(--font-head); font-weight: 700; text-transform: uppercase;
-    letter-spacing: .18em; font-size: .66rem; color: var(--gold-light);
-    border: 1px solid rgba(215,161,61,.35); border-radius: 40px; padding: 9px 20px;
-  }
+  .legal-updated { margin: 12px 0 0; font-size: .8rem; letter-spacing: .02em; color: var(--dim, #828ca2); }
 
-  .legal-body { padding: 26px 0 110px; position: relative; z-index: 2; }
-  .legal-body p { color: var(--silver-dim); font-size: 1rem; line-height: 1.85; margin: 0 0 22px; }
+  .legal-lede { font-size: 1.06rem; line-height: 1.8; color: var(--silver); margin: 0 0 36px; }
+
+  .legal-toc {
+    border: 1px solid rgba(240,242,245,.1); border-radius: 12px;
+    background: rgba(7,22,40,.45); padding: 22px 26px; margin: 0 0 52px;
+  }
+  .legal-toc-title {
+    display: block; font-family: var(--font-head); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .18em; font-size: .62rem;
+    color: var(--gold); margin-bottom: 14px;
+  }
+  .legal-toc ol { margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+  .legal-toc li { counter-increment: toc; margin: 0 0 9px; }
+  .legal-toc li:last-child { margin-bottom: 0; }
+  .legal-toc li::before {
+    content: counter(toc) '.'; color: var(--gold); opacity: .55;
+    font-size: .82rem; margin-right: 10px;
+  }
+  .legal-toc a {
+    color: var(--silver-dim, #cdd6e6); font-size: .92rem;
+    border-bottom: 1px solid transparent; transition: color .25s, border-color .25s;
+  }
+  .legal-toc a:hover { color: var(--gold-light, #f4d98b); border-color: rgba(215,161,61,.4); }
+
+  .legal-body p { color: var(--silver-dim); font-size: 1rem; line-height: 1.85; margin: 0 0 20px; }
   .legal-body h2 {
     font-family: var(--font-head); font-weight: 800;
-    font-size: 1.3rem; line-height: 1.2; letter-spacing: -.01em;
-    color: var(--silver); margin: 56px 0 18px;
-  }
-  .legal-body h2:first-child { margin-top: 0; }
-  .legal-body ul { list-style: none; margin: 0 0 26px; padding: 0; }
-  .legal-body li {
-    position: relative; color: var(--silver-dim); font-size: 1rem;
-    line-height: 1.85; padding-left: 26px; margin-bottom: 12px;
-  }
-  .legal-body li::before {
-    content: ''; position: absolute; left: 0; top: .72em;
-    width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+    font-size: 1.24rem; line-height: 1.25; letter-spacing: .01em;
+    color: var(--silver); margin: 58px 0 20px;
+    padding-top: 22px; border-top: 1px solid rgba(240,242,245,.08);
   }
   .legal-body strong { color: var(--silver); font-weight: 600; }
-  .legal-body a.inline {
-    color: var(--gold-light); border-bottom: 1px solid rgba(215,161,61,.4);
-    transition: color .3s, border-color .3s;
+  .legal-body a.inline, .legal-body a:not(.inline) {
+    color: var(--gold-light, #f4d98b); border-bottom: 1px solid rgba(215,161,61,.35);
+    transition: color .25s, border-color .25s;
   }
-  .legal-body a.inline:hover { color: var(--silver); border-color: var(--silver); }
+  .legal-body a:hover { color: var(--silver); border-color: var(--silver); }
 
-  .legal-note {
-    border: 1px solid rgba(240,242,245,.12); border-radius: 14px;
-    background: rgba(7,22,40,.55); padding: 22px 26px; margin: 30px 0;
+  .legal-callout {
+    border-left: 2px solid var(--gold);
+    background: rgba(215,161,61,.05);
+    padding: 20px 24px; margin: 26px 0 28px; border-radius: 0 10px 10px 0;
   }
-  .legal-note p { margin: 0; font-size: .97rem; }
-  .legal-note--flag { border-color: rgba(215,161,61,.35); background: rgba(215,161,61,.06); }
+  .legal-callout p { margin: 0; font-size: .98rem; }
+
+  .legal-controller {
+    margin-top: 50px; padding-top: 24px;
+    border-top: 1px solid rgba(240,242,245,.1);
+    font-size: .84rem !important; color: var(--dim, #828ca2) !important;
+  }
 
   @media (max-width: 820px) {
+    .legal { padding: 120px 0 80px; }
     .legal-wrap { padding: 0 20px; }
-    .legal-hero { padding: 120px 0 16px; }
-    .legal-body { padding: 20px 0 80px; }
+    .legal-toc { padding: 18px 20px; margin-bottom: 40px; }
+    .legal-body h2 { margin-top: 44px; }
   }
 </style>

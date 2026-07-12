@@ -78,6 +78,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .modal-skip { margin-top:12px; display:block; font-size:12px; color:#4a5a6e; cursor:pointer; background:none; border:none; }
   .modal-skip:hover { color:#7a8b9e; }
   .modal-status { font-size:12px; color:#4a5a6e; margin-top:8px; min-height:18px; }
+  .modal-consent { font-size:11px; line-height:1.6; color:#4a5a6e; margin:16px 0 0; }
+  .modal-consent a { color:#9F6F16; text-decoration:underline; }
 
   /* Print styles */
   @media print {
@@ -103,6 +105,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <button class="modal-submit" id="gate-submit" onclick="submitEmail()">Download PDF →</button>
     <div class="modal-status" id="gate-status"></div>
     <button class="modal-skip" onclick="skipEmail()">Skip and download without email</button>
+    <p class="modal-consent">By submitting your email you agree to our <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/terms" target="_blank" rel="noopener">Terms</a>, and consent to us storing your answers and results and emailing them to you. Skip and nothing is stored.</p>
   </div>
 </div>
 

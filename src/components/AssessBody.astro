@@ -1023,9 +1023,11 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
         h('button',{onClick:function(){submit(false);},disabled:busy,className:'w-full py-3 rounded-xl bg-gold text-navy font-bold text-sm mb-3',style:busy?{opacity:0.5}:{}},busy?'…':((T.ui&&T.ui.gateBtn)||'Show my results →')),
         h('button',{onClick:function(){submit(true);},className:'text-gray-400 text-xs underline'},(T.ui&&T.ui.gateSkip)||'Skip and view results'),
         h('p',{className:'text-gray-400 text-xs mt-4 leading-relaxed',style:{lineHeight:'1.6'}},
-          (T.ui&&T.ui.gateConsent)||'By submitting your email you consent to us storing your answers and results and emailing them to you. Skip and nothing is stored. Withdraw any time — see our ',
+          (T.ui&&T.ui.gateConsent)||'By submitting your email you agree to our ',
           h('a',{href:'/privacy',target:'_blank',rel:'noopener',className:'underline',style:{color:'#9F6F16'}},(T.ui&&T.ui.gatePrivacy)||'Privacy Policy'),
-          '.'
+          ' and ',
+          h('a',{href:'/terms',target:'_blank',rel:'noopener',className:'underline',style:{color:'#9F6F16'}},(T.ui&&T.ui.gateTerms)||'Terms'),
+          (T.ui&&T.ui.gateConsent2)||', and consent to us storing your answers and results and emailing them to you. Skip and nothing is stored — withdraw any time.'
         )
       )
     );
