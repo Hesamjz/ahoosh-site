@@ -1,0 +1,110 @@
+---
+title: "AI Chatbots for B2B Support: Build, Buy, or Skip?"
+description: "A practical framework for B2B firms deciding whether to build a custom AI support chatbot, buy an off-the-shelf tool, or skip it entirely — with costs and decision criteria."
+pubDate: 2026-07-14
+tags: ["AI Operations", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80" alt="Team working at laptops around a table discussing a support workflow" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Every B2B firm under a few hundred people eventually asks the same question: should we put an AI chatbot on our site and in our support queue? The pitch is attractive — deflect repetitive questions, answer at 2am, free up the two people who currently handle everything. The reality is more mixed. Some firms save real hours. Others spend three months building something that annoys customers and gets switched off.
+
+The decision is not really "AI: yes or no." It is three separate questions bundled together. What kind of support load do you actually have? Should you build a custom system or buy an off-the-shelf one? And is the honest answer, for your volume, to skip it for now and revisit in a year?
+
+This piece gives you a framework to answer all three, with the numbers a small B2B operator needs to make the call without a consultant's markup.
+
+---
+
+## First, Diagnose Your Actual Support Load
+
+**Count the tickets before you shop for tools.**
+
+The single most common mistake is buying a chatbot for a problem you do not have. Before evaluating anything, pull one month of support conversations — emails, chat logs, WhatsApp messages, whatever channels you use — and categorize them.
+
+- How many total inbound support messages per month?
+- What share are repetitive, answerable-from-documentation questions ("what are your lead times," "where is my order," "do you ship to Serbia")?
+- What share genuinely need a human — pricing negotiation, complex technical scoping, complaints?
+
+**The repetitive share is what a chatbot addresses.**
+
+If 70% of a 400-message monthly volume is repetitive, an AI layer can plausibly deflect a couple hundred messages a month, which is meaningful. If you get 40 messages a month and most are bespoke deal conversations, no chatbot will help — you would spend more time maintaining it than answering the messages yourself.
+
+A rough threshold: below roughly 100 repetitive, documentable questions per month, most B2B firms are better served by a good FAQ page and fast human replies than by any bot. Above a few hundred, automation starts paying for itself. Between those, it depends on how documentable your answers are.
+
+**Documentability is the hidden variable.**
+
+An AI chatbot is only as good as the knowledge it can draw on. If your answers live in three people's heads and change weekly, a bot will be wrong often. If you have — or can write — clear documentation of your products, policies, and processes, a bot can answer reliably. The work of writing that documentation is valuable regardless of whether you ever deploy a bot.
+
+---
+
+## The "Buy" Path — Off-the-Shelf Tools and What They Cost
+
+**For most small B2B firms, buying is the right default.**
+
+The market of support tools with built-in AI has matured. Products like Intercom, Tidio, Crisp, and the AI features inside help desks like Freshdesk and Zendesk let you connect your knowledge base, point the bot at it, and go live in days. Many now use retrieval over your own documents rather than generic answers, which cuts the hallucination problem dramatically.
+
+**What buying actually costs in 2026.**
+
+- Entry AI-support plans typically run from roughly €30 to €100 per seat per month, sometimes with per-resolution pricing on top
+- Resolution-based pricing (you pay per question the AI successfully answers) can run around €0.50 to €1 per resolution — attractive at low volume, expensive at high volume
+- Setup is usually days, not weeks: connect the knowledge base, set the tone, define when to hand off to a human
+
+**The advantages of buying.**
+
+You get a maintained product, ongoing model improvements without engineering work, built-in analytics, and a supported handoff-to-human flow. You avoid owning the failure modes. For a firm whose core competence is not software, this is almost always the better economics. A minimal, bought stack fits the philosophy in [the minimal tech stack for B2B consulting](/articles/minimal-tech-stack-b2b-consulting/) — pay a small monthly fee, avoid maintenance.
+
+**The catch to check before signing.**
+
+Read the data terms. Confirm where customer conversations are processed and stored, especially for GDPR — you want an EU processing option or a data processing agreement in place. Confirm you can export your knowledge base and conversation history if you leave. And test the handoff: a bot that traps customers in a loop with no route to a human damages relationships fast.
+
+---
+
+## The "Build" Path — When Custom Makes Sense (and When It Doesn't)
+
+**Building means wiring your own retrieval system on top of an AI model.**
+
+The modern build pattern is retrieval-augmented generation: you store your documentation as embeddings, retrieve the relevant chunks when a customer asks something, and pass them to a model API (OpenAI, Anthropic, or similar) to compose an answer grounded in your content. The provider docs — for example [OpenAI's platform documentation](https://platform.openai.com/docs/) — walk through the mechanics.
+
+**Building is justified in a narrow set of cases:**
+
+- You have unusual integration needs — the bot must query your live inventory or order system in ways no off-the-shelf tool supports
+- You have the volume to make per-resolution pricing on a bought tool more expensive than running your own inference
+- Conversational support is core to your product, not a cost center, so owning it is strategic
+- You have genuine engineering capacity to maintain it — not a one-time build, but ongoing
+
+**The honest cost of building.**
+
+The first version is deceptively quick — a competent developer can prototype a working retrieval bot in a week. The real cost is everything after: handling edge cases, keeping the knowledge base synced, monitoring for wrong answers, adding the human handoff, and maintaining it as models and libraries change. For most B2B firms with a handful of staff, this ongoing burden outweighs the savings. The pattern of adding a capable AI layer without over-engineering is covered in [building an AI support layer for around €200/month](/articles/ai-support-layer-200-month/), which for most firms lands closer to configuring bought tools than building from scratch.
+
+**A middle path exists.**
+
+You can build a lightweight, purpose-specific AI helper for internal use — drafting replies for a human to send, summarizing long threads, categorizing incoming tickets — without exposing it to customers at all. This captures much of the time savings while keeping a human in every customer-facing loop, which sidesteps the biggest risk. Several of these internal helpers are among [the AI tools worth adding to a B2B sales workflow](/articles/five-ai-tools-b2b-sales-2026/).
+
+---
+
+## The "Skip" Path — And How to Revisit Later
+
+**Skipping is a legitimate, sometimes optimal, decision.**
+
+If your volume is low, your answers are bespoke, or your customer relationships depend on personal contact, a chatbot may subtract value. B2B buyers spending five or six figures often actively want a human, and a bot between them and your team reads as friction. There is no rule that says you must have one.
+
+**What to do instead if you skip.**
+
+- Write the FAQ page you would have trained the bot on. Most of the deflection value comes from good self-serve documentation, bot or no bot
+- Set up canned replies or templates in your inbox so humans answer common questions in seconds
+- Add an internal AI assistant to draft and speed up human replies, keeping the customer-facing side human
+
+**Set a trigger to revisit.**
+
+Skipping now does not mean skipping forever. Set a concrete condition to reopen the question: "when repetitive questions pass 150 a month," or "when we hire past eight people and support is eating a full role." Revisit against that trigger rather than against a vendor's sales cadence.
+
+---
+
+The build-vs-buy-vs-skip decision comes down to three honest measurements: your repetitive support volume, how documentable your answers are, and whether support is a cost center or a core product surface. Measure those first. For the large majority of small B2B firms, the answer is buy a resolution-priced tool connected to a well-written knowledge base, keep a fast route to a human, and check the data terms — or skip for now and invest the same effort in documentation that pays off either way.
+
+The firms that regret their chatbot are almost always the ones that bought or built before they diagnosed the load. Do the counting first. The tool decision gets much easier once you know what you are actually automating.
+
+---
+
+**Sources:** [OpenAI Platform documentation](https://platform.openai.com/docs/) · [European Commission — GDPR overview](https://commission.europa.eu/law/law-topic/data-protection_en)

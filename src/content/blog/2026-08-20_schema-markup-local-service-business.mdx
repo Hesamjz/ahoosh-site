@@ -1,0 +1,112 @@
+---
+title: "Schema Markup for Local and Service Businesses"
+description: "A practical guide to structured data for local and service businesses — which schema types matter, how to implement them correctly, and how to validate markup before it goes live."
+pubDate: 2026-07-14
+tags: ["Strategy", "SEO", "Content"]
+heroImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80" alt="Analytics dashboard on a laptop showing search performance metrics" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Two local service businesses can have near-identical websites, offer the same service, and rank very differently in search — and one common reason is that one of them tells search engines exactly what it is in machine-readable form, and the other leaves them to guess. That machine-readable layer is schema markup: structured data added to your pages that spells out your business name, location, services, hours, and reviews in a format search engines parse directly.
+
+For a local or service business, this matters more than for most. Search engines increasingly answer queries with rich results — the business card in the sidebar, the star ratings under a listing, the "open now" label, the frequently-asked-questions dropdown. These enhanced results come disproportionately from pages with correct structured data. Without it, you're competing for a plain blue link while competitors get the visual real estate.
+
+Schema markup has a reputation for being technical, but the core of it for a service business is straightforward and worth doing yourself. This guide covers which schema types actually matter, how to implement them without breaking anything, and how to validate before you rely on it.
+
+---
+
+## Understand What Schema Actually Does
+
+**Structured data doesn't change what your page says — it changes what search engines understand.**
+
+A human reading your page knows instantly that "Open Mon–Fri 9–5" is your opening hours and that "★★★★☆ (47 reviews)" is a rating. A search engine has to infer this from unstructured text, and it often gets it wrong or ignores it. Schema markup removes the guesswork by labelling each fact explicitly, using a shared vocabulary defined at [schema.org](https://schema.org).
+
+The practical payoffs for a local or service business:
+
+- **Rich results** — star ratings, opening hours, price ranges, and FAQ dropdowns that make your listing larger and more clickable
+- **Knowledge panel accuracy** — the business info box search engines show is fed partly by your structured data
+- **Better local relevance** — clear location and service-area data helps you surface for "near me" and location-specific searches
+- **Voice and AI answers** — assistants and AI search increasingly pull from structured data because it's unambiguous
+
+The important framing: schema doesn't directly boost rankings the way good content or links do. What it does is make your existing pages eligible for enhanced presentation and clearer understanding — which lifts click-through even when your position doesn't change. It's an amplifier on the visibility you've already earned, and it pairs naturally with a solid [SEO approach for B2B and service businesses](/articles/seo-b2b-services-2026/).
+
+---
+
+## Choose the Schema Types That Matter for You
+
+**A handful of schema types cover almost everything a service business needs — don't over-engineer it.**
+
+Schema.org defines hundreds of types, most of which are irrelevant to a local business. The mistake is either using none or trying to mark up everything. The right move is to implement the few types that map to what you actually are and do.
+
+The core set for a local or service business:
+
+- **LocalBusiness** (or a more specific subtype) — your foundational markup: name, address, phone, opening hours, geo-coordinates, price range. If you serve customers at or from a physical location, this is essential. Use the most specific subtype that fits (there are many, from `ProfessionalService` to trade-specific types).
+- **Service** — describes each service you offer, letting you spell out what you do rather than leaving it implied. Useful for a business with distinct service lines.
+- **Organization** — for businesses without a strong local-storefront angle, this carries your name, logo, contact points, and social profiles.
+- **Review / AggregateRating** — marks up genuine customer reviews and your overall rating. This is what produces the star ratings in search results, but it must reflect real reviews you actually display.
+- **FAQPage** — marks up a genuine question-and-answer section, which can produce an expandable FAQ directly in search results.
+- **BreadcrumbCrumb / BreadcrumbList** — shows your site hierarchy in the result, helpful for multi-page service sites.
+
+Pick the types that describe your real business and skip the rest. Marking up things that don't apply, or that don't appear on the visible page, is worse than omitting them — search engines penalise structured data that misrepresents the page. This restraint mirrors the [minimal, deliberate tech stack](/articles/minimal-tech-stack-b2b-consulting/) principle: use what earns its place and nothing more.
+
+---
+
+## Implement It Correctly with JSON-LD
+
+**JSON-LD is the recommended format — a block of structured data that sits in your page without touching the visible content.**
+
+Schema can be implemented three ways, but for a service business the answer is settled: use JSON-LD. It's a self-contained script block, usually in the page head, that describes your data without weaving markup through your visible HTML. Google explicitly recommends it, and it's far easier to maintain than the alternatives.
+
+The implementation basics:
+
+- **One JSON-LD block per page, describing that page.** Your homepage or contact page carries the LocalBusiness data; a service page carries its Service data; a page with a real FAQ carries FAQPage data. Match the markup to the page's actual content.
+- **Every marked-up fact must appear on the visible page.** Structured data has to describe what a user actually sees. Marking up reviews that aren't shown, hours that aren't listed, or an address that's hidden violates the guidelines and risks a manual penalty.
+- **Use consistent NAP everywhere.** Your Name, Address, and Phone in the markup must exactly match what appears across your site and other listings. Inconsistency confuses the local-search signal you're trying to strengthen.
+- **Fill the recommended properties, not just the required ones.** For LocalBusiness, include hours, price range, geo-coordinates, and a link to your logo. More complete data produces richer results.
+
+If your site runs on a common platform, plugins and built-in features can generate JSON-LD for you — but check what they output rather than trusting it blindly. Auto-generated schema is frequently incomplete or subtly wrong. For a small service site, hand-writing a clean JSON-LD block for your key pages is entirely doable and gives you control over exactly what's declared. Google's own [structured data documentation](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data) is the authoritative reference for the required and recommended properties of each type.
+
+---
+
+## Validate Before You Rely on It
+
+**Broken schema fails silently — it produces no rich results and no error message unless you test.**
+
+The most common outcome of DIY schema isn't a penalty; it's nothing. A small syntax error or a missing required property means search engines quietly ignore the markup, and you never see the rich result you were hoping for. Validation is the step that catches this, and it takes minutes.
+
+The validation workflow:
+
+- **Run the Rich Results Test.** Google's [Rich Results Test](https://search.google.com/test/rich-results) checks whether your markup is valid and which rich results it's eligible for. Paste your URL or the code and read the report — it flags errors and warnings specifically.
+- **Use the Schema Markup Validator for general correctness.** The [schema.org validator](https://validator.schema.org) checks that your structured data is well-formed against the vocabulary, independent of any one search engine's requirements.
+- **Distinguish errors from warnings.** Errors mean the markup won't work and must be fixed. Warnings mean recommended properties are missing — worth adding for richer results but not blocking.
+- **Test every page type once.** Validate a representative page of each type — homepage, a service page, an FAQ page — since each carries different markup. Fixing one doesn't guarantee the others are correct.
+
+After you deploy, watch Google Search Console's enhancement reports. They show which structured data types Google detected across your site, how many pages are valid, and any errors found in the wild — including problems that only appear once real pages are crawled. This is the ongoing check that keeps your markup healthy as the site changes. Treat validation as part of publishing, not a one-time setup, because a template change or plugin update can break schema you thought was settled.
+
+---
+
+## Keep Schema Accurate as the Business Changes
+
+**Structured data that describes an outdated business is worse than none — it tells search engines wrong facts.**
+
+Schema isn't set-and-forget. Your hours change, you add a service, you move location, your review count grows. Markup that drifts out of sync with reality actively misleads search engines and can produce wrong rich results — the "open now" label showing when you're closed, an old address, a service you dropped.
+
+The maintenance discipline:
+
+- **Update markup whenever the underlying fact changes.** New opening hours, a new phone number, a new service line — the JSON-LD updates at the same time as the visible page. Tie the two together so one never lags the other.
+- **Keep reviews genuine and current.** AggregateRating should reflect your real, currently-displayed reviews. Never inflate the count or rating; beyond the ethics, it's a guideline violation that risks losing rich-result eligibility entirely.
+- **Re-validate after any site change.** A theme update, a new plugin, or a redesign can silently break existing schema. Re-run the Rich Results Test on your key pages after significant changes.
+- **Watch Search Console for new errors.** Enhancement reports flag problems that emerge over time. A monthly glance catches issues before they cost you visibility.
+
+For a local or service business, structured data is one of the higher-return technical investments available — it's a one-time setup with modest ongoing upkeep that makes your existing search presence larger and clearer. The businesses that get the enhanced listings aren't doing anything a small operator can't. They've simply told search engines precisely what they are, in a format that leaves no room for guessing.
+
+---
+
+Schema markup is where a service business converts good information into better visibility. It doesn't require a developer or an agency for the core set — LocalBusiness, Service, Review, and FAQPage cover most of what matters, implemented as clean JSON-LD, validated before launch, and kept in sync with the real business.
+
+The payoff is the enhanced search presence that quietly wins clicks: the star ratings, the opening hours, the FAQ dropdown, the accurate business card. Do it once, do it correctly, validate it, and maintain it — and you claim the search real estate that competitors relying on plain links are leaving on the table.
+
+---
+
+**Sources:** [Schema.org LocalBusiness](https://schema.org/LocalBusiness) · [Google Search Central — structured data introduction](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data)

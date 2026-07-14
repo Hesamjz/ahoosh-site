@@ -1,0 +1,102 @@
+---
+title: "Building a Simple RAG Knowledge Base for Support"
+description: "How a small B2B business builds a simple RAG knowledge base to answer support questions from its own documents — what RAG is, what you need, and how to set it up without a data team."
+pubDate: 2026-07-14
+tags: ["AI Operations", "B2B", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&q=80" alt="Person organising documents and knowledge base articles on a laptop" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+A general AI assistant can write a nice email, but ask it about your specific return policy, your product's compatibility, or your delivery windows and it will either say it doesn't know or, worse, confidently make something up. That's because it was never trained on your business. For customer support, this gap is the whole problem: the questions your customers ask are almost always about *your* specifics, not general knowledge.
+
+RAG — Retrieval-Augmented Generation — is the technique that closes that gap. In plain terms, it lets an AI answer questions using your own documents. When a customer asks something, the system first retrieves the relevant passage from your knowledge base, then the AI writes an answer grounded in that passage rather than in whatever it happens to remember. The answer cites your actual policy, not a plausible guess.
+
+This sounds like enterprise technology, and a few years ago it was. Today a small B2B business can build a useful RAG support system in a day or two using off-the-shelf tools, without hiring an engineer. This guide explains what RAG is in practical terms, what you need, and how to set it up sensibly — including the limits worth knowing before you start.
+
+---
+
+## What RAG Is, Without the Jargon
+
+**The core idea in one sentence: retrieve the right document, then let the AI answer from it.** Instead of hoping the AI knows your business, you give it a library of your own content and a way to find the relevant piece for each question. The "retrieval" is the search step; the "generation" is the AI writing a natural answer from what it found.
+
+**Why this beats just training or prompting an AI:**
+
+- **It stays current.** Update a document in your knowledge base and the next answer reflects the change immediately. There's no retraining, no waiting. Your return policy changes on Monday, and the system answers correctly on Monday.
+- **It grounds answers in fact.** Because the AI answers from a retrieved passage, it's far less likely to invent things. A well-built RAG system can even quote or point to the source, so answers are checkable rather than mysterious.
+- **It scales with your content, not your budget.** Adding knowledge means adding documents, not paying for a bigger model or a custom build. Your FAQ, your policies, your product docs — each one you add makes the system more capable.
+
+**How a query flows through the system:**
+
+1. A customer asks a question.
+2. The system converts the question into a form it can search with and finds the most relevant passages in your knowledge base.
+3. Those passages, plus the question, go to the AI.
+4. The AI writes an answer using the retrieved passages as its source of truth.
+
+That's the entire mechanism. Everything else is tooling around those four steps. This is the same grounded-answer principle behind a lean [AI support layer running under 200 euro a month](/articles/ai-support-layer-200-month/), applied specifically to answering from your own documents.
+
+---
+
+## What You Need to Build One
+
+You need three things, and none of them require a data science team.
+
+**1. Your content, organised.** The knowledge base is only as good as what goes into it. Gather the documents that answer your customers' real questions:
+
+- Your FAQ and help articles
+- Product specifications and compatibility information
+- Policies: returns, shipping, warranty, payment terms
+- Common support responses your team already writes repeatedly
+- Onboarding and setup guides
+
+The quality here matters more than any technical choice. Clear, accurate, well-organised source content produces good answers; a pile of outdated, contradictory documents produces confident wrong answers. Clean your content before you feed it in.
+
+**2. A RAG tool or platform.** You don't build the retrieval machinery yourself. Several categories of tool handle it:
+
+- **All-in-one AI support platforms** that let you upload documents and get a working assistant or chat widget, handling the RAG plumbing invisibly. This is the right starting point for most small businesses — the least setup for a usable result.
+- **AI assistant products with a "custom knowledge" feature**, where you upload files and the assistant answers from them. Simple, though sometimes limited on volume.
+- **Developer frameworks** for those who want control and have some technical help. More powerful, more work — usually overkill for a small support use case.
+
+Start with the simplest option that handles your document volume. You can always graduate to something more capable once you know what you actually need.
+
+**3. A place for customers or your team to ask.** The system needs a front door: a chat widget on your site, an internal tool your support team queries before answering a ticket, or an assistant embedded in your help centre. Deciding whether it's customer-facing or an internal aid for your team is an important early choice, covered below.
+
+---
+
+## Setting It Up Sensibly
+
+**Start internal, not customer-facing.** The safest and often most valuable first deployment is a tool your own support team uses, not a public chatbot. Your team asks it a question, gets a grounded draft answer with its source, and decides whether to use it. This captures most of the time savings — no more hunting through documents to answer the same question for the hundredth time — while keeping a human between the AI and the customer. If the system gets something wrong, your team catches it before the customer ever sees it.
+
+**Structure your content for retrieval.** RAG works best when your documents are broken into focused, self-contained chunks rather than sprawling pages that cover ten topics at once. A few practical habits:
+
+- **One topic per document or section.** A short article answering "how do returns work" retrieves more cleanly than a giant "everything about orders" page.
+- **Use clear headings and plain language.** The retrieval step matches meaning, and clearly written content matches better.
+- **Front-load the answer.** State the key fact early in each section rather than burying it after three paragraphs of preamble.
+
+This is the same discipline as writing good help content in general — clarity that helps a human reader also helps the retrieval system.
+
+**Test with your real questions before trusting it.** Take the fifty questions your customers actually ask most and run them through the system. For each, check: did it retrieve the right source? Is the answer correct? Where it's wrong, the fix is almost always in your content — a missing document, an ambiguous passage, two documents that contradict each other. Fixing the content fixes the answers. Budget real time for this testing loop; it's where a mediocre system becomes a reliable one.
+
+**Keep a feedback path.** Whether internal or customer-facing, give users a simple way to flag a bad answer. Those flags are gold — they point straight at gaps or errors in your knowledge base. A RAG system improves not by getting smarter but by having its source content corrected and expanded based on where it stumbles.
+
+---
+
+## Knowing the Limits Before You Rely on It
+
+**RAG reduces hallucination but doesn't eliminate it.** Grounding answers in retrieved documents makes made-up answers much rarer, but not impossible. The AI can still misread a passage, blend two sources awkwardly, or answer confidently when the retrieval found nothing relevant. For anything with real consequences — a warranty claim, a legal question, a payment dispute — keep a human in the loop. RAG is a strong assistant, not an autonomous authority.
+
+**It can only answer what's in your content.** If a question's answer isn't in your knowledge base, a good system should say so rather than invent one — but this depends on the tool and its configuration. Test what your system does when it doesn't know. A system that admits "I don't have that information" is far safer than one that guesses. Make sure yours is set up to prefer honesty over a confident fabrication.
+
+**Customer-facing deployment raises the stakes.** A public chatbot answering customers directly needs more caution than an internal tool. It needs guardrails on topics it shouldn't handle, a clear path to a human, and careful testing, because a wrong answer goes straight to a customer with your name on it. Many small businesses get most of the benefit from the internal-tool version and never need to take on the risk of a fully public bot. Start internal, prove the value, and only go customer-facing once you're confident.
+
+**It's a support aid, not a support replacement.** The realistic goal is to make your existing support faster and more consistent — answering the routine questions instantly, freeing your team for the ones that need human judgment. A RAG knowledge base that handles the repetitive 60% of questions well is a genuine operational win. Expecting it to replace support entirely sets you up for disappointment and your customers up for frustration. Paired with the right lightweight tooling — a good [customer database](/articles/minimum-viable-crm-b2b-distributor-2026/) so you know who's asking — it becomes a durable part of how support runs.
+
+---
+
+A RAG knowledge base is one of the few genuinely practical AI applications for a small B2B business right now, because it solves a real and specific problem: getting accurate, business-specific answers instead of confident general-purpose guesses. The technology that made this an enterprise project a few years ago is now available in tools you can set up in a day, and the hardest part isn't technical — it's having clean, well-organised content for the system to draw on.
+
+Start internal, feed it good content, test it against your real questions, and keep a human between it and your customers until you've earned confidence. Done this way, it takes the repetitive weight off your support and answers from your actual documents rather than from thin air. That's a modest, achievable win — and a far better use of AI than asking a general assistant to guess at facts it was never given.
+
+---
+
+**Sources:** [Anthropic — retrieval-augmented generation guidance](https://docs.anthropic.com/en/docs/build-with-claude/embeddings) · [OpenAI — retrieval and knowledge documentation](https://platform.openai.com/docs/guides/retrieval)

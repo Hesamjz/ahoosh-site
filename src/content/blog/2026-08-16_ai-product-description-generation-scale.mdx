@@ -1,0 +1,117 @@
+---
+title: "AI Product Description Generation at Scale"
+description: "How B2B distributors generate consistent, accurate product descriptions across thousands of SKUs with AI — templates, source data, guardrails, and a review workflow that scales."
+pubDate: 2026-07-14
+tags: ["AI Operations", "B2B", "Distribution"]
+heroImage: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80" alt="Warehouse shelving with catalogued products stretching into the distance" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+A B2B distributor with 8,000 SKUs has 8,000 product descriptions to write, and most of them don't exist or were copied verbatim from a supplier PDF a decade ago. The catalogue is the storefront — for search, for the sales team, for the customer deciding between two similar parts — and it's usually the least maintained asset in the business. Nobody has time to write eight thousand descriptions by hand, so nobody does.
+
+This is exactly the kind of high-volume, pattern-heavy work AI does well. Not because a language model writes more beautifully than a person, but because it can apply the same structure, tone, and completeness to thousands of items at a speed no team could match — provided you give it good source data and a real review process.
+
+The failure mode is equally clear: point an AI at a spreadsheet, ask it to "write descriptions," and you get 8,000 fluent, plausible, and occasionally wrong paragraphs that quietly invent specifications. This guide covers how to generate at scale without generating errors at scale.
+
+---
+
+## Start with Structured Source Data, Not Prose
+
+**The quality of the output is capped by the quality of the input.**
+
+An AI description is only as accurate as the facts you feed it. If your source data is a jumble of half-filled fields and inconsistent units, the model fills gaps by guessing — and a confident guess about a torque rating or voltage is worse than a blank.
+
+Before generating anything, get the structured attributes right:
+
+- **Core identifiers** — SKU, manufacturer part number, brand, category
+- **Physical attributes** — dimensions, weight, material, colour, with consistent units
+- **Technical specs** — the numbers that matter for the category (voltage, capacity, thread size, tolerance)
+- **Compatibility and use** — what it fits, what it's for, what standards it meets
+- **Commercial** — pack size, minimum order quantity, lead time
+
+The rule that prevents most errors: the AI writes prose from facts you supply, and never invents facts you didn't. A description should be a readable rearrangement of known attributes plus category context — not a source of new specifications. If a field is empty, the description leaves it out rather than filling it.
+
+Cleaning source data before generation feels like the boring part, but it's where accuracy is won. This is the same discipline that underpins any [AI product catalogue automation](/articles/ai-product-catalog-automation-b2b-distributors/) — the model is a rewriting engine sitting on top of a clean database, not a substitute for one.
+
+---
+
+## Build a Template and Tone Specification
+
+**Consistency across thousands of items comes from a fixed structure, not from asking nicely each time.**
+
+Left to its own defaults, an AI writes each description slightly differently — different length, different ordering, different emphasis. Across a catalogue that reads as chaos. The fix is a template the model fills, the same way every time.
+
+A workable B2B description template has three parts:
+
+- **Opening line** — what the product is and its primary use, in one sentence a buyer scanning search results can parse
+- **Specification body** — the key attributes in a consistent order, as a short paragraph or a clean bullet list
+- **Application or fit note** — where it's used, what it's compatible with, or the standard it meets
+
+Alongside the template, write a short tone specification the model follows on every item:
+
+- Factual and plain — describe the product, don't sell it. B2B buyers want specs, not adjectives.
+- No superlatives or filler — ban "premium," "high-quality," "versatile," and the rest. They add length and zero information.
+- Consistent units and formatting — millimetres or inches, but pick one per catalogue and enforce it
+- A fixed length band — roughly 40–90 words, so search snippets and category pages stay uniform
+
+Feed the template and tone spec into every generation call. The output stops looking like eight thousand different writers and starts looking like one catalogue with one voice.
+
+---
+
+## Generate in Batches with Category-Specific Prompts
+
+**One universal prompt for the whole catalogue produces mediocre results everywhere.**
+
+A bearing, a safety glove, and an industrial adhesive need different things emphasised. Rather than a single prompt for all 8,000 SKUs, group by category and write a prompt per category that tells the model what matters for that product type.
+
+The practical workflow:
+
+- **Segment the catalogue by category.** Each category gets a prompt that specifies which attributes lead, what compatibility information matters, and any standards worth naming.
+- **Run in batches of a few hundred.** Batching keeps the job reviewable and lets you catch a systematic problem — a mis-mapped field, a unit error — after 200 items instead of 8,000.
+- **Include two or three worked examples per category.** Showing the model a good description for a similar product anchors the output far better than instructions alone. This is the single highest-leverage move for quality.
+- **Pass the structured attributes as data, not prose.** Give the model the fields as a clean list and let the template do the shaping.
+
+Batching also matches how the work actually gets reviewed. A human can meaningfully check a category of 200 similar items in a sitting; nobody can review 8,000 mixed products in one pass. The [minimal tech stack](/articles/minimal-tech-stack-b2b-consulting/) view applies here too — you don't need a specialist enterprise platform to run this. A spreadsheet of attributes, a scripting layer, and an AI API endpoint are enough for most distributors to start.
+
+---
+
+## Put Guardrails Between Generation and Publication
+
+**The danger of scale is that a mistake in the prompt becomes a mistake in every record.**
+
+Because AI generation is fast and cheap, the temptation is to publish straight from the model. Don't. The gap between "generated" and "published" is where you catch the errors that scale would otherwise multiply.
+
+Practical guardrails, in order of importance:
+
+- **Fact-check against source, not vibes.** For a sample of each batch, verify that every number in the description appears in the source data. If the model wrote "24V" and the source says "12V," you have a systematic prompt problem to fix before publishing the batch.
+- **Flag hallucination-prone fields.** Compatibility claims, certifications, and safety ratings are where invented facts do real damage. Route any description that asserts one of these to human review even if the rest auto-publishes.
+- **Check for the empty-field tell.** If a description reads smoothly but the source was missing three attributes, the model likely filled them. Spot-check items with sparse source data hardest.
+- **Run a banned-words pass.** A simple filter catches the superlatives and filler your tone spec forbade, and flags any description that drifted off template.
+
+A realistic split for a distributor: 70–80% of descriptions auto-publish after passing automated checks, and the remaining 20–30% — anything touching safety, compatibility, or sparse data — gets a human read. That ratio keeps the throughput high where it's safe and human where it matters. The point of automation here isn't to remove people; it's to concentrate their attention on the small slice where a wrong word has consequences.
+
+---
+
+## Keep Descriptions Current as the Catalogue Changes
+
+**A catalogue is not a one-time project — new SKUs arrive and specs change.**
+
+The biggest waste in catalogue work is treating it as a heroic annual clean-up. New products arrive weekly; suppliers revise specs; discontinued lines linger. The system that generated the first 8,000 descriptions should quietly handle the flow of changes too.
+
+- **Wire generation into the intake process.** When a new SKU is added with its attributes, it runs through the same category prompt and template automatically, then queues for review. New products get a proper description on day one instead of an empty field for six months.
+- **Regenerate on source change.** If a supplier updates a spec, the affected description regenerates from the new data rather than being edited by hand. The description stays a function of the current facts.
+- **Keep the template and tone spec versioned.** When you improve the template, you can re-run a category to bring older descriptions up to the new standard — a controlled batch job, not a manual rewrite.
+- **Track coverage as a metric.** "Percentage of active SKUs with a current, reviewed description" is a number worth watching. It tells you whether the catalogue is drifting back toward neglect.
+
+This continuous approach is what turns a catalogue from a liability into an asset. Search engines index complete, structured product pages; sales teams trust the descriptions instead of pulling supplier PDFs; and customers comparing two parts get the same clear information every time.
+
+---
+
+Generating product descriptions at scale with AI works when you treat the model as a fast, consistent writer sitting on top of clean data — and it fails when you treat it as a source of facts. Get the source attributes right, fix the template and tone once, generate by category in reviewable batches, and keep a human in the loop wherever a wrong number would cost a customer.
+
+Done this way, a distributor can take a catalogue from mostly-blank to fully described in weeks rather than never, and keep it current with a fraction of the ongoing effort. The competitive edge isn't the AI itself — every competitor has access to the same models. It's the discipline around it that turns raw generation into a catalogue buyers can rely on.
+
+---
+
+**Sources:** [Schema.org Product type](https://schema.org/Product) · [Google Merchant product data guidelines](https://support.google.com/merchants/answer/7052112)

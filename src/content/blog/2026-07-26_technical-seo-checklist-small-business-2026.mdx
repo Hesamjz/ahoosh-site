@@ -1,0 +1,107 @@
+---
+title: "A Technical SEO Checklist for Small-Business Sites (2026)"
+description: "A practical technical SEO checklist for small-business and B2B sites in 2026 — crawlability, Core Web Vitals, structured data, indexing, and the checks that actually move rankings."
+pubDate: 2026-07-14
+tags: ["Strategy", "SEO", "Content"]
+heroImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80" alt="Laptop showing website analytics and a search results overview on a desk" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Most small-business sites lose search traffic not because their content is bad, but because search engines struggle to crawl, render, or trust the pages. The content is there. The technical plumbing underneath it is broken in ways the business owner never sees, because the site looks fine in a browser.
+
+Technical SEO is the part of search optimisation that has nothing to do with keywords or blog posts. It's whether Google can reach your pages, load them quickly, understand what they're about, and decide they're worth ranking. For a European small business with ten to fifty pages, this is a finite, checkable list — not an endless project.
+
+This checklist is ordered by impact. The first three sections fix problems that can keep pages out of the index entirely. The rest are refinements that improve where you rank once you're already in. Work top to bottom, and don't move on until each section passes.
+
+---
+
+## Crawlability and Indexing — Can Google Actually See Your Pages?
+
+**Start with the index count.** Open [Google Search Console](https://search.google.com/search-console/about) and look at the Pages report. It tells you how many pages are indexed and, more usefully, how many are excluded and why. A common finding: a business has 40 pages but only 12 are indexed. The other 28 are marked "Crawled — currently not indexed" or "Discovered — currently not indexed." Those pages earn zero traffic no matter how good they are.
+
+**Check your robots.txt file.** Type `yourdomain.com/robots.txt` into a browser. This plain-text file tells crawlers what they may and may not access. The single most damaging mistake in small-business SEO is a leftover `Disallow: /` line from a staging or development phase, which blocks the entire site. If you see that line on your live site, remove it today. It is the digital equivalent of locking the front door and wondering why nobody visits.
+
+**Review your XML sitemap.** A sitemap is a list of every URL you want indexed. Confirm it exists at `yourdomain.com/sitemap.xml`, that it contains your real pages (not test URLs), and that it's submitted in Search Console under the Sitemaps section. Sitemaps don't force indexing, but they help Google discover pages faster, especially on newer sites with few inbound links.
+
+**Look for accidental noindex tags.** A `noindex` meta tag tells search engines to keep a page out of results. These are useful for thank-you pages and internal search results, but they end up on important pages by mistake more often than you'd expect — usually because a CMS setting or a plugin default applied them site-wide. In Search Console's URL Inspection tool, check a few key pages and confirm they say "Indexing allowed: Yes."
+
+**Confirm one canonical version of your domain.** Your site should resolve to exactly one address. Test that `http://`, the non-www version, and trailing-slash variants all redirect to a single canonical URL (usually `https://www.yourdomain.com`). Multiple accessible versions split your ranking signals across duplicate URLs and confuse crawlers.
+
+---
+
+## Core Web Vitals and Page Speed — The Ranking Signal You Can Measure
+
+Google uses page experience as a ranking factor, and the measurable core of that is a set of metrics called Core Web Vitals. They matter more on mobile, where most B2B research now happens even for desktop-closed deals.
+
+**The three metrics that count in 2026:**
+
+- **Largest Contentful Paint (LCP)** — how long until the main content is visible. Target under 2.5 seconds.
+- **Interaction to Next Paint (INP)** — how quickly the page responds when someone clicks or taps. Target under 200 milliseconds.
+- **Cumulative Layout Shift (CLS)** — how much the layout jumps around while loading. Target under 0.1.
+
+**Measure with real tools, not guesses.** Run your homepage and two key service pages through [PageSpeed Insights](https://pagespeed.web.dev/). It reports both lab data (a simulated test) and field data (real visitor measurements, if you have enough traffic). Trust the field data when it's available — it's what Google actually uses.
+
+**The fixes that give the biggest return for small sites:**
+
+- **Compress and resize images.** The single most common speed problem is uploading a 4,000-pixel-wide photo and displaying it at 600 pixels. Resize images to their display size and serve them in modern formats like WebP. This alone often cuts LCP in half.
+- **Reduce third-party scripts.** Every chat widget, analytics tag, and social embed adds load time. Audit what's running and remove anything you don't actively use.
+- **Set width and height on images.** Explicitly declaring image dimensions in the HTML prevents the layout from jumping as images load, which directly fixes CLS.
+
+For a deeper look at how speed connects to visitors actually completing a form or booking a call, see our guide to [B2B website conversion](/articles/b2b-website-conversion-2026/), where load time is one of the first things we check.
+
+---
+
+## Structured Data — Helping Search Engines Understand Your Content
+
+Structured data is code you add to pages to describe what they contain in a machine-readable format. It doesn't change what visitors see, but it helps search engines display richer results — star ratings, FAQs, business hours — and understand your business more precisely.
+
+**The schema types worth adding for a small B2B business:**
+
+- **Organization** — your company name, logo, and contact details. Add this once, site-wide.
+- **LocalBusiness** — if you serve a specific region, this includes address, opening hours, and service area.
+- **Service** — describes each service you offer.
+- **FAQPage** — marks up question-and-answer sections so they can appear expanded in results.
+- **BreadcrumbList** — shows your site hierarchy in search listings.
+
+**How to implement it.** The standard vocabulary is defined at [schema.org](https://schema.org/), and Google recommends the JSON-LD format — a block of code you add to the page's head section. Most CMS platforms have plugins that generate this automatically; if you're on a custom site, a developer can add it in an afternoon.
+
+**Always validate.** After adding structured data, test each page type with the [Rich Results Test](https://search.google.com/test/rich-results). It confirms your markup is valid and shows which rich result types the page qualifies for. Invalid schema does nothing, so this check is not optional.
+
+---
+
+## Mobile, HTTPS, and Site Architecture — The Foundations
+
+**Mobile-first is not optional.** Google indexes the mobile version of your site, not the desktop version. If your mobile site hides content, uses tiny tap targets, or loads slowly on a phone, that's the version being ranked. Test your key pages on an actual phone, not just a resized browser window.
+
+**HTTPS everywhere.** Every page must load over a secure connection with a valid SSL certificate. Browsers flag insecure pages, and Google treats HTTPS as a ranking signal. Most hosting providers now include free certificates through Let's Encrypt, so there's no cost reason to skip it. Confirm there are no "mixed content" warnings, where a secure page loads an insecure image or script.
+
+**Keep the click depth shallow.** Every important page should be reachable within three clicks of the homepage. Pages buried five or six clicks deep get crawled less often and rank worse. A flat, logical structure — homepage to category to page — helps both crawlers and humans.
+
+**Fix broken internal links.** Run a crawl with a free tool like Screaming Frog (free for up to 500 URLs) and look for 404 errors and redirect chains. Broken links waste crawl budget and frustrate visitors. This ties directly into how a lean site should be built in the first place — our note on a [minimal tech stack for B2B consulting](/articles/minimal-tech-stack-b2b-consulting/) argues that fewer moving parts means fewer of these problems to begin with.
+
+---
+
+## Ongoing Monitoring — What to Check Every Month
+
+Technical SEO is not a one-time cleanup. Sites drift: plugins update, pages get added, redirects pile up. A monthly 30-minute review keeps small problems from becoming ranking losses.
+
+**Your monthly checklist:**
+
+- **Search Console coverage** — did the indexed page count drop? Any new errors in the Pages report?
+- **Core Web Vitals report** — did any URL group fall from "Good" to "Needs improvement"?
+- **Manual actions and security issues** — check these sections in Search Console. They're rare but serious.
+- **Broken links** — a quick crawl catches new 404s before they accumulate.
+- **Search performance trends** — are impressions and clicks stable, rising, or falling? A sudden drop signals a technical problem worth investigating immediately.
+
+**Set up alerts where you can.** Search Console emails you when it detects major issues, so make sure the notification email goes to someone who reads it. For content and keyword strategy that builds on this technical base, our guide to [SEO for B2B services in 2026](/articles/seo-b2b-services-2026/) covers the layer that sits on top of a technically sound site.
+
+---
+
+Technical SEO for a small business is not the endless, mysterious discipline it's sometimes made out to be. For a site with a few dozen pages, it's a finite checklist you can work through in a focused day, then maintain in half an hour a month. The tools that matter — Search Console, PageSpeed Insights, the Rich Results Test — are free and made by Google itself.
+
+The payoff isn't glamorous, but it's real: pages that were invisible get indexed, pages that loaded slowly get faster, and content you already wrote finally gets the ranking it deserves. Fix the plumbing first, and everything you do on top of it — content, links, keywords — works harder.
+
+---
+
+**Sources:** [Google Search Console](https://search.google.com/search-console/about) · [Google Search Central documentation](https://developers.google.com/search/docs) · [schema.org](https://schema.org/)

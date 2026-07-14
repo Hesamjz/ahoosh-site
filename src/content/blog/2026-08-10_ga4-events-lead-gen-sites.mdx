@@ -1,0 +1,96 @@
+---
+title: "GA4 Event Tracking for Lead-Gen Sites"
+description: "A practical GA4 event tracking setup for B2B lead-gen sites — which events to track, how to configure key events and conversions, and turning data into decisions."
+pubDate: 2026-07-14
+tags: ["Strategy", "SEO", "Operations"]
+heroImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80" alt="An analytics dashboard with charts displayed on a laptop screen" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Most B2B lead-generation sites have Google Analytics installed and almost none of it configured to answer the only question that matters: where do our leads actually come from? The default GA4 install tracks pageviews and a few automatic events, which tells you traffic went up or down but nothing about which pages, sources, or actions produce enquiries. So the owner stares at a session count that moves for reasons no one can explain and makes marketing decisions on gut feel.
+
+Event tracking is what turns analytics from a vanity dashboard into a decision tool. When GA4 is set up to record the specific actions that matter on a lead-gen site — a form submission, a call button tap, a pricing-page visit — you can finally see which channels bring people who convert, not just people who arrive. That single shift changes where you spend time and money.
+
+This guide covers a practical GA4 event setup for a B2B lead-gen site: which events are worth tracking, how to mark the ones that count as conversions, and how to read the result without drowning in reports you will never open.
+
+---
+
+## Understand the GA4 Event Model Before Configuring Anything
+
+**GA4 is events all the way down — and that is the key to using it well.**
+
+Unlike the old session-and-pageview model, GA4 treats everything as an event: a pageview is an event, a scroll is an event, a form submission is an event. This is more flexible but also why the default reports feel empty — GA4 collects a lot automatically but only becomes useful once you define the events specific to your goals.
+
+There are a few categories to know:
+
+- **Automatically collected events** — GA4 records these with no setup: `page_view`, `session_start`, `first_visit`, and others.
+- **Enhanced measurement events** — toggled on in the data stream settings, these capture `scroll`, `outbound_click`, `file_download`, `video_progress`, and site search without code. Turn this on; it is free signal.
+- **Recommended events** — Google's named events for common actions (`generate_lead`, `sign_up`) that unlock better reporting if you use the standard names.
+- **Custom events** — the ones you define for actions unique to your site.
+
+The practical implication: do not try to track everything. Decide which handful of actions represent real progress toward a lead, and configure those precisely. [Google's GA4 event documentation](https://support.google.com/analytics/answer/9322688) lays out the full model, but the discipline is picking the few events that map to your funnel.
+
+---
+
+## Choose the Events That Actually Signal a Lead
+
+**Track the actions that mean someone is becoming a customer, not the noise.**
+
+On a B2B lead-gen site, a short list of events captures nearly all the value. Configure these and ignore the temptation to track dozens more:
+
+- **Form submission** — the core conversion. A completed contact, demo-request, or quote form is the clearest lead signal you have. Track it as a distinct event, ideally with the form name as a parameter so you can tell a contact form from a newsletter signup.
+- **Phone or email click** — on mobile especially, a tap on a `tel:` or `mailto:` link is a strong intent signal that no form captures. Enhanced measurement's outbound-click tracking gets some of this; a dedicated event is cleaner.
+- **Pricing page view** — someone reaching your pricing is deep in consideration. Marking this lets you see which sources send serious prospects versus tyre-kickers.
+- **Key resource download** — if you gate or offer a guide, spec sheet, or case study, downloading it signals genuine interest.
+- **Booking or calendar interaction** — a click on "book a call" or a scheduling embed is often your highest-intent action.
+
+For each, decide what parameters to attach — form name, page path, resource title — because those parameters are what let you slice the data later. A `generate_lead` event that cannot tell you which form or page produced the lead is only half useful.
+
+**Do not over-instrument.**
+
+Tracking every button and scroll depth produces a cluttered event list where the signals drown in noise. Five to eight well-chosen, well-named events beat forty vague ones. You can always add an event later; you cannot easily clean up a mess of duplicative ones.
+
+---
+
+## Mark Key Events and Configure Conversions
+
+**An event only drives decisions once GA4 knows it is a conversion.**
+
+In GA4, you promote the events that represent business value to "key events" (the term that replaced "conversions" in the interface). This is what makes them appear in conversion reports and, crucially, become importable into Google Ads if you run paid campaigns.
+
+- **Mark your lead events as key events.** Form submission and booking clicks are the obvious candidates. Pricing-page views and downloads can be key events too if you treat them as micro-conversions.
+- **Keep the list of key events short.** If everything is a conversion, nothing is. Reserve key-event status for actions that genuinely represent a lead or a strong step toward one.
+- **Set up the events without code where possible.** GA4's "create event" and "modify event" tools, plus Google Tag Manager, let you define most events from the interface — for example, creating a `generate_lead` event that fires when a `page_view` matches your thank-you page URL. A form that redirects to a `/thank-you` page is the simplest reliable way to capture a submission with no developer involved.
+- **Verify with DebugView.** Before trusting any event, use GA4's real-time DebugView to confirm it fires exactly once when you perform the action. Untested event tracking is worse than none, because it produces confident-looking wrong numbers.
+
+If you run Google Ads, importing these key events closes the loop — you can finally see which keywords and campaigns produce leads rather than just clicks, and stop paying for traffic that never converts. This is the analytics foundation that makes the rest of a lead-gen site measurable, and it pairs directly with the on-page work in our [B2B website conversion](/articles/b2b-website-conversion-2026/) guide.
+
+---
+
+## Turn the Data Into Decisions, Not Dashboards
+
+**The point of tracking is to change what you do, not to have charts.**
+
+Once events fire reliably, GA4 can answer the questions that actually guide a lead-gen strategy. Build a few simple explorations rather than staring at the default overview:
+
+- **Which channels convert, not just visit.** Compare traffic sources by key-event rate, not session count. A source sending 200 sessions and 15 leads beats one sending 2,000 sessions and 3 leads — and the default traffic report hides this.
+- **Which landing pages produce leads.** Look at conversions by landing page. The pages that bring converting visitors deserve more content and more promotion; this feeds directly into your [SEO for B2B services](/articles/seo-b2b-services-2026/) priorities.
+- **Where the funnel leaks.** A funnel exploration from landing to pricing view to form submission shows where prospects drop. A big fall between pricing and form points at a page or offer problem, not a traffic problem.
+- **What devices and times matter.** If mobile visitors convert at half the rate of desktop, that is a mobile-experience issue worth fixing.
+
+Set a monthly rhythm: look at these four views, note what changed, and pick one action from it. Analytics that never changes a decision is just an expensive habit.
+
+**Respect privacy and consent.**
+
+For a European business, GA4 must run within your consent and data-protection obligations. Use a consent banner that gates analytics tags appropriately, and configure GA4's consent settings so tracking respects the user's choice. Good measurement and lawful measurement are not in tension — but the compliance step is not optional.
+
+---
+
+GA4 event tracking is the difference between knowing your traffic went up and knowing why your leads came in. The setup is not large: understand that GA4 is an event model, pick the five to eight actions that signal a real lead, mark the important ones as key events, verify they fire, and then actually read the source-and-page conversion data monthly to change where you invest.
+
+The sites that grow their pipeline are not the ones with the most sophisticated tracking. They are the ones that track a few things accurately and then act on what the data shows — moving budget toward the channels and pages that produce leads and away from the ones that only produce sessions. Configure the events once, build the habit of reading them, and analytics finally starts earning its place.
+
+---
+
+**Sources:** [GA4 events documentation](https://support.google.com/analytics/answer/9322688) · [GA4 key events and conversions](https://support.google.com/analytics/answer/9267568)

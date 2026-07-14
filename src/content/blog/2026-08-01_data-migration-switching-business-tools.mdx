@@ -1,0 +1,98 @@
+---
+title: "Data Migration When Switching Business Tools"
+description: "A practical guide to migrating data when switching CRM, email, or accounting tools — planning, cleaning, mapping fields, testing, and cutting over without losing records or downtime."
+pubDate: 2026-07-14
+tags: ["Operations", "B2B", "Strategy"]
+heroImage: "https://images.unsplash.com/photo-1568234928966-359c35dd8327?w=1200&q=80"
+---
+
+<img src="https://images.unsplash.com/photo-1568234928966-359c35dd8327?w=1200&q=80" alt="Two laptops on a desk showing data being transferred between systems" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+At some point every growing business outgrows a tool. The CRM that worked at ten customers creaks at two hundred. The accounting software that fit a solo founder can't handle a team. The email platform that was fine becomes too expensive or too limited. Switching is the right call — but the switch itself, the data migration, is where good decisions go wrong. Records get lost, fields land in the wrong place, and a Monday-morning cutover turns into a week of firefighting.
+
+The fear of migration keeps many businesses stuck on tools they've outgrown, paying a tax in daily friction to avoid a one-time risk. That's the wrong trade. Migration is risky when it's improvised and safe when it's planned. The difference isn't technical skill — it's whether you treat it as a project with steps, or as something you'll "just do this weekend."
+
+This guide lays out the steps that make a data migration boring, which is exactly what you want it to be. Boring means no lost customers, no scrambled invoices, and no Monday panic.
+
+---
+
+## Plan the Migration Before You Touch Any Data
+
+**Inventory what you actually have.** Before moving anything, list every type of data in the old system: contacts, companies, deals, notes, email history, files, invoices, custom fields. For each, note how many records there are and how important they are. You'll often find that 80% of the value sits in 20% of the data — the contacts and open deals — while a lot of the rest is stale history you don't need to bring along.
+
+**Decide what not to migrate.** Migration is a chance to leave junk behind. Duplicate contacts, leads from five years ago that never went anywhere, test records, obsolete custom fields — none of it needs to make the trip. Moving less means faster migration, cleaner data in the new system, and fewer things that can break. Be deliberate about what earns a place in the new tool.
+
+**Map the timeline and the risk window.** Every migration has a period where data exists in two places and could drift out of sync. Plan the cutover for your quietest time — a weekend, a slow week, never during your busiest month. Decide in advance how long the old system stays accessible after the switch as a fallback. A migration with no rollback plan is a gamble; keep the old system readable until you're certain the new one is solid.
+
+**Read the export and import capabilities of both tools.** Before committing, confirm the old tool can export what you need (ideally as CSV or via an API) and the new tool can import it. Some tools make export deliberately painful to keep you locked in. Knowing this upfront prevents the nasty surprise of discovering, mid-migration, that your email history can't be exported at all. This due diligence belongs in the tool-selection decision — our guide to a [minimum viable CRM for B2B distributors](/articles/minimum-viable-crm-b2b-distributor-2026/) treats data portability as a selection criterion, not an afterthought.
+
+---
+
+## Clean the Data Before It Moves, Not After
+
+**Migration is the best moment to clean, and the worst moment to skip it.** Whatever mess exists in the old system will be faithfully copied into the new one unless you clean it first. Dirty data that moves is dirty data you'll be living with for years. Cleaning before the move is far easier than cleaning a live system afterward.
+
+**The core cleaning tasks:**
+
+- **Deduplicate.** Merge duplicate contacts and companies. Two records for the same customer become one, with the good data from each combined. This is the single highest-value cleaning step.
+- **Standardise formats.** Phone numbers, country names, dates, job titles — make them consistent. "Germany," "DE," and "Deutschland" should become one value. Inconsistent formats break filtering and reporting in the new tool.
+- **Fill or flag gaps.** Decide what to do with records missing key fields. Some you can complete, some you flag, some you drop. Don't let empty critical fields silently move across.
+- **Remove the dead weight.** Bounced email addresses, contacts who unsubscribed years ago, closed-lost deals with no future value. Leave them behind.
+
+**Export to a spreadsheet as a working copy.** The practical way to clean is to export the data to a spreadsheet, do the cleaning there where you can see everything at once and use sort and filter to find problems, then import the cleaned version. This working copy also becomes your backup — the untouched original export you can always return to if something goes wrong.
+
+---
+
+## Map Fields Carefully — This Is Where Migrations Break
+
+**Field mapping is the technical heart of migration, and the most common failure point.** Every field in the old system needs a home in the new one. "First name" maps to "First name" — easy. But the old system's custom field "Account tier" might need to map to the new system's "Customer segment," and if you get that mapping wrong, data lands in the wrong place or vanishes.
+
+**Work through the mapping methodically:**
+
+- **List every source field and its destination.** Make an explicit table: old field, new field, any transformation needed. Don't do this in your head. The fields that have no obvious destination are exactly the ones that cause silent data loss.
+- **Handle fields that don't exist yet.** If the old system has data the new system has no field for, create the custom field in the new tool *before* importing. Otherwise that data has nowhere to go and is dropped.
+- **Watch the format transformations.** Dates in particular cause chaos — a day/month/year format imported as month/day/year silently corrupts every date. Confirm how each system reads dates, numbers, and currencies before you import.
+- **Preserve relationships.** In a CRM, contacts belong to companies and deals belong to contacts. The migration must keep these links intact. Importing contacts and companies as disconnected lists loses the relationships that make the data useful. Most tools use a matching key (like a company name or an ID) to reconnect them — plan for it.
+
+**Never do the full import as your first import.** This is the rule that saves migrations. Import a small test batch first — twenty or thirty records — and inspect them thoroughly in the new system. Are the fields in the right place? Are the dates correct? Are the relationships intact? Fix the mapping, test again, and only run the full import once a test batch comes through perfectly. A mapping error caught on thirty records is a five-minute fix; the same error discovered after importing ten thousand is a disaster.
+
+---
+
+## Test, Cut Over, and Verify
+
+**Run the full import into a checked environment.** Once your test batch is clean, run the complete import. Then, before you rely on it, verify systematically rather than assuming success.
+
+**The post-import verification checklist:**
+
+- **Record counts match.** The number of contacts, companies, and deals in the new system should match what you exported (minus anything you deliberately dropped). A mismatch means records were silently rejected — investigate before going live.
+- **Spot-check across the data.** Open a sample of records from different parts of the dataset — not just the first few. Confirm every field landed correctly, especially custom fields and dates.
+- **Relationships are intact.** Confirm contacts are linked to the right companies and deals to the right contacts.
+- **Nothing was truncated.** Long notes and text fields sometimes get cut off at import. Check a few of your longest records.
+
+**Cut over deliberately.** The cutover is the moment the new tool becomes the system of record and everyone stops using the old one. Do this at a planned time, tell the whole team the exact moment, and make sure everyone knows to stop entering data in the old system — because data entered in the old tool after the export is data that won't be in the new one. A messy cutover where half the team keeps using the old tool for a week creates two diverging copies and a reconciliation nightmare.
+
+**Keep the old system readable, not editable.** For a safety window — a few weeks — keep the old tool accessible in read-only mode as a fallback. If you discover something didn't migrate, you can retrieve it. Once you're confident everything's intact and the new system is running smoothly, you can decommission the old one and stop paying for it.
+
+---
+
+## After the Switch: Adoption and Cleanup
+
+**Migration isn't done when the data lands — it's done when the team uses the new tool correctly.** The technical move is only half the project. The other half is people actually working in the new system, entering data consistently, and not quietly reverting to old habits or old spreadsheets on the side.
+
+**Support adoption in the first weeks:**
+
+- **Update your processes and automations.** Any email automation, integration, or workflow tied to the old tool needs rebuilding in the new one. Don't discover on send day that your [email automation sequences](/articles/email-automation-b2b-distributors-results/) point at a system that no longer exists.
+- **Give the team a short reference.** A one-page guide covering the few things they do daily in the new tool prevents the frustration that drives people back to old habits.
+- **Watch for shadow systems.** If someone keeps a private spreadsheet because they don't trust the new tool yet, that's a signal to fix — either the tool or their confidence in it. Shadow systems undermine the single source of truth the migration was meant to create.
+
+**Do a 30-day data-health check.** A month after cutover, review the new system with fresh eyes. Are there new duplicates creeping in? Are fields being filled consistently? A short review at the one-month mark catches bad habits before they harden and confirms the migration truly succeeded rather than just appeared to.
+
+---
+
+Data migration earns its scary reputation only when it's improvised. Treated as a project — inventory, clean, map, test on a small batch, verify, cut over deliberately, keep a fallback — it becomes a controlled, unremarkable process. The businesses that get hurt are the ones who skip the planning and try to move everything in one weekend rush, then spend the next month chasing lost records.
+
+The reward for doing it properly is significant. You escape a tool you've outgrown, you arrive in the new one with cleaner data than you left with, and you do it without losing a single customer record or a day of operation. That's worth the few hours of planning that separate a boring, successful migration from a memorable, painful one.
+
+---
+
+**Sources:** [European Commission — data portability under GDPR](https://commission.europa.eu/law/law-topic/data-protection_en) · [Google — export and import data formats](https://support.google.com/a/answer/40057)
