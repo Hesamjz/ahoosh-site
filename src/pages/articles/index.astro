@@ -537,9 +537,12 @@ const cardsHtml = posts.map(card).join('\n');
     </div>
   </div>
 
-  <style id="art-real">
+  <style id="art-real" is:global>
+  /* is:global is REQUIRED: cards are injected via set:html and do not receive
+     Astro's scoped-style hash, so these .art-thumb rules must be global or the
+     thumbnails lose their height cap + object-fit and balloon to natural size. */
   .art-card{text-decoration:none;will-change:transform;transition:transform .22s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease)}
-  .art-thumb{height:172px!important}
+  .art-thumb{height:172px!important;overflow:hidden}
   .art-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
   .art-card:hover .art-thumb img{transform:scale(1.07)}
   @keyframes artPop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
