@@ -129,13 +129,9 @@ const alternates = isLocalized
       // Must run before any page-level ScrollTrigger code.
       (async () => {
         const { killPageTriggers } = await import('../3d/core/gsap-config');
-        const { initLenis } = await import('../3d/core/lenis-setup');
 
-        // Check reduced-motion — if yes, skip Lenis smooth scroll entirely (§1.6)
+        // Native scroll — Lenis smooth-scroll removed for performance (was the main "heavy scroll" cause).
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!reduced) {
-          initLenis();
-        }
 
         // Disable Three.js scroll animation on reduced-motion (§1.6)
         if (reduced) {
