@@ -26,6 +26,21 @@
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CAL = 'https://calendly.com/ahoosh/strategy';
+// Absolute base for links/attachments inside emails. Always production: an email
+// must not link a reader at a staging build. Override per-env if ever needed.
+const SITE = 'https://ahoosh.ai';
+
+/**
+ * Unsubscribe token — HMAC of the address, so an unsubscribe link cannot be
+ * forged for someone else's address by guessing the URL. Keyed on an existing
+ * secret; falls back to the Brevo key so this works without new config.
+ */
+async function unsubToken(env, email) {
+  const secret = env.BACKEND_SECRET || env.BREVO_API_KEY || 'ahoosh-unsub';
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(email.toLowerCase()));
+  return [...new Uint8Array(sig)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -136,6 +151,27 @@ export async function onRequestPost(context) {
         const isReport = !!execSummary; // consulting report (business/website) vs personality test
         const advisory = isReport ? '' : await buildAdvisory(env, { testTitle: label, scaleName, summary, score, breakdown, answers });
 
+        // ── Snapshot lead magnet ─────────────────────────────────────────────
+        // The /snapshot page promises "The Snapshot (PDF, by email)". Attach the
+        // real document AND give a download link (some clients strip attachments).
+        // Detected off source/track so only Snapshot requests get it.
+        const isSnapshot = /snapshot/i.test(source) || /snapshot/i.test(track);
+        const snapshotHtml = isSnapshot
+          ? `<div style="margin:18px 0 4px;padding:14px 16px;border:1px solid rgba(215,161,61,0.35);border-radius:8px;">
+            <p style="color:#F0F2F5;font-size:14px;line-height:1.6;margin:0 0 10px;"><b>Your Snapshot is attached</b> as a PDF &mdash; print it, tick the 12 boxes, add up your score.</p>
+            <a href="${SITE}/downloads/AI_Visibility_Snapshot_v1.pdf" style="color:#D7A13D;font-size:14px;font-weight:700;text-decoration:none;">Download the Snapshot (PDF) &rarr;</a>
+          </div>`
+          : '';
+
+        // The eyebrow used to hard-code "Growth Assessment" on every email,
+        // including Snapshot ones. Say what the reader actually asked for.
+        const eyebrow = isSnapshot ? 'AI Visibility Snapshot' : (isReport ? 'Consulting Report' : 'Growth Assessment');
+
+        // We add every address to a Brevo marketing list, and /snapshot promises
+        // "unsubscribe any time with one click" — so ship a real one-click link.
+        const unsubUrl = `${SITE}/api/unsubscribe?e=${encodeURIComponent(email)}&t=${await unsubToken(env, email)}`;
+        const unsubHtml = `<p style="color:#5e6e82;font-size:12px;margin-top:18px;">You are getting this because you asked us for it at ahoosh.ai. <a href="${unsubUrl}" style="color:#7f92a8;">Unsubscribe in one click</a> &mdash; no questions, no form.</p>`;
+
         // ── shared dark-email fragments ──
         const scoreBlock = score !== null
           ? `<div style="font-size:40px;font-weight:700;color:#D7A13D;line-height:1;margin:6px 0;">${score}<span style="font-size:15px;color:#9FB0C4;"> / 100</span></div>`
@@ -162,7 +198,8 @@ export async function onRequestPost(context) {
 
         // ── 1) Customer full-report email ──
         const custHtml = `<div style="background:#03142E;color:#F0F2F5;font-family:Georgia,serif;padding:32px;border-radius:12px;max-width:600px;margin:auto;">
-          <div style="color:#D7A13D;letter-spacing:3px;font-size:11px;text-transform:uppercase;">AHoosh &middot; Growth Assessment</div>
+          <div style="color:#D7A13D;letter-spacing:3px;font-size:11px;text-transform:uppercase;">AHoosh &middot; ${esc(eyebrow)}</div>
+          ${snapshotHtml}
           <h1 style="font-size:22px;margin:10px 0 2px;font-weight:700;">Your ${esc(label)}${isReport ? '' : ' report'}</h1>
           ${scaleName ? `<div style="color:#7f92a8;font-size:12px;margin-bottom:6px;">${esc(scaleName)}</div>` : ''}
           ${scoreBlock}
@@ -174,13 +211,23 @@ export async function onRequestPost(context) {
           ${advisoryHtml}
           ${answersHtml}
           <div style="margin-top:22px;padding-top:16px;border-top:1px solid rgba(215,161,61,0.25);">
-            <p ${P}>Want a human read on what this means for your business or career? Book a free 30-minute call &mdash; no pitch.</p>
-            <a href="${CAL}" style="display:inline-block;background:#D7A13D;color:#03142E;font-weight:700;text-decoration:none;padding:12px 26px;border-radius:8px;">Book a strategy call &rarr;</a>
+            <p ${P}>Want a human read on what this means? A paid strategy call is 60 minutes with Hesam, recorded, and you leave with a one-page action memo. &euro;149 &mdash; credited toward bigger work if you book within 14 days.</p>
+            <a href="${CAL}" style="display:inline-block;background:#D7A13D;color:#03142E;font-weight:700;text-decoration:none;padding:12px 26px;border-radius:8px;">Book a strategy call &mdash; &euro;149 &rarr;</a>
           </div>
-          <p style="color:#5e6e82;font-size:12px;margin-top:24px;">AHoosh.ai &mdash; AI-augmented consulting &middot; ahoosh.ai. For informational purposes only.</p>
+          ${unsubHtml}
+          <p style="color:#5e6e82;font-size:12px;margin-top:24px;">AHoosh.ai &mdash; business, digital &amp; AI consulting &middot; ahoosh.ai. For informational purposes only.</p>
         </div>`;
 
-        await sendBrevo(env, { sender, to: [{ email, name: name || undefined }], subject: `Your ${label}${isReport ? '' : ' report'} — AHoosh`, html: custHtml, tag: 'result email' });
+        await sendBrevo(env, {
+          sender, to: [{ email, name: name || undefined }],
+          subject: `Your ${label}${isReport ? '' : ' report'} — AHoosh`,
+          html: custHtml, tag: 'result email',
+          // Real attachment for the Snapshot; Brevo fetches it from our own site.
+          attachment: isSnapshot
+            ? [{ url: `${SITE}/downloads/AI_Visibility_Snapshot_v1.pdf`, name: 'AI Visibility Snapshot — AHoosh.pdf' }]
+            : undefined,
+          unsubUrl,
+        });
 
         // ── 2) Admin lead email — everything Hesam needs to advise ──
         const rows = [
@@ -239,10 +286,20 @@ function answersTable(answers, dark) {
 }
 
 // Send one transactional email through Brevo (best-effort; logs on failure).
-async function sendBrevo(env, { sender, to, replyTo, subject, html, tag }) {
+async function sendBrevo(env, { sender, to, replyTo, subject, html, tag, attachment, unsubUrl }) {
   try {
     const payload = { sender, to, subject, htmlContent: html };
     if (replyTo) payload.replyTo = replyTo;
+    // Brevo fetches attachments by URL (must be publicly reachable).
+    if (attachment) payload.attachment = attachment;
+    // RFC 8058 one-click unsubscribe: puts the native "Unsubscribe" control in
+    // Gmail/Outlook next to the sender name, and is expected by bulk-sender rules.
+    if (unsubUrl) {
+      payload.headers = {
+        'List-Unsubscribe': `<${unsubUrl}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      };
+    }
     const r = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY, accept: 'application/json' },
