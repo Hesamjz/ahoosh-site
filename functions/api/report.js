@@ -1,19 +1,25 @@
 // Cloudflare Pages Function — POST /api/report
 // Receives assessment JSON → calls Claude Haiku → returns consulting report JSON
 //
-// This endpoint deliberately does NOT persist anything.
+// Persists every session to D1 (fire-and-forget, bound as ASSESS_DB).
 //
-// It used to write the respondent's answers + IP to D1 on every call. But the
-// page that calls it sends only { assessments } — no email, no consent — and the
-// consent notice on /assess/report and in AssessBody promises the visitor:
-//   "Skip and nothing is stored."
-// Storing here made that statement false, and an IP is personal data under GDPR.
-// Persistence now happens only in /api/email-gate, which runs after the visitor
-// has actually given their email and consented. Nothing is lost: email-gate
-// already writes the same row to the same table.
+// Hesam's decision 2026-07-15: store EVERYTHING, including sessions where the
+// visitor never gives an email. The row carries answers, the generated report,
+// and the caller's IP.
+//
+// Because of that, the on-page notice MUST describe this accurately. It used to
+// say "Skip and nothing is stored", which was false while this write existed.
+// The wording was corrected in the same commit as this comment. If you ever
+// change what is stored here, change the notice on /assess/report and in
+// AssessBody.astro in the same commit — an IP is personal data under GDPR and
+// the notice is the lawful-basis disclosure. (Not legal advice: worth one pass
+// by a lawyer, since a "legitimate interests" basis is doing the work here
+// rather than consent.)
 //
 // Required Cloudflare env secrets (set via Cloudflare dashboard → Pages → Settings → Variables):
 //   ANTHROPIC_API_KEY  — your Anthropic API key
+// Required D1 binding (Cloudflare dashboard → Pages → Settings → Bindings):
+//   ASSESS_DB          — D1 database "ahoosh-assess"
 
 const SYSTEM_PROMPT = `You are a senior business consultant working at AHoosh.ai. You have received assessment results from a potential client. Produce a concise, precise consulting report.
 
@@ -114,11 +120,28 @@ export async function onRequestPost(context) {
       return json({ error: "Failed to parse AI response", raw }, 422);
     }
 
-    // NO PERSISTENCE HERE — see the header comment.
-    // The visitor is told "Skip and nothing is stored", and at this point they
-    // have not been asked for consent yet (this endpoint receives only
-    // { assessments }). Writing their answers + IP here contradicted that
-    // promise. /api/email-gate stores the session after real consent.
+    // Persist to D1 (fire-and-forget — never blocks the response).
+    // Stores every session, with or without an email. The on-page notice says so.
+    if (env.ASSESS_DB) {
+      const sessionId = crypto.randomUUID();
+      const email = body.email || null;
+      const ip = request.headers.get("CF-Connecting-IP") || null;
+      context.waitUntil(
+        env.ASSESS_DB.prepare(
+          `INSERT INTO assess_sessions (id, email, assessments, report, created_at, ip) VALUES (?, ?, ?, ?, ?, ?)`
+        )
+          .bind(
+            sessionId,
+            email,
+            JSON.stringify(assessments),
+            JSON.stringify(report),
+            new Date().toISOString(),
+            ip
+          )
+          .run()
+          .catch((e) => console.error("[report] D1 persist failed:", e))
+      );
+    }
 
     return json({ ok: true, report });
   } catch (e) {
