@@ -1,0 +1,159 @@
+---
+title: "Inventory Turnover Metrics for Distributors"
+description: "The inventory turnover metrics that predict distributor cash problems — GMROI, days of supply, dead stock ratio, fill rate — and how to calculate each."
+pubDate: 2026-07-14
+tags: ["Operations", "B2B", "Distribution"]
+heroImage: "/articles/img/inventory-turnover-metrics-distribution.jpg"
+---
+
+<img src="/articles/img/inventory-turnover-metrics-distribution.jpg" alt="Warehouse shelving with stacked cartons and a clipboard showing stock figures" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Most distributors track one inventory number: turnover. Cost of goods sold divided by average inventory. It goes in the annual accounts, someone compares it to last year, and everyone nods.
+
+That number is nearly useless on its own. A business with a turnover of 6 can be healthy or dying, and the ratio will not tell you which. It aggregates a fast-moving core range and a warehouse of dead stock into a single average that describes neither. Meanwhile the questions that actually determine whether you run out of cash in March — which SKUs are eating your working capital, which ones you should stop buying, whether your service level is being bought at an unreasonable price — are invisible at that level.
+
+This article covers the inventory metrics that a distributor with under €10m in revenue should actually run, how to calculate each one so the number means something, and what to do when it comes back bad. All of them can be computed from data you already have in your ERP or, honestly, in a spreadsheet export.
+
+---
+
+## Inventory Turnover — Calculating It So the Number Means Something
+
+**The formula, and the two ways people get it wrong.**
+
+Inventory turnover = Cost of Goods Sold ÷ Average Inventory at cost.
+
+Two mistakes make this number lie:
+
+- **Using revenue instead of COGS.** Revenue includes your margin; inventory is valued at cost. Dividing one by the other inflates turnover by exactly your markup. A business with a 40% gross margin that uses revenue will report a turnover roughly 1.7x higher than reality. Always use COGS.
+- **Using year-end inventory instead of average inventory.** Year-end is the single least representative day of the year for most distributors, because you deliberately run stock down before a count. Average at least the four quarter-ends; monthly is better.
+
+**Turn it into days, because days are how you think.**
+
+Days of supply = 365 ÷ turnover. A turnover of 6 is 61 days of stock. That is a sentence a human can act on: "we are holding two months of product." Turnover of 6 is a number you compare to a benchmark. Days of supply is a number you compare to your supplier's lead time — which is the comparison that matters.
+
+The useful test is not "is turnover good?" It is: **days of supply versus replenishment lead time plus a review cycle.** If your supplier takes 45 days and you review orders weekly, you need roughly 52 days plus safety stock. Holding 61 is reasonable. Holding 140 is a financing decision nobody made deliberately.
+
+**Segment it or it is meaningless.**
+
+Calculate turnover separately for at least:
+
+- Each product category
+- Each supplier
+- Each ABC class (see below)
+
+The blended number hides the problem. Almost every distributor we have looked at has a top quartile turning 12+ and a bottom quartile turning under 1 — and reports an average of 5, which describes no product they sell.
+
+---
+
+## GMROI — The Metric That Should Replace Turnover in Your Reporting
+
+**Turnover tells you speed. It does not tell you whether the speed is worth anything.**
+
+Gross Margin Return on Inventory Investment is the number that connects stock to profit:
+
+GMROI = Gross Margin (€) ÷ Average Inventory at Cost (€)
+
+A GMROI of 3.0 means every euro tied up in that inventory returns three euros of gross margin per year. Read that way, it is directly comparable across your whole range — and against alternative uses of the same euro.
+
+**Why it changes decisions.**
+
+Consider two SKUs:
+
+- SKU A: turns 12 times a year, 8% gross margin. GMROI ≈ 0.96
+- SKU B: turns 3 times a year, 45% gross margin. GMROI ≈ 1.35
+
+Turnover says A is four times better. GMROI says B earns more per euro of shelf investment. Distributors who optimise for turnover systematically over-invest in fast, thin commodity lines and under-invest in slower speciality lines that fund the business.
+
+**Where to set the bar.**
+
+A working rule for a distributor: GMROI under 1.0 means the SKU does not pay for the capital it consumes before you have counted a single warehouse cost. Under 1.0 is a discontinue conversation, not a review conversation. Between 1.0 and 2.0 is the range where carrying cost, handling, and space actually decide it. Above 3.0, the question is why you are not buying more.
+
+Set your own threshold from your own cost structure rather than importing a benchmark. If you cannot compute your carrying cost, use 20–25% of inventory value per year as a starting estimate — capital cost, warehouse, insurance, shrink, and obsolescence — and refine it later.
+
+---
+
+## ABC Classification and the 80/20 That Is Actually 90/5
+
+**Rank your SKUs by annual COGS and look at the shape.**
+
+Sort every SKU by annual cost of goods sold, descending, then take the cumulative total:
+
+- **A items:** the SKUs making up the first 70–80% of COGS
+- **B items:** the next 15–20%
+- **C items:** the tail
+
+In most distribution businesses the A group is far smaller than people expect. It is common to find 5–8% of SKUs driving 80% of cost, not the tidy 20% the Pareto cliché promises. That matters, because it means your forecasting attention has a very small target.
+
+**What to do differently per class.**
+
+- **A items:** forecast individually, review weekly, negotiate hard on price and lead time, hold real safety stock. These deserve human attention and are where [AI inventory forecasting](/articles/ai-inventory-forecasting-b2b-distributors/) pays back fastest, because the volume justifies the setup.
+- **B items:** rules-based reordering, monthly review, standard safety stock formula.
+- **C items:** minimum attention. Reorder-point rules, or make-to-order. Many C items should not be stocked at all — quote a lead time instead of holding units.
+
+**The C-item trap.** C items are individually trivial and collectively enormous — they typically consume most of your SKU count, most of your picking labour, and a disproportionate share of your warehouse space. The distributor who says "it only costs a few hundred euros to keep it" is right per SKU and wrong across 2,000 of them.
+
+---
+
+## Dead Stock, Excess Stock, and the Difference Between Them
+
+**These are two different problems with two different fixes.**
+
+- **Dead stock:** no movement in the last 12 months. It is not slow, it is stopped. The question is disposal, not replenishment.
+- **Excess stock:** moving, but you hold more than forward demand justifies. The question is stop buying, not liquidate.
+
+Compute both monthly:
+
+- **Dead stock ratio** = value of SKUs with zero movement in 12 months ÷ total inventory value
+- **Excess stock** = for each SKU, `units on hand` minus `(forecast demand over lead time + safety stock)`, valued at cost, summed across positives only
+
+**What good looks like.** Dead stock above 10% of inventory value is a structural problem, not a bad quarter. It usually means one of three things: purchasing incentives that reward volume discounts over sell-through, a range that grew by addition and never by subtraction, or a supplier minimum order quantity that does not match your demand.
+
+**The write-off arithmetic nobody wants to do.** Dead stock does not become less dead. Every month you hold it, you pay carrying cost on a zero-return asset and the recoverable value falls. The emotional block is that writing it off makes this year's P&L look worse. It does. It also stops the bleed and frees the space and the cash. The correct question is not "how much did we pay for it" — that money is gone regardless — but "what is the best price we can get today, and is the cash worth more than the hope?"
+
+Run a quarterly disposal cycle: offer to existing customers at a discount first, then to a liquidator, then scrap. Set a date for each step so the decision does not require a new meeting each time.
+
+---
+
+## Fill Rate and the Cost of the Service Level Nobody Priced
+
+**Fill rate = order lines shipped complete on first attempt ÷ total order lines.**
+
+Measure by line, not by order. Order-level fill rate collapses to a number driven by your largest orders and hides the single missing SKU that made a customer call.
+
+**The relationship you need to internalise:** safety stock rises roughly geometrically as target fill rate approaches 100%. Going from 95% to 98% costs meaningfully more inventory than going from 90% to 95%, and 99.5% is where distributors quietly destroy their own working capital.
+
+The right move is not one fill-rate target. It is a target per customer tier and per ABC class:
+
+- A items for key accounts: 98%+
+- A items generally: 95–97%
+- B items: 90–95%
+- C items: whatever the reorder rule produces; quote lead time instead
+
+**The measurement that reveals the truth: stockout cost.** For every stockout, log what happened — customer waited, customer bought a substitute, customer bought elsewhere once, customer left. Most distributors have never counted this and assume every stockout is catastrophic. Usually it is not, and the ones that are cluster in a small number of accounts and SKUs. That log turns "we must never be out of stock" from a belief into a priced decision.
+
+---
+
+## Building the Monthly Dashboard
+
+**Six numbers, one page, same day every month.**
+
+1. Days of supply, blended and by ABC class
+2. GMROI by category, with a flagged list of every SKU under 1.0
+3. Dead stock as a percentage of inventory value, with the euro figure
+4. Excess stock euro value, top 20 SKUs listed
+5. Fill rate by line, split by ABC class
+6. Inventory value versus the same month last year, alongside revenue versus last year
+
+That last comparison is the sanity check that catches slow drift. If inventory is up 18% and revenue is up 4%, you have a working capital problem that has been building for a year and no single month's report would have shown it.
+
+Every one of these comes out of a sales history export and a stock-on-hand export. You do not need a new system. A distributor doing this in a spreadsheet with an hour of monthly discipline is ahead of most competitors running expensive software nobody reads. If you are choosing tooling, our note on the [minimum viable CRM for a B2B distributor](/articles/minimum-viable-crm-b2b-distributor-2026/) makes the same argument about the sales side: the constraint is rarely the software.
+
+---
+
+Inventory is the largest thing on most distributors' balance sheets and the least examined. The reason is not laziness — it is that the standard metric, turnover, is an average that hides everything worth knowing, and once a year at that.
+
+Replace it with three habits: measure days of supply against real lead times, rank everything by GMROI and act on the bottom, and separate dead stock from excess stock so each gets its own fix. The first month you do this, expect to find somewhere between 8% and 20% of your inventory value sitting in SKUs that will never earn their capital back. That is not a failure. It is the cash that funds next year, and it has been on your shelves the whole time.
+
+---
+
+**Sources:** [European Commission — Internal Market and Industry](https://single-market-economy.ec.europa.eu/index_en) · [ICC — International Chamber of Commerce](https://iccwbo.org/)

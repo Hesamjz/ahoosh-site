@@ -1,0 +1,134 @@
+---
+title: "Core Web Vitals for Small Business Sites"
+description: "Core Web Vitals for small business sites — what LCP, INP and CLS measure, the fixes that actually move them, and how much of this matters for SEO."
+pubDate: 2026-07-14
+tags: ["Strategy", "SEO", "Operations"]
+heroImage: "/articles/img/website-speed-core-web-vitals-2026.jpg"
+---
+
+<img src="/articles/img/website-speed-core-web-vitals-2026.jpg" alt="Laptop showing a website performance report with speed metrics on screen" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Someone runs your website through PageSpeed Insights, and it returns a red 34 out of 100 with a list of eleven problems in language that sounds like an accusation. Render-blocking resources. Cumulative layout shift. Unused JavaScript. The natural reactions are either to ignore it entirely, or to pay a developer €2,000 to chase a green score that changes nothing about the business.
+
+Both reactions are wrong, in opposite directions. Core Web Vitals matter, but not for the reason most people are told, and the work that moves them is usually three specific fixes rather than eleven.
+
+This guide covers what the metrics actually measure, which fixes produce real movement on a small business site, and an honest assessment of how much SEO benefit is on the table — because the "speed is a ranking factor" framing has caused more wasted budget than almost any other piece of received wisdom in small business web work.
+
+---
+
+## The Three Metrics, in Plain Terms
+
+Core Web Vitals are three measurements of what a real visitor experiences. Google defines them, publishes thresholds, and measures them on real Chrome users rather than in a lab.
+
+**LCP — Largest Contentful Paint.** How long until the biggest visible thing on screen has loaded. Usually your hero image or headline. This is "how long until the page looks like a page."
+
+- Good: 2.5 seconds or less
+- Needs improvement: up to 4 seconds
+- Poor: over 4 seconds
+
+**INP — Interaction to Next Paint.** How long between a visitor clicking something and the page visibly responding. This replaced First Input Delay in March 2024 and is a stricter measure — FID only counted the first interaction and only measured the delay before processing started. INP measures every interaction, end to end.
+
+- Good: 200 milliseconds or less
+- Needs improvement: up to 500ms
+- Poor: over 500ms
+
+**CLS — Cumulative Layout Shift.** How much the page jumps around while loading. The number is unitless. You've experienced this: you go to click a link, an ad or image loads above it, everything moves down, and you click the wrong thing.
+
+- Good: 0.1 or less
+- Needs improvement: up to 0.25
+- Poor: over 0.25
+
+The pass condition is the **75th percentile of real users on each metric**. Not the average. This distinction matters enormously — it means your site must be fast for three out of four visitors, including the ones on a four-year-old Android phone on rural mobile data. The definitions and current thresholds are maintained on [web.dev's Vitals page](https://web.dev/articles/vitals).
+
+---
+
+## Field Data vs Lab Data — The Distinction That Explains the Confusion
+
+**Two different measurements, constantly mistaken for each other.**
+
+This is where most small business owners get lost, and it's worth five minutes.
+
+- **Lab data (Lighthouse)** — a simulated load, run on demand, on a simulated device with a simulated network. This produces the 0–100 performance score everyone fixates on. It is a diagnostic tool. It is not what Google uses for ranking.
+- **Field data (CrUX — the Chrome User Experience Report)** — actual measurements from actual Chrome users who opted into reporting, aggregated over the trailing 28 days. This is what Google uses.
+
+So: your Lighthouse score is not a ranking factor. Your field data is. They frequently disagree, and when they do, the field data is the one that counts.
+
+Consequences that follow directly:
+
+- **Fixes take up to 28 days to show in field data**, because the window rolls. Deploying a fix and re-running PageSpeed the same afternoon shows you nothing about your actual standing.
+- **Low-traffic sites may have no field data at all.** Below a traffic threshold, CrUX has no sample, and PageSpeed Insights shows only lab data. If your site gets 200 visits a month, you have no field data, Google has no Core Web Vitals signal for you, and you are optimising a number that exists only in a simulation.
+- **The 0–100 score is heavily weighted and volatile.** Running the same test three times on the same page gives three scores. Chasing it precisely is chasing noise.
+
+**Where to actually look:** [PageSpeed Insights](https://pagespeed.web.dev/) shows both field and lab data for a single URL — read the field section at the top and treat the lab section below as the diagnosis. For a site-wide view, Google Search Console has a Core Web Vitals report that groups pages by template, which is far more useful than testing URLs one at a time.
+
+---
+
+## The Fixes That Actually Move the Numbers
+
+On a small business site — typically WordPress, or a static site, or a page builder — the causes are remarkably consistent. Here's what to do, in order of return.
+
+**Images. Almost always images.**
+
+On a typical small business site, images are 60–80% of page weight and the direct cause of a bad LCP. Three fixes, in order:
+
+1. **Resize before upload.** The single most common fault on small business sites is a 4,000-pixel-wide photo from a phone or a stock library displayed in a 800-pixel-wide slot. The browser downloads all of it. Resize to roughly twice the display width for retina and no more.
+2. **Convert to WebP or AVIF.** WebP typically cuts file size 25–35% against JPEG at equivalent quality, AVIF more. Browser support is universal in any browser you care about. [Squoosh](https://squoosh.app/) does this in a browser tab with no install, or any decent WordPress image plugin does it on upload.
+3. **Lazy-load everything below the fold — and nothing above it.** The `loading="lazy"` attribute is native in every modern browser and needs no plugin. The critical error, which plugins make constantly, is lazy-loading the hero image. That directly delays LCP, which is the metric you're trying to fix. Your hero image should load eagerly and ideally be preloaded. MDN's [lazy loading guide](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading) covers the mechanics.
+
+Doing these three things on a typical WordPress site moves LCP more than every other item on the Lighthouse list combined.
+
+**Set dimensions on everything. This is the whole CLS fix.**
+
+CLS is caused by content loading and pushing other content around. The fix is telling the browser how much space to reserve before the content arrives:
+
+- Width and height attributes on every image and video element. Not CSS width — the HTML attributes, so the browser can compute the aspect ratio before the file arrives.
+- Reserve space for ads, embeds, and iframes with a fixed-height container.
+- Use `font-display: swap` and preload your primary font. Fonts loading late cause text to reflow, which is a shift.
+- Never inject a cookie banner, promo bar, or notification above existing content after load. If it must exist, overlay it or reserve its space in the initial layout.
+
+CLS is the cheapest of the three to fix and the one that most annoys real humans. Most small sites can go from poor to good in an afternoon.
+
+**JavaScript. This is your INP problem.**
+
+INP is almost entirely a JavaScript problem, and on a small business site the JavaScript is almost entirely things you added and forgot:
+
+- **Audit your plugins and tags.** A typical WordPress site accumulates 25–40 plugins, each loading scripts on every page including the ones that don't use them. A slider plugin used once on the homepage loading on every blog post is normal and absurd.
+- **Count your tracking scripts.** Google Analytics, a chat widget, a heatmap tool, a retargeting pixel, a cookie consent manager, and a form embed is six third-party scripts on a brochure site. Each one blocks the main thread. Chat widgets are the usual worst offender — they're heavy, they load early, and on a B2B site they generate a fraction of the contact volume of a plain email address.
+- **Defer what isn't needed for first render.** Add `defer` to script tags that don't need to run before paint. This is most of them.
+- **Remove, don't optimise.** The fastest script is one that isn't there. Before optimising a tool's loading behaviour, ask when anyone last looked at its data.
+
+Fewer moving parts is the reliable answer here, and it's the same principle that governs the rest of a small company's systems — see the [minimal tech stack for B2B consulting](/articles/minimal-tech-stack-b2b-consulting/).
+
+**Hosting, if the above didn't do it.**
+
+Time to First Byte feeds directly into LCP. If your server takes 900ms to respond, no amount of front-end work gets you to a good LCP. Budget hosting at €3/month on a shared server with 400 other sites is a hard ceiling. Moving to decent managed hosting or putting a CDN in front is a one-day job with a permanent effect, and it's often cheaper than the developer hours spent trying to optimise around it.
+
+---
+
+## How Much Does This Actually Matter for SEO?
+
+**Less than you've been told, and more than nothing.**
+
+Google has been consistent and public that page experience signals, including Core Web Vitals, are a real but comparatively minor ranking input, and that content relevance dominates. The [Core Web Vitals documentation in Search Central](https://developers.google.com/search/docs/appearance/core-web-vitals) states the role plainly.
+
+The practical reading, which matches what actually happens:
+
+- **Vitals act as a tiebreaker, not a lever.** Between two pages of roughly equal relevance, the faster one has an edge. A fast page about the wrong topic will not outrank a slow page about the right one. Ever.
+- **The gain is asymmetric.** Moving from poor to good is worth something. Moving from good to *very* good is worth nothing at all — the thresholds are pass/fail, and there is no bonus for a 1.2-second LCP over a 2.4-second one.
+- **No field data means no signal.** Low-traffic sites are optimising for a measurement Google doesn't have.
+
+So the honest recommendation: get out of the red on all three, then stop. The remaining hours are better spent on content and on what happens after the page loads. If your site is slow *and* thin, fix the content first — that's the [SEO for B2B services](/articles/seo-b2b-services-2026/) problem, and it's the one with actual upside.
+
+**The conversion argument is the stronger one anyway.**
+
+Set the SEO question aside. A page that takes six seconds and jumps around while loading loses visitors before they read anything, and B2B buyers on mobile are impatient in a way that has nothing to do with algorithms. The reason to fix Core Web Vitals is that people leave slow sites — which makes this a conversion project wearing an SEO costume. Framed that way it competes for budget against the right things, and [B2B website conversion](/articles/b2b-website-conversion-2026/) covers where the rest of that budget should go.
+
+---
+
+The realistic programme for a small business site: resize and convert your images, add width and height attributes everywhere, remove the four scripts nobody looks at, preload the hero and the primary font, and check your host's response time. That's most of a day, it's mostly not developer work, and it takes almost any small site from red to green on all three metrics.
+
+Then leave it alone for 28 days, look at the field data in Search Console, and go back to writing things your buyers want to read. The score was never the point. The visitor who didn't leave is.
+
+---
+
+**Sources:** [Google Search Central — Core Web Vitals](https://developers.google.com/search/docs/appearance/core-web-vitals) · [web.dev — Web Vitals](https://web.dev/articles/vitals) · [PageSpeed Insights](https://pagespeed.web.dev/)

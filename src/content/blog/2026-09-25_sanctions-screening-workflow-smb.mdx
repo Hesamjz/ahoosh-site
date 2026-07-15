@@ -1,0 +1,175 @@
+---
+title: "Sanctions Screening Workflow for Small Teams"
+description: "A practical sanctions screening workflow for small B2B teams — which lists to check, when to screen, handling name-match hits, and keeping an audit trail that holds up."
+pubDate: 2026-07-14
+tags: ["Trade", "MENA", "Operations"]
+heroImage: "/articles/img/sanctions-screening-workflow-smb.jpg"
+---
+
+<img src="/articles/img/sanctions-screening-workflow-smb.jpg" alt="A desk with trade documents and a laptop showing a compliance checklist" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Sanctions compliance is one of the few areas where a small company faces essentially the same legal exposure as a large one. The EU restrictive measures regime does not have a small-business exemption. A ten-person trading firm in Belgrade or Hamburg that ships to the wrong counterparty is in the same category of trouble as a multinational — with none of the compliance department.
+
+What small teams usually do instead is one of two things. Either they ignore screening entirely, on the theory that nobody is looking at a company their size. Or they buy an enterprise screening tool at €2,000/month, use it for six weeks, and quietly stop because nobody has time to clear 40 false positives a day.
+
+There's a workable middle. It costs very little, takes about twenty minutes per new counterparty and two minutes per repeat order, and — critically — produces a written record that demonstrates you took reasonable steps. This guide describes that workflow. It is operational guidance, not legal advice; for a specific transaction with real exposure, you need a lawyer.
+
+---
+
+## What You Are Actually Screening For
+
+**Three separate questions, often confused.**
+
+People say "sanctions check" as if it's one lookup. It's three, and conflating them is how firms miss things:
+
+- **Is the counterparty listed?** Is this specific company or person named on a sanctions list — an entity, a director, a beneficial owner?
+- **Is the goods classification restricted?** Some items are controlled regardless of who's buying — dual-use goods, certain electronics, specific chemicals. The buyer can be clean and the shipment still illegal.
+- **Is the destination or end-use restricted?** Sectoral sanctions restrict transaction *types* with entire industries in a country, even where no specific party is listed.
+
+A firm that screens only the counterparty name passes all three checks in their head and has actually done one.
+
+**Ownership is where small firms get caught.**
+
+The rule that trips people up is control-based, not name-based. Under EU guidance, a company that is not itself listed can still be off-limits if a listed person owns more than 50% of it, or otherwise controls it. Your buyer's name returns clean on every list. Their majority shareholder does not.
+
+This is why "I searched the name and got nothing" is not a screening process. You need the ownership structure, and for anything material you need it in writing from the counterparty.
+
+**Watch the intermediaries too.**
+
+Screen the whole chain, not just the party on the invoice: the buyer, the consignee if different, the notify party, the freight forwarder, the bank, and the vessel or carrier where relevant. Circumvention through a clean-looking intermediary in a third country is the pattern regulators are most focused on, particularly on routes touching Russia, Iran, and Central Asia. Your forwarder choice matters here — see the [freight forwarder selection guide](/articles/freight-forwarder-selection-guide/) for the diligence questions that overlap with this.
+
+---
+
+## The Lists That Matter and Where to Find Them
+
+**Start with the consolidated lists, free and official.**
+
+You do not need a paid data vendor to begin. The primary sources are public:
+
+- **EU Financial Sanctions Files (FSF)** — the EU's consolidated list of persons and entities subject to financial restrictions, published by the Commission and downloadable.
+- **EU Sanctions Map** — an official interactive tool at [sanctionsmap.eu](https://www.sanctionsmap.eu/) that shows measures by country and regime. Useful for the sectoral question that name lists don't answer.
+- **OFAC SDN list (US)** — relevant to you even if you're an EU firm, whenever the transaction touches the US dollar, US persons, or US-origin goods. That's more transactions than most people assume.
+- **UK OFSI consolidated list** — relevant post-Brexit if you deal with UK parties or GBP.
+- **Your national list** — most member states maintain additions.
+- **UN Security Council consolidated list** — the base layer most regimes build on.
+
+For a small EU trading firm, screening against the EU consolidated list plus OFAC SDN covers the large majority of realistic exposure. Add UK OFSI if you touch British counterparties.
+
+**Which ones apply to you.**
+
+The mistake in the other direction is screening against everything and drowning. Jurisdiction is determined by nexus: your incorporation, where the transaction happens, the currency, the goods' origin, and the nationality of the people involved. A Serbian company selling EU-origin goods to a MENA buyer in USD potentially has EU nexus (goods origin) and US nexus (currency). It should screen both.
+
+If you're mapping the specific Iran situation, the layered regime there deserves its own read — the practical restrictions differ sharply by sector and by whether US secondary sanctions bite.
+
+**Screening frequency, not just screening.**
+
+Lists change. A counterparty clean in March can be listed in June, and the obligation is ongoing, not point-in-time. Three trigger points:
+
+1. **Onboarding** — before the first transaction, full screen including ownership.
+2. **Per transaction** — a name re-check before shipment or payment. This is the two-minute one.
+3. **Periodic re-screen** — the whole active counterparty book, monthly or quarterly. This catches the March-to-June problem.
+
+The periodic re-screen is the one small teams skip and the one that matters most, because it's the only control that catches a *change* rather than an initial state.
+
+---
+
+## The Workflow — Twenty Minutes per New Counterparty
+
+**Step 1: Collect the identifying data before you search.**
+
+Screening a trade name gets you noise. Collect and record:
+
+- Full legal name and any trading names
+- Registration number and country of incorporation
+- Registered address
+- Directors and, above a threshold, beneficial owners over 25%
+- The bank and account country
+- For individuals: full name, date of birth, nationality
+
+Ask for this on a standard counterparty form at onboarding. It's a normal commercial request and refusing to provide it is itself a signal.
+
+**Step 2: Search each name against each applicable list.**
+
+Use the official search tools. Search with and without legal suffixes, and try transliteration variants — this is the step where MENA and Russian counterparty names generate the most false negatives. "Mohammed", "Muhammad", and "Mohamad" are the same name and different strings. Any decent screening tool does fuzzy matching; a manual process needs you to do it deliberately.
+
+**Step 3: Check the sectoral and goods questions separately.**
+
+Name clean does not mean transaction clean. Check the EU Sanctions Map for the destination country's regime, and check your goods against the dual-use control list if there's any electronics, software, or industrial equipment involved. If the answer is "probably not controlled but I'm not certain", that's the point to pay for an hour of a trade lawyer's time rather than guess.
+
+**Step 4: Record the negative result.**
+
+This is the step everyone skips and it is the whole point. A screening you did but didn't document is, from an enforcement perspective, a screening you didn't do. Record for each check:
+
+- Date and time
+- Who ran it
+- Which lists, and the list version or publication date
+- Exactly what was searched (the strings)
+- The result
+- The decision and who made it
+
+A spreadsheet is acceptable. A dated PDF export of the search result attached to the counterparty file is better. What matters is that eighteen months later you can produce evidence of what you knew and when.
+
+**Step 5: Re-screen at transaction and on schedule.**
+
+Attach the two-minute per-transaction re-check to an existing gate — the moment before you release the shipment or approve the payment. If it's a separate task, it won't happen. If it's a checkbox on the release step, it will. This is the same logic that makes [Incoterms discipline](/articles/incoterms-b2b-eu-iran/) stick: the control has to live inside a step someone already performs.
+
+---
+
+## Handling a Hit Without Panicking
+
+**Most hits are false positives. That does not mean you can wave them through.**
+
+A common name will match. The workflow for a hit is a documented triage, not a judgement call in your head:
+
+1. **Freeze the transaction.** Do not ship, do not pay, do not proceed. This is not optional and it is time-sensitive.
+2. **Compare the discriminating identifiers.** Date of birth, nationality, registration number, address. A name match with a different DOB and a different country is very likely a different person — but write down *why* you concluded that, citing the specific mismatched fields.
+3. **Escalate if it isn't clearly resolvable.** "Clearly resolvable" means two or more strong identifiers conflict. Anything less goes to a named person — and for anything genuinely ambiguous, to external counsel.
+4. **Document the clearance decision** with the reasoning, the evidence, and the approver's name.
+5. **If it's a true match, stop and report.** Do not tip off the counterparty. Do not attempt to unwind creatively. Contact your national competent authority. There are asset-freeze and reporting obligations that attach immediately, and getting this step wrong converts a compliance problem into a criminal one.
+
+**The four-eyes rule.**
+
+No single person should be able to clear their own hit on a deal they're commercially motivated to close. In a small firm this feels bureaucratic and it is the single highest-value control you can add. The salesperson screens; someone else approves the clearance. Two people, one minute, and it removes the exact conflict of interest that enforcement actions are built on.
+
+**Red flags that warrant a harder look regardless of list results.**
+
+Screening catches listed parties. It does not catch circumvention. These patterns should slow you down even with clean results:
+
+- A new intermediary in a third country with no obvious commercial reason to be in the chain
+- Payment routed from a country unrelated to the buyer or the goods
+- A buyer indifferent to price, delivery time, or technical specification
+- Shipping instructions that change destination after the order
+- A customer whose stated end-use doesn't match the quantity or specification ordered
+- Reluctance to provide ownership information or end-use documentation
+
+The currency and routing questions overlap with your FX exposure — if you're already thinking about [FX risk as a B2B importer](/articles/fx-risk-b2b-importers/), the same payment-chain map serves both purposes.
+
+---
+
+## Tooling — What to Buy and When
+
+**Start free, upgrade on volume.**
+
+For under roughly 50 active counterparties, manual screening against the official portals plus a documented spreadsheet is defensible and costs nothing but time. The official EU and OFAC search tools are free and authoritative — more authoritative, in fact, than a vendor's copy of them.
+
+The trigger to buy a tool is not company size. It's one of three things:
+
+- **Volume** — enough counterparties that the periodic re-screen no longer fits in a morning.
+- **Automation need** — you want screening to fire from your order system rather than depend on someone remembering.
+- **Audit demand** — a bank, an insurer, or a large customer asks for evidence of a systematic control, and a spreadsheet stops being credible.
+
+When you do buy, the features that matter are fuzzy matching quality, automatic list updates, ownership data, and an immutable audit log. Everything else is a demo feature. Test candidates on your own worst names — the transliterated ones — not on the vendor's sample data.
+
+**Keep the human decision.**
+
+No tool clears a hit. Tools generate hits; people clear them. Any vendor pitching fully automated clearance is selling you the risk, not removing it. The tool's job is to make sure nothing reaches a human unexamined, and to prove afterwards that it didn't.
+
+---
+
+The realistic goal for a small team is not a zero-risk compliance function. It's a documented, consistently applied, proportionate process — which is what "reasonable steps" means in practice and what a regulator actually looks for. A twenty-minute onboarding screen, a two-minute transaction check bolted to your release gate, a monthly re-screen of the active book, four-eyes on every clearance, and a file you could hand over tomorrow.
+
+The firms that get into serious trouble are almost never the ones with an imperfect process. They're the ones with no process, who then have to explain what they were thinking at the time and have nothing to show.
+
+---
+
+**Sources:** [EU Sanctions Map](https://www.sanctionsmap.eu/) · [European Commission — sanctions and restrictive measures](https://finance.ec.europa.eu/eu-and-world/sanctions-restrictive-measures_en) · [US Treasury OFAC sanctions list search](https://sanctionssearch.ofac.treas.gov/)

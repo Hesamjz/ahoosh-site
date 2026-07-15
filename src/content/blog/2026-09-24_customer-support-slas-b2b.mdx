@@ -1,0 +1,170 @@
+---
+title: "Support SLAs for B2B Customers"
+description: "How to write and run support SLAs for B2B customers — severity tiers, response vs resolution targets, business-hours math, and what to do when you breach one."
+pubDate: 2026-07-14
+tags: ["Operations", "B2B", "Strategy"]
+heroImage: "/articles/img/customer-support-slas-b2b.jpg"
+---
+
+<img src="/articles/img/customer-support-slas-b2b.jpg" alt="A support queue dashboard showing ticket response timers on a desk monitor" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Most small B2B companies have no support SLA at all. They answer tickets when they see them, which is usually fast, because the founder is watching the inbox. Then the company grows to eight people, the founder stops watching the inbox, and response times quietly drift from twenty minutes to two days. Nobody notices until a customer says "you've become impossible to reach" in a renewal call.
+
+The other failure mode is worse: a company writes an SLA to win a tender, promises a four-hour response window across the board, and then has no staffing model, no escalation path, and no way to measure whether it's meeting the promise. The SLA becomes a liability document that exists only to be breached.
+
+An SLA is not a marketing claim. It's an operational commitment with a staffing cost attached. This guide covers how to write one that is honest, how to work out what it costs before you sign it, and how to run it once it's live.
+
+---
+
+## What an SLA Actually Commits You To
+
+**Separate response time from resolution time.**
+
+This is the single most common drafting error. Teams write "we will resolve critical issues within 4 hours" and then discover that some issues cannot be resolved in four hours regardless of effort — because they depend on a third-party API, a shipment, or a customer's own IT team.
+
+Split the commitment:
+
+- **Response time** — how long until a human acknowledges the ticket and confirms it's being worked. This is fully within your control. Commit to it hard.
+- **Resolution time** — how long until the issue is fixed. This is partly outside your control. Commit to it softly, or commit to a *workaround* time instead.
+- **Update cadence** — how often you send a progress update while the issue is open. This is the underrated one. Customers tolerate long resolutions far better than they tolerate silence.
+
+The update cadence is what buys you goodwill during a bad week. A customer with a broken integration who hears from you every two hours is a customer who stays. The same customer who hears nothing for a day is drafting a complaint.
+
+**Define what a "business hour" means, precisely.**
+
+If you promise a four-hour response and you operate 09:00–17:00 CET Monday to Friday, a ticket that arrives at 16:30 Friday is due at 12:30 Monday. That is a 92-hour wall-clock gap. If the customer thought "four hours" meant four hours, you have a dispute.
+
+Write it down explicitly in the agreement:
+
+- Coverage window (e.g. 09:00–17:00 CET, Mon–Fri)
+- Named public holidays excluded (list the country — "public holidays" is ambiguous when you and the customer are in different states)
+- Whether the clock pauses when a ticket is in "waiting for customer" status (it should — say so)
+- What happens outside the window (nothing, or an emergency channel with different terms)
+
+**Say what is out of scope.**
+
+An SLA that covers "support" covers everything, which means it covers the customer's own misconfiguration, their new hire's training questions, and their request for a feature. Name the exclusions: training, custom development, issues caused by unsupported modifications, and third-party outages.
+
+---
+
+## Severity Tiers That Survive Contact with Reality
+
+**Three tiers, not five.**
+
+Five-tier severity models look thorough and get used as two-tier models in practice, because nobody can reliably distinguish a P3 from a P4 at 09:15 on a Tuesday. Use three, and define each by *business impact*, not by technical description.
+
+- **S1 — Business stopped.** The customer cannot perform their core operation. Orders cannot be placed, the system is down, data is inaccessible. No workaround exists.
+- **S2 — Degraded.** Core operation works but is impaired, or a significant secondary function is broken. A workaround exists but is painful.
+- **S3 — Minor.** Cosmetic, single-user, or a question. No operational impact.
+
+The test for each tier is a sentence the customer could say out loud. "We can't ship anything today" is S1. "We can ship but we're doing it manually" is S2. "The export button is in a weird place" is S3.
+
+**Who assigns the severity.**
+
+The customer proposes; you confirm. If you let customers assign severity unilaterally, everything becomes S1 within a quarter — not out of malice, but because every problem feels urgent to the person having it. If you assign it unilaterally, customers feel dismissed.
+
+The workable middle: the customer selects a severity when filing, and your first response either confirms it or proposes a change *with a reason*. "We've moved this to S2 because the manual workaround in section 4 restores order entry — tell us if that doesn't hold for your setup."
+
+**Realistic targets by tier.**
+
+For a small B2B team without a night shift, these are defensible:
+
+| Tier | Response | Update cadence | Target resolution |
+|---|---|---|---|
+| S1 | 1 business hour | Every 2 hours | Workaround same business day |
+| S2 | 4 business hours | Daily | 3 business days |
+| S3 | 1 business day | On change | Next release cycle |
+
+Notice S1 commits to a *workaround*, not a fix. That's the honest version.
+
+---
+
+## The Staffing Math Before You Sign
+
+**An SLA is a headcount decision disguised as a document.**
+
+Before you commit to a one-hour S1 response, work out whether you can actually hit it. The arithmetic is simple and most teams skip it.
+
+Start with three numbers:
+
+1. **Ticket volume per month** — pull the last three months from your helpdesk. If you don't have a helpdesk, count the support emails.
+2. **Severity mix** — what percentage lands in each tier. For most B2B products, S1 is under 5% of volume, S2 is around 20%, and S3 is the rest.
+3. **Average handling time per tier** — measure it. Don't estimate. S1 tickets typically consume far more than their volume share suggests.
+
+Then check coverage, not capacity. Capacity is "can we do 200 tickets a month" — usually yes. Coverage is "is there a qualified human available in every hour of the promised window" — often no, because one person is on holiday and the other is in a workshop.
+
+A one-hour response target across a 40-hour week requires someone genuinely watching the queue for all 40 hours. With one support person, that breaks the first time they take a day off. Two people with overlapping schedules is the realistic minimum for a one-hour promise.
+
+**Where automation legitimately helps.**
+
+Automation does not shorten resolution. It shortens *acknowledgement* and it deflects S3 volume, which is where the volume actually is:
+
+- Auto-acknowledgement with a ticket number and the applicable SLA terms, sent instantly. This is not a "response" under a well-written SLA, but it stops the customer wondering if the email arrived.
+- Routing rules that push S1 keywords to a phone alert rather than an inbox.
+- A knowledge base that answers the top twenty repeat questions. An [AI support layer that costs under €200/month](/articles/ai-support-layer-200-month/) can absorb a meaningful share of S3 traffic, which frees the humans to hit the S1 and S2 targets you actually contracted.
+
+The point of deflecting S3 is not to save money on S3. It's to protect S1 response time from being crowded out by password resets.
+
+**Log everything against the customer record.**
+
+Ticket history belongs next to the account, not in a separate silo. If your support tool and your CRM don't talk, your account manager walks into a renewal conversation without knowing the customer filed nine S2 tickets last quarter. Even a [minimum viable CRM](/articles/minimum-viable-crm-b2b-distributor-2026/) should carry a support-history field.
+
+---
+
+## Measuring the SLA Without Gaming It
+
+**The metrics that matter.**
+
+- **SLA attainment by tier** — percentage of tickets that met the response target, reported per tier. A blended number hides S1 failures behind S3 successes.
+- **Time to first *useful* response** — not time to first response. An auto-reply and a "we're looking into it" both stop the clock in most tools while helping nobody. Measure the first message that contains information.
+- **Reopen rate** — the percentage of tickets closed and then reopened within 7 days. A rising reopen rate means the team is closing tickets to protect the resolution metric.
+- **Update compliance on open S1/S2** — did you send the promised updates? This is the metric customers actually feel.
+
+**The gaming patterns to watch for.**
+
+Every support metric creates an incentive to distort it. Know the patterns before they appear:
+
+- Closing tickets prematurely to hit resolution targets (watch reopen rate)
+- Downgrading severity to buy a longer clock (watch the severity-change log and require a stated reason)
+- Splitting one issue into three tickets to improve average handling time (watch tickets-per-account spikes)
+- Parking tickets in "waiting for customer" to pause the clock when you're not actually waiting for anything (audit a sample monthly)
+
+None of these are malice. They're rational responses to being measured. The fix is measuring the pair, not the single number — resolution time *and* reopen rate, handling time *and* tickets per account.
+
+**Report to the customer before they ask.**
+
+Send a quarterly SLA report to any account above a meaningful revenue threshold: attainment by tier, ticket volume, the breaches and why. Reporting your own breaches is counterintuitive and it works. It converts the SLA from a stick the customer holds into a shared operational document. It is also, in practice, one of the cheapest retention mechanisms available — the same logic that makes [recurring revenue and loyalty programmes](/articles/recurring-revenue-b2b-distributors-loyalty/) work is at play here: predictability is the product.
+
+---
+
+## When You Breach — The Playbook
+
+**Breaches will happen. Have the response written before the first one.**
+
+The instinct is to explain. The customer does not want an explanation in the first hour; they want a plan. Sequence it:
+
+1. **Acknowledge the breach explicitly and first.** "We missed the 1-hour response target on ticket 4471. It was answered at 14:20, three hours late." Do not wait for them to raise it. If they raise it first, you've lost the frame.
+2. **State the current status of the underlying issue.** The breach and the issue are separate problems. Fix the issue.
+3. **State the cause in one sentence, without hedging.** "Both engineers were in an offsite with no queue cover."
+4. **State the specific prevention.** Not "we'll do better" — "we've added a phone escalation rule so S1 tickets page a phone rather than sit in an inbox."
+5. **Apply the remedy if the contract has one**, without being asked.
+
+**Service credits — a note of caution.**
+
+Many B2B contracts attach service credits to SLA breaches: miss the target, refund a percentage of the monthly fee. Two things about credits are worth knowing before you agree to them.
+
+First, they're usually a poor deal for the customer and they know it. A 5% credit on a €400/month contract is €20 against a day of lost operations. Credits rarely compensate; they mostly signal that you take the commitment seriously.
+
+Second, credits cap your liability, which is why enterprise buyers' lawyers like them and why you should read the clause carefully. A credit regime that is "sole and exclusive remedy" is generally in your favour. One that sits alongside general damages is not.
+
+For most small B2B firms, a simpler structure works better: no automatic credits, an explicit escalation contact, and a termination right if attainment drops below a floor over a rolling quarter. It's honest, it's cheaper to administer, and it puts the pressure where it belongs — on actually meeting the target.
+
+---
+
+An SLA is worth writing only if you'd be willing to publish your attainment against it. That's the test. If you'd be uncomfortable showing a customer the real numbers for last quarter, the SLA is aspirational, and aspirational SLAs damage trust more than having none at all — because you've converted a vague expectation into a specific broken promise.
+
+Start narrow. One tier of coverage, one honest response target, an update cadence you can actually hold, and a monthly look at attainment. Widen it when the staffing supports it. A four-hour response you always hit is worth considerably more to a customer than a one-hour response you hit two-thirds of the time.
+
+---
+
+**Sources:** [ITIL service level management overview](https://www.axelos.com/certifications/itil-service-management) · [Google SRE Workbook — implementing SLOs](https://sre.google/workbook/implementing-slos/)

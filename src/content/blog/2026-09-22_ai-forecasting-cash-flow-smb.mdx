@@ -1,0 +1,151 @@
+---
+title: "AI Cash Flow Forecasting for Small Business"
+description: "How AI cash flow forecasting actually works for small business — what it can predict, what it cannot, the data you need, and the 13-week model to build first."
+pubDate: 2026-07-14
+tags: ["AI Operations", "Finance", "Operations"]
+heroImage: "/articles/img/ai-forecasting-cash-flow-smb.jpg"
+---
+
+<img src="/articles/img/ai-forecasting-cash-flow-smb.jpg" alt="Laptop displaying a cash flow chart beside a printed bank statement and calculator" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Profitable businesses do not usually fail because they were wrong about profit. They fail because they were wrong about timing — the money went out in March and came in in May, and there was a Tuesday in April when the payroll did not clear.
+
+Which is why cash flow forecasting is the highest-stakes number in a small business and, almost universally, the worst-maintained one. The typical version is a spreadsheet somebody built during a bad quarter, updated for two months, and abandoned. What replaced it is the founder checking the bank balance every morning and doing arithmetic in their head, which is a forecast — just an undocumented one with a horizon of about eleven days.
+
+AI shows up in this space with a lot of noise attached. Some of it is real: predicting when a specific customer will actually pay is a genuine machine learning problem with a genuine answer, and it is the single largest source of error in most small-business forecasts. Some of it is nonsense: no model predicts your next big contract. This article separates the two and lays out what to actually build.
+
+---
+
+## What a Cash Flow Forecast Is For
+
+**It is not a prediction. It is a warning system.**
+
+The purpose of a 13-week cash flow forecast is not to know your bank balance on week nine. It is to know, today, whether there is a week in the next quarter where you run out — early enough to do something about it. The actions it enables all have lead times:
+
+- Chase receivables harder (2–4 weeks)
+- Delay a payment or renegotiate terms (1–3 weeks)
+- Draw on a facility (2–6 weeks to arrange if you do not have one)
+- Slow discretionary spend (immediate, but only helps if you see it early)
+- Raise money (3–6 months, which is why a 13-week horizon is the minimum)
+
+**This reframes what accuracy means.** A forecast that is 8% wrong on the balance but correctly flags week seven as tight has done its job perfectly. A forecast that is 2% accurate on average but smoothed over the week-seven dip is worthless. You are not forecasting a number. You are forecasting the trough.
+
+**Why 13 weeks.** Long enough that the actions above are available, short enough that the inputs are mostly known — your receivables ledger, your payables ledger, and your fixed costs already tell you most of the picture. Beyond 13 weeks the inputs become sales assumptions, which is a different exercise with different error bars. Do both, but do not confuse them.
+
+---
+
+## The Real Source of Error — Payment Timing
+
+**Almost every small-business cash forecast is wrong for the same reason.**
+
+The standard model takes the receivables ledger and assumes each invoice is paid on its due date. Every business owner knows this is false. The largest customer pays at 60 days on 30-day terms, reliably, and always has. The forecast pretends otherwise, and so it is wrong by the size of that customer's invoices, every single month, in a direction that flatters the balance.
+
+This is where machine learning is genuinely, unarguably useful — because "when will this customer pay this invoice?" is exactly the kind of question that a pattern in historical data answers well and a human rule of thumb answers badly.
+
+**What the model learns from:**
+
+- Payment history per customer — how many days past terms, historically, and how consistent
+- Invoice size — large invoices from the same customer often pay slower than small ones
+- Timing — invoices issued near month-end at a customer with a monthly payment run behave differently
+- Seasonality — a customer who slows down every August
+- Recent trend — a customer whose days-to-pay has drifted from 34 to 51 over six months is telling you something before they tell you
+
+**What you get out:** for each open invoice, a predicted payment date with a confidence range. Aggregate those and your receivables line stops being fiction.
+
+**The honest size of the win.** For a business with concentrated, repeat customers and 12+ months of payment history, this typically cuts receivables timing error by a large fraction — and receivables timing is usually the biggest single error in the whole forecast. For a business with mostly new customers and no history, the model has nothing to learn from and you should not bother. The technique needs repetition to work.
+
+---
+
+## What AI Cannot Do Here
+
+**Be clear about this before you buy anything.**
+
+- **It cannot predict new sales.** No model knows whether the deal you are working closes. Anything claiming to forecast your pipeline into cash is reading your CRM's probability field, which is a number a salesperson typed. Garbage in, confident garbage out.
+- **It cannot predict a shock.** A customer going insolvent, a supplier demanding prepayment, a tax bill you forgot. These dominate the outcomes and they are not in the training data.
+- **It cannot fix bad bookkeeping.** If your ledgers are three weeks behind, no model helps. It will forecast beautifully from data that does not describe your business.
+- **It does not know about the things you have not told it.** The equipment purchase you agreed verbally, the bonus you promised, the deposit that is contractually due. These live in the founder's head and they are frequently the largest movements in the quarter.
+
+**The consequence:** AI improves one component of the forecast — the timing of known receivables — very well, and touches nothing else. That component happens to be the largest error term for most small businesses, which makes it worth doing. It is not "an AI forecast." It is a normal forecast with one component predicted rather than assumed.
+
+---
+
+## The Data You Need Before You Start
+
+**Four things. If any is missing, fix it before touching a model.**
+
+- **Clean, current receivables and payables ledgers.** Current means reconciled within the last week. This is the whole foundation and it is where most small businesses actually fail — not at modelling, at bookkeeping.
+- **At least 12 months of invoice-to-payment history**, with issue date, due date, and actual payment date per invoice. Two years is meaningfully better. This is the training data and it is usually already sitting in your accounting system.
+- **Your committed fixed costs**, listed with dates: payroll, rent, loan repayments, insurance, subscriptions, VAT and tax payment dates. Mechanical to assemble, tedious, and about 60% of the forecast's value comes from just having it written down.
+- **Bank feed access**, so actuals reconcile automatically. Manual reconciliation means the forecast is stale by the time you look at it, and a stale forecast is one you stop trusting and then stop opening.
+
+**The VAT and tax dates deserve a special mention** because they are the most common cause of a real cash crisis in a small business. They are large, they are scheduled, and they are forgotten precisely because they are not part of daily operations. Put them in the model as fixed, dated, non-negotiable outflows before anything else. For cross-border service businesses, [VAT on cross-border EU invoicing](/articles/invoicing-vat-cross-border-eu-services/) affects both the amount and the timing.
+
+---
+
+## Building the 13-Week Model
+
+**The structure, week by week.**
+
+Rows: opening balance, receipts, payments, net movement, closing balance. Columns: 13 weeks.
+
+**Receipts:**
+
+- Predicted collections from open invoices (per-invoice predicted date, not due date)
+- Recurring revenue with known billing dates
+- Anything contractually committed with a date
+
+Do not include pipeline. If you want to see it, put it in a separate scenario line below the main forecast, clearly marked, and never let it into the trough calculation.
+
+**Payments:**
+
+- Payroll, by date
+- Supplier payables, by their actual due date, adjusted for how you actually pay
+- Rent, loans, insurance
+- VAT and tax, by date
+- Recurring subscriptions
+- A line for the unexpected, sized from your own history — go back twelve months, find the average monthly spend that was not in any category above, and put it in
+
+**Then the only two views that matter:**
+
+1. **The trough.** The lowest closing balance across the 13 weeks, and which week it falls in.
+2. **The buffer.** Trough minus your minimum operating balance. If this is negative, you have a problem with a date attached, which is infinitely better than a problem without one.
+
+**Three scenarios, not one.** Base, plus a downside where your two largest customers pay 30 days later than predicted, plus one where your largest customer does not pay at all this quarter. That third one is not pessimism, it is the actual distribution of outcomes in a concentrated small business, and running it once will change how you think about customer concentration permanently.
+
+---
+
+## Tooling and What It Costs
+
+**Three levels, and most small businesses should start at the first.**
+
+- **A spreadsheet plus your accounting export.** Free. Genuinely adequate for a business under roughly €5m. The discipline of updating it weekly is worth more than any feature you are missing. Start here even if you intend to buy something, because building it teaches you what your forecast is actually sensitive to.
+- **A cash flow tool that connects to your accounting system.** Tens of euros a month. Automates the data pull and the reconciliation, which removes the reason people abandon the spreadsheet. Most now include some form of payment-date prediction. This is the right answer for most.
+- **A custom model on your own data.** Only worth it if you have unusual payment patterns, high volume, and someone technical. The marginal gain over a good tool is small.
+
+**The buying warning.** Vendors sell forecast accuracy. Ask a specific question instead: on my last two quarters of real data, what would this have predicted, and where was it wrong? Any vendor with a working product can run that backtest in an afternoon. Ones that deflect are selling the demo.
+
+The broader pattern here matches every other AI operations decision — the tool is the cheap part and the process around it decides the outcome. [AI deployment failure modes in B2B operations](/articles/ai-deployment-failure-modes-b2b-operations/) covers why this is nearly always where these projects die.
+
+---
+
+## The Weekly Routine That Makes It Real
+
+**Thirty minutes, same day every week, no exceptions.**
+
+1. Reconcile actuals against last week's forecast
+2. Look at the variance — not the total, the line that moved. Which invoice did not land?
+3. Update the ledgers and re-run
+4. Read the trough and the week it falls in
+5. If the buffer moved materially, say so out loud to whoever needs to know
+
+**The step that creates all the value is step 2.** Over a few months, tracking where your forecast is wrong teaches you more about your business than the forecast itself does. You learn that one customer always pays late in quarter-end months, that your "unexpected" line is not unexpected at all but a consistent €4,000, that receipts cluster in the second half of the month while payments cluster in the first. Those patterns are not in any model. They come from looking at the miss every week for a quarter. Alongside it, keeping an eye on [FX exposure for small importers](/articles/fx-risk-small-importers-eur-usd/) matters if any material share of your receipts or payments is in another currency — the timing error and the rate error compound.
+
+---
+
+The reason to build this is not that it makes you better at finance. It is that it converts a diffuse, permanent anxiety into a specific question with a date on it. "Are we okay?" is unanswerable and it sits in the back of every founder's head at 3am. "The trough is week seven and it is €14,000 short unless the Hoffmann invoice lands" is a problem, and problems have actions.
+
+Build the spreadsheet before you buy the tool. Get the ledgers current before you get the model. Add payment-date prediction once you have twelve months of history to predict from — it is the one place the technology earns its keep, and it earns it by fixing the thing you already knew was wrong: nobody pays on the due date, and your forecast has been pretending they do.
+
+---
+
+**Sources:** [European Central Bank — Statistics](https://www.ecb.europa.eu/stats/html/index.en.html) · [European Commission — Late payment in commercial transactions](https://single-market-economy.ec.europa.eu/smes/sme-fundamentals/late-payment_en)

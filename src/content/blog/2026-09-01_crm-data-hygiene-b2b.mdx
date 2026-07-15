@@ -1,0 +1,155 @@
+---
+title: "CRM Data Hygiene for B2B Teams"
+description: "How B2B teams keep CRM data clean — deduplication, decay rates, required-field discipline, GDPR retention, and the monthly routine that stops a CRM rotting."
+pubDate: 2026-07-14
+tags: ["B2B", "Operations", "Strategy"]
+heroImage: "/articles/img/crm-data-hygiene-b2b.jpg"
+---
+
+<img src="/articles/img/crm-data-hygiene-b2b.jpg" alt="Laptop showing a CRM contact list with duplicate records highlighted" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Every CRM starts clean. Someone imports a contact list, sets up the pipeline stages, and for about four months the data reflects reality. Then a trade fair produces 60 business cards typed in by three different people. A salesperson leaves and their accounts get reassigned by bulk edit. Someone imports a purchased list "just to test." Two years later there are 4,100 contacts, roughly 2,600 of them are real, nobody trusts the reporting, and the team has quietly moved the actual account information into a spreadsheet on someone's laptop.
+
+That last part is the real cost. Bad CRM data doesn't announce itself as bad data. It shows up as a team that stops using the CRM — and once they've stopped, every downstream thing you built on it (segmentation, automation, forecasting) is running on a fiction.
+
+Data hygiene isn't a cleanup project you do once when it gets bad enough. It's a small recurring routine plus a handful of structural decisions that stop the mess forming. This covers both.
+
+---
+
+## Why B2B Data Decays Faster Than You Think
+
+**The decay rate is structural, not a sign of neglect.**
+
+B2B contact data goes stale on its own, because the world moves:
+
+- People change jobs. Across a typical B2B database, a meaningful share of contacts change employer every year — enough that a contact list untouched for two years has a large minority of dead addresses in it.
+- Companies rebrand, merge, get acquired, change domain.
+- Job titles shift without the person moving.
+- Email formats change when a company migrates provider.
+- Companies close.
+
+Compound it and a database left alone for three years is close to half wrong. Not because anyone did anything wrong — because that's the half-life of the underlying facts.
+
+This reframes the problem usefully. You are not cleaning up after mistakes. You are running maintenance against a known decay rate, the way you'd service a vehicle. A CRM with no maintenance routine isn't unlucky; it's unmaintained.
+
+**What bad data actually costs:**
+
+- Emails to dead addresses drive up bounce rates, which damages sender reputation, which harms delivery to your *good* addresses. This is the sneakiest cost — the dead contacts hurt the live ones.
+- Duplicate records mean the same person receives the same campaign twice, which is the single most visible signal of an amateur operation.
+- Reporting becomes fiction. Pipeline value counts duplicates. Conversion rates use a denominator of contacts, a third of whom don't exist.
+- Salespeople waste time on records that go nowhere, learn the CRM wastes their time, and stop trusting it.
+- Segmentation breaks. Any behavioural model — [RFM segmentation](/articles/b2b-customer-segmentation-rfm/) included — is arithmetic on your records. Duplicate an account across two records and it scores as two mediocre customers instead of one good one.
+
+---
+
+## Structural Decisions That Prevent the Mess
+
+**Decide what a "contact" is before you have 4,000 of them.**
+
+The most common structural fault in a small B2B CRM is no clear rule about what earns a record. If everyone who ever emailed you, every business card, every purchased list row, and every newsletter signup all become contacts, the database is a landfill within eighteen months.
+
+Write the rule down. A defensible version: a contact record exists for a person who has either (a) had a two-way interaction with your company, or (b) opted in to hear from you. Everything else lives somewhere else — a prospecting list, a separate tool, a spreadsheet. Not in the CRM.
+
+This one decision does more for data quality than any deduplication tool.
+
+**Use the company as the primary object, not the person.**
+
+B2B buying is done by organisations. Structure accordingly: the company is the durable object, contacts hang off it, deals attach to the company. When a person leaves, you lose a contact but keep the account history — which is the thing that actually has value.
+
+Small teams routinely get this backwards, running a contact-centric database because it's how personal address books work. Then a buyer moves on and eight years of relationship context walks out with them. The [minimum viable CRM for a B2B distributor](/articles/minimum-viable-crm-b2b-distributor-2026/) covers the object structure worth starting from.
+
+**Match on a stable key.**
+
+Company names are unstable and ambiguous. "Müller GmbH," "Mueller GmbH," and "Müller Gmbh" are three records for one company, and no fuzzy matcher will reliably catch all three.
+
+Pick a stable identifier and populate it religiously:
+
+- **VAT number** — the best available key for EU B2B. Unique, verifiable through the Commission's VIES system, and it survives rebranding.
+- **Company domain** — a strong secondary key. `acme.de` is unambiguous where "Acme" isn't.
+- **Registration number** from the national business register.
+
+Make VAT number or domain a required field on company creation. Deduplication becomes trivial when there's a key to match on and nearly impossible when there isn't.
+
+**Required fields: as few as possible, enforced absolutely.**
+
+There's a trade-off here and most teams get it wrong in the same direction. Make 14 fields required and salespeople enter garbage to get past the form — "N/A", "test", "asdf", their own phone number. Now you have a full database of fictional data, which is worse than an empty one, because empty is honest.
+
+Require the minimum that makes the record usable:
+
+- Company: name, domain or VAT number, country
+- Contact: first name, last name, email, company link
+- Deal: company link, value, expected close date, stage
+
+Everything else optional. Fill it in when it matters. A field that's 40% populated with truth beats one that's 100% populated with 60% noise.
+
+---
+
+## The Cleanup — Doing It Once, Properly
+
+If you've inherited a bad database, do this before starting any routine. Half a day for a typical small-business CRM.
+
+**1. Back up first.** Export everything to CSV before touching anything. Deduplication merges are frequently irreversible.
+
+**2. Deduplicate.** Order matters:
+
+- Companies first, then contacts. Merging contacts before companies creates orphans.
+- Match companies on VAT number, then domain, then normalised name (lowercase, strip legal suffixes like GmbH, Ltd, d.o.o., SRL, strip punctuation).
+- Match contacts on email exactly. Email is unique by definition; if two records share one, they are the same person.
+- For contacts without email, match on name plus company.
+- Merge, don't delete. Merging preserves the interaction history on both records. Deleting throws away the reason you had the record.
+
+**3. Validate emails.** Run the list through a verification service — NeverBounce, ZeroBounce, and similar tools cost roughly €0.003–0.01 per address, so a 4,000-contact database is €12–40. They return valid, invalid, catch-all, or unknown.
+
+- Suppress the invalids immediately. Don't delete them — mark them, so you don't re-import the same dead address from the same old CSV next year.
+- Catch-all domains are genuinely unknown. Treat them as valid but watch the bounces.
+- If more than 15% of your list comes back invalid, you have an acquisition problem, not a hygiene problem. Find out where those addresses came from.
+
+**4. Find the ghost records.** Contacts with no email and no phone. Companies with no contacts. Deals with no close date that have been open 400 days. Records created by an import that nobody has touched since. Archive them all — put them in a "dormant" state rather than deleting, so the decision is reversible and the reporting is clean.
+
+**5. Standardise the fields you'll filter on.** Country as ISO codes, not "Germany" / "DE" / "Deutschland" / "germany". Industry from a fixed picklist, not free text. Any field you plan to segment on must be a picklist, or it will end up with 60 distinct values for eight real categories.
+
+---
+
+## GDPR Isn't Optional and Isn't Complicated
+
+**The parts that touch a CRM directly.**
+
+Under GDPR, B2B contact data is still personal data — a named person at a company is a person. What applies:
+
+- **Lawful basis.** For B2B outreach, legitimate interest is generally available where the contact is relevant to their professional role, but it requires you to have actually considered the balance and to record that you did. Document it once, in a paragraph. Consent is the basis for marketing email in many member states under the ePrivacy rules, which are stricter than GDPR itself and vary by country.
+- **Record where data came from.** A `SOURCE` field on every contact: trade fair, website form, referral, inbound email. This is a GDPR requirement in substance, and it's also the most useful data quality field you will ever add, because it lets you see which sources produce contacts that convert and which produce landfill.
+- **Retention limits.** You can't keep personal data indefinitely "just in case." Set a retention rule — a common defensible policy is deletion after 24–36 months of no interaction, unless there's a contractual or accounting reason to keep it. Write the policy down and automate the flag.
+- **Deletion requests.** You need to be able to find every record for a person and delete it. If your data is spread across a CRM, three spreadsheets, and an email platform, you cannot honour this. That's a compliance problem and an operational one with the same fix: one system of record.
+- **Unsubscribe propagation.** An unsubscribe in your email tool must reach your CRM. If it doesn't, someone will eventually export a segment and email a person who opted out.
+
+The Commission's [data protection pages](https://commission.europa.eu/law/law-topic/data-protection_en) are the authoritative starting point, and [gdpr.eu](https://gdpr.eu/) is a readable reference for the article text. Neither replaces advice for your specific situation, but a small B2B consultancy with a documented basis, a source field, a retention rule, and working unsubscribes is doing the substance of it.
+
+---
+
+## The Monthly Routine
+
+Twenty minutes. Put it in a calendar with a named owner.
+
+- **Run the duplicate check.** Most CRMs have one built in. New duplicates appear every month, mostly from form fills and imports.
+- **Review new records from the last 30 days.** Look at what came in, and from where. This is where you catch the salesperson who's been pasting a purchased list in, or the form that's creating a record for every newsletter signup.
+- **Check bounce reports** and suppress the hard bounces. Do this before your next campaign, not after.
+- **Sweep stale deals.** Anything open past its close date by more than 60 days is either mis-staged or dead. Both need action.
+- **Spot-check ten records at random.** Open them like a salesperson would. Is the data usable? Would you know what to say on a call? This is the only quality check that measures the thing that matters, and it takes four minutes.
+
+**Quarterly, add:**
+
+- Email verification on contacts not emailed in 6+ months
+- Retention policy pass — flag and archive anything past the threshold
+- Review the source field breakdown and cut the sources producing junk
+
+**The automation-hygiene loop.** Anything you automate off CRM data amplifies whatever is in it. A reorder reminder sequence built on a database with 20% duplicates sends 20% of its recipients a second copy. Clean data is a precondition for automation, not a nice-to-have alongside it — the sequences described in [email automation for B2B distributors](/articles/email-automation-b2b-distributors-results/) only produce their numbers on a database that reflects reality.
+
+---
+
+The reason CRM hygiene gets neglected is that it produces no visible win. Nobody congratulates the person who merged 140 duplicates. The return arrives as an absence — the awkward email that didn't go out, the forecast that wasn't wrong, the salesperson who didn't quietly start keeping their own spreadsheet.
+
+That last one is the real measure. If your team is maintaining a shadow list, your CRM has already failed, and no feature will fix it. Rebuild trust with a real cleanup, protect it with two or three structural rules, and defend it with twenty minutes a month. It is the least interesting work in a B2B operation and close to the highest-leverage.
+
+---
+
+**Sources:** [European Commission — Data protection](https://commission.europa.eu/law/law-topic/data-protection_en) · [GDPR.eu reference](https://gdpr.eu/)

@@ -1,0 +1,152 @@
+---
+title: "Google Search Console Diagnostics for Small Sites"
+description: "A practical Google Search Console workflow for small business sites — reading the reports that matter, diagnosing indexing problems, and finding pages worth fixing."
+pubDate: 2026-07-14
+tags: ["Strategy", "SEO", "Content"]
+heroImage: "/articles/img/google-search-console-diagnostics.jpg"
+---
+
+<img src="/articles/img/google-search-console-diagnostics.jpg" alt="Laptop screen showing a search performance graph with impressions and clicks over time" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Google Search Console is free, it is the only tool that reports what Google itself thinks about your site, and roughly nobody uses it properly. The typical small-business pattern is: verify the property during the website build, receive an alarming email eight months later about coverage errors, log in, look at a graph that goes up and down, feel vaguely worried, close the tab.
+
+That is a shame, because Search Console answers questions no paid SEO tool can. Ahrefs and Semrush model your rankings from third-party crawls. Search Console reports your actual impressions, your actual clicks, your actual average position, and — uniquely — whether Google has decided your pages are worth indexing at all. That last question is the one that matters most and gets asked least.
+
+This is a working diagnostic routine for a site with somewhere between twenty and three hundred pages: what to check, in what order, what the reports actually mean, and how to turn the data into a list of things worth doing on a Monday morning. Budget twenty minutes a month once it is set up.
+
+---
+
+## Setup — Get the Property Type Right or Everything Else Is Wrong
+
+**Domain property, not URL prefix.**
+
+When you add a site, Search Console offers two options and the default choice is usually the wrong one.
+
+- **URL prefix** verifies one exact protocol and subdomain — `https://www.example.com/`. It reports nothing about `http://`, nothing about the bare domain, nothing about `de.example.com`.
+- **Domain property** covers every subdomain and every protocol under `example.com`. It requires DNS verification, which means adding a TXT record at your registrar.
+
+Use domain property. The five minutes of DNS work buys you a complete picture instead of a slice. The most common consequence of getting this wrong is a site owner who sees a fraction of their real traffic and concludes SEO is not working, when in fact half their pages sit on a subdomain the property never covered. Search Console's [overview and setup documentation](https://search.google.com/search-console/about) walks through both verification paths.
+
+**Submit a sitemap, once.**
+
+Submit `example.com/sitemap.xml` under Sitemaps. This does not make Google index anything — that is the persistent myth — but it does give you a diagnostic you cannot get any other way: the Pages report can then be filtered by sitemap, so you can compare *pages you say exist* against *pages Google indexed*. That delta is the single most useful number in the whole tool. Google's [sitemap documentation](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap) covers the format; most site generators produce one automatically.
+
+**Set expectations on the lag.**
+
+Search Console data is delayed by two to three days, and some reports update far less often. Do not publish a page and check the next morning. Do not diagnose anything from a three-day window.
+
+---
+
+## The Pages Report — Is Google Even Willing to Index You?
+
+**Start here, not with Performance.**
+
+Everyone opens Performance first because it has a graph. Open Pages first. If Google has not indexed a page, its performance is zero and no amount of keyword work changes that. Indexing is the gate; everything else is behind it.
+
+The report splits into indexed and not indexed, with a reason per URL. For a small site the reasons that actually appear:
+
+**"Crawled — currently not indexed."**
+
+Google fetched the page, read it, and chose not to index it. There is no error. This is Google saying the page is not worth a slot. On small business sites this is the most common and most misread status — people hunt for a technical fault that does not exist.
+
+It usually means one of:
+- The content is thin, or near-duplicate of another page you have
+- It is a page with no meaningful independent purpose — a tag archive, a paginated listing, an empty category
+- The site as a whole has low authority and Google is rationing
+
+The fix is editorial, not technical. Merge thin pages into one substantial page, or accept that a tag archive does not need indexing and mark it `noindex` so it stops polluting the report.
+
+**"Discovered — currently not indexed."**
+
+Google knows the URL exists and has not fetched it. Different problem: this is a crawl-budget or a quality-prediction signal. If a lot of pages sit here, Google is unenthusiastic about the site. Internal linking from pages that *are* indexed is the practical lever — an orphan page with one link from a sitemap is a weak candidate.
+
+**"Duplicate, Google chose different canonical than user."**
+
+You declared a canonical URL and Google overrode you. Worth investigating, because it usually means two of your pages genuinely overlap and you have not noticed. Two service pages targeting the same intent with different words is the classic case.
+
+**"Page with redirect" / "Not found (404)" / "Blocked by robots.txt."**
+
+These are informational and usually fine — provided you recognise every URL in the list. The alarm case is a page you care about appearing under 404 or blocked. Check `robots.txt` against Google's [robots documentation](https://developers.google.com/search/docs/crawling-indexing/robots/intro) if the blocked list surprises you.
+
+**The one number to record monthly.**
+
+Indexed pages ÷ pages submitted in the sitemap. On a healthy small site this is above 80%. Below 50% and you have a quality or architecture problem that no amount of new content will outrun — you are adding pages to a system that is already rejecting most of what you give it.
+
+---
+
+## The Performance Report — Reading It Without Fooling Yourself
+
+**Four metrics, and only two of them are diagnostic.**
+
+- **Impressions** — your page appeared in results. Says nothing about being seen.
+- **Clicks** — someone clicked.
+- **CTR** — clicks ÷ impressions.
+- **Average position** — an average of averages, and the most misleading number in the tool. A page ranking 3rd for one query and 80th for forty others shows an average around 75. The number is not wrong; it is meaningless in aggregate.
+
+**Filter before you look. Always.**
+
+The default view — all queries, all countries, all devices, last three months, web search — is noise. It contains your brand name, which converts at a high rate and tells you nothing, and it contains fifty markets you do not sell to. Three filters make it useful immediately:
+
+1. **Exclude your brand name** from queries. What remains is your actual discoverability to people who did not already know you.
+2. **Filter to your target country.**
+3. **Compare last 28 days to the previous 28**, not to a rolling three months. Seasonality inside a three-month window will invent trends that do not exist.
+
+**The four patterns worth acting on.**
+
+Sort the Queries tab and look for these shapes. Each maps to a specific action.
+
+- **High impressions, low CTR, position 1–10.** You rank, and nobody clicks. This is a title tag and meta description problem, not a ranking problem. It is also the cheapest fix in SEO — rewriting a title is twenty minutes and the page is already ranking.
+- **High impressions, position 11–20.** Page two. You are close and invisible; page-two traffic is effectively zero. These pages are your highest-return work: adding depth, internal links and specificity to a page already at position 14 beats writing a new page from scratch, by a wide margin.
+- **Decent clicks, position 1–3, low conversion.** Not an SEO problem at all. The traffic arrives and leaves. That is a page problem — the diagnosis and the fixes are in [B2B website conversion](/articles/b2b-website-conversion-2026/).
+- **Queries you rank for that you never targeted.** The most valuable pattern in the report, and the most ignored. Google is telling you what the market actually calls your thing. If you sell "industrial fittings" and Search Console shows impressions for a phrase you have never used, that phrase is real demand you stumbled into. Build a page for it deliberately. This is keyword research with your own data instead of a vendor's estimate — a far better starting point than the process described in most guides, including the query-selection work in [SEO for B2B services](/articles/seo-b2b-services-2026/).
+
+**Page-level, then query-level.**
+
+Use the Pages tab to find your top pages, then click a page and switch to Queries to see what that specific page ranks for. This is where you discover that your carefully targeted service page ranks for nothing you intended and gets all its impressions from one incidental sentence. That is common, and it is actionable — either lean into the accidental topic or fix the intended one.
+
+---
+
+## URL Inspection — The Tool for a Specific Question
+
+**Use it when you have one URL and one question.**
+
+The URL Inspection tool at the top of Search Console answers, for a single URL: is it indexed, when was it last crawled, which canonical did Google pick, is it mobile-usable, and what did Googlebot actually see.
+
+The most valuable function is **"View crawled page" → HTML**. This shows the rendered HTML Googlebot received. If your page is built with client-side JavaScript and the crawled HTML shows an empty container where your content should be, you have found the reason nothing ranks. This is the diagnosis that saves months of pointless content work, and it takes ninety seconds.
+
+**"Request indexing" — what it does and does not do.**
+
+It puts the URL in a priority crawl queue. It does not guarantee indexing. It does not help a page Google has already decided against — if a page shows "Crawled — currently not indexed," requesting indexing repeatedly is a way to feel productive while changing nothing. Fix the page, then request.
+
+Use it for: a genuinely new important page, a page whose content you substantially changed, a page you just fixed a real bug on. Do not use it as a monthly ritual.
+
+---
+
+## The Twenty-Minute Monthly Routine
+
+**Do these five things, in this order, and stop.**
+
+1. **Pages report.** Record indexed ÷ submitted. Scan the "not indexed" reasons for anything new or anything you care about. Two minutes.
+2. **Performance, brand excluded, 28 vs 28.** Are non-brand impressions up or down? This is your one health metric. Two minutes.
+3. **Position 11–20 list.** Export it. These are your next three articles' worth of work — not new topics, existing pages that need depth. Five minutes.
+4. **Low-CTR, top-10 list.** Export it. Rewrite the titles. This is the quickest available win and it recurs every month. Five minutes.
+5. **Check the Enhancements and manual-action sections for anything new.** Manual actions are rare and serious; everything else is usually noise. Two minutes.
+
+**What not to do.**
+
+- Do not check daily. The data lags, the noise dominates, and you will chase phantoms.
+- Do not act on a single week's movement. Search results fluctuate constantly; a rank moving from 8 to 12 and back is not a signal.
+- Do not chase every warning. Search Console reports things it noticed, not things that matter. A handful of 404s from old links is normal and costs you nothing.
+- Do not confuse impressions growth with business growth. Impressions for queries you cannot serve are not an asset.
+
+**The one thing worth building.**
+
+Export the query data monthly to a spreadsheet — Search Console only retains sixteen months, and the day you want a three-year view is the day you find out. A monthly CSV, appended, costs nothing and becomes the only long-run record of your own search history that exists anywhere.
+
+---
+
+Search Console rewards a narrow, boring routine more than it rewards attention. Twenty minutes a month, five checks, two exports. What it gives back is a list of specific pages with specific problems — a title that undersells a page already ranking third, an article stranded at position 13 that needs four more paragraphs, a query the market uses that you never thought of. That list is worth considerably more than another round of keyword research, because it describes what is already happening on your site rather than what a tool estimates might happen. It is also the only place Google will tell you, plainly, that it read your page and decided not to bother.
+
+---
+
+**Sources:** [Google Search Console](https://search.google.com/search-console/about) · [Google Search Central — SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)

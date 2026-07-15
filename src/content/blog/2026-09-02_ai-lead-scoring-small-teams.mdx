@@ -1,0 +1,153 @@
+---
+title: "AI Lead Scoring Without a Data Team"
+description: "AI lead scoring for small B2B teams — why rules beat models at low volume, the data you need, and where AI genuinely helps without a data team."
+pubDate: 2026-07-14
+tags: ["AI Operations", "B2B", "Sales"]
+heroImage: "/articles/img/ai-lead-scoring-small-teams.jpg"
+---
+
+<img src="/articles/img/ai-lead-scoring-small-teams.jpg" alt="Sales pipeline board with leads ranked by score on a laptop screen" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Lead scoring gets sold to small B2B teams as an AI problem. It is presented as a model that reads your pipeline, learns what a good lead looks like, and tells your two salespeople who to call first. The demo is impressive. The pilot produces a number between 0 and 100 next to every lead. Six months later nobody looks at the number, because the first time someone acted on it, the 94-point lead turned out to be a student doing research and the 31-point lead signed a €60,000 contract.
+
+The failure isn't in the technology. It's that lead scoring is a data problem disguised as an AI problem, and most small B2B companies do not have the data. Not because they're disorganised — because of arithmetic. A machine learning model needs enough examples of the thing it's predicting to learn a pattern. If you close 30 deals a year, you have 30 positive examples. No model learns anything reliable from 30 examples, and any tool that claims to is fitting noise and presenting it with a decimal point.
+
+That's not a reason to skip lead scoring. It's a reason to build the version that works at your size. This guide covers what that is, when AI genuinely earns its place, and how to avoid the failure modes that make a team stop trusting the number.
+
+---
+
+## The Volume Question — Answer It Before Anything Else
+
+**Roughly how much data does a real model need?**
+
+The rule of thumb in applied practice is something like 10 to 20 events per feature you want the model to use, on the *minority* class — which for lead scoring is your closed-won deals, not your total leads. Want the model to consider ten signals? You need somewhere in the region of 100–200 closed deals, minimum, and more to validate it honestly.
+
+Work out where you sit:
+
+- **Under ~50 closed deals a year:** you have no basis for a learned model. Use rules. This is most B2B consultancies and many distributors.
+- **50–200 a year:** a simple model is borderline. A logistic regression on five or six features might beat rules slightly. A complex model will not.
+- **200+ a year:** modelling becomes genuinely worthwhile.
+
+This is not a limitation you can buy your way past. A vendor whose product promises AI scoring on your 40 annual deals is either running rules with a smarter interface — fine, but say so — or overfitting, which is worse than nothing because it's confidently wrong.
+
+**A worked example of why.** Suppose 20% of your leads close. A model that predicts "no" for every single lead is 80% accurate. Accuracy is a meaningless metric here, which is why any evaluation of a scoring model should look at precision and recall on the positive class, not accuracy — [scikit-learn's model evaluation documentation](https://scikit-learn.org/stable/modules/model_evaluation.html) covers why. If a vendor quotes you an accuracy figure for a lead scoring product, that figure is close to uninformative and they probably know it.
+
+---
+
+## Rule-Based Scoring — The Version That Works at Small Scale
+
+Rules have properties that matter more than accuracy at low volume: your salespeople understand them, you can debug them, and they encode judgement you already have.
+
+**Score on two axes, not one.**
+
+The single biggest structural error in lead scoring is collapsing everything into one number. A 70 could mean "perfect fit, no interest" or "wrong fit, very interested." Those need opposite actions and one number can't tell you which you have.
+
+Score separately:
+
+- **Fit** — how well they match a customer you'd want. Static. Known at the moment the lead arrives.
+- **Interest** — how much behaviour they've shown. Dynamic. Changes daily.
+
+Then read the grid:
+
+- **High fit, high interest** → call today. This is the only quadrant that justifies interrupting anything.
+- **High fit, low interest** → nurture. They're worth having; they're not ready.
+- **Low fit, high interest** → careful. Frequently a competitor, a student, or someone who will consume forty hours and never buy. This quadrant is where sales time goes to die, and a single-number score routes you straight into it.
+- **Low fit, low interest** → ignore.
+
+**Building the fit score.**
+
+Start from your last 20 closed-won customers and your last 20 closed-lost. Look for what actually separates them. Not what you think should — what does. Usually it's three or four things:
+
+- Company size band (revenue or headcount)
+- Industry
+- Country or region — a real factor if you have language, currency, or logistics constraints
+- Job title of the contact — decision-maker, influencer, or neither
+- Whether they arrived through a channel that historically converts
+
+Assign weights that reflect how strongly each separated the two groups. Keep the whole thing to five or six criteria. A 20-criterion scoring model is a model, and you're back to the volume problem, just with a spreadsheet instead of a library.
+
+**Building the interest score.**
+
+Behaviour, weighted by how much intent it actually signals:
+
+- Visited the pricing page: high
+- Requested a quote or demo: very high
+- Replied to an email with a question: high
+- Opened three emails in a week: moderate
+- Downloaded one PDF: low
+- Opened one email: near zero
+
+Two rules that make this work:
+
+- **Decay it.** Interest from six weeks ago is not interest. Halve the score every 30 days. Without decay, everyone drifts upward forever and the score becomes a measure of how long they've been in your database.
+- **Weight recency over volume.** One pricing page visit yesterday beats twelve email opens last quarter.
+
+**Negative scoring matters as much as positive.** Free email domain on a B2B enquiry, job title containing "student" or "intern," a competitor's domain, a country you don't ship to, a company size an order of magnitude off. Subtract. Most teams only add, and end up with high-scoring leads that any human would dismiss in a second.
+
+---
+
+## Where AI Genuinely Helps a Small Team
+
+The pattern-learning part is out of reach at low volume. Several adjacent parts are not, and they're where the actual value sits.
+
+**Enrichment — filling in the fit data.**
+
+Fit scoring needs firmographic data you usually don't have. A form gives you a name, an email, and a company name typed by a human at 11pm. Enrichment tools take a domain and return industry, headcount, revenue band, tech stack, and location. Clearbit, Apollo, and similar services do this from €50–200/month at small-team volume.
+
+This is the highest-return AI-adjacent spend in lead scoring, because it converts a scoring model you can't populate into one you can. The model isn't the bottleneck. The data was.
+
+**Classification and extraction from unstructured text.**
+
+This is where language models are straightforwardly good and where no training data is required:
+
+- Read the free-text "what do you need help with" field and classify it into your service categories
+- Extract company size, timeline, and budget signals from an inbound email
+- Detect whether an inbound enquiry is a real buyer, a job application, a vendor pitch, or spam — this alone saves real time in most inboxes
+- Summarise a lead's full interaction history into three lines before a call
+
+None of this needs your historical data. It's reading comprehension, and it works on the first lead. That's the useful test for whether an AI feature fits a small team: does it need your history to work? If yes, you probably can't feed it. If no, it may be worth having.
+
+**Similarity to your best customers.**
+
+A defensible middle path: instead of predicting close probability, compute how similar a new lead is to your existing best customers on enriched attributes. It needs no labels and works with 20 customers. It's closer to the clustering logic described in [scikit-learn's clustering documentation](https://scikit-learn.org/stable/modules/clustering.html) than to prediction — and it's honest about what it's doing, which is finding lookalikes rather than forecasting outcomes.
+
+**Where this connects to what you already have.** If you're running [RFM segmentation](/articles/b2b-customer-segmentation-rfm/) on your customer base, you already have a definition of a good customer that came from behaviour rather than opinion. Your Champions segment is the lookalike target. That's a better basis for fit scoring than a workshop where everyone describes their ideal customer profile from memory.
+
+---
+
+## Making It Operational Without Losing the Team
+
+**Garbage in, confidently wrong out.**
+
+Lead scoring runs on CRM data. If 20% of your records are duplicates and a third of your company fields are free text with six spellings, your score is arithmetic on noise, presented with false precision. Fix the data first — [CRM data hygiene](/articles/crm-data-hygiene-b2b/) is a genuine prerequisite here, not a related topic.
+
+**Start manual, then automate.**
+
+Score 30 leads by hand against your rules. Then ask your best salesperson to rank the same 30 by gut. Compare. Where they disagree, one of you is wrong and the conversation about which is the most valuable hour of the whole project. Do this before configuring anything.
+
+**Thresholds must map to actions, not to feelings.**
+
+A score with no action attached is decoration:
+
+- High fit + high interest → assigned to a named person, contacted within 4 working hours
+- High fit + low interest → into a nurture sequence, reviewed in 30 days
+- Low fit + high interest → a templated reply, no call unless they push
+- Low fit + low interest → automated response only
+
+Most CRMs and email platforms handle the routing natively. The [Brevo setup guide for B2B marketing teams](/articles/brevo-b2b-marketing-setup-guide-2026/) covers building the notification workflow that fires when a lead crosses a threshold, which is the part that turns a score into a phone call.
+
+**Measure whether it's working — and be willing to find out it isn't.**
+
+Track the close rate by score band, monthly. If your high-scoring leads close at 22% and your low-scoring leads close at 19%, your model has no discriminating power and should be switched off or rebuilt. Publishing that number is uncomfortable and it's the only thing standing between a scoring system and a shared fiction everyone quietly ignores.
+
+**One compliance note.** GDPR restricts decisions based solely on automated processing that produce legal or similarly significant effects on a person. Routing a B2B lead to a salesperson is not that. But if scoring ever drives something consequential and fully automated — pricing, credit, rejection — [Article 22](https://gdpr.eu/article-22-automated-individual-decision-making/) becomes relevant and you need a human in the loop. Keeping a human deciding what to do with the score keeps you well clear of this, and is a better process anyway.
+
+---
+
+The honest recommendation for most small B2B teams: build a two-axis rule-based score in an afternoon, spend your AI budget on enrichment and on classifying inbound text, and revisit the modelling question when you're closing 200 deals a year.
+
+That's a deflating answer next to a demo with a neural network in it. It's also the version that a two-person sales team will still be using in a year — because they helped write the rules, they can see why a lead scored what it scored, and when it's wrong they can fix it in five minutes rather than filing a ticket with a vendor. Trust is the actual product here. A score nobody believes is worth exactly nothing, regardless of what generated it.
+
+---
+
+**Sources:** [scikit-learn — model evaluation](https://scikit-learn.org/stable/modules/model_evaluation.html) · [scikit-learn — clustering](https://scikit-learn.org/stable/modules/clustering.html) · [GDPR Article 22](https://gdpr.eu/article-22-automated-individual-decision-making/)

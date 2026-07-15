@@ -1,0 +1,172 @@
+---
+title: "Multi-Currency Accounting for Small Business"
+description: "How to handle multi-currency accounting in a small B2B company — functional currency, revaluation, realised vs unrealised FX, tooling choices, and month-end close discipline."
+pubDate: 2026-07-14
+tags: ["Finance", "Operations", "Emerging Markets"]
+heroImage: "/articles/img/multi-currency-accounting-small-business.jpg"
+---
+
+<img src="/articles/img/multi-currency-accounting-small-business.jpg" alt="An accountant's desk with currency conversion figures and invoices in euros and dollars" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+The moment a small business raises its first invoice in a currency it doesn't bank in, it acquires an accounting problem it usually doesn't notice for a year. The invoice goes out for $12,000. The bookkeeper records it as roughly €11,000 because that's what the converter said that morning. Ninety days later the customer pays, €10,600 arrives, and the €400 difference gets coded to "bank charges" because nobody knows what else to do with it.
+
+Multiply that by eighty invoices and you have a P&L where a real and material FX result is scattered across four expense codes, an unreconciled balance sheet, and no ability to answer the only question that matters: are we making money on this business, or is the currency making it for us and about to stop?
+
+None of this is difficult. It's just unfamiliar, and the accounting software makes it easy to do the wrong thing by default. This guide covers the mechanics — which are more standardised than most people realise — and the month-end discipline that keeps them working.
+
+---
+
+## Functional Currency — The Decision Everything Else Follows From
+
+**Pick one currency and mean it.**
+
+Your functional currency is the currency of the primary economic environment you operate in. Everything else is a foreign currency, converted for reporting. This isn't a preference; under IAS 21 it's determined by facts:
+
+- Which currency mainly influences your sales prices?
+- Which currency mainly determines your labour, material, and other costs?
+- Which currency do you retain your receipts in?
+- Which currency is your financing denominated in?
+
+For a Serbian company selling to EU clients in EUR, paying local salaries in RSD, and holding cash in EUR, the answer is genuinely arguable — and it's a decision worth making deliberately rather than defaulting to the currency of incorporation.
+
+**The consequence people miss.**
+
+Your functional currency determines where FX gains and losses land. If your functional currency is EUR and you invoice in EUR, you have no FX exposure on that revenue at all — the RSD cost base moves, but the revenue doesn't. If your functional currency is RSD and you invoice in EUR, every euro invoice creates an exposure that has to be revalued.
+
+Companies get this backwards constantly: they set the functional currency to their local currency because that's what the tax office wants, then report an FX result that swings wildly and has no relationship to any commercial decision they made. The tax reporting currency and the functional currency are separate questions and can differ.
+
+**Presentation currency is a third thing.**
+
+You may keep books in one currency, report to a parent in another, and file tax in a third. These are legitimately different and the conversion rules differ for each. For a single-entity small business, this rarely matters. The moment you have a holding structure — which many EU-adjacent founders do — it does.
+
+---
+
+## The Mechanics: Realised, Unrealised, and Revaluation
+
+**Three moments, three rates.**
+
+Every foreign-currency transaction has up to three points where a rate applies, and the accounting requires all three:
+
+1. **Transaction date.** You raise a $12,000 invoice on 15 March. Record it at the spot rate that day. This creates a receivable of $12,000 with a booked value of, say, €11,050.
+2. **Reporting date.** It's 31 March and the invoice is unpaid. Revalue the receivable at the closing rate. If the dollar weakened, the receivable is now worth €10,900. The €150 difference is an **unrealised FX loss**. It goes to P&L.
+3. **Settlement date.** Payment arrives 14 June at the spot rate that day. The difference between what you'd revalued it to and what you actually received is a **realised FX gain or loss**.
+
+**Realised versus unrealised is not a technicality.**
+
+The distinction matters commercially and it matters for tax. Unrealised movements are paper — they reverse if the rate moves back, and in several jurisdictions they're not taxable until realised. Realised movements are cash you actually gained or lost.
+
+Keep them in separate P&L accounts. `FX gain/loss — realised` and `FX gain/loss — unrealised`. Two lines, no ambiguity. When you look at your management accounts, you can see immediately whether the FX line represents money that moved or a mark-to-market on the balance sheet date.
+
+**Revalue every monetary balance. Only monetary balances.**
+
+At each reporting date, revalue:
+
+- Foreign currency bank accounts
+- Foreign currency receivables and payables
+- Foreign currency loans
+
+Do **not** revalue:
+
+- Fixed assets bought in foreign currency (these stay at their historical rate)
+- Prepayments and deferred income (non-monetary — they're a right to goods, not to cash)
+- Inventory
+
+The monetary/non-monetary split is where hand-built spreadsheets go wrong. A prepayment to a supplier in USD is not revalued, because you're not owed dollars — you're owed goods. Revaluing it produces an FX result that doesn't exist.
+
+**Which rate, exactly.**
+
+Pick a source and document it in your accounting policy:
+
+- **ECB reference rates** are the sensible default for EUR-functional EU businesses. Published daily around 16:00 CET, free, authoritative, and not disputable by an auditor.
+- **Your bank's rate** is closer to what you actually transacted at but includes their spread, which contaminates the FX line with what is really a bank fee.
+- **A monthly average rate** is permitted for P&L items where rates don't fluctuate significantly, and it simplifies the close considerably. Balance sheet items must still use the closing rate.
+
+The important thing is consistency. Switching rate sources between periods to flatter a result is exactly the kind of thing that makes a set of accounts unreliable, and it's obvious to anyone who looks.
+
+---
+
+## Separating FX Noise from Commercial Performance
+
+**Your gross margin is lying to you if it includes FX.**
+
+A distributor buys in USD and sells in EUR. The dollar drops 6% over a quarter. Gross margin improves by 4 points. Nobody did anything better — the currency did it, and it will do the opposite next quarter.
+
+The fix is to report margin at a fixed internal rate — a budget rate set at the start of the year — and show the FX variance as a separate line. Then:
+
+- **Margin at budget rate** = did the commercial operation improve?
+- **FX variance** = what did the currency do to us?
+
+Two questions, two answers. This is the single highest-value reporting change a multi-currency small business can make, and it costs a column in a spreadsheet.
+
+**Price at a rate, not at a spot.**
+
+If you quote in a foreign currency using today's spot rate and deliver in ninety days, you've written an unhedged forward contract without noticing. Build a buffer into the quoted rate, or quote with a validity window short enough to be meaningful, or state a rate-adjustment clause.
+
+Which of those is right depends on your exposure size and your customers' tolerance — the trade-offs are covered in more depth in [FX risk for B2B importers](/articles/fx-risk-b2b-importers/). The accounting point here is narrower: whatever you decide, the internal rate you priced at should be recorded on the transaction, so that afterwards you can measure whether your buffer was adequate.
+
+**Natural hedging shows up in the accounts before it shows up in strategy.**
+
+If you buy in USD and sell in USD, the exposures partially offset and your net position is much smaller than either gross figure. Most small businesses have some natural offset and don't know its size, because payables and receivables are looked at separately.
+
+Run a simple net exposure report monthly: total foreign-currency assets minus total foreign-currency liabilities, per currency. One number per currency. If your USD receivables are $180,000 and your USD payables are $150,000, your net exposure is $30,000, not $180,000 — and any hedging conversation should start from the net.
+
+---
+
+## Tooling — What Handles This Properly
+
+**Most small-business accounting software does multi-currency badly or not at all.**
+
+Check three things before you commit, because retrofitting is painful:
+
+- **Does it revalue automatically at period end, and does it post the entry?** Many packages will convert a transaction and then never revalue the balance. That's not multi-currency support; that's a currency field.
+- **Can it hold a bank account in a foreign currency as a true FX account?** As opposed to converting every line to base currency on entry, which destroys the underlying data.
+- **Does it separate realised from unrealised?** Some packages lump both into one account.
+
+Xero and QuickBooks Online handle this properly on their higher tiers. Several cheaper packages handle it in name only. Wave, notably, does not do multi-currency in any real sense. Find out before you have two years of history to migrate.
+
+**Multi-currency bank accounts are the operational half.**
+
+Holding actual balances in each currency you transact in removes a conversion — and therefore a spread — from every transaction. Wise Business, Revolut Business, and increasingly the traditional banks offer this. The saving against a bank's retail FX spread on a few hundred thousand euros of annual flow is not small; the spread is frequently 1.5–3% on small-ticket conversions and it's invisible because it's baked into the rate rather than charged as a fee.
+
+The accounting benefit is separate and underrated: when you receive $12,000 into a USD account and pay a USD supplier from it, there's no realised FX event at all. You've naturally hedged and simplified the books simultaneously.
+
+**Don't build it in a spreadsheet.**
+
+Everyone tries this. It works for eleven transactions a month and breaks at forty, usually at the point where someone needs to reconcile a revalued balance against a bank statement and the spreadsheet has no audit trail. The revaluation logic is genuinely fiddly and the software that does it correctly costs €40 a month.
+
+---
+
+## Month-End Close for Multi-Currency
+
+**The sequence, and it matters.**
+
+Do these in order. Doing them out of order produces reconciliations that don't tie and hours lost finding out why:
+
+1. **Post all transactions** at their transaction-date rates. Nothing enters after this point.
+2. **Reconcile each foreign currency bank account in its own currency first.** Not in EUR. The USD account reconciles against the USD statement, dollar for dollar. If that doesn't tie, no amount of revaluation will help.
+3. **Pull the closing rates** from your documented source and record them. Screenshot or export — you want to be able to prove which rate you used.
+4. **Run the revaluation** for every monetary balance.
+5. **Review the FX P&L lines.** A number that looks wrong usually is. An unrealised loss of €14,000 on a book of €80,000 in receivables is not plausible unless something dramatic happened; go find the mis-keyed rate.
+6. **Reconcile the FX gain/loss account** to the movement in your net exposure. These should be explicable in terms of each other. If they're not, something isn't being revalued that should be.
+
+**The controls that catch the common errors.**
+
+- **A rate reasonableness check.** Flag any transaction booked at a rate more than 2% away from that day's reference rate. This catches transposed digits and inverted rates — booking at 0.92 instead of 1.087 is a mistake that produces a beautifully consistent set of wrong numbers.
+- **A monetary/non-monetary tag** on every balance sheet account, decided once. Then revaluation is mechanical rather than judgemental.
+- **An unreconciled FX suspense of zero.** If there's a plug, find it. FX plugs grow.
+
+**Keep the transaction-level history.**
+
+Store, per transaction: the foreign currency amount, the rate used, the rate source, the date, and the base currency amount. All five. When someone asks in eighteen months why the March margin looked odd, this is the only thing that answers it — and it's also what your auditor will ask for first.
+
+The same record-keeping instinct that makes [Incoterms and trade documentation](/articles/incoterms-b2b-eu-iran/) manageable applies: the cost of capturing the detail at the moment of the transaction is seconds, and the cost of reconstructing it later is days.
+
+---
+
+Multi-currency accounting has a reputation for complexity that it doesn't really deserve. The rules are settled, the software does the arithmetic, and the whole discipline reduces to four habits: choose your functional currency deliberately, split realised from unrealised, revalue only the monetary balances, and report commercial margin separately from FX variance.
+
+What it does require is doing it from the first foreign invoice rather than the eightieth. The company that starts clean spends twenty minutes a month on this forever. The company that starts by coding FX differences to bank charges spends a fortnight, eventually, unpicking two years of history — usually at the worst possible moment, when a buyer or a lender asks whether the margin trend is real.
+
+---
+
+**Sources:** [IFRS — IAS 21 The Effects of Changes in Foreign Exchange Rates](https://www.ifrs.org/issued-standards/list-of-standards/ias-21-the-effects-of-changes-in-foreign-exchange-rates/) · [ECB — euro foreign exchange reference rates](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html)

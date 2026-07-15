@@ -1,0 +1,142 @@
+---
+title: "B2B Customer Segmentation with RFM Analysis"
+description: "How to run RFM segmentation on a B2B customer base — scoring recency, frequency and monetary value, and what to actually do with each segment."
+pubDate: 2026-07-14
+tags: ["Strategy", "B2B", "Operations"]
+heroImage: "/articles/img/b2b-customer-segmentation-rfm.jpg"
+---
+
+<img src="/articles/img/b2b-customer-segmentation-rfm.jpg" alt="Spreadsheet of customer accounts with segments highlighted, on a desk beside a notebook" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Most small B2B companies segment their customers by gut feel. There's a mental list of the big accounts, a vaguer sense of who's been quiet lately, and a spreadsheet somewhere sorted by revenue. It works until the customer base passes roughly 80 accounts, at which point the quiet ones become invisible and the first anyone notices a churn is when a reorder that used to arrive every quarter simply doesn't.
+
+RFM analysis fixes this with three numbers you already have. Recency: how long since this customer last bought. Frequency: how often they buy. Monetary: how much they spend. Score each customer on each dimension, combine, and the customer base sorts itself into groups that behave differently and deserve different treatment.
+
+It is a technique from 1990s direct mail, and that's exactly why it's useful here. It needs no data science team, no machine learning, and no new software. If you have order dates and order values in any system — an ERP, an accounting package, a CSV export — you can run it this afternoon. This guide covers how, and more importantly what to do with the output, which is where most RFM projects quietly die.
+
+---
+
+## Why RFM Fits B2B Better Than Most Segmentation Models
+
+**It uses behaviour, not attributes.**
+
+The standard alternative is firmographic segmentation: industry, company size, region. That tells you what a customer *is*. It doesn't tell you what they're *doing*. A €200k/year manufacturing account that hasn't ordered in 140 days and a €200k/year manufacturing account that ordered last Tuesday are identical firmographically and completely different commercially. One needs a phone call today. The other needs to be left alone.
+
+RFM captures the thing firmographics can't: direction of travel.
+
+**The B2B adjustments that matter.**
+
+Classic RFM was designed for consumer retail, where purchases are frequent and cycles are short. Three adjustments make it work for B2B:
+
+- **Recency must be measured against the account's own cycle, not a fixed window.** A customer who orders every 90 days and last ordered 100 days ago is late. A customer who orders annually and last ordered 100 days ago is early. Use a ratio — days since last order divided by that account's median inter-order gap — rather than raw days. This is the single change that makes B2B RFM usable, and most tutorials skip it.
+- **Frequency should be measured over a window that spans several cycles.** For distribution, 24 months. For project-based consulting with annual cycles, 36 months. Too short a window and every annual customer looks like a one-timer.
+- **Monetary should be gross margin, not revenue,** if you have cost data. A high-revenue, low-margin account scoring as "champion" leads to expensive attention on a customer who barely pays for it. If you don't have margin per line, revenue is an acceptable stand-in — but know what you're trading away.
+
+**What it doesn't do.**
+
+RFM is descriptive, not predictive. It tells you the state of an account today based on what already happened. It won't tell you that a customer is about to churn because their own end market is collapsing, or that a small account is about to triple because they just won a contract. Those need a human who talks to customers. RFM's job is to make sure the human is talking to the right ones.
+
+---
+
+## Building the Scores — The Quintile Method
+
+**Start with one row per customer.**
+
+You need, per customer: date of last order, count of orders in the analysis window, total value in the analysis window, and ideally the median gap between orders. Every ERP and accounting system can produce this. If yours can't, an export of all order lines into a spreadsheet and a pivot table gets you there in an hour.
+
+**Score each dimension 1 to 5 using quintiles.**
+
+Rank all customers on each dimension and split into fifths. The top fifth scores 5, the bottom fifth scores 1. For recency, the ranking inverts — most recent gets 5.
+
+Quintiles beat fixed thresholds because they self-calibrate. "Ordered within 30 days = 5" is a rule you'll have to rewrite when your business changes. "Top 20% on recency = 5" stays correct forever.
+
+In SQL, this is one window function:
+
+```sql
+SELECT
+  customer_id,
+  NTILE(5) OVER (ORDER BY days_since_last_order DESC) AS r_score,
+  NTILE(5) OVER (ORDER BY order_count ASC)            AS f_score,
+  NTILE(5) OVER (ORDER BY total_margin ASC)           AS m_score
+FROM customer_summary;
+```
+
+NTILE is standard across PostgreSQL, MySQL 8+, SQL Server, and BigQuery — the [PostgreSQL window function documentation](https://www.postgresql.org/docs/current/functions-window.html) covers the semantics if you need to adapt it. In Excel, `PERCENTRANK` plus a lookup table does the same job in two columns. In Google Sheets, `PERCENTRANK.INC` behaves identically.
+
+**A caution on small customer bases.**
+
+Below roughly 50 customers, quintiles produce groups of nine or ten and the segmentation says more about arithmetic than about behaviour. Under 50 accounts, use tertiles (1–3) or skip the scoring and just sort by recency ratio. RFM's value scales with the size of the base — it exists to find the accounts you've stopped being able to hold in your head.
+
+**A note on clustering.**
+
+You'll find plenty of material suggesting k-means clustering instead of quintiles. It's a legitimate technique and [scikit-learn's clustering documentation](https://scikit-learn.org/stable/modules/clustering.html) covers the implementation. For a business with fewer than a few thousand customers, it produces cluster boundaries that are harder to explain to a sales team and no better at driving action. Quintiles are explainable. Explainable wins, because a segmentation nobody trusts is a segmentation nobody uses.
+
+---
+
+## The Segments That Matter and What Each One Means
+
+You now have a three-digit code per customer, from 111 to 555. That's 125 combinations, which is 114 too many. Collapse them into named segments. These are the ones that earn their keep in B2B:
+
+- **Champions (R 4–5, F 4–5, M 4–5)** — recent, frequent, high value. Typically 5–8% of accounts and 30–40% of margin.
+- **Loyal (R 3–5, F 4–5, M 3–5)** — reliable, buy often, mid-to-high value.
+- **Big Spenders At Risk (R 1–2, F 3–5, M 4–5)** — the most important segment on this list. High value, used to buy often, have gone quiet. This is where the money leaks.
+- **Recent High Potential (R 5, F 1–2, M 3–5)** — bought recently, bought big, haven't established a pattern yet. New accounts that could become Champions or could vanish.
+- **Steady Small (R 3–5, F 3–5, M 1–2)** — order reliably, spend little. The automation segment.
+- **About To Sleep (R 2–3, F 2–3, M 2–3)** — drifting on every dimension.
+- **Hibernating (R 1–2, F 1–2, M 1–3)** — long gone, low value. Mostly not worth reactivating.
+- **One-Time Big (R 1–2, F 1, M 4–5)** — one large order, never returned. Worth one call to find out why.
+
+**Where the effort goes.**
+
+The instinct is to spend effort on Champions. Champions are already happy and already buying; a quarterly check-in and priority service is usually enough. The return is in **Big Spenders At Risk** and **Recent High Potential** — accounts where a specific human intervention this month changes the outcome, and where the value at stake justifies the intervention cost.
+
+Run the arithmetic on your own numbers before deciding. If Big Spenders At Risk is 6% of accounts holding €180k of annualised margin, and a phone call recovers a third of it, that's the highest-return hour anyone in your company will spend this quarter.
+
+---
+
+## Turning Segments Into Actions
+
+A segmentation that lives in a spreadsheet is a hobby. It becomes operational when each segment has a named owner, a defined action, and a trigger that fires without anyone remembering.
+
+**Write the segment back into your CRM.**
+
+Add an `RFM_SEGMENT` field on the company or account record and populate it monthly. Every downstream action reads from that field. If you don't have somewhere for it to live, that's the actual first problem to solve — the [minimum viable CRM for a B2B distributor](/articles/minimum-viable-crm-b2b-distributor-2026/) covers the smallest structure that supports this.
+
+**The action map:**
+
+| Segment | Owner | Action | Cadence |
+|---|---|---|---|
+| Champions | Account manager | Relationship check-in, early access to new lines | Quarterly |
+| Loyal | Account manager | Cross-sell based on category gaps | Every 2 months |
+| Big Spenders At Risk | Sales lead | Direct phone call, named person, within 5 working days | On entry |
+| Recent High Potential | Sales | Onboarding sequence + call at day 30 | On entry |
+| Steady Small | Automated | Reorder reminder, self-serve tools | Automated |
+| About To Sleep | Automated | Single re-engagement email, then reassess | On entry |
+| Hibernating | None | Suppress from active campaigns, keep on file | — |
+| One-Time Big | Sales lead | One diagnostic call: what went wrong | Once |
+
+**Automate the segments that deserve automation.**
+
+Steady Small and About To Sleep are volume segments with low per-account value. Handling them by hand is a bad use of a salesperson. Feed the RFM field into your email platform as a sync condition, and let reorder reminders and re-engagement emails run on their own — the revenue mechanics of exactly this are broken down in [email automation for B2B distributors](/articles/email-automation-b2b-distributors-results/).
+
+**Refresh monthly, review quarterly.**
+
+Recompute the scores monthly. Accounts move between segments and the movement is itself the signal — a Champion that drops to Loyal is worth noticing, and a Loyal that drops to At Risk is worth a call. Set up the recompute as a scheduled query or a recurring 20-minute task. If it depends on someone remembering, it will run twice and then stop.
+
+Review the segment definitions quarterly. If Big Spenders At Risk contains 40% of your accounts, your recency thresholds are wrong for your cycle length, not your business.
+
+**Watch for the two classic traps.**
+
+The first: treating RFM output as truth about a customer rather than a prompt to look. An account can sit in Hibernating because their buyer went on parental leave. RFM flags it; a person resolves it.
+
+The second: acting on the segment without checking the cause. A cluster of Big Spenders At Risk in one region usually means something happened — a competitor, a price change, a rep who left — and the cluster is more informative than any individual account in it. When several accounts move the same way at the same time, the pattern is the finding. This is the same reason [demand signals feed inventory forecasting](/articles/ai-inventory-forecasting-b2b-distributors/): the aggregate movement carries information the individual rows don't.
+
+---
+
+The first RFM run on a B2B customer base usually produces one uncomfortable moment. It's the point where you see a name in Big Spenders At Risk that you'd have sworn was a healthy account, because someone spoke to them warmly at a trade fair in March and nobody checked whether they'd ordered since.
+
+That's the value. Not the model, which is arithmetic anyone could do. The value is that the arithmetic doesn't have a favourable impression of anybody, doesn't forget, and doesn't get distracted by the accounts that shout loudest. Run it monthly, put the output where your team already works, and give every segment an owner. The technique is 30 years old and still beats intuition on any customer base too big to hold in one head.
+
+---
+
+**Sources:** [PostgreSQL window function documentation](https://www.postgresql.org/docs/current/functions-window.html) · [scikit-learn clustering documentation](https://scikit-learn.org/stable/modules/clustering.html)

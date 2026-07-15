@@ -1,0 +1,149 @@
+---
+title: "AI Agents in Back-Office Operations"
+description: "Where AI agents genuinely work in back-office operations — task selection, the human approval gate, error budgets, and what a realistic first deployment costs a small B2B team."
+pubDate: 2026-07-14
+tags: ["AI Operations", "B2B", "Operations"]
+heroImage: "/articles/img/ai-agents-back-office-operations.jpg"
+---
+
+<img src="/articles/img/ai-agents-back-office-operations.jpg" alt="An office desk with a screen showing an automated workflow processing invoices" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+There is a specific gap between what AI agents are marketed as doing in back-office operations and what they actually do well. The marketing version is an autonomous digital employee that handles your accounts payable. The reality, in the small B2B companies that have made this work, is narrower and considerably more useful: an agent that reads 200 supplier invoices a month, extracts twelve fields from each, matches them against purchase orders, and routes the 15% it isn't sure about to a human.
+
+That's not a digital employee. It's a very good clerk who never gets bored, works at 3am, and has a well-calibrated sense of when to ask. It's also the difference between a deployment that survives its first quarter and one that gets switched off after a bad month.
+
+This guide covers which back-office tasks are genuinely suitable, how to structure the human oversight so it doesn't become the bottleneck, and what to expect from the numbers.
+
+---
+
+## The Task Selection Test
+
+**Four properties make a task suitable. Missing any one is a warning.**
+
+Back-office work is not uniformly automatable, and the difference isn't difficulty — it's structure. Score any candidate task against these:
+
+- **High volume, low variance.** The task happens many times and mostly the same way. Fifty invoices a month from twelve regular suppliers: good. Six bespoke contracts a year: bad. Volume is what pays for the setup; low variance is what makes accuracy achievable.
+- **Verifiable output.** You can check the answer against something. An extracted invoice total can be checked against the PO and the goods receipt. A "strategic summary of market conditions" cannot be checked against anything, which means errors are invisible.
+- **Bounded cost of error.** A wrong answer is caught downstream or costs little. Misrouting a support ticket: recoverable. Paying a fraudulent invoice: not.
+- **Stable inputs.** The format doesn't change weekly. If your inputs are 200 different PDF layouts that redesign quarterly, you're maintaining the agent forever.
+
+**The tasks that reliably work.**
+
+In small B2B operations, these consistently clear the bar:
+
+- **Invoice and document data extraction** — pull fields from PDFs into structured records. Highest-volume, most-verifiable, best-understood.
+- **Purchase order matching** — three-way match between PO, goods receipt, and invoice. Rules-heavy with fuzzy edges, which is exactly the shape AI handles better than rules alone.
+- **Email triage and routing** — classify inbound to the right queue with the right priority. Errors are cheap and instantly visible.
+- **Order entry from unstructured requests** — a customer emails "the usual plus 20 more of the blue ones", an agent drafts the order line items. Always with approval.
+- **Data cleaning and normalisation** — deduplicating a CRM, standardising address formats, mapping supplier SKUs to internal ones.
+- **First-draft responses** — the agent drafts, a human sends. The draft saves 80% of the time and the human keeps 100% of the judgement.
+
+**The tasks that reliably fail.**
+
+- **Anything where the agent moves money without a human.** Not because it can't — because the error cost is unbounded and the fraud surface is enormous.
+- **Final approvals of any kind.** An agent recommending an approval is useful. An agent granting one moves accountability to a system that can't hold it.
+- **Low-volume high-stakes decisions.** Vendor selection, contract terms, hiring. Not enough repetitions to calibrate, too much cost when wrong.
+- **Tasks whose "rules" are actually undocumented tribal knowledge.** If nobody can write down how the task is done, you cannot specify it, and the agent will confidently invent a method.
+
+That last one is the most common hidden failure. Teams try to automate a process and discover mid-project that the process doesn't exist — one person has been doing it by feel for six years. The automation project becomes a process documentation project, which is valuable but is not what anyone budgeted for.
+
+---
+
+## The Human Approval Gate
+
+**Confidence thresholds, not binary trust.**
+
+The design that works is not "the agent does it" or "the human does it". It's a confidence threshold with three bands:
+
+- **High confidence (auto-process)** — the agent's extraction matches the PO within tolerance, the supplier is known, the amount is within normal range. Process it. Log it.
+- **Medium confidence (human review)** — something is off but plausibly fine. A new supplier, an amount 20% above the usual, a field the model flagged as uncertain. Queue for a human with the specific uncertainty highlighted.
+- **Low confidence (human handles)** — the agent couldn't parse it, or the mismatch is large. Route to a person with the raw document and no pretence.
+
+The critical detail is the *middle* band's presentation. Don't hand the human a document and say "check this." Hand them the extraction with the uncertain field highlighted and the reason: "Total reads €4,820.00 but PO says €4,280.00 — possible digit transposition." That turns a five-minute review into a fifteen-second one, and review time is what determines whether the whole thing pays for itself.
+
+**Calibrate the threshold with real data, then move it.**
+
+Start conservative. Route 40% to human review in month one, even though it feels like you've automated nothing. Then measure: of the items you routed to review, how many did the human change? If the human is rubber-stamping 95% of the medium band, your threshold is too tight — loosen it and re-measure.
+
+Move the threshold in small steps, monthly, based on the correction rate. What you're converging on is the point where human review catches roughly the errors it costs you to catch. Below that, you're paying people to agree with a machine.
+
+**Never remove the sampling audit.**
+
+Even at high confidence, sample. Pull 2% of auto-processed items monthly and have a human check them cold. This is your only detection mechanism for silent drift — the model quietly getting worse because a supplier changed their invoice template, or the vendor updated the underlying model, or your data shifted.
+
+Without sampling, degradation is invisible until it's a crisis. With it, you see the error rate tick from 0.5% to 3% and you investigate in a normal week rather than a bad one. This is the same failure pattern that shows up across [AI deployments in B2B operations](/articles/ai-support-layer-200-month/): the thing that kills them is not a dramatic error, it's undetected slow decay.
+
+---
+
+## Building It — Buy, Wire, or Build
+
+**Three architectures, three cost profiles.**
+
+- **Buy a vertical tool.** Invoice-processing SaaS with AI extraction built in. Fastest to value, typically €50–300/month, limited to what the vendor built. Right answer for standard tasks like AP automation, where the problem is genuinely the same everywhere.
+- **Wire together with an automation platform.** Make, n8n, or Zapier calling a model API, with your business logic in the workflow. Moderate setup effort, €20–100/month plus API costs, flexible. Right answer for tasks specific to your operation. Requires someone comfortable with logic, not necessarily a developer.
+- **Build custom.** Direct API integration with your own code. Highest effort, lowest marginal cost at volume, full control. Only justified when the task is core to your operation and high-volume enough that per-item vendor pricing hurts.
+
+Most small B2B companies should start in the middle. The vertical tools are excellent for the two or three universal problems and useless for the ones specific to your business. Custom builds create maintenance obligations that a five-person company should think hard about before accepting.
+
+**The integration cost is the real cost.**
+
+The model API bill for a small operation is genuinely small — processing 500 documents a month with a current-generation model costs single-digit to low-double-digit euros. The cost is everywhere else:
+
+- Getting documents *into* the system (email parsing, folder watching, portal scraping)
+- Getting results *out* (writing to your ERP, accounting system, or CRM)
+- The exception queue UI that humans actually use
+- The audit log
+- Handling the third of your suppliers who send scanned images rather than digital PDFs
+
+Budget the integration at 5–10x the API cost in the first year. If a proposal shows the API cost as the headline number, it's incomplete.
+
+**Keep the stack small.**
+
+Every tool added to a back-office automation is a thing that breaks at 2am. The discipline that makes a [minimal tech stack](/articles/minimal-tech-stack-b2b-consulting/) work applies with force here: fewer integration points, fewer failure modes, fewer vendors to chase when something's wrong.
+
+---
+
+## Measuring Whether It Worked
+
+**The metrics that matter, and the one that doesn't.**
+
+The vanity metric is "documents processed." It measures throughput, which was never the problem. Track instead:
+
+- **Touch rate** — the percentage of items that required any human involvement. This is the real automation rate. Starting point around 40%, mature systems 10–20%. If it isn't falling, the calibration isn't working.
+- **Human minutes per item** — including exception handling. Compare against the manual baseline you measured *before* deploying. If you didn't measure the baseline, you cannot claim a saving, and you will be asked to.
+- **Error escape rate** — errors that got past the gate and were caught downstream (by a supplier complaint, an audit, a reconciliation). This is the number that matters for risk, and it's the one nobody instruments.
+- **Cycle time** — how long from document arrival to processed. Often the biggest real gain: invoices processed in two hours instead of five days changes your early-payment discount capture and your supplier relationships.
+
+**The payback arithmetic, honestly.**
+
+Take a firm processing 300 supplier invoices monthly at 6 minutes each — 30 hours a month, call it €600 in loaded cost. An agent at 80% touch-free with 90 seconds average human time on the remainder: roughly 6 hours a month, €120. Gross saving €480/month.
+
+Against that: €80/month tooling and API, and a setup effort of perhaps 40 hours. Payback lands around month three, and the ongoing saving is real but it is €400/month, not the "50% cost reduction" in the vendor deck. For a small firm, €400/month is meaningful. It is not transformational, and pitching it internally as transformational is how these projects get killed when the real numbers arrive.
+
+**The gain that doesn't show up in the model.**
+
+The saving that people undercount is variance reduction, not average cost. The invoice backlog doesn't build when the AP person is on holiday. The month-end close doesn't slip. The forecast inputs arrive on time, which matters if you're doing anything like [AI inventory forecasting](/articles/ai-inventory-forecasting-b2b-distributors/) downstream — forecast quality is bounded by data timeliness, and back-office latency is usually the binding constraint.
+
+That's harder to put in a business case and it's often the larger benefit.
+
+---
+
+## The Failure Modes to Design Against
+
+**Automation complacency.** After six months of the agent being right, humans stop actually reviewing the exception queue. They click approve. The gate still exists on the org chart and has stopped existing in reality. Counter it by rotating reviewers, by injecting known-bad test items occasionally, and by tracking whether the human ever changes anything.
+
+**Silent model drift.** Your vendor updates the underlying model. Behaviour shifts. Nobody told you. Counter it with the 2% sample and with a fixed regression set — 50 documents with known-correct answers that you re-run monthly.
+
+**The one-person dependency.** The agent works because one person built it and understands the prompt logic. They leave. Counter it by documenting the process the agent implements, not just the configuration — the process documentation is the durable asset.
+
+**Scope creep into judgement.** It works for extraction, so someone extends it to deciding which invoices to dispute. That's a different class of task and it does not have a verifiable output. Keep the boundary explicit: the agent handles the tasks that pass the four-property test, and adding a task means re-running the test.
+
+---
+
+The realistic version of AI in back-office operations is unexciting and it compounds. One task, chosen because it's high-volume and checkable. A confidence gate that starts conservative. A human queue designed so review takes seconds rather than minutes. A sample audit that runs whether or not anything looks wrong. Six months later, a second task.
+
+The companies that get value from this are not the ones that moved fastest. They're the ones that picked the right first task, instrumented it properly, and resisted the pull to expand into work where nobody could tell whether the machine was right.
+
+---
+
+**Sources:** [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework) · [OpenAI — safety best practices](https://platform.openai.com/docs/guides/safety-best-practices) · [Anthropic — building with Claude](https://docs.anthropic.com/en/docs/intro-to-claude)

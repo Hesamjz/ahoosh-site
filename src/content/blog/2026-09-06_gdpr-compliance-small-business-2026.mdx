@@ -1,0 +1,142 @@
+---
+title: "GDPR Compliance for Small Businesses"
+description: "A practical GDPR compliance path for European small businesses — lawful basis, the records you need, vendor DPAs, and the first 72 hours of a breach."
+pubDate: 2026-07-14
+tags: ["Strategy", "Operations", "Finance"]
+heroImage: "/articles/img/gdpr-compliance-small-business-2026.jpg"
+---
+
+<img src="/articles/img/gdpr-compliance-small-business-2026.jpg" alt="Desk with a laptop, a printed policy document and a pen, arranged for a compliance review" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+GDPR compliance for a ten-person company has become a market for fear. There are consultants who will quote five figures for a "compliance programme," SaaS tools charging monthly for a cookie banner, and a general atmosphere suggesting that a small business is one form field away from a catastrophic fine. Meanwhile the actual regulation — which is long, but is written in plain-ish language — asks a small business to do a fairly finite set of things, most of which are free.
+
+The gap between the fear and the requirement is where small businesses lose money in both directions. Some overspend on theatre: a cookie consent tool, a 4,000-word privacy policy nobody reads, and no idea where customer data actually lives. Others do nothing at all, on the theory that regulators are busy with Meta. Both are avoidable.
+
+This is the working path: what actually applies to a small B2B company, the documents you genuinely need, the vendor question most teams get wrong, and what to do in the first three days of a breach. It is not legal advice — for anything contested, get a lawyer in your jurisdiction. It is the operational checklist a small company can execute in about two working days.
+
+---
+
+## What Actually Applies to You — Scope Before Panic
+
+**The regulation covers personal data, not "customer data."**
+
+Personal data is any information relating to an identified or identifiable living person. That definition is much wider than most people assume, and it does not stop at consumers. In B2B, all of the following are personal data:
+
+- `firstname.lastname@company.com` — an identifiable individual
+- A named contact in your CRM, with their direct line
+- An IP address in your web server logs
+- A photo of a person at your trade fair stand
+- A CV in your recruitment inbox
+- Your own employees' payroll records
+
+What is generally *not* personal data: `info@company.com`, a company VAT number, a company registration record, aggregate statistics with no route back to an individual. The common small-business error is assuming "we're B2B, so GDPR doesn't apply." It applies. Your buyer is a person.
+
+**The small-business exemptions are narrower than the myth.**
+
+The most-cited relief — the exemption from keeping a formal record of processing activities for organisations under 250 employees — has conditions that most companies fail. It does not apply if processing is other than occasional, or if it involves special-category data. Sending marketing email, running a CRM, or employing staff is not occasional. In practice, assume the exemption does not apply to you, and keep the record. It is a spreadsheet. It takes an afternoon. The full text is in [Regulation (EU) 2016/679](https://eur-lex.europa.eu/eli/reg/2016/679/oj) if you want to read the actual wording rather than a vendor's summary of it.
+
+**Do you need a Data Protection Officer?**
+
+Almost certainly not. A DPO is mandatory for public authorities, for organisations whose core activity is large-scale regular monitoring of individuals, and for large-scale processing of special-category data. A ten-person distributor selling industrial fittings does none of these. Name an internal owner anyway — one person who is accountable — but you do not need to hire or appoint a formal DPO, and you should not let anyone sell you one.
+
+---
+
+## Lawful Basis — The Decision Everyone Skips
+
+**You need a reason for every processing activity, chosen in advance.**
+
+This is the concept that most small-business compliance work gets wrong, because it sounds abstract and it is actually the load-bearing part. Every time you process personal data, you must be able to name which of the six lawful bases you are relying on — and you must choose it before you process, not defend it afterward.
+
+For a B2B small business, three of the six do essentially all the work:
+
+- **Contract** — you process a customer's contact details because you need to fulfil an order they placed. No consent needed, and asking for it would be confusing.
+- **Legitimate interests** — you process a prospect's business contact details for direct marketing because you have a genuine commercial interest, and a reasonable person in their role would expect it. This requires you to actually weigh your interest against their rights, and to write down that you did.
+- **Consent** — freely given, specific, informed, unambiguous, and as easy to withdraw as to give. Required for things like a newsletter signup in most member states, and for non-essential cookies.
+
+**Where the mistake happens.**
+
+Teams reach for consent by default, because it feels safest. It is often the weakest option. Consent that is bundled, pre-ticked, or a condition of service is not valid consent, and if it is invalid you have no basis at all — whereas legitimate interests, properly assessed and documented, would have covered you. Conversely, teams sometimes claim legitimate interests for a mass cold-email campaign to purchased lists, which is not a defensible weighing exercise in most circumstances.
+
+**The legitimate interests assessment, in three lines.**
+
+You do not need a template from a consultancy. Write, per activity, three sentences: what your interest is, why the processing is necessary to achieve it (and whether a less intrusive route exists), and why the individual's rights do not override it. File it. That document is the entire deliverable, and it is the thing a regulator asks for.
+
+**Marketing consequences.**
+
+Whatever basis you pick, two mechanics are non-negotiable in every marketing email: a working unsubscribe, honoured promptly, and an identifiable sender with a postal address. If you are configuring an email platform, the double opt-in and unsubscribe settings described in the [Brevo B2B setup guide](/articles/brevo-b2b-marketing-setup-guide-2026/) are the operational half of this — the lawful basis is the legal half. You need both.
+
+---
+
+## The Four Documents You Actually Need
+
+**1. Record of Processing Activities (ROPA).**
+
+A spreadsheet. One row per processing activity. Columns: activity name, categories of people, categories of data, purpose, lawful basis, who it is shared with, where it is stored, retention period, transfers outside the EU. A ten-person B2B company typically has between eight and fifteen rows — customers, prospects, suppliers, employees, applicants, website visitors, newsletter subscribers, CCTV if you have it.
+
+This document is the backbone. Every other compliance question — "can we do this?", "where is this data?", "what do we delete?" — is answered by reading it. Build it first.
+
+**2. Privacy notice.**
+
+Public, on your website, written for humans. It must say who you are, what you collect, why, on what basis, who you share it with, how long you keep it, and what rights people have. Length is not a virtue. A clear 800-word notice is more compliant than a 5,000-word one that obscures the same facts, because the regulation requires it to be *intelligible*.
+
+**3. Retention schedule.**
+
+One line per data category: how long you keep it and why. "Customer invoices: 10 years — national accounting law." "Unsuccessful applicant CVs: 6 months — potential future roles, consented." "Prospect records with no engagement: 24 months, then deleted." Indefinite retention is the most common finding in a small-business audit, and it is the easiest to fix. Your CRM should enforce this rather than your memory — the field structure in a [minimum viable CRM](/articles/minimum-viable-crm-b2b-distributor-2026/) is where retention rules live in practice.
+
+**4. Breach register.**
+
+An empty spreadsheet is a valid breach register. It has to exist before you need it, because the day you need it, you will not have time to create it.
+
+---
+
+## Vendors, Processors and the Transfer Question
+
+**Every SaaS tool holding personal data is your processor.**
+
+Your email platform, your CRM, your accounting software, your cloud storage, your website host, your AI transcription tool — each of them processes personal data on your behalf, and each requires a **Data Processing Agreement** with you. You are the controller; they are the processor; you remain accountable for what they do with the data.
+
+The good news: essentially every serious vendor publishes a standard DPA. You do not negotiate it; you accept it and file the PDF. The bad news: nobody does the filing, so when a customer's procurement team asks "list your sub-processors and provide the DPAs," the answer takes three weeks instead of three minutes.
+
+**The audit that takes ninety minutes.**
+
+List every tool that holds personal data. For each, record: what data it holds, whether a DPA exists and where the PDF is, where the data is physically stored, and whether it transfers outside the EU. Keeping the tool count low is a compliance strategy as much as a cost strategy — the argument for a [minimal tech stack](/articles/minimal-tech-stack-b2b-consulting/) is partly that every additional SaaS subscription is an additional processor you must document, review, and answer for.
+
+**Transfers outside the EU.**
+
+If a vendor stores or accesses data outside the EEA, you need a transfer mechanism — an adequacy decision for that country, or Standard Contractual Clauses, which reputable vendors include in their DPA by default. The practical action for a small business is not to build a legal analysis; it is to know, for each vendor, which applies. The [European Data Protection Board](https://edpb.europa.eu/) publishes the current guidance and the list of adequacy decisions.
+
+**AI tools are processors too.**
+
+The tool that summarises your sales calls is processing the personal data of everyone on the call. Check the DPA, check the region, and check whether your inputs are used for model training — some plans train on your data by default and some do not, and the difference is usually a setting rather than a contract.
+
+---
+
+## The First 72 Hours of a Breach
+
+**What counts as a breach.**
+
+Not just a hack. A breach is any accidental or unlawful destruction, loss, alteration, unauthorised disclosure of, or access to personal data. The most common small-business breach by a wide margin is an email sent to the wrong recipient, or a spreadsheet attached to the wrong thread. A lost unencrypted laptop is a breach. A misconfigured cloud folder is a breach.
+
+**The clock.**
+
+Where a breach is likely to result in a risk to individuals' rights and freedoms, it must be reported to your supervisory authority without undue delay and, where feasible, within **72 hours of becoming aware of it**. If the risk is high, the affected individuals must be told too, without undue delay.
+
+**The sequence.**
+
+1. **Contain.** Revoke the access, recall the message, lock the account. First hour.
+2. **Assess.** What data, how many people, what harm is plausible. Write it down as you go — this becomes the register entry and, if needed, the notification.
+3. **Record.** Every breach goes in the register, including ones you decide not to report. The decision not to report is itself something you must be able to justify.
+4. **Report, if the threshold is met.** Notify your supervisory authority. If you do not have all the facts in 72 hours, report what you have and supplement later — a partial report on time beats a complete report on day five.
+5. **Fix the mechanism.** The wrong-recipient email is a process problem, not a person problem. Delayed send, restricted distribution lists, no bulk personal data in attachments.
+
+**On fines.**
+
+Yes, the ceiling is up to €20 million or 4% of worldwide annual turnover for the most serious infringements. That number is quoted at small businesses constantly and it is not the realistic exposure. What actually happens to small companies is a complaint, an information request, and a corrective order. The real cost is the fortnight your team spends reconstructing records that should already have existed — which is precisely the ROPA and vendor list above.
+
+---
+
+Two working days is a fair estimate for a ten-person B2B company to get from nothing to defensible: half a day on the ROPA, half a day on the vendor and DPA audit, a day on the privacy notice, retention schedule, and lawful-basis notes. Almost none of it needs to be bought. What it buys back is real: procurement questionnaires answered in minutes, a breach handled calmly, and enterprise customers who stop treating you as a supply-chain risk. Compliance at this size is not a programme. It is a spreadsheet, four documents, and knowing where the data is.
+
+---
+
+**Sources:** [Regulation (EU) 2016/679 (GDPR), EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj) · [European Data Protection Board](https://edpb.europa.eu/)

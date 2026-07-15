@@ -1,0 +1,151 @@
+---
+title: "AI Translation for Multilingual B2B Content"
+description: "How to run multilingual B2B content with AI translation — engine selection, the glossary layer, human review tiers, and the hreflang setup that keeps SEO intact."
+pubDate: 2026-07-14
+tags: ["AI Operations", "Content", "Emerging Markets"]
+heroImage: "/articles/img/ai-translation-multilingual-b2b.jpg"
+---
+
+<img src="/articles/img/ai-translation-multilingual-b2b.jpg" alt="Screen showing the same paragraph of business text side by side in two languages" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Machine translation crossed a threshold somewhere around 2023 that most small B2B companies still have not priced in. For a decade, the honest advice was: use it for gist, never for anything a customer sees. That advice is now wrong in a specific and useful way — for structured business prose between major European language pairs, current engines produce output that a native speaker will read as competent, if occasionally bland, writing. The remaining failures are not grammatical. They are terminological, tonal, and legal.
+
+This matters commercially because the alternative has always been prohibitive. A distributor in Belgrade selling into Germany, Austria and Switzerland needs German. A consultancy targeting the Persian diaspora needs Farsi and English and probably German. Agency translation runs somewhere around €0.10–€0.20 per word depending on pair and specialism, which puts a 1,500-word article at €150–€300 and a full site relaunch beyond reach. So the site stays monolingual, and the company competes in its second-best market in its second-best language.
+
+The workable answer is not "use AI instead of translators." It is a tiered system: machine translation as the draft layer, a controlled glossary as the accuracy layer, and human review applied selectively to the content where being wrong actually costs something. Here is how to build it.
+
+---
+
+## Engine Selection — The Choice Is Narrower Than the Market Suggests
+
+**Three categories, different failure modes.**
+
+- **Dedicated MT engines (DeepL, Google Translate).** Trained specifically on translation. Strongest on European pairs, extremely consistent, fast, cheap at volume. They translate sentences faithfully and will not improvise. Their weakness is that faithful is not always correct — a marketing headline translated faithfully often lands flat, because the source idiom does not exist in the target.
+- **General LLMs (Claude, GPT, Gemini).** Weaker on rare pairs, but substantially better at the thing that actually matters for marketing copy: they can be told the register, the audience and the intent, and they will adapt rather than transpose. Ask a general model to "translate this headline for a German industrial buyer, keep it direct, avoid Anglicisms" and it will do something an MT engine structurally cannot.
+- **CAT tools with MT plugged in (memoQ, Trados, Phrase).** The professional layer. Worth it once you are translating regularly and need translation memory — the store of previously approved segments that makes the tenth document cheaper than the first.
+
+**The practical split for a small team.**
+
+Use a dedicated MT engine for anything structural and repetitive: product descriptions, specification tables, documentation, order confirmations, FAQ entries. The [DeepL API documentation](https://developers.deepl.com/) covers glossary support and formality control, both of which matter below. Use an LLM for anything persuasive: headlines, landing pages, email subject lines, LinkedIn posts, anything where the goal is a reaction rather than a comprehension.
+
+**Language-pair reality.**
+
+Quality is not uniform and you should not pretend it is. English↔German, English↔French, English↔Spanish, English↔Italian are strong enough that a well-configured pipeline produces publishable output with light review. English↔Serbian, English↔Farsi, English↔Turkish are materially weaker — grammatically usually fine, but tonally unreliable and prone to register drift, particularly Farsi, where formal business register and everyday register diverge sharply and engines routinely pick the wrong one. Budget more human time on those pairs, not less.
+
+**Never pivot through English.**
+
+If you need German→Farsi, do not translate German→English→Farsi. Errors compound across the pivot and the second hop cannot see the original. Translate from the source, always, even if the direct pair is weaker.
+
+---
+
+## The Glossary Layer — Where Most of the Accuracy Actually Lives
+
+**The single highest-return artefact.**
+
+If you build one thing before translating anything, build the glossary. Every business has fifty to two hundred terms that must be translated one specific way, every time, and an untuned engine will render them differently in each document — sometimes within the same document.
+
+For a distributor, the list looks like:
+
+- Product category names, exactly as the market uses them (not as the dictionary translates them)
+- Your own product and service names — usually *do not translate* is the correct instruction
+- Trade terms: `Incoterms` codes stay as codes, never translated; delivery, lead time, backorder, MOQ
+- Legal and financial terms: net 30, credit limit, retention of title, VAT versus MwSt versus TVA
+- Your brand vocabulary — the words you have decided to use and the ones you have banned
+
+**Building it from what you already have.**
+
+You do not write a glossary from scratch. Extract it:
+
+1. Take your ten most important source documents.
+2. Have an LLM list every domain-specific term with its frequency.
+3. Have one native-speaker customer, partner or salesperson in the target market fix the target column. This is the only step that requires a human and it takes about two hours.
+4. Load the result into your engine's glossary feature and, separately, into the system prompt of whatever LLM you use.
+
+That two-hour conversation with a native-speaking salesperson is worth more than the next €2,000 of translation spend, because it fixes the errors that would otherwise recur in every document forever. Note the direction of the correction: a professional translator knows the language; your salesperson knows what buyers in Hamburg actually call the part. Those are different kinds of knowledge and you need the second one.
+
+**The formality setting is not cosmetic.**
+
+German has Sie and du. French has vous and tu. Farsi has a formality system that is finer-grained than either and unforgiving when you get it wrong. B2B is formal, always, in all three. DeepL exposes a formality parameter; LLMs need it stated in the prompt. Set it once, globally, and never leave it to the engine's default — an accidental du in a first-contact email to a German procurement manager is a real, if quiet, cost.
+
+---
+
+## Human Review Tiers — Spend Where Being Wrong Is Expensive
+
+**Not all content carries the same risk.**
+
+The mistake is binary thinking: either everything gets professional review (unaffordable) or nothing does (eventually embarrassing). Sort your content into three tiers by what a mistake actually costs.
+
+**Tier 1 — Professional human translation. No AI first draft.**
+
+- Contracts, terms and conditions, warranty text
+- Anything with a compliance or safety consequence
+- Your five most important pages: homepage, primary service page, pricing
+
+For a small company this is maybe 3,000–5,000 words in total. At agency rates, a few hundred euros, once. Pay it. A mistranslated liability clause is not a content problem.
+
+**Tier 2 — AI draft, native-speaker review.**
+
+- Case studies, key blog articles, sales emails, landing pages
+- Anything a prospect reads while deciding
+
+The reviewer is not re-translating. They are reading the target text on its own, without the source, and marking anything that sounds like a translation. That job takes roughly a quarter of the time of translating from scratch and can often be done by a native-speaking colleague or a contractor at a fraction of agency rates.
+
+**Tier 3 — AI, published with spot checks.**
+
+- Product descriptions at scale, documentation, FAQ, archive content, changelogs
+
+Review a 10% sample monthly. Accept that some phrasing will be flat. Flat and present beats perfect and absent — a German buyer searching for a part number would rather find a slightly stiff German product page than an English one.
+
+**The review instruction that finds real errors.**
+
+Do not ask a reviewer "is this translated correctly?" — they will read the source, see a faithful rendering, and approve it. Ask: *"Read only the German. Would a procurement manager at a mid-sized German firm think a German person wrote this? Mark every sentence where the answer is no."* That question surfaces register errors, false friends and calques. The first one surfaces nothing.
+
+---
+
+## Publishing Multilingual Content Without Damaging Your SEO
+
+**One URL per language. Always.**
+
+The single most common technical failure is a JavaScript language switcher that swaps text without changing the URL. Search engines index one URL with one language, so your German content is invisible — you did the work and get none of the traffic. Every language needs a distinct, crawlable URL:
+
+- `example.com/de/leistungen/` — subdirectory. The right default for a small business: one domain, one accumulated authority, simple to host.
+- `de.example.com` — subdomain. Splits authority. Avoid unless you have a strong infrastructure reason.
+- `example.de` — country domain. Strongest local signal, but you are now building a second site's authority from zero. Only worth it if Germany is your primary market rather than one of several.
+
+**hreflang, done minimally and correctly.**
+
+Every language version must declare every other language version, including itself, and the declarations must be reciprocal. If the German page points to the English page but the English page does not point back, the whole cluster is ignored. Google's [localized versions documentation](https://developers.google.com/search/docs/specialty/international/localized-versions) is the reference; the rules are fiddly and the tags are easy to generate badly, so generate them from your content collection programmatically rather than by hand.
+
+Two things worth knowing: `x-default` should point to your language-selection page or your primary-language version, and hreflang is a signal, not a directive — it tells Google which version to *show* to a German user, not which pages to index.
+
+**Do not machine-translate your URLs and metadata carelessly.**
+
+Slugs, title tags and meta descriptions are where translation quality is most visible and most consequential. A German title tag is typically 15–20% longer than its English source and will truncate in results. Write the metadata for each language against the actual keyword research for that market, rather than translating the English. The keyword a German buyer types is frequently not a translation of the keyword an English buyer types — it is a different word describing the same intent. This is the same discipline as the underlying [B2B SEO keyword work](/articles/seo-b2b-services-2026/), performed once per market.
+
+**Translate the conversion path, not just the pages.**
+
+A German landing page with an English contact form, English validation errors and an English confirmation email is not a German experience — and it leaks conversions at exactly the moment the visitor decided to act. Translate the form labels, the error states, the thank-you page and the automated reply. The same applies to your email sequences: language should be a contact attribute that drives which version of a workflow fires, which is straightforward to set up if your [email platform's segment architecture](/articles/brevo-b2b-marketing-setup-guide-2026/) is built for it from the start.
+
+---
+
+## Running It as a System
+
+**Source language discipline.**
+
+Translation quality is bounded by source quality. Long sentences with three subordinate clauses translate badly in every engine. Idioms translate badly. Ambiguous pronouns translate badly. If you write the source knowing it will be translated — short sentences, explicit subjects, consistent terminology, no wordplay — output quality improves measurably across every target language at once. It is the cheapest quality intervention available and it costs nothing but discipline.
+
+**Version control.**
+
+The failure mode of every multilingual site: the English page gets updated, the German page does not, and eighteen months later they describe different products at different prices. Track it. One column per language in a content sheet, with the source's last-modified date. Any target older than its source is stale and gets re-run. Automate the flag; the re-run is cheap, the drift is not.
+
+**Cost, honestly.**
+
+For a company running one source language into two targets at roughly 20,000 words a year: MT API costs in the low tens of euros annually; LLM costs are similar; Tier 1 professional translation is a few hundred euros once; Tier 2 native review is the only real recurring line, and at a quarter of translation time it is manageable. Total is comfortably under what a single agency-translated site relaunch costs — and unlike the relaunch, it stays current.
+
+---
+
+The reason to do this is not that translation is cheap now. It is that the cost structure inverted: the expensive part used to be producing the words, and now it is deciding which words matter. A small European company can plausibly run three languages with a glossary, a tiered review policy and an afternoon of hreflang work. What it cannot do is run three languages by translating everything perfectly — that was never affordable and still is not. Sort the content by what a mistake costs, spend the human hours there, and let the machine handle the specification table nobody will ever compliment you on.
+
+---
+
+**Sources:** [DeepL API Documentation](https://developers.deepl.com/) · [Google Search Central — Localized Versions](https://developers.google.com/search/docs/specialty/international/localized-versions)

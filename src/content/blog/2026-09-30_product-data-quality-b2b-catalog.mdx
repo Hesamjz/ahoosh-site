@@ -1,0 +1,164 @@
+---
+title: "Product Data Quality in B2B Catalogs"
+description: "Why B2B catalog data breaks and how to fix it — the field taxonomy that matters, measurable quality rules, deduplication, and governance that survives a busy quarter."
+pubDate: 2026-07-14
+tags: ["AI Operations", "B2B", "Distribution"]
+heroImage: "/articles/img/product-data-quality-b2b-catalog.jpg"
+---
+
+<img src="/articles/img/product-data-quality-b2b-catalog.jpg" alt="A warehouse office screen showing a product catalog spreadsheet with inconsistent entries" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Ask a distributor how many products they carry and you'll get a confident number. Ask them how many of those products have a complete, accurate, current record and the confidence disappears. The honest answer, in most small and mid-sized B2B distributors, is somewhere between 30% and 60% — and nobody knows which 30-60%, which is the actual problem.
+
+Bad catalog data doesn't announce itself. It shows up as a customer service call about a dimension that was wrong, a return because the specification didn't match, a search on your own site that returns nothing for a product you definitely stock, and a quote that took forty minutes because someone had to phone the supplier to check a thread pitch. Each of those looks like a separate operational annoyance. They're one problem wearing different costumes.
+
+The reason it stays broken is that fixing product data is nobody's job, produces no visible win, and competes with revenue work every single quarter. This guide is about making it small enough and measurable enough that it actually gets done.
+
+---
+
+## Where B2B Catalog Data Actually Breaks
+
+**The four sources of decay.**
+
+Catalog data doesn't start bad. It degrades, through four mechanisms that all operate simultaneously:
+
+- **Supplier feed drift.** Your supplier changes their spreadsheet column order, renames a field, or starts sending "Blue" where they used to send "BLU". Your import runs, doesn't error, and quietly writes garbage into 400 records.
+- **Manual entry under time pressure.** A new product arrives, sales needs it live today, someone creates a record with a name and a price and a promise to fill in the rest. The rest never happens. This is where most incomplete records come from.
+- **Silent supersession.** The supplier discontinues a part and replaces it with a near-identical one under a new code. Your record still describes the old one. Nobody told you because nobody at the supplier thinks of it as your problem.
+- **Multi-system divergence.** The ERP, the webshop, and the sales team's price list all hold a version of the truth. They were identical at go-live. They diverged within a month, and now each system has a constituency who trusts it.
+
+**The cost, in the places you're already paying it.**
+
+The reason data quality never gets funded is that its cost is distributed across budgets that each absorb it invisibly:
+
+- **Returns** caused by specification mismatch. Pull your last 100 returns and code them by reason — the data-caused share surprises people.
+- **Quote cycle time.** Every field a salesperson has to verify manually is minutes on a quote that a competitor answered in an hour.
+- **On-site search failure.** Products that don't surface for the terms buyers actually use are, commercially, products you don't stock.
+- **Support volume.** "What's the flow rate on this" is a question your catalog should have answered.
+- **Marketplace rejections** if you sell through any channel with data requirements.
+- **Forecast quality.** Anything downstream that depends on clean categorisation — including [AI inventory forecasting](/articles/ai-inventory-forecasting-b2b-distributors/) — inherits your data's error rate. A model trained on a catalog where the same product appears under three SKUs will forecast three products.
+
+That last point is the one worth internalising before any AI project. Every automation you build on top of your catalog multiplies your data quality rather than fixing it.
+
+---
+
+## The Field Taxonomy That Matters
+
+**Not all fields are equal. Tier them.**
+
+The instinct is to try to complete every field on every product, which is why data quality projects stall — it's an infinite task with no visible milestone. Tier the fields instead:
+
+- **Tier 1 — Identity.** Without these the record cannot be trusted at all: internal SKU, manufacturer part number, manufacturer name, GTIN/EAN where applicable, unit of measure. Target: 100%. No exceptions, no "we'll add the MPN later."
+- **Tier 2 — Commercial.** Needed to sell: description, price, pack quantity, lead time, status (active/discontinued/superseded), category. Target: 100% on active products.
+- **Tier 3 — Technical.** Needed to *specify*: dimensions, weight, material, capacity, compliance certifications, the attributes buyers filter on. Target: 100% on your top-selling 20%, best-effort below.
+- **Tier 4 — Enrichment.** Images, datasheets, application notes, related products. Target: driven by revenue. Your top 100 SKUs, properly.
+
+This tiering makes the work finite. "Get Tier 1 to 100% on active products" is a project with an end. "Improve our data" is not.
+
+**Unit of measure is the field that quietly destroys everything.**
+
+Of all the fields, UoM causes damage out of proportion to its apparent triviality. A product sold in boxes of 50, stocked in individual units, and priced per metre is three numbers that must reconcile. When they don't, you get orders for 50x what the customer wanted, stock counts that never balance, and margin calculations that are wrong in a direction nobody notices until year-end.
+
+Define, for every product: the selling unit, the stocking unit, the pricing unit, and the conversion factors between them. Explicitly. In fields, not in a salesperson's memory.
+
+**Attributes need a controlled vocabulary or they're free text with extra steps.**
+
+If your material field contains "Stainless Steel", "stainless steel", "SS", "S/S", "Inox", and "AISI 316", you don't have an attribute — you have six. Nothing filters, nothing groups, nothing aggregates.
+
+For every Tier 3 attribute, define the permitted values as a list. Enforce it at entry. Map supplier variants to your canonical value at import. This is unglamorous and it's the difference between a catalog you can query and a pile of text.
+
+Where a standard exists, borrow it rather than inventing one. [GS1 standards](https://www.gs1.org/) cover product identification and classification, and ETIM covers technical attributes in several industrial verticals. Adopting an existing taxonomy costs a week and saves you the ongoing argument about what to call things.
+
+---
+
+## Measurable Quality Rules
+
+**You cannot manage what you haven't defined as a rule.**
+
+"Good data" is not a target. A rule that returns a number is. Write rules that a script can evaluate:
+
+- **Completeness** — Tier 1 fields populated on all active SKUs. Returns a percentage.
+- **Validity** — the value is of the right type and in the right range. Weight is a positive number. Price is greater than zero. GTIN passes its check digit. Status is one of four permitted values.
+- **Consistency** — cross-field logic holds. Selling unit price divided by pack quantity is within tolerance of the unit price. Discontinued products have a supersession target. Products with a stock level have an active status.
+- **Uniqueness** — no duplicate MPN within a manufacturer. No duplicate GTIN anywhere.
+- **Currency** — last-verified date within 12 months on Tier 2 fields. This is the rule that catches decay rather than error.
+
+**Run them on a schedule and put the number somewhere visible.**
+
+A weekly script that evaluates every rule and writes the results to a dashboard is a day of work and it changes the dynamic entirely. Once "Tier 1 completeness: 94.2%" is a number on a screen that someone owns, it moves. Before that, it's a feeling.
+
+The rules also give you an entry gate. New products fail validation and don't go live until they pass — which sounds obstructive and is the only mechanism that stops the incoming tide while you fix the backlog.
+
+**Deduplication is a project, not a rule.**
+
+Duplicates are the hardest class because they require judgement. The same physical product arrives as `SKU-4471`, `4471-A` from a second supplier, and `BSP-4471` from an acquisition ten years ago. Three records, one product, three stock levels, three price points, and a customer who bought all three.
+
+The workable approach:
+
+1. **Match on strong identifiers first.** Identical GTIN or identical manufacturer+MPN is a definite duplicate. This finds the easy half automatically.
+2. **Fuzzy match on description plus key attributes** for the rest. This produces candidates, not conclusions.
+3. **Human review of candidates**, prioritised by combined transaction volume. Reviewing duplicates on products nobody buys is a waste.
+4. **Merge with a survivor rule** decided in advance: which record survives, what happens to the history, and how the retired SKU redirects.
+
+Do not attempt to deduplicate the whole catalog at once. Take the top 500 by revenue, clean those, and let the long tail wait. The revenue concentration in B2B catalogs is severe enough that this covers most of the pain.
+
+---
+
+## Where AI Helps and Where It Adds Confident Nonsense
+
+**It's good at the transformation, not the truth.**
+
+Language models are genuinely useful on catalog data, in a narrow band. They're good at:
+
+- **Normalising free text to a controlled vocabulary.** Mapping "S/S", "Inox", and "stainless" to your canonical value. High volume, verifiable, low error cost.
+- **Extracting attributes from unstructured supplier text.** A 200-word supplier description contains the thread size and the pressure rating in prose; pulling them into fields is exactly the right task.
+- **Drafting descriptions from structured attributes.** Fields in, prose out. This direction is safe because the facts come from your data.
+- **Flagging anomalies.** "This product's weight is 400x the category median" is a useful thing to surface.
+- **Proposing duplicate candidates** for human confirmation.
+
+**It's bad at inventing the facts you don't have.**
+
+The failure mode is asking a model to fill a gap rather than transform a value. If your record has no pressure rating and you ask a model what the pressure rating is, it will tell you. Confidently. Sometimes correctly, which is worse than always wrong, because it destroys your ability to spot the pattern.
+
+The boundary is simple and should be enforced in the tooling: the model may restructure, extract, or normalise information that is present in a source you supplied. It may not supply information from its own knowledge. If the source doesn't contain the pressure rating, the correct output is "not found", and the correct next step is a human emailing the supplier.
+
+The broader mechanics of doing this at scale — including the pipeline and review structure — are covered in [AI product catalog automation for B2B distributors](/articles/ai-product-catalog-automation-b2b-distributors/). The governance point stands regardless of the tooling: AI accelerates whatever your process already does, including the mistakes.
+
+**Always keep provenance.**
+
+Every field should carry where it came from and when: supplier feed, manual entry, AI extraction from datasheet, verified by a named person. When something's wrong three months later — and something will be — provenance is the difference between fixing one field and re-auditing a category. It's also the only way to know whether your AI extraction is actually working, because you can compare AI-sourced fields against verified ones.
+
+---
+
+## Governance That Survives a Busy Quarter
+
+**One owner, named, with time allocated.**
+
+Data quality without an owner reverts to its prior state within two quarters, reliably. The owner does not need to be full-time — for a small distributor, a day a week is enough. They need to be named, and the day needs to be in the calendar, because the work has no deadline of its own and will lose every collision with work that does.
+
+**Bolt the maintenance to events that already happen.**
+
+Standalone data tasks don't get done. Attached ones do:
+
+- **New product onboarding** — the validation gate. Nothing goes live incomplete. This is the highest-leverage control because it stops the problem at source.
+- **Supplier price update** — the moment the file is in your hands anyway. Re-validate the whole product range from that supplier while you're there.
+- **Return processed** — code the reason. If it's data-caused, fix the record before closing the return. This creates a feedback loop from the symptom to the cause, which is the only self-correcting mechanism in the whole system.
+- **Quarterly** — the top 100 SKUs get a currency check against the supplier's current datasheet.
+
+**Fix the feed, not the record.**
+
+When a supplier's import writes bad data, the instinct is to correct the affected records. That's a treadmill — next month's import overwrites your correction. Fix the mapping, the transformation, or the supplier's file. Correcting downstream of a broken pipe is the most common way data quality effort gets burned with nothing to show.
+
+**Report it in money.**
+
+The dashboard number that gets attention is not "94.2% completeness". It's "12 of last month's 47 returns were caused by wrong catalog data, at €3,100 in freight and handling." Code your returns by cause for one quarter and you'll have the business case you've been unable to make for years. That's the number that gets you the day a week.
+
+---
+
+Product data quality is a maintenance discipline that has been repeatedly mis-sold as a project. There is no end state where the catalog is clean and stays clean, because suppliers keep changing things and products keep arriving under time pressure. What exists is a set of rules that run every week, a gate that stops bad records entering, an owner with a day, and a feedback loop from returns back to records.
+
+Set up that machinery and the catalog trends toward correct. Run a heroic six-month cleanup without it and you'll be back where you started by the following summer, having spent the money and learned nothing durable.
+
+---
+
+**Sources:** [GS1 — global standards for product identification](https://www.gs1.org/) · [GS1 GDSN — Global Data Synchronisation Network](https://www.gs1.org/services/gdsn) · [Schema.org Product](https://schema.org/Product)

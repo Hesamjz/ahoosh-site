@@ -1,0 +1,151 @@
+---
+title: "AI Competitor Monitoring on a Budget"
+description: "Build a competitor monitoring system for under €30 a month — the signals worth tracking, AI summarisation of the noise, and the weekly digest that produces decisions."
+pubDate: 2026-07-14
+tags: ["AI Operations", "Strategy", "B2B"]
+heroImage: "/articles/img/ai-competitor-monitoring-setup.jpg"
+---
+
+<img src="/articles/img/ai-competitor-monitoring-setup.jpg" alt="Dashboard on a monitor showing a list of tracked competitor updates and change alerts" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Competitive intelligence in most small B2B companies is a founder with too many browser tabs. Someone mentions a competitor in a sales call, the founder spends forty minutes reading their site, notices they have changed their pricing page, feels a spike of anxiety, tells nobody, and forgets by Thursday. Six months later a deal is lost to a product feature that was announced in March on a page nobody was watching.
+
+The enterprise answer to this is a competitive intelligence platform costing four figures a month. The small-business answer is usually nothing. Between those two there is a perfectly good middle: a handful of free monitoring tools feeding a change log, an LLM doing the reading and the compression, and a fifteen-minute weekly review that produces a decision or explicitly produces nothing.
+
+Total cost is somewhere around €20–€30 a month, mostly in API tokens. Setup is an afternoon. The reason it works now and did not three years ago is specific: the expensive part of competitive monitoring was never collecting the signals — RSS and change detectors have been free forever. The expensive part was a human reading 200 low-value updates to find the two that mattered. That is now a machine task.
+
+---
+
+## Decide What You Are Monitoring For — Before Any Tools
+
+**Monitoring without a question is a hobby.**
+
+The failure mode is comprehensiveness: track everything, produce a dashboard, feel informed, change nothing. Before configuring a single alert, write down the three to five decisions this system is supposed to inform. For a small B2B company they are usually some version of:
+
+- **Should we change our price?** (competitor pricing moves, new tiers, discounting behaviour)
+- **Should we build or stock this?** (product and range announcements)
+- **Are we about to lose a segment?** (their new case studies, their hiring, their market messaging)
+- **Is there an opening?** (their customers complaining, their retreat from a segment, their key person leaving)
+
+If a signal cannot plausibly change one of those answers, do not collect it. Their LinkedIn post about their office Christmas party is not intelligence.
+
+**Pick five competitors. Not twenty.**
+
+Three direct competitors — the ones that actually appear in your lost deals. One adjacent player who could enter your space. One "shape of the future" company, usually larger or in another market, whose moves preview where the category is going.
+
+Twenty competitors produces a feed nobody reads. Five produces a document a founder will actually open on Monday.
+
+**Where the list comes from.**
+
+Not from a brainstorm. From your lost-deal records. If your CRM does not have a "lost to whom" field, add it today — it is one dropdown, and without it every competitive discussion in your company is speculation. The three names that appear most often are your competitor set, and they are frequently not the names you would have guessed.
+
+---
+
+## The Signal Stack — What to Watch and How, for Free
+
+**1. Website change detection.**
+
+The highest-signal, lowest-noise source available. A competitor's pricing page, product pages and terms are their strategy in public, and they update them without announcement.
+
+Tools like Visualping, Distill.io and changedetection.io all run free tiers sufficient for a handful of pages, and changedetection.io is open-source if you would rather self-host. Watch, per competitor:
+
+- Pricing page — the single most valuable URL on the internet for your purposes
+- Main product or services page
+- Terms and conditions — quiet changes here signal shifts in guarantees, terms and risk appetite
+- Careers page — hiring is the most honest roadmap a company publishes
+
+Set daily checks. Set them to ignore cosmetic changes if the tool supports it, or you will drown in cookie-banner diffs.
+
+**2. Their careers page is their roadmap.**
+
+This deserves its own point because it is consistently underrated. A company that posts three ML engineer roles and a data platform lead is telling you what it will ship in nine months, before its marketing team knows. A company that stops hiring salespeople in a region is leaving that region. A company hiring a Head of Partnerships is about to change its channel model.
+
+Job posts are also unusually honest, because they are written by hiring managers to attract specialists, not by marketers to position a company. The requirements list is a specification.
+
+**3. Google Alerts, tuned.**
+
+[Google Alerts](https://www.google.com/alerts) is free and mostly produces noise, because most people configure it badly. Improve it with two changes: use quoted exact names, and exclude their own domain — you want what *others* say about them, not their own press releases. Set delivery to a weekly digest, not "as it happens," and send it to a dedicated address rather than your inbox.
+
+**4. RSS, which is not dead.**
+
+Their blog, their changelog, their newsroom almost certainly still expose feeds. An RSS reader — Feedly, Inoreader, or a self-hosted one — collects these reliably and without the algorithmic mediation of a social platform. A changelog feed is particularly valuable: it is a competitor's product decisions, dated, in sequence, with no spin.
+
+**5. Search Console, as a competitive tool.**
+
+This is the source nobody thinks of as competitive intelligence, and it is the most reliable one you have, because it is measured rather than inferred. If your impressions for a set of queries decline while your position holds, someone has entered above you. If a query you never targeted starts producing impressions, the market is shifting language. The monthly routine in [Google Search Console diagnostics](/articles/google-search-console-diagnostics/) doubles as a competitive early-warning system, and the data is yours rather than a vendor's estimate.
+
+**6. Your own sales calls.**
+
+The best competitive intelligence in your company is already being spoken aloud, weekly, and discarded. One CRM field — "who else are they evaluating, and what did they say about them" — collected consistently, outperforms every tool on this list combined. It is free and it is the one thing small companies never do.
+
+---
+
+## The AI Layer — Where the Actual Saving Is
+
+**The problem is triage, not collection.**
+
+By week two you will have a feed with 30–60 items in it. Perhaps two matter. Reading all sixty to find the two is a forty-minute job you will do twice and then abandon — which is exactly why the last three attempts at this failed.
+
+An LLM does that reading in about twenty seconds and thirty cents. This is the part that makes the system survive contact with a busy week.
+
+**The pipeline, plainly.**
+
+1. Every signal lands in one place — a Google Sheet, an Airtable base, a Notion database. Zapier or Make can route change-detection alerts, RSS items and alert emails into it, and both have free tiers that cover this volume.
+2. Once a week, an automation sends the week's rows to an LLM with a fixed prompt.
+3. The output goes into a document you read on Monday.
+
+If you can write a little code, this is a scheduled script and an API call, and the hosting is free. If you cannot, it is a Make scenario with four steps.
+
+**The prompt is the whole product.**
+
+A vague prompt produces a vague summary, which is worse than nothing because it feels like work. Be specific about the output structure and — critically — about the option to report nothing:
+
+> You are a competitive analyst for a B2B distributor selling industrial components in the EU. Below are this week's tracked changes from five competitors. For each item, classify as: `IGNORE` (cosmetic, PR, routine), `NOTE` (real but not urgent), or `ACT` (requires a decision within 30 days). For every `ACT` item, state in one sentence what changed, in one sentence why it matters to us, and propose one specific action. If nothing qualifies as `ACT`, say so explicitly and do not manufacture significance.
+
+That last sentence is the important one. Without it the model will invent urgency, because summarisers are trained to produce content. With it, a genuinely quiet week reports as a quiet week — which is the correct and most common answer, and the thing that keeps you from reacting to noise.
+
+**What the model is good and bad at.**
+
+Good at: reading a diff and telling you what materially changed; spotting that three unrelated signals point the same direction; compressing sixty items into five; noticing language shifts across time.
+
+Bad at: knowing what matters to *your* business. It does not know that the competitor's new tier is aimed at a segment you exited last year, or that the person they hired used to work for you. Feed it that context in the prompt — a short standing paragraph about your positioning, your segments and your current strategic questions — and its classification improves sharply. Without it, you get a generic news summary.
+
+Also bad at: being right about intent. Treat every "why it matters" line as a hypothesis to check, not a finding.
+
+**Keep the stack small.**
+
+Every tool in this system is one you must maintain, pay for and remember. Two collectors, one sheet, one automation, one LLM call. Resist the urge to add a sixth source because it exists — the same logic that governs a [minimal tech stack](/articles/minimal-tech-stack-b2b-consulting/) applies with force here, because monitoring tools are unusually good at generating the appearance of insight.
+
+---
+
+## The Weekly Review — Fifteen Minutes, One Output
+
+**Monday, quarter of an hour, one page.**
+
+The digest arrives. You read five bullets. For each `ACT` item you make exactly one of three calls:
+
+- **Do nothing, deliberately.** Note it and move on. This is the correct answer most weeks and it should not feel like failure.
+- **Watch it.** Set a specific trigger: "if they add a second warehouse, revisit." A watch item without a trigger is a worry, not a plan.
+- **Act.** One owner, one date, one line in whatever your task system is.
+
+**The log is the asset, not the digest.**
+
+Keep every weekly digest in one running document, dated. Individual weeks are usually boring. The twelve-month view is not — it is the only place you can see that a competitor has moved from "software for distributors" to "software for manufacturers" across four small steps, none of which was newsworthy alone. That trajectory is invisible in real time and obvious in review. Nobody keeps this log, which is precisely why it is worth keeping.
+
+**Quarterly, zoom out.**
+
+Once a quarter, feed the whole quarter's log back to the model with a different question: what direction is each competitor moving, what have they stopped doing, and where is the gap none of them are serving? That last question is where positioning decisions come from — and the answer is frequently a segment everyone has quietly abandoned because it is unglamorous.
+
+**Do not let it become reactive.**
+
+The genuine risk of good competitive monitoring is that it turns your roadmap into a mirror of theirs. Every week you see what they shipped, and every week the pull is to match it. That is how a small company ends up with a worse version of a bigger company's product.
+
+The guard is a standing question at the review: *does this change what our customers asked us for?* If not, it goes in the log and nowhere else. A competitor's price cut is information about them. Whether you respond is a question about your own margin, your own segment, and your own [discount policy](/articles/b2b-pricing-discount-policy/) — and it should be answered from those, not from a change-detection alert.
+
+---
+
+The whole system is five competitors, six sources, one sheet, one weekly prompt and fifteen minutes on a Monday. It costs less than a single hour of a consultant's time per month and it replaces the thing most small companies actually do, which is nothing punctuated by panic. What it produces is not a dashboard. It is a dated log that, read backwards at the end of the year, shows you the four moves that mattered and the two hundred that did not — and, more usefully, tells you honestly on most Mondays that nothing happened and you should go back to work.
+
+---
+
+**Sources:** [Google Alerts](https://www.google.com/alerts) · [Google Search Console](https://search.google.com/search-console/about)

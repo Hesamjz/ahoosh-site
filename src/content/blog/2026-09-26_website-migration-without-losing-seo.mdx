@@ -1,0 +1,171 @@
+---
+title: "Website Migration Without Losing SEO"
+description: "A step-by-step website migration plan that protects search rankings — URL mapping, redirect rules, pre-launch QA, launch-day checks, and the 90-day recovery curve."
+pubDate: 2026-07-14
+tags: ["Strategy", "SEO", "Operations"]
+heroImage: "/articles/img/website-migration-without-losing-seo.jpg"
+---
+
+<img src="/articles/img/website-migration-without-losing-seo.jpg" alt="A laptop showing a URL redirect map next to a notebook of migration checklists" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Website migrations are where good SEO goes to die. A company spends two years building organic traffic, redesigns the site, launches on a Friday, and watches 60% of its search visibility evaporate over the following three weeks. The agency says it's a temporary fluctuation. It isn't, and by the time everyone agrees it isn't, the diagnosis is much harder because too much changed at once.
+
+The frustrating part is that migration losses are almost entirely preventable. The mechanics are well understood and documented by Google itself. Traffic drops during migration are not caused by mysterious algorithmic disfavour. They're caused by a specific, findable list of things: URLs that changed without redirects, redirects that chain four hops deep, a `robots.txt` that shipped from staging, canonical tags pointing at the old domain, and internal links still going to URLs that now 301.
+
+This guide is the sequence that avoids that. It assumes a small B2B site — a few hundred pages, no dedicated SEO team, one developer or an agency.
+
+---
+
+## Decide What Kind of Migration You Are Actually Doing
+
+**The risk profile depends entirely on what changes.**
+
+"Migration" covers five quite different operations with wildly different risk. Be precise about which you're doing, because it determines how much of this guide applies:
+
+- **Redesign only** — same URLs, same domain, new templates and design. Lowest risk. The danger is content loss and template-level changes to titles and headings.
+- **Platform change** — WordPress to Astro, Shopify to something else. Same domain, but URL structure usually changes because the new platform generates paths differently. Moderate risk.
+- **URL structure change** — same domain and platform, new information architecture. Moderate to high risk, entirely dependent on redirect quality.
+- **Domain change** — new hostname. High risk, but well-documented and recoverable if done cleanly.
+- **Consolidation** — merging two sites into one. Highest risk, because you're combining URL changes, domain changes, and content decisions all at once.
+
+**Never combine categories if you can avoid it.**
+
+The single best piece of migration advice is boring: do one at a time, with a gap between. Change the design, wait three weeks, confirm stability, then change the URLs. When you change the design, the URLs, the domain, and the CMS in one release, and traffic drops 40%, you have four candidate causes and no way to isolate them. When you change one thing, you have one.
+
+The counter-argument is always cost — "we can't do three deploys." The cost of a three-week staggered rollout is one extra deploy cycle. The cost of an unattributable 40% traffic loss is a quarter of pipeline. Stagger it.
+
+---
+
+## Build the URL Map Before Anything Else
+
+**The inventory comes first, and it comes from four sources.**
+
+You cannot redirect URLs you don't know exist. Every migration failure I've seen started with an incomplete inventory. Pull from all four of these and deduplicate:
+
+1. **A full crawl of the current site** — Screaming Frog (free under 500 URLs) or Sitebulb. This gets you what's linked.
+2. **The XML sitemap** — what you *think* you have.
+3. **Google Search Console** — the Pages report and the Performance report exported for the last 12 months. This gets you what Google actually has indexed, including orphan pages nothing links to.
+4. **Server logs or analytics** — the last 12 months of URLs that received a real visit. This catches pages with backlinks that you'd otherwise never find.
+
+The union of these four is your real inventory. It is always larger than anyone expected — typically 20–40% larger than the crawl alone, because of old campaign pages, PDFs, and pages that dropped out of the navigation years ago but still hold links.
+
+**Prioritise, because you can't hand-map everything.**
+
+For each URL, pull three numbers: organic clicks (last 12 months), referring domains, and conversions. Then bucket:
+
+- **Tier 1 — map by hand.** Anything with meaningful traffic, any page with external backlinks, every page that converts. Usually 5–10% of URLs and 80%+ of the value. A human decides each destination.
+- **Tier 2 — map by pattern.** Bulk rules where old and new structure map predictably (`/blog/2024/05/post-name` → `/articles/post-name`). Regex rules, but verified against a sample.
+- **Tier 3 — decide deliberately.** Zero traffic, zero links. Redirect to the nearest relevant page or let it 410. Do not blanket-redirect these to the homepage.
+
+**The homepage redirect anti-pattern.**
+
+The most common lazy fix is redirecting every unmapped old URL to the homepage. Google treats a redirect to an irrelevant page as a soft 404 — it passes no value and it wastes crawl budget. If there's no relevant destination, returning a 410 Gone is cleaner and faster: it tells Google to drop the URL rather than repeatedly recheck it.
+
+Redirect to the closest *equivalent* page or don't redirect at all. There is no middle option that helps.
+
+---
+
+## Redirect Rules That Don't Undo Themselves
+
+**301, and only 301.**
+
+Use permanent redirects for permanent moves. A 302 tells Google the old URL is still the canonical one and the move is temporary — it will keep the old URL indexed and may never fully transfer signals. This sounds like a detail and it is the difference between a clean migration and a six-month one. Check the actual response code with `curl -I`; do not trust the CMS's redirect plugin label.
+
+**Kill the chains.**
+
+A redirect chain is `/old` → `/interim` → `/new`. Every hop dilutes and slows. This happens organically when a site has been migrated before and the new rules stack on top of the old ones. Before launch, run your redirect list through a checker and flatten every chain to a single hop: `/old` → `/new` directly, plus `/interim` → `/new`.
+
+Redirect loops (`/a` → `/b` → `/a`) are rarer and fatal — the page becomes unreachable entirely. A crawl of the staging environment with redirect-following enabled catches both.
+
+**Preserve query strings and trailing slashes deliberately.**
+
+Two silent killers:
+
+- **Trailing slash inconsistency.** If the old site served `/services/` and the new one serves `/services`, that's a different URL and you need a rule. Pick one convention, enforce it site-wide, and redirect the other form.
+- **Query parameters.** UTM-tagged URLs in old campaigns, paginated archives, filtered category pages. Make sure your redirect rules pass parameters through rather than stripping them, or your attribution breaks on launch day even where SEO survives.
+
+**Keep the redirects for at least a year.**
+
+Google's own guidance is to maintain migration redirects for at least a year. In practice, keep them forever — a redirect rule costs nothing and old backlinks keep sending traffic for a very long time. The temptation to "clean up the redirect file" at the twelve-month mark should be resisted. There's no upside.
+
+---
+
+## Pre-Launch QA on Staging
+
+**Block staging from indexing, then remember to unblock production.**
+
+Staging environments must not be indexable — use HTTP authentication rather than `robots.txt`, because a `robots.txt` disallow doesn't reliably prevent indexing of linked URLs, and more importantly because the staging `robots.txt` is the file most likely to get deployed to production by accident.
+
+That accident — shipping `Disallow: /` to a live site — is the single most destructive migration bug there is, and it's invisible for days because the site looks perfectly fine to humans. Make "fetch production `robots.txt` and read it out loud" an explicit launch-day step with a named owner.
+
+**Crawl staging and diff it against production.**
+
+This is the highest-value hour in the whole project. Crawl both environments and compare, page by page:
+
+- **Title tags and meta descriptions** — templates change and titles silently lose the keyword or gain a boilerplate suffix.
+- **H1s** — new designs love turning the H1 into a styled div.
+- **Canonical tags** — the classic failure is every staging page canonicalising to the staging domain, which then ships to production and tells Google your whole site is a copy of a dev server.
+- **Word count per page** — a page that lost 60% of its content in the template rebuild will lose its rankings. This diff catches content that fell out of a sidebar or accordion nobody rebuilt.
+- **Internal link count** — pages that lost their internal links lost their internal PageRank.
+- **Structured data** — schema markup routinely doesn't survive a template rebuild. Validate against [schema.org](https://schema.org/) definitions and Google's Rich Results Test.
+- **hreflang** — if multilingual, this breaks on almost every migration.
+
+**Test the redirect map against the real list.**
+
+Take your full URL inventory, run every old URL against staging (with the redirect rules loaded), and record the final status code and destination. What you want: every Tier 1 URL returns 200 at the intended destination in one hop. What you'll find on the first pass: roughly 10–15% wrong. That's normal. Fix and re-run until clean.
+
+**Check performance, because it's now a ranking input.**
+
+Run Core Web Vitals on the new templates before launch, not after. A redesign that improves aesthetics and regresses LCP from 1.2s to 3.5s will cost you. The correlation between speed and B2B conversion is separately well established — the same considerations that drive [B2B website conversion](/articles/b2b-website-conversion-2026/) apply here, and a migration is the cheapest moment to fix them.
+
+---
+
+## Launch Day and the 90 Days After
+
+**Launch on a Tuesday morning. Not Friday.**
+
+This is not superstition. It's that you want the people who built it awake, available, and not on a weekend when the first problems surface. Migration bugs surface in the first 6–24 hours. Ship Tuesday, watch it Wednesday, fix Thursday.
+
+**The launch-hour checklist, in order:**
+
+1. Fetch `https://yourdomain.com/robots.txt` and read it. Confirm it does not disallow.
+2. Spot-check ten Tier 1 URLs with `curl -I`. Confirm single-hop 301 to a 200.
+3. View source on five key pages. Confirm canonical tags point to the production domain.
+4. Submit the new XML sitemap in Search Console. Keep the *old* sitemap submitted too for a few weeks — it accelerates discovery of the redirects.
+5. If the domain changed, file the Change of Address in Search Console. This is a specific tool and it materially speeds up the transfer.
+6. Confirm analytics is firing on the new templates. Confirm goal and conversion tracking survived.
+7. Confirm the new property in Search Console is verified *before* launch, not after.
+
+**Update internal links properly.**
+
+Redirects handle external links. Internal links should point directly at the new URL — an internal link that 301s works, but it's slow, it burns crawl budget, and it signals sloppiness at scale. Run a crawl a week after launch and fix every internal link that hits a redirect. This includes links inside old blog posts, which is the set everyone forgets.
+
+**The expected curve, so you don't panic.**
+
+A well-executed migration on a small site typically looks like this:
+
+- **Week 1** — visible drop, 10–25%. Google is recrawling and reprocessing. This is normal and not a signal of failure.
+- **Weeks 2–4** — partial recovery. Rankings fluctuate as pages get reindexed at their new URLs.
+- **Weeks 4–8** — approaching baseline. Most sites reach 90%+ of previous traffic here.
+- **Weeks 8–12** — stable, often above baseline if the new site is faster and better structured.
+
+What is *not* normal: a drop that deepens after week 3, or a recovery that plateaus below 70%. Either means something is structurally wrong — go back to the redirect map and the canonical tags first. Ninety percent of the time it's one of those two.
+
+**Monitor these four things weekly for 90 days:**
+
+- Search Console Pages report — watch "Not indexed" reasons, especially "Page with redirect" and "Excluded by robots.txt"
+- Crawl stats — a collapse in crawl rate means Google is struggling
+- 404 log on the production server — real 404s from real referrers are unmapped URLs you missed
+- Organic clicks by page, compared against the pre-migration baseline you exported
+
+Keep the pre-migration baseline export. Without it, you cannot prove what happened, and "traffic feels lower" is not a diagnosis. The broader discipline here connects to how you [approach SEO for B2B services](/articles/seo-b2b-services-2026/) generally — measurement first, changes second.
+
+---
+
+A migration is not an SEO project with a development component. It's a development project where the acceptance criteria happen to be SEO. That reframing is what gets the URL map built in week one instead of the week before launch, and what gets the redirect testing into the QA plan instead of into a post-launch scramble.
+
+The work is unglamorous: an inventory, a mapping spreadsheet, a redirect file, a diff, and a checklist. It takes a few days on a small site. Skipping it doesn't save those days — it moves them to the following quarter, at a much worse exchange rate, while the pipeline is dry.
+
+---
+
+**Sources:** [Google Search Central — site moves with URL changes](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) · [Google Search Central — redirects and Google Search](https://developers.google.com/search/docs/crawling-indexing/301-redirects) · [Schema.org](https://schema.org/)

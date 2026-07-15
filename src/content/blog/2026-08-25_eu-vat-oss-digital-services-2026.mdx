@@ -1,0 +1,137 @@
+---
+title: "EU VAT One Stop Shop for Digital Services: A Practical Guide"
+description: "How the EU VAT One Stop Shop works for digital services — place-of-supply rules, the €10,000 threshold, registration, evidence and quarterly filing."
+pubDate: 2026-07-14
+tags: ["Finance", "Trade", "Strategy"]
+heroImage: "/articles/img/eu-vat-oss-digital-services-2026.jpg"
+---
+
+<img src="/articles/img/eu-vat-oss-digital-services-2026.jpg" alt="Desk with an invoice, a laptop showing a VAT return form, and a European map" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+The moment a small European business sells its first digital product to a customer in another member state, it inherits a tax problem that has nothing to do with the size of the sale. A €29 subscription bought by a freelancer in Portugal is, from a VAT perspective, a Portuguese supply. You owe Portuguese VAT at the Portuguese rate to the Portuguese tax authority. Sell to eleven countries and you have, in principle, eleven registrations.
+
+The One Stop Shop (OSS) exists to make that survivable. It lets you register once, in one member state, file one quarterly return, make one payment, and let the tax authorities distribute the money between themselves. It is genuinely one of the better pieces of EU administrative design. It is also poorly explained, which is why so many small consultancies and SaaS operators either ignore it until an accountant panics, or over-comply and register in countries they never needed.
+
+This guide covers what actually applies to a small business selling digital services: when the rules bite, what the €10,000 threshold really means, how to register, what evidence you must keep, and what the quarterly filing looks like in practice.
+
+---
+
+## What Counts as a Digital Service — and Why the Definition Decides Everything
+
+**The category is narrower than most people assume.**
+
+"Digital services" in EU VAT law means, roughly, services delivered over the internet with minimal human intervention. The official term is telecommunications, broadcasting and electronically supplied services (TBE). The minimal-human-intervention test is the one that matters:
+
+- **In scope:** software downloads, SaaS subscriptions, hosted courses that run without a live instructor, stock photos, e-books, website hosting, automated data feeds, template packs, app purchases.
+- **Out of scope:** consulting delivered by a person over a video call, custom development work quoted per project, a live workshop delivered over Zoom, coaching, a report written specifically for one client.
+
+This distinction is the single most valuable thing to understand early, because it splits most small consultancies neatly in two. If you sell your own time, you are almost certainly not in the digital services regime at all. If you sell a recorded course of that same material, you are.
+
+**The B2B / B2C split matters more than the OSS itself.**
+
+Before you worry about OSS, check who your buyer is:
+
+- **Selling to a VAT-registered business in another member state** — the reverse charge applies. You invoice with no VAT, note "reverse charge" on the invoice, and the buyer accounts for VAT in their own country. OSS is not involved. This covers most B2B consulting and most B2B software sold to registered companies.
+- **Selling to a private individual or a non-registered entity in another member state** — you charge the VAT rate of the customer's country. This is where OSS applies.
+
+So the practical answer for a lot of B2B operators is: validate the customer's VAT number, apply the reverse charge, and OSS never enters the picture. Validation runs through the Commission's VIES system and takes about two seconds per number. It is not optional diligence — an invalid number means you were supposed to charge VAT and you didn't.
+
+The mixed case is the awkward one, and it is common: a consultancy that sells project work to registered companies (reverse charge) and also sells a €200 self-paced course to individuals (OSS). Both regimes run in the same business at the same time. Your invoicing system needs to know which is which at the moment of sale, not at year-end.
+
+---
+
+## The €10,000 Threshold — What It Actually Covers
+
+**One threshold, all countries combined, and it is not per-country.**
+
+Since July 2021 there is a single EU-wide threshold of €10,000 per calendar year. Below it, you may keep charging your own country's VAT rate on cross-border B2C digital sales and intra-EU distance sales of goods, and skip OSS entirely. Above it, you must apply the destination country's rate from the transaction that crosses the line onward.
+
+The details that catch people out:
+
+- It is **cumulative across all member states**, not €10,000 per country.
+- It **excludes your domestic sales** — only cross-border B2C supplies count toward it.
+- It **combines goods and digital services** if you sell both.
+- Crossing it mid-year means the rules change **from that transaction**, not from the next quarter or the next year.
+- Once you exceed it, you are bound by destination rules for the **rest of that year and the following calendar year**, even if sales fall back.
+- It is only available if you are established in **one** member state. Non-EU sellers have no threshold at all — the first euro of B2C digital sales triggers the obligation.
+
+**You can opt in voluntarily, and sometimes should.**
+
+You may register for OSS before hitting €10,000. Whether that's smart depends on rate arithmetic. If you're established in a high-rate country (Hungary at 27%, or the Nordics at 25%) and selling to buyers in lower-rate countries, applying destination rates makes your gross price more competitive or your margin better, depending on whether you price tax-inclusive. If you're established in a low-rate country, staying under the threshold is the cheaper option while it lasts.
+
+The other reason to opt in early is operational: switching your billing system mid-year, mid-quarter, on the day a transaction happens to tip you over, is a worse project than doing it deliberately in January.
+
+---
+
+## Registration — The Three Schemes and Which One You're In
+
+There are three OSS schemes, and picking the wrong one wastes a month.
+
+- **Union scheme** — for businesses established in the EU, covering intra-EU B2C services and distance sales of goods. You register in your member state of establishment. This is what most European small businesses use.
+- **Non-Union scheme** — for businesses with no EU establishment supplying services to EU consumers. You choose any member state as your member state of identification. A Serbian, UK, or Swiss consultancy selling courses to EU individuals lands here. If you're weighing where to base an entity in the first place, the trade-offs are covered in the guide to [setting up a Serbian company as a non-EU founder](/articles/serbia-company-setup-non-eu-founder-2026/).
+- **Import scheme (IOSS)** — for distance sales of imported goods in consignments valued at or below €150. Not relevant to digital services, but frequently confused with the others because the acronyms rhyme.
+
+**The registration steps.**
+
+1. Access your national tax authority's OSS portal. Every member state runs its own front end to the same system; the Commission maintains the [OSS portal](https://vat-one-stop-shop.ec.europa.eu/index_en) with country-by-country links.
+2. Register under the correct scheme. You need your VAT number (Union scheme) or a chosen identification state (non-Union).
+3. Registration takes effect from the **first day of the quarter following** your application. Apply on 20 August and you're live 1 October. There's an exception if you apply by the tenth of the month after your first qualifying supply.
+4. Configure your billing system with the correct destination rates before that date.
+
+Registration itself takes about twenty minutes. The system-configuration work behind it takes longer, which is why the effective-date lag is usually helpful rather than annoying.
+
+---
+
+## Evidence, Rates, and the Two-Piece Location Rule
+
+**You must prove where your customer was.**
+
+Charging the right rate means knowing the customer's country, and the law does not take your word for it. The standard requirement is **two pieces of non-contradictory evidence** from a list that includes:
+
+- Billing address
+- IP address geolocation
+- Bank or card issuer country (BIN lookup)
+- Country code of the SIM for mobile purchases
+- Fixed landline location
+- Other commercially relevant information
+
+For small sellers under a €100,000 annual turnover in cross-border TBE supplies, a simplified single-piece rule applies — one item of evidence is enough. Most small consultancies sit comfortably inside that.
+
+In practice: if you use Stripe, Paddle, Lemon Squeezy, or a similar processor, the evidence collection is already happening. Stripe Tax and Paddle both capture IP, card country, and billing address at checkout and store them against the transaction. Paddle and Lemon Squeezy go further and act as merchant of record, meaning they take on the VAT registration and filing obligation entirely — you receive a net payout and never touch an OSS return. The cost is a higher processing fee, typically around 5% versus roughly 1.5–3% for a plain gateway. For a business doing under €50,000 a year in B2C digital sales, that spread is usually cheaper than an accountant's time and much cheaper than a mistake.
+
+**Rates change and you are responsible for the current ones.**
+
+There are 27 standard rates ranging from 17% to 27%, plus reduced rates that apply to some categories — e-books, for instance, qualify for reduced rates in many member states while SaaS does not. The Commission publishes current rates through its [VAT information pages](https://taxation-customs.ec.europa.eu/taxation-1/value-added-tax-vat_en), and tax engines pull from the same source. Do not hard-code a rate table into your checkout and forget about it. Rates move.
+
+---
+
+## The Quarterly Return — What Filing Actually Involves
+
+**The rhythm.**
+
+OSS returns are quarterly, due by the **end of the month following the quarter**: Q1 by 30 April, Q2 by 31 July, Q3 by 31 October, Q4 by 31 January. The deadline does not shift for weekends or public holidays, which is unusual and catches people.
+
+The return itself is short. For each member state where you made supplies, you report the taxable amount and the VAT due, split by rate. One payment covers the lot, made to your member state of identification, which then distributes.
+
+**What you need on hand each quarter:**
+
+- Total B2C sales per member state, split by VAT rate applied
+- Total VAT collected per member state
+- Nil returns still required if you're registered and sold nothing that quarter — this is the most commonly missed obligation and it triggers reminders and eventually deregistration
+- Corrections to prior returns, which go into the current return rather than an amended one
+
+**Records must be kept for ten years.** That is longer than most business record requirements and longer than most SaaS billing platforms retain granular transaction data on cheaper plans. Export quarterly to your own storage. A CSV per quarter in a folder is sufficient and costs nothing; the alternative is discovering in year six that your processor's data retention on the plan you were paying for was three years. Building this kind of small, unglamorous export step into your operating routine is the same discipline described in the [minimal tech stack for B2B consulting](/articles/minimal-tech-stack-b2b-consulting/) — the systems that survive are the ones with fewer moving parts and clear ownership.
+
+**Currency.** Returns are filed in euro. If you sell in another currency, convert using the ECB reference rate on the last day of the reporting period, published on the [ECB's euro reference exchange rate page](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html). One rate, one date, applied consistently — not the rate on each transaction date. Businesses with meaningful non-euro exposure should read this alongside the mechanics of [FX risk for B2B importers](/articles/fx-risk-b2b-importers/), because the same conversion discipline applies on the cost side.
+
+**Deregistration.** If you stop making qualifying supplies, deregister. Leaving a dormant OSS registration open means indefinite nil returns and a slow drip of compliance noise for no benefit.
+
+---
+
+The honest summary for most small European B2B businesses: check whether you're actually in scope before doing anything else, because a large share of consultancies selling their own time to registered companies are not. If you sell productised digital goods to individuals, decide early between running OSS yourself or using a merchant of record — and make that decision on the basis of your own hourly rate, not on the sticker price of the fee.
+
+The failure mode worth avoiding is the quiet one: selling €40,000 of courses across nine member states over two years, charging domestic VAT throughout, and finding out during due diligence or a bank review that you owe destination VAT plus interest in countries you've never visited. Registration is twenty minutes. The cleanup is not.
+
+---
+
+**Sources:** [European Commission — VAT One Stop Shop](https://vat-one-stop-shop.ec.europa.eu/index_en) · [European Commission — Value Added Tax](https://taxation-customs.ec.europa.eu/taxation-1/value-added-tax-vat_en) · [ECB euro reference exchange rates](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html)
