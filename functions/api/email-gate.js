@@ -37,13 +37,31 @@ function levelWord(l) {
   return m[String(l || '').toLowerCase()] || (l ? String(l) : '');
 }
 
+import { fromOurSite, denyForeign, preflight, corsHeaders, turnstileOk } from './_guard.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
+  const headers = corsHeaders(request);
   const reply = (body) => new Response(JSON.stringify(body), { headers });
+
+  // ── Guard 1: only our own pages may call this ──────────────────────────────
+  // This endpoint sends mail FROM contact@ahoosh.ai TO an address supplied in
+  // the request body. Left open (it was: no checks, CORS "*"), anyone could
+  // script it to send mail to arbitrary recipients under our domain — a fast
+  // route to a spam listing and a Brevo suspension.
+  if (!fromOurSite(request)) return denyForeign(request);
 
   let body = {};
   try { body = await request.json(); } catch { return reply({ ok: true, captured: false, status: 'parse_error' }); }
+
+  // ── Guard 2: Turnstile, verified when a token is supplied ──────────────────
+  // Not yet REQUIRED: the assess gate renders no Turnstile widget, so demanding
+  // a token here would reject every real visitor. Once the widget ships, pass
+  // `true` as the last argument to make it mandatory.
+  const tsToken = String(body['cf-turnstile-response'] || body.turnstile_token || '');
+  if (!(await turnstileOk(request, env, tsToken, false))) {
+    return reply({ ok: true, captured: false, status: 'turnstile_failed' });
+  }
 
   const email = String(body.email || '').trim().toLowerCase();
   const name = String(body.name || '').trim().slice(0, 100);
@@ -66,6 +84,12 @@ export async function onRequestPost(context) {
   const founderNote = String(body.founder_note || '').slice(0, 1500);
 
   if (!EMAIL_RE.test(email)) return reply({ ok: true, captured: false, status: 'invalid_email' });
+
+  // ── Guard 3: consent must actually be given ────────────────────────────────
+  // `consent` was previously read on the line above and then ignored — we stored
+  // and emailed regardless. The notice on the gate promises the visitor
+  // "Skip and nothing is stored", so honour it: no consent, no row, no email.
+  if (!consent) return reply({ ok: true, captured: false, status: 'no_consent' });
 
   // ── Store in D1 (fire-and-forget) — now includes answers + breakdown for the record ──
   let stored = false;
@@ -257,12 +281,6 @@ async function buildAdvisory(env, { testTitle, scaleName, summary, score, breakd
   }
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+export async function onRequestOptions(context) {
+  return preflight(context.request);
 }

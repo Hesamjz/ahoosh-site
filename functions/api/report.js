@@ -1,11 +1,19 @@
 // Cloudflare Pages Function — POST /api/report
 // Receives assessment JSON → calls Claude Haiku → returns consulting report JSON
-// Persists session to D1 (fire-and-forget, bound as ASSESS_DB)
+//
+// This endpoint deliberately does NOT persist anything.
+//
+// It used to write the respondent's answers + IP to D1 on every call. But the
+// page that calls it sends only { assessments } — no email, no consent — and the
+// consent notice on /assess/report and in AssessBody promises the visitor:
+//   "Skip and nothing is stored."
+// Storing here made that statement false, and an IP is personal data under GDPR.
+// Persistence now happens only in /api/email-gate, which runs after the visitor
+// has actually given their email and consented. Nothing is lost: email-gate
+// already writes the same row to the same table.
 //
 // Required Cloudflare env secrets (set via Cloudflare dashboard → Pages → Settings → Variables):
 //   ANTHROPIC_API_KEY  — your Anthropic API key
-// Required D1 binding (set via Cloudflare dashboard → Pages → Settings → Bindings):
-//   ASSESS_DB          — D1 database "ahoosh-assess"
 
 const SYSTEM_PROMPT = `You are a senior business consultant working at AHoosh.ai. You have received assessment results from a potential client. Produce a concise, precise consulting report.
 
@@ -34,8 +42,13 @@ Rules:
 - Mention AHoosh services only where genuinely relevant
 - Tone: direct, clear, respectful. Like a smart friend who happens to be an expert.`;
 
+import { fromOurSite, denyForeign, preflight } from './_guard.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
+
+  // Only our own pages may call this — it spends an LLM call per request.
+  if (!fromOurSite(request)) return denyForeign(request);
 
   try {
     const body = await request.json();
@@ -101,27 +114,11 @@ export async function onRequestPost(context) {
       return json({ error: "Failed to parse AI response", raw }, 422);
     }
 
-    // Persist to D1 (fire-and-forget — never blocks response)
-    if (env.ASSESS_DB) {
-      const sessionId = crypto.randomUUID();
-      const email = body.email || null;
-      const ip = request.headers.get("CF-Connecting-IP") || null;
-      context.waitUntil(
-        env.ASSESS_DB.prepare(
-          `INSERT INTO assess_sessions (id, email, assessments, report, created_at, ip) VALUES (?, ?, ?, ?, ?, ?)`
-        )
-          .bind(
-            sessionId,
-            email,
-            JSON.stringify(assessments),
-            JSON.stringify(report),
-            new Date().toISOString(),
-            ip
-          )
-          .run()
-          .catch((e) => console.error("[report] D1 persist failed:", e))
-      );
-    }
+    // NO PERSISTENCE HERE — see the header comment.
+    // The visitor is told "Skip and nothing is stored", and at this point they
+    // have not been asked for consent yet (this endpoint receives only
+    // { assessments }). Writing their answers + IP here contradicted that
+    // promise. /api/email-gate stores the session after real consent.
 
     return json({ ok: true, report });
   } catch (e) {
@@ -130,14 +127,8 @@ export async function onRequestPost(context) {
   }
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
+export async function onRequestOptions(context) {
+  return preflight(context.request);
 }
 
 function json(body, status = 200) {
@@ -145,7 +136,9 @@ function json(body, status = 200) {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      // Locked to our own origin (was "*", which let any site call this).
+      "Access-Control-Allow-Origin": "https://ahoosh.ai",
+      Vary: "Origin",
     },
   });
 }
