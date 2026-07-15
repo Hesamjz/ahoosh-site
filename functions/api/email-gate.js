@@ -26,9 +26,19 @@
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CAL = 'https://calendly.com/ahoosh/strategy';
-// Absolute base for links/attachments inside emails. Always production: an email
-// must not link a reader at a staging build. Override per-env if ever needed.
-const SITE = 'https://ahoosh.ai';
+// Absolute base for links/attachments inside emails.
+//
+// Derived from the deployment actually serving the request, NOT hard-coded.
+// Learned the hard way (staging test 2026-07-15): with this pinned to
+// ahoosh.ai, a Snapshot sent from staging told Brevo to attach
+// https://ahoosh.ai/downloads/AI_Visibility_Snapshot_v1.pdf — a path that does
+// not exist on production. The site answers unknown paths with 200 + the
+// homepage HTML (no 404 route), so Brevo happily attached the HOMEPAGE renamed
+// .pdf. The email looked perfect; the attachment was junk.
+// Using the serving origin keeps every email self-consistent: staging emails
+// carry staging's file, production emails carry production's.
+// fromOurSite() already restricts callers to our own hosts.
+const siteBase = (request) => new URL(request.url).origin;
 
 /**
  * Unsubscribe token — HMAC of the address, so an unsubscribe link cannot be
@@ -155,6 +165,7 @@ export async function onRequestPost(context) {
         // The /snapshot page promises "The Snapshot (PDF, by email)". Attach the
         // real document AND give a download link (some clients strip attachments).
         // Detected off source/track so only Snapshot requests get it.
+        const SITE = siteBase(request);
         const isSnapshot = /snapshot/i.test(source) || /snapshot/i.test(track);
         const snapshotHtml = isSnapshot
           ? `<div style="margin:18px 0 4px;padding:14px 16px;border:1px solid rgba(215,161,61,0.35);border-radius:8px;">
