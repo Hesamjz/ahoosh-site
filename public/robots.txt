@@ -1,0 +1,14 @@
+# https://ahoosh.ai/robots.txt
+# Until 2026-07-15 this file did not exist: the SPA catch-all answered /robots.txt
+# with the homepage HTML, so Googlebot got a page instead of directives and had
+# no Sitemap: line to follow. Keep this file — it must stay a real static file.
+
+User-agent: *
+Allow: /
+
+# Not useful to searchers, and not meant to be public.
+Disallow: /api/
+Disallow: /admin/
+Disallow: /lab/
+
+Sitemap: https://ahoosh.ai/sitemap-index.xml
