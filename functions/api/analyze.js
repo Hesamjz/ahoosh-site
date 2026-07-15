@@ -12,10 +12,15 @@
 //   scores       (object)  per-dimension {DIM:{pct,level}} or single {total,pct,level}
 //   name         (string)  optional first name
 
+import { fromOurSite, denyForeign, preflight, corsHeaders } from './_guard.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const cors = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
+  const cors = corsHeaders(request);
   const reply = (b, s = 200) => new Response(JSON.stringify(b), { status: s, headers: cors });
+
+  // Only our own pages may call this — every request spends an LLM call.
+  if (!fromOurSite(request)) return denyForeign(request);
 
   let body = {};
   try { body = await request.json(); } catch { return reply({ ok: false, error: 'bad_json' }, 400); }
@@ -79,12 +84,6 @@ export async function onRequestPost(context) {
   }
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+export async function onRequestOptions(context) {
+  return preflight(context.request);
 }

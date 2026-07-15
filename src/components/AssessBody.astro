@@ -1027,7 +1027,7 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
           h('a',{href:'/privacy',target:'_blank',rel:'noopener',className:'underline',style:{color:'#9F6F16'}},(T.ui&&T.ui.gatePrivacy)||'Privacy Policy'),
           ' and ',
           h('a',{href:'/terms',target:'_blank',rel:'noopener',className:'underline',style:{color:'#9F6F16'}},(T.ui&&T.ui.gateTerms)||'Terms'),
-          (T.ui&&T.ui.gateConsent2)||', and consent to us storing your answers and results and emailing them to you. Skip and nothing is stored — withdraw any time.'
+          (T.ui&&T.ui.gateConsent2)||'. We store your answers and results either way, so we can improve these assessments. Add your email and we\'ll also send you the full report. You can ask us to delete your data at any time.'
         )
       )
     );

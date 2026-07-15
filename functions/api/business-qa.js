@@ -41,16 +41,21 @@ function scoreBusinessAnswers(answers, questionCount) {
   return { score: clamped, band: band.label, interpretation: BAND_INTERPRETATIONS[band.label] };
 }
 
+import { fromOurSite, denyForeign, preflight } from './_guard.js';
+
 export async function onRequest(context) {
   const { request, env } = context;
 
   if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400' } });
+    return preflight(request);
   }
 
   if (request.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
+
+  // Only our own pages may call this — every request spends an LLM call.
+  if (!fromOurSite(request)) return denyForeign(request);
 
   let body;
   try { body = await request.json(); } catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }); }
@@ -58,11 +63,11 @@ export async function onRequest(context) {
   const { answers = {} } = body;
   const answeredCount = Object.values(answers).filter(v => v && v.trim().length > 2).length;
   if (answeredCount < 5) {
-    return Response.json({ error: 'Please answer at least 5 questions before submitting.' }, { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } });
+    return Response.json({ error: 'Please answer at least 5 questions before submitting.' }, { status: 400, headers: { 'Access-Control-Allow-Origin': 'https://ahoosh.ai', Vary: 'Origin' } });
   }
 
   const apiKey = env.ANTHROPIC_API_KEY;
-  if (!apiKey) return Response.json({ error: 'Service temporarily unavailable.' }, { status: 503, headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (!apiKey) return Response.json({ error: 'Service temporarily unavailable.' }, { status: 503, headers: { 'Access-Control-Allow-Origin': 'https://ahoosh.ai', Vary: 'Origin' } });
 
   const questions = [
     'What industry or business sector are you in?',
@@ -117,13 +122,13 @@ Rules: Base everything on actual answers. No generic startup advice. No motivati
     const text = claudeData.content?.[0]?.text || '';
 
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return Response.json({ error: 'Analysis generation failed. Please try again.' }, { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });
+    if (!jsonMatch) return Response.json({ error: 'Analysis generation failed. Please try again.' }, { status: 500, headers: { 'Access-Control-Allow-Origin': 'https://ahoosh.ai', Vary: 'Origin' } });
 
     const analysis = JSON.parse(jsonMatch[0]);
     const scoring = scoreBusinessAnswers(answers, questions.length);
-    return Response.json({ analysis, scoring }, { headers: { 'Access-Control-Allow-Origin': '*' } });
+    return Response.json({ analysis, scoring }, { headers: { 'Access-Control-Allow-Origin': 'https://ahoosh.ai', Vary: 'Origin' } });
 
   } catch (err) {
-    return Response.json({ error: 'Analysis failed: ' + err.message }, { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });
+    return Response.json({ error: 'Analysis failed: ' + err.message }, { status: 500, headers: { 'Access-Control-Allow-Origin': 'https://ahoosh.ai', Vary: 'Origin' } });
   }
 }

@@ -1,10 +1,24 @@
 // Cloudflare Pages Function — POST /api/report
 // Receives assessment JSON → calls Claude Haiku → returns consulting report JSON
-// Persists session to D1 (fire-and-forget, bound as ASSESS_DB)
+//
+// Persists every session to D1 (fire-and-forget, bound as ASSESS_DB).
+//
+// Hesam's decision 2026-07-15: store EVERYTHING, including sessions where the
+// visitor never gives an email. The row carries answers, the generated report,
+// and the caller's IP.
+//
+// Because of that, the on-page notice MUST describe this accurately. It used to
+// say "Skip and nothing is stored", which was false while this write existed.
+// The wording was corrected in the same commit as this comment. If you ever
+// change what is stored here, change the notice on /assess/report and in
+// AssessBody.astro in the same commit — an IP is personal data under GDPR and
+// the notice is the lawful-basis disclosure. (Not legal advice: worth one pass
+// by a lawyer, since a "legitimate interests" basis is doing the work here
+// rather than consent.)
 //
 // Required Cloudflare env secrets (set via Cloudflare dashboard → Pages → Settings → Variables):
 //   ANTHROPIC_API_KEY  — your Anthropic API key
-// Required D1 binding (set via Cloudflare dashboard → Pages → Settings → Bindings):
+// Required D1 binding (Cloudflare dashboard → Pages → Settings → Bindings):
 //   ASSESS_DB          — D1 database "ahoosh-assess"
 
 const SYSTEM_PROMPT = `You are a senior business consultant working at AHoosh.ai. You have received assessment results from a potential client. Produce a concise, precise consulting report.
@@ -34,8 +48,13 @@ Rules:
 - Mention AHoosh services only where genuinely relevant
 - Tone: direct, clear, respectful. Like a smart friend who happens to be an expert.`;
 
+import { fromOurSite, denyForeign, preflight } from './_guard.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
+
+  // Only our own pages may call this — it spends an LLM call per request.
+  if (!fromOurSite(request)) return denyForeign(request);
 
   try {
     const body = await request.json();
@@ -101,7 +120,8 @@ export async function onRequestPost(context) {
       return json({ error: "Failed to parse AI response", raw }, 422);
     }
 
-    // Persist to D1 (fire-and-forget — never blocks response)
+    // Persist to D1 (fire-and-forget — never blocks the response).
+    // Stores every session, with or without an email. The on-page notice says so.
     if (env.ASSESS_DB) {
       const sessionId = crypto.randomUUID();
       const email = body.email || null;
@@ -130,14 +150,8 @@ export async function onRequestPost(context) {
   }
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
+export async function onRequestOptions(context) {
+  return preflight(context.request);
 }
 
 function json(body, status = 200) {
@@ -145,7 +159,9 @@ function json(body, status = 200) {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      // Locked to our own origin (was "*", which let any site call this).
+      "Access-Control-Allow-Origin": "https://ahoosh.ai",
+      Vary: "Origin",
     },
   });
 }
