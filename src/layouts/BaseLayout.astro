@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/motion-tokens.css';
 import CustomCursor from '../components/CustomCursor.astro';
 import PageTransition from '../components/PageTransition.astro';
+import { orgSchema, personSchema } from '../data/schema';
 import {
   CHROME,
   LOCALES,
@@ -98,6 +99,10 @@ const alternates = isLocalized
       gtag('js', new Date());
       gtag('config', 'G-Z1X8JHR84R');
     </script>
+
+    <!-- Structured data (AEO Kit, Snippet 2 + Snippet 9) -->
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   </head>
   <body>
     <!--
@@ -177,6 +182,7 @@ const alternates = isLocalized
       <div class="foot-col">
         <h4>Company</h4>
         <a href="/about" data-cursor>About</a>
+        <a href="/faq" data-cursor>FAQ</a>
         <a href="/contact" data-cursor>Book a call</a>
         <a href="/privacy" data-cursor>Privacy</a>
         <a href="/terms" data-cursor>Terms</a>

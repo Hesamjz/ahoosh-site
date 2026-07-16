@@ -1,4 +1,5 @@
 ---
+import { orgSchema, personSchema } from '../data/schema';
 export interface Props { title?: string; description?: string; ogImage?: string; }
 const { title = 'AHoosh', description = '', ogImage = '/favicon.svg' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -490,6 +491,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   @media (prefers-reduced-motion:reduce){ body.aa-on .ab-stop{opacity:1!important;transform:none!important} }
 </style>
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Structured data (AEO Kit, Snippet 2 + Snippet 9) -->
+  <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
 </head>
 <body>
   <!-- Backgrounds (site "fluent" background) -->
@@ -531,6 +536,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       <div class="foot-col">
         <h4>Company</h4>
         <a href="/about" data-cursor>About</a>
+        <a href="/faq" data-cursor>FAQ</a>
         <a href="/contact" data-cursor>Book a call</a>
         <a href="/privacy" data-cursor>Privacy</a>
         <a href="/terms" data-cursor>Terms</a>
