@@ -1104,7 +1104,7 @@
     if(!ch) return;
     var src;
     if(ch.sources && ch.sources.length){ src = ch.sources[0]; }
-    else if(ch.type==='youtube'){ src = { type:'youtube', vid:ch.vid }; }
+    else if(ch.type==='youtube'){ src = { type:'youtube', vid:ch.vid, channel:ch.channel }; }
     else { src = { type:'hls', src:ch.src }; }
     try{
       if(src.type==='youtube') loadYouTube(src);
