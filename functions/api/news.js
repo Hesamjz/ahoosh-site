@@ -33,13 +33,6 @@ function isBlocked(title) {
 
 const SOURCES = [
   // ── Persian-language ───────────────────────────────────────────────
-  { url: 'https://feeds.bbci.co.uk/persian/rss.xml',                   name: 'BBC Persian',         lang: 'fa' },
-  { url: 'https://www.radiofarda.com/api/zrqojmoryit',                 name: 'Radio Farda',          lang: 'fa' },
-  { url: 'https://www.voanews.com/api/ztmqooky_t',                     name: 'VOA Persian',          lang: 'fa' },
-  { url: 'https://www.iranintl.com/rss.xml',                           name: 'Iran International',   lang: 'fa' },
-  { url: 'https://www.khabaronline.ir/rss',                            name: 'Khabaronline',         lang: 'fa' },
-  { url: 'https://donya-e-eqtesad.com/rss/',                           name: 'Donya-e-Eqtesad',      lang: 'fa' },
-  { url: 'https://rss.dw.com/xml/rss-fa-all',                          name: 'DW Farsi',             lang: 'fa' },
 
   // ── US / English ───────────────────────────────────────────────────
   { url: 'https://feeds.apnews.com/rss/apf-topnews',                   name: 'AP News',              lang: 'en' },
