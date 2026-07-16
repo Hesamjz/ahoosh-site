@@ -222,7 +222,7 @@ export async function onRequestPost(context) {
           ${advisoryHtml}
           ${answersHtml}
           <div style="margin-top:22px;padding-top:16px;border-top:1px solid rgba(215,161,61,0.25);">
-            <p ${P}>Want a human read on what this means? A paid strategy call is 60 minutes with Hesam, recorded, and you leave with a one-page action memo. &euro;149 &mdash; credited toward bigger work if you start within 14 days. Tell us on the contact form and Hesam sends payment details and confirms a time.</p>
+            <p ${P}>Want a human read on what this means? A paid strategy call is 60 minutes with Hesam. &euro;149 &mdash; credited toward bigger work if you start within 14 days. Tell us on the contact form and Hesam sends payment details and confirms a time.</p>
             <a href="${CAL}" style="display:inline-block;background:#D7A13D;color:#03142E;font-weight:700;text-decoration:none;padding:12px 26px;border-radius:8px;">Ask about a strategy call &mdash; &euro;149 &rarr;</a>
           </div>
           ${unsubHtml}
