@@ -13,6 +13,9 @@ export interface Env {
   DB: D1Database;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_HESAM_CHAT_ID?: string;
+  // CoinGecko Demo API key. Set via: wrangler secret put COINGECKO_API_KEY
+  // Without it, CoinGecko 429s anonymous calls from Cloudflare's shared IPs.
+  COINGECKO_API_KEY?: string;
 }
 
 const FAIL_THRESHOLD = 3; // brief: alert on >3 consecutive failures

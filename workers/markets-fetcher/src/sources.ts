@@ -136,10 +136,15 @@ const COINS: Record<string, string> = {
   "avalanche-2": "AVAX",
 };
 
-export async function fetchCrypto(): Promise<QuoteMap> {
+export async function fetchCrypto(apiKey?: string): Promise<QuoteMap> {
   const ids = Object.keys(COINS).join(",");
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
-  const res = await fetch(url, { headers: { Accept: "application/json", "User-Agent": UA }, signal: timeout(10000) });
+  // Anonymous calls from Cloudflare's shared egress IPs get HTTP 429 — CoinGecko's
+  // docs name this exact case ("IP sharing ... register for a demo account").
+  // Demo plan: same root URL, header x-cg-demo-api-key, ~30 req/min (we use ~0.2).
+  const headers: Record<string, string> = { Accept: "application/json", "User-Agent": UA };
+  if (apiKey) headers["x-cg-demo-api-key"] = apiKey;
+  const res = await fetch(url, { headers, signal: timeout(10000) });
   if (!res.ok) throw new Error(`coingecko: HTTP ${res.status}`);
   const data: any = await res.json();
   const out: QuoteMap = {};

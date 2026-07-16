@@ -5,14 +5,14 @@ import { alertFailures } from "./alerts";
 
 type Family = { assets: string[]; fn: () => Promise<QuoteMap> };
 
-const FAMILIES: Family[] = [
+const familiesFor = (env: Env): Family[] => [
   { assets: ["USD/IRR", "EUR/IRR"], fn: fetchIrr },
   { assets: ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CNY", "USD/TRY"], fn: fetchMajors },
   { assets: ["USD/RSD", "EUR/RSD", "USD/AED"], fn: fetchRsd },
   { assets: ["XAU/USD"], fn: () => fetchGold() },
   {
     assets: ["BTC", "ETH", "BNB", "SOL", "XRP", "USDT", "USDC", "ADA", "DOGE", "AVAX"],
-    fn: fetchCrypto,
+    fn: () => fetchCrypto(env.COINGECKO_API_KEY),
   },
 ];
 
@@ -21,6 +21,7 @@ async function runCycle(env: Env): Promise<Record<string, unknown>> {
   const quotes: QuoteMap = {};
   const errors: Record<string, string> = {};
 
+  const FAMILIES = familiesFor(env);
   const results = await Promise.allSettled(FAMILIES.map((f) => f.fn()));
   results.forEach((res, i) => {
     const fam = FAMILIES[i];
