@@ -49,7 +49,7 @@ async function runCycle(env: Env): Promise<Record<string, unknown>> {
 
   const failedThisCycle = EXPECTED_ASSETS.filter((a) => !quotes[a]);
   return {
-    updated,
+    updated: new Date().toISOString(),
     fresh_count: Object.keys(quotes).length,
     stale_count: EXPECTED_ASSETS.length - Object.keys(quotes).length,
     failed_this_cycle: failedThisCycle,
