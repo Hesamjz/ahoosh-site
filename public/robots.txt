@@ -10,5 +10,7 @@ Allow: /
 Disallow: /api/
 Disallow: /admin/
 Disallow: /lab/
+Disallow: /reply-templates
+Disallow: /home-v2
 
 Sitemap: https://ahoosh.ai/sitemap-index.xml

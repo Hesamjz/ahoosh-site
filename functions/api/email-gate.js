@@ -25,7 +25,7 @@
 // Bindings: ASSESS_DB (D1, optional), AI (Workers AI, optional — powers the advisory read)
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const CAL = 'https://calendly.com/ahoosh/strategy';
+const CAL = 'https://ahoosh.ai/contact';
 // Absolute base for links/attachments inside emails.
 //
 // Derived from the deployment actually serving the request, NOT hard-coded.
@@ -222,8 +222,8 @@ export async function onRequestPost(context) {
           ${advisoryHtml}
           ${answersHtml}
           <div style="margin-top:22px;padding-top:16px;border-top:1px solid rgba(215,161,61,0.25);">
-            <p ${P}>Want a human read on what this means? A paid strategy call is 60 minutes with Hesam, recorded, and you leave with a one-page action memo. &euro;149 &mdash; credited toward bigger work if you book within 14 days.</p>
-            <a href="${CAL}" style="display:inline-block;background:#D7A13D;color:#03142E;font-weight:700;text-decoration:none;padding:12px 26px;border-radius:8px;">Book a strategy call &mdash; &euro;149 &rarr;</a>
+            <p ${P}>Want a human read on what this means? A paid strategy call is 60 minutes with Hesam, recorded, and you leave with a one-page action memo. &euro;149 &mdash; credited toward bigger work if you start within 14 days. Tell us on the contact form and Hesam sends payment details and confirms a time.</p>
+            <a href="${CAL}" style="display:inline-block;background:#D7A13D;color:#03142E;font-weight:700;text-decoration:none;padding:12px 26px;border-radius:8px;">Ask about a strategy call &mdash; &euro;149 &rarr;</a>
           </div>
           ${unsubHtml}
           <p style="color:#5e6e82;font-size:12px;margin-top:24px;">AHoosh.ai &mdash; business, digital &amp; AI consulting &middot; ahoosh.ai. For informational purposes only.</p>

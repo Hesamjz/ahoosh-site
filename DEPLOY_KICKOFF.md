@@ -121,7 +121,7 @@ pm2 restart ws-server   # or however you manage the process
 | `functions/api/report.js` | New: POST → Claude Haiku → JSON report → Hetzner persist |
 | `functions/api/pagespeed.js` | New: GET proxy for Google PageSpeed API (hides key) |
 | `src/pages/assess/website.astro` | New: website audit form + score cards + localStorage save |
-| `src/pages/assess/report.astro` | New: reads localStorage → POST /api/report → renders report + Calendly CTA |
+| `src/pages/assess/report.astro` | New: reads localStorage → POST /api/report → renders report + contact-form CTA |
 | `backend/assess_schema.sql` | New: Hetzner Postgres schema for assess_sessions |
 | `backend/ws_server/server.js` | New: POST /api/assess/save endpoint |
 
@@ -137,4 +137,4 @@ pm2 restart ws-server   # or however you manage the process
 | 4 | Report gate | Free (no gate for now) |
 | 5 | Storage | Hetzner Postgres via ws_server |
 | 6 | Language | EN only |
-| 7 | CTA | Calendly (update URL in report.astro line 91 if needed) |
+| 7 | CTA | Contact form — CONTACT_URL in report.astro (Calendly retired 2026-07-16: calendly.com/ahoosh/strategy returned 404) |
