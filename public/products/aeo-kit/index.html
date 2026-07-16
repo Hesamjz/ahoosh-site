@@ -228,7 +228,7 @@
       <span class="label">Products / The AEO Kit</span>
       <h1 class="display">The AEO Kit</h1>
       <p class="pg-lede">A set of files you download once and work through in a weekend. It shows you, step by step, how to change your website and online listings so AI assistants can actually read, understand, and mention your business.</p>
-      <span class="price-chip">€49 one-time <span class="sep"></span> Checkout opening soon</span>
+      <span class="price-chip">€49 one-time <span class="sep"></span> Instant download</span>
     </div>
   </section>
 
@@ -293,7 +293,7 @@
       <span class="label">How it works</span>
       <h2 class="display">Step by step</h2>
       <ol class="steps">
-        <li>Once checkout opens: click <b>Buy the Kit</b> on this page. You go to a secure checkout (run by Lemon Squeezy, a payment company that also handles EU VAT).</li>
+        <li>Click <b>Buy the Kit</b> on this page. You go to a secure checkout (run by Lemon Squeezy, a payment company that also handles EU VAT).</li>
         <li>Pay by card. No account needed.</li>
         <li>Within minutes, you get an email with your receipt and download links.</li>
         <li>Download the files. Read the playbook's first two parts (about 30 minutes).</li>
@@ -363,14 +363,10 @@
   <section class="kit-sec" style="padding-bottom:120px">
     <div class="kit-wrap">
       <div class="gate-box">
-        <span class="label">Checkout opening soon</span>
-        <h2>Hear about it first</h2>
-        <p>The kit's checkout isn't open yet. Leave your email and we'll tell you the moment it is — nothing else, no drip campaign.</p>
-        <form class="gate-form" id="waitForm" novalidate>
-          <input type="email" id="waitEmail" name="email" placeholder="you@yourbusiness.com" autocomplete="email" required />
-          <button type="submit" class="btn btn-gold" id="waitBtn" data-cursor>Notify me when checkout opens</button>
-        </form>
-        <p class="gate-msg" id="waitMsg" role="status" aria-live="polite"></p>
+        <span class="label">Checkout</span>
+        <h2>Get the Kit</h2>
+        <p>Pay once by card, and your download arrives right after checkout. Payment runs through Lemon Squeezy, which also handles EU VAT.</p>
+        <a class="btn btn-gold" data-cursor href="https://ahoosh.lemonsqueezy.com/checkout/buy/bb592cc4-1803-4152-96c0-687db7f968f9">Buy the Kit &mdash; &euro;49 &rarr;</a>
         <p class="gate-alt">Want something today? <a href="/snapshot" data-cursor>Start with the free Snapshot</a> — it shows you where you stand before you spend anything.</p>
         <span class="refund-line">€49 one-time · 14-day refund · quarterly updates included</span>
       </div>
@@ -445,6 +441,7 @@ if(!matchMedia('(pointer:coarse)').matches){
 (function(){
   const form=document.getElementById('waitForm'),input=document.getElementById('waitEmail'),
         btn=document.getElementById('waitBtn'),msg=document.getElementById('waitMsg');
+  if(!form)return; // waitlist form removed when checkout opened (2026-07-16)
   const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   form.addEventListener('submit',async function(e){
     e.preventDefault();

@@ -18,6 +18,7 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  noindex?: boolean;
   locale?: Locale;
 }
 
@@ -25,6 +26,7 @@ const {
   title,
   description = 'AI, market data, and research for better decisions. AHoosh helps founders, companies, and decision-makers act with better information.',
   ogImage = '/assets/logo-dark.png',
+  noindex = false,
   locale = localeOf(Astro.url.pathname),
 } = Astro.props;
 
@@ -51,6 +53,7 @@ const alternates = isLocalized
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex" />}
 
     <!-- SEO -->
     <title>{title} | AHoosh</title>
