@@ -32,3 +32,6 @@ pnpm-debug.log*
 # recommended additions (trim if unwanted) [Claude 2026-06-19]
 .wrangler/
 *.tmp
+
+# no-slash form also catches a SYMLINK named node_modules (the 2026-07-16 bug)
+node_modules
