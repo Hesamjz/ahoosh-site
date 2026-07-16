@@ -13,7 +13,14 @@
 // answer for that is a Cloudflare WAF rate-limiting rule (dashboard → Security →
 // WAF → Rate limiting rules) and/or a Turnstile widget on the assess gate.
 
-const ALLOWED_ORIGINS = ['https://ahoosh.ai', 'https://www.ahoosh.ai'];
+const ALLOWED_ORIGINS = [
+  'https://ahoosh.ai',
+  'https://www.ahoosh.ai',
+  // Our own staging copy (branch deploy of staging-lane1). Without this every
+  // form on staging 403s and staging cannot be tested. Browsers set Origin
+  // themselves, and this host is ours, so the guard stays meaningful.
+  'https://staging.ahoosh.ai',
+];
 
 /** CORS headers locked to our own origins (never "*"). */
 export function corsHeaders(request) {
