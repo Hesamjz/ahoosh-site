@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page not found"
+  description="This page does not exist on ahoosh.ai."
+>
+  <main id="page" style="min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;">
+    <div style="max-width:560px;">
+      <span class="label" style="display:block;letter-spacing:3px;font-size:12px;text-transform:uppercase;color:var(--gold,#e0a93f);margin-bottom:14px;">404</span>
+      <h1 style="font-size:clamp(28px,5vw,44px);margin:0 0 14px;">This page doesn't exist</h1>
+      <p style="line-height:1.6;margin:0 0 26px;opacity:.85;">The address may be mistyped, or the page has moved. Everything we offer is one click away.</p>
+      <p style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:0;">
+        <a href="/" data-cursor style="color:var(--gold,#e0a93f);font-weight:700;text-decoration:none;">Home &rarr;</a>
+        <a href="/products" data-cursor style="color:var(--gold,#e0a93f);font-weight:700;text-decoration:none;">Products &rarr;</a>
+        <a href="/snapshot" data-cursor style="color:var(--gold,#e0a93f);font-weight:700;text-decoration:none;">Free Snapshot &rarr;</a>
+        <a href="/contact" data-cursor style="color:var(--gold,#e0a93f);font-weight:700;text-decoration:none;">Contact &rarr;</a>
+      </p>
+    </div>
+  </main>
+</BaseLayout>
