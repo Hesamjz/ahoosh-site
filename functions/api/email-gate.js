@@ -24,6 +24,33 @@
 // Env: RESEND_API_KEY, BACKEND_SECRET, MAIL_SENDER?, MAIL_SENDER_NAME?, ADMIN_NOTIFY_EMAIL?
 // Bindings: ASSESS_DB (D1, optional), AI (Workers AI, optional — powers the advisory read)
 
+/**
+ * Has this address unsubscribed? D1 is the source of truth (see unsubscribe.js).
+ *
+ * json_extract is safe here: D1 ships SQLite's JSON extension — Cloudflare D1 docs,
+ * "Supported SQLite extensions": "JSON extension for JSON functions and operators."
+ *
+ * Fails OPEN on error: a D1 hiccup must not silently kill the whole lead magnet. The
+ * trade-off is deliberate — a suppressed address could be mailed during a D1 outage.
+ */
+async function isSuppressed(env, email) {
+  if (!env.ASSESS_DB) return false;
+  try {
+    const row = await env.ASSESS_DB.prepare(
+      `SELECT 1 AS hit FROM assess_sessions
+        WHERE lower(email) = ?
+          AND json_extract(assessments, '$.kind') = 'unsubscribe'
+        LIMIT 1`
+    )
+      .bind(String(email).toLowerCase())
+      .first();
+    return !!row;
+  } catch (e) {
+    console.error('[email-gate] suppression check failed (failing open):', e);
+    return false;
+  }
+}
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CAL = 'https://ahoosh.ai/contact';
 // Absolute base for links/attachments inside emails.
@@ -129,6 +156,17 @@ export async function onRequestPost(context) {
   // and emailed regardless. The notice on the gate promises the visitor
   // "Skip and nothing is stored", so honour it: no consent, no row, no email.
   if (!consent) return reply({ ok: true, captured: false, status: 'no_consent' });
+
+  // ── Guard 4: never email an address that unsubscribed ──────────────────────
+  // This gate is an UNAUTHENTICATED form: anyone can type anyone's address into it.
+  // Without this check, a reader who unsubscribed is re-mailed the moment a stranger
+  // types their address — breaking the unsubscribe page's literal promise,
+  // "We will not email <address> again", and manufacturing the complaint class that
+  // got the marketing channel suspended. The consent box proves the SENDER consented,
+  // never that the address's OWNER did.
+  if (await isSuppressed(env, email)) {
+    return reply({ ok: true, captured: false, stored: false, status: 'suppressed' });
+  }
 
   // ── Store in D1 (fire-and-forget) — now includes answers + breakdown for the record ──
   let stored = false;

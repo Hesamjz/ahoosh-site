@@ -13,7 +13,14 @@
 // POST -> unsubscribe, 200, no body (Gmail/Outlook one-click)
 
 async function expectedToken(env, email) {
-  const secret = env.BACKEND_SECRET || env.BREVO_API_KEY || 'ahoosh-unsub';
+  // Signer (email-gate.js) and verifier (here) MUST obey the same rule. The old fallback
+  // chain was removed from the signer but left here, and its last link was a hard-coded
+  // string sitting in this PUBLIC repo — any token signed with it is forgeable by anyone
+  // who can read the source, which would let a stranger unsubscribe any address. Silently
+  // signing with a public string is worse than not signing at all: it looks secure.
+  // Fail loudly instead of verifying with a guessable key.
+  const secret = env.BACKEND_SECRET;
+  if (!secret) throw new Error('BACKEND_SECRET missing — refusing to verify an unsubscribe token with a fallback key');
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(email.toLowerCase()));
   return [...new Uint8Array(sig)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -27,20 +34,68 @@ function safeEqual(a, b) {
   return diff === 0;
 }
 
-async function unsubscribe(env, email) {
-  if (!env.BREVO_API_KEY) return false;
-  // Brevo: blocklisting the contact stops all marketing sends to it.
-  const r = await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY, accept: 'application/json' },
-    body: JSON.stringify({ emailBlacklisted: true }),
-  });
-  // 204 = done. 404 = never in the list, which is still "not subscribed" for the reader.
-  if (r.status >= 300 && r.status !== 404) {
-    console.error('[unsubscribe] Brevo said', r.status, await r.text().catch(() => ''));
+/**
+ * Suppression record in D1 — the source of truth.
+ *
+ * The unsubscribe list has to outlive the mail provider. While the reader's
+ * "unsubscribed" state lived only in Brevo, removing BREVO_API_KEY would have made every
+ * unsubscribe link answer "That link is not valid" — the exact complaint class that got the
+ * marketing channel suspended. D1 fixes that: the record is ours.
+ *
+ * No migration needed — assess_sessions and these columns are already in daily use by
+ * email-gate.js's email_capture insert.
+ */
+async function suppress(env, email, ip) {
+  if (!env.ASSESS_DB) return false;
+  try {
+    await env.ASSESS_DB.prepare(
+      `INSERT INTO assess_sessions (id, email, assessments, report, created_at, ip)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    )
+      .bind(
+        crypto.randomUUID(),
+        email,
+        JSON.stringify({ kind: 'unsubscribe', source: 'one-click' }),
+        null,
+        new Date().toISOString(),
+        ip || null
+      )
+      .run();
+    return true;
+  } catch (e) {
+    console.error('[unsubscribe] D1 suppression write failed:', e);
     return false;
   }
-  return true;
+}
+
+/** Brevo blocklist — best effort ONLY, while the account still exists. Never decides the answer. */
+async function brevoBlocklist(env, email) {
+  if (!env.BREVO_API_KEY) return false;
+  try {
+    const r = await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY, accept: 'application/json' },
+      body: JSON.stringify({ emailBlacklisted: true }),
+    });
+    // 204 = done. 404 = never in the list, which is still "not subscribed" for the reader.
+    if (r.status >= 300 && r.status !== 404) {
+      console.error('[unsubscribe] Brevo said', r.status, await r.text().catch(() => ''));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('[unsubscribe] Brevo blocklist failed:', e);
+    return false;
+  }
+}
+
+async function unsubscribe(env, email, ip) {
+  // D1 first — the record that survives the provider.
+  const d1 = await suppress(env, email, ip);
+  // Brevo second — belt and braces while the account is still there. BREVO_API_KEY can now
+  // be removed from the env without breaking a single unsubscribe link.
+  const brevo = await brevoBlocklist(env, email);
+  return d1 || brevo;
 }
 
 const PAGE = (ok, email) => `<!doctype html><html lang="en"><head><meta charset="utf-8">
@@ -64,7 +119,7 @@ async function handle(request, env) {
   const token = String(url.searchParams.get('t') || '').trim();
   if (!EMAIL_RE.test(email) || !token) return { ok: false, email };
   if (!safeEqual(token, await expectedToken(env, email))) return { ok: false, email };
-  return { ok: await unsubscribe(env, email), email };
+  return { ok: await unsubscribe(env, email, request.headers.get('CF-Connecting-IP')), email };
 }
 
 export async function onRequestGet(context) {
