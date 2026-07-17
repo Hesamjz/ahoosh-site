@@ -21,7 +21,7 @@
 //   answers    (optional)  — [{q,a}] the respondent's actual answers
 //   consent    (optional)  — boolean
 //
-// Env: BREVO_API_KEY, BREVO_LIST_ID?, BREVO_SENDER?, BREVO_SENDER_NAME?, ADMIN_NOTIFY_EMAIL?
+// Env: RESEND_API_KEY, BACKEND_SECRET, MAIL_SENDER?, MAIL_SENDER_NAME?, ADMIN_NOTIFY_EMAIL?
 // Bindings: ASSESS_DB (D1, optional), AI (Workers AI, optional — powers the advisory read)
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -42,11 +42,25 @@ const siteBase = (request) => new URL(request.url).origin;
 
 /**
  * Unsubscribe token — HMAC of the address, so an unsubscribe link cannot be
- * forged for someone else's address by guessing the URL. Keyed on an existing
- * secret; falls back to the Brevo key so this works without new config.
+ * forged for someone else's address by guessing the URL.
+ *
+ * The old fallback chain (BACKEND_SECRET || BREVO_API_KEY || 'ahoosh-unsub') is
+ * deliberately gone. Two reasons:
+ *   1. 'ahoosh-unsub' is a LITERAL IN THIS REPO. Any token signed with it is
+ *      forgeable by anyone who can read the source. Silently signing with a
+ *      public string is worse than not signing at all — it looks secure.
+ *   2. It keyed on BREVO_API_KEY, so pulling Brevo out of the env would have
+ *      silently changed the signing key and invalidated every unsubscribe link
+ *      already sitting in someone's inbox. A dead unsubscribe link is the exact
+ *      complaint class that got the Brevo account suspended.
+ *
+ * BACKEND_SECRET is set on BOTH Production and Preview (verified in the
+ * Cloudflare dashboard, 2026-07-17). If it ever goes missing we fail LOUDLY
+ * rather than fall back to something forgeable.
  */
 async function unsubToken(env, email) {
-  const secret = env.BACKEND_SECRET || env.BREVO_API_KEY || 'ahoosh-unsub';
+  const secret = env.BACKEND_SECRET;
+  if (!secret) throw new Error('BACKEND_SECRET missing — refusing to sign an unsubscribe token with a fallback');
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(email.toLowerCase()));
   return [...new Uint8Array(sig)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -132,28 +146,20 @@ export async function onRequestPost(context) {
     );
   }
 
-  if (!env.BREVO_API_KEY) return reply({ ok: true, captured: false, stored, status: 'brevo_not_configured' });
+  if (!env.RESEND_API_KEY) return reply({ ok: true, captured: false, stored, status: 'mail_not_configured' });
 
   try {
-    // ── Brevo contact upsert ──
-    const attributes = { SOURCE: source, ASSESS_DATE: new Date().toISOString().split('T')[0], CONSENT: consent };
-    if (name) attributes.FIRSTNAME = name;
-    if (track) attributes.ASSESS_TRACK = track;
-    if (score !== null) attributes.ASSESS_SCORE = score;
-    const contactBody = { email, attributes, updateEnabled: true };
-    if (env.BREVO_LIST_ID) { const id = parseInt(env.BREVO_LIST_ID, 10); if (!isNaN(id)) contactBody.listIds = [id]; }
-
-    const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY, accept: 'application/json' },
-      body: JSON.stringify(contactBody),
-    });
-    const captured = brevoRes.status === 201 || brevoRes.status === 204;
-    if (!captured) console.error('[email-gate] Brevo contact', brevoRes.status, await brevoRes.text().catch(() => ''));
+    // ── Lead accepted ─────────────────────────────────────────────────────
+    // Consent is given and the address is valid, so the visitor gets the report
+    // they asked for. This USED to be gated on a Brevo marketing-contact write
+    // (POST /v3/contacts): when that call failed, the customer's PDF silently
+    // never sent. Someone requesting their own report must never depend on a
+    // mailing-list write succeeding. The upsert is gone. D1 is the record.
+    const captured = true;
 
     // ── Generate the AI advisory read + send BOTH rich emails, all in the background ──
     if (captured) {
-      const sender = { email: env.BREVO_SENDER || 'contact@ahoosh.ai', name: env.BREVO_SENDER_NAME || 'AHoosh' };
+      const sender = { email: env.MAIL_SENDER || 'contact@ahoosh.ai', name: env.MAIL_SENDER_NAME || 'AHoosh' };
       const adminTo = env.ADMIN_NOTIFY_EMAIL || 'hesamjafarzadeh@gmail.com';
       const label = testTitle || 'assessment';
 
@@ -178,8 +184,10 @@ export async function onRequestPost(context) {
         // including Snapshot ones. Say what the reader actually asked for.
         const eyebrow = isSnapshot ? 'AI Visibility Snapshot' : (isReport ? 'Consulting Report' : 'Growth Assessment');
 
-        // We add every address to a Brevo marketing list, and /snapshot promises
-        // "unsubscribe any time with one click" — so ship a real one-click link.
+        // /snapshot promises "unsubscribe any time with one click" — so ship a
+        // real one-click link. We no longer add anyone to a marketing list at
+        // all (the Brevo upsert is gone), but the promise on the page stands and
+        // the link must keep working for every address already emailed.
         const unsubUrl = `${SITE}/api/unsubscribe?e=${encodeURIComponent(email)}&t=${await unsubToken(env, email)}`;
         const unsubHtml = `<p style="color:#5e6e82;font-size:12px;margin-top:18px;">You are getting this because you asked us for it at ahoosh.ai. <a href="${unsubUrl}" style="color:#7f92a8;">Unsubscribe in one click</a> &mdash; no questions, no form.</p>`;
 
@@ -229,13 +237,13 @@ export async function onRequestPost(context) {
           <p style="color:#5e6e82;font-size:12px;margin-top:24px;">AHoosh.ai &mdash; business, digital &amp; AI consulting &middot; ahoosh.ai. For informational purposes only.</p>
         </div>`;
 
-        await sendBrevo(env, {
+        await sendResend(env, {
           sender, to: [{ email, name: name || undefined }],
           subject: `Your ${label}${isReport ? '' : ' report'} — AHoosh`,
           html: custHtml, tag: 'result email',
-          // Real attachment for the Snapshot; Brevo fetches it from our own site.
+          // Real attachment for the Snapshot, read from our own asset store.
           attachment: isSnapshot
-            ? [{ url: `${SITE}/downloads/AI_Visibility_Snapshot_v1.pdf`, name: 'AI Visibility Snapshot — AHoosh.pdf' }]
+            ? await fetchAsset(env, request.url, '/downloads/AI_Visibility_Snapshot_v1.pdf', 'AI Visibility Snapshot — AHoosh.pdf')
             : undefined,
           unsubUrl,
         });
@@ -264,21 +272,21 @@ export async function onRequestPost(context) {
           <h2 style="margin:0 0 10px;">New ${isReport ? 'report lead' : 'assessment lead'}</h2>
           <table style="border-collapse:collapse;font-size:14px;">${rows}</table>
           ${adminExec}${adminBreakdown}${adminQuick}${adminFounder}${adminAdvisory}${adminAnswers}
-          <p style="color:#888;font-size:12px;margin-top:16px;">Saved to Brevo${stored ? ' + D1' : ''}. Automated alert from ahoosh.ai/assess.</p>
+          <p style="color:#888;font-size:12px;margin-top:16px;">Saved to ${stored ? 'D1' : 'nothing (D1 unavailable)'}. Automated alert from ahoosh.ai/assess.</p>
         </div>`;
 
-        await sendBrevo(env, {
-          sender: { email: env.BREVO_SENDER || 'contact@ahoosh.ai', name: 'AHoosh Assessments' },
+        await sendResend(env, {
+          sender: { email: env.MAIL_SENDER || 'contact@ahoosh.ai', name: 'AHoosh Assessments' },
           to: [{ email: adminTo }], replyTo: { email }, subject: `New lead: ${name || email} — ${testTitle || track || 'assessment'} (${score != null ? score + '/100' : 'n/a'})`,
           html: adminHtml, tag: 'admin alert',
         });
       })());
     }
 
-    return reply({ ok: true, captured, stored, status: captured ? 'captured' : 'brevo_rejected' });
+    return reply({ ok: true, captured, stored, status: 'captured' });
   } catch (e) {
     console.error('[email-gate] error:', e);
-    return reply({ ok: true, captured: false, stored, status: 'brevo_error' });
+    return reply({ ok: true, captured: false, stored, status: 'mail_error' });
   }
 }
 
@@ -296,29 +304,88 @@ function answersTable(answers, dark) {
   return `${head}<table style="border-collapse:collapse;width:100%;font-family:Arial,Helvetica,sans-serif;">${rows}</table>`;
 }
 
-// Send one transactional email through Brevo (best-effort; logs on failure).
-async function sendBrevo(env, { sender, to, replyTo, subject, html, tag, attachment, unsubUrl }) {
+// Send one transactional email through Resend.
+// Mirrors the resendSend() helper already proven in functions/api/contact.js,
+// which has been sending from contact@ahoosh.ai in production.
+// Returns true/false so a failure is visible instead of swallowed.
+async function sendResend(env, { sender, to, replyTo, subject, html, tag, attachment, unsubUrl }) {
   try {
-    const payload = { sender, to, subject, htmlContent: html };
-    if (replyTo) payload.replyTo = replyTo;
-    // Brevo fetches attachments by URL (must be publicly reachable).
-    if (attachment) payload.attachment = attachment;
-    // RFC 8058 one-click unsubscribe: puts the native "Unsubscribe" control in
-    // Gmail/Outlook next to the sender name, and is expected by bulk-sender rules.
+    const from = sender && sender.name ? `${sender.name} <${sender.email}>` : (sender && sender.email);
+    const payload = {
+      from,
+      to: (to || []).map((t) => (typeof t === 'string' ? t : t && t.email)).filter(Boolean),
+      subject,
+      html,
+    };
+    if (replyTo) payload.reply_to = typeof replyTo === 'string' ? replyTo : replyTo.email;
+    // RFC 8058 one-click unsubscribe — Resend passes custom headers through.
     if (unsubUrl) {
       payload.headers = {
         'List-Unsubscribe': `<${unsubUrl}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       };
     }
-    const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+    if (attachment) payload.attachments = attachment;
+
+    const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY, accept: 'application/json' },
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    if (r.status >= 300) console.error(`[email-gate] ${tag} failed`, r.status, await r.text().catch(() => ''));
+    if (r.status >= 300) {
+      console.error(`[email-gate] ${tag} failed`, r.status, await r.text().catch(() => ''));
+      return false;
+    }
+    return true;
   } catch (e) {
     console.error(`[email-gate] ${tag} error`, e);
+    return false;
+  }
+}
+
+// Read a static asset from Pages' own asset store and return it as a Resend
+// attachment (base64). Replaces "let the mail provider fetch this URL".
+//
+// WHY — this closes three separate failure modes at once:
+//   1. BUG-5 (2026-07-15): the URL was built from SITE. SITE pointed at an
+//      origin without the file, the site answered 200 + homepage, and Brevo
+//      mailed the 407KB HOMEPAGE to a recipient renamed .pdf. env.ASSETS takes
+//      no origin, so SITE cannot be wrong. The bug is structurally impossible.
+//   2. THE STAGING GATEWAY (2026-07-17): functions/_middleware.js locks every
+//      non-production host behind basic auth. A plain fetch() of
+//      staging.ahoosh.ai/downloads/... returns 401 "Authentication required."
+//      (verified). env.ASSETS reads beneath the Functions router, so the
+//      middleware is not in its path.
+//   3. EDGE CACHE: no HTTP request means no stale cached copy.
+//
+// env.ASSETS.fetch() is documented for the /functions directory mode and takes
+// "a Request object, URL string, or URL object" (Cloudflare Pages API
+// reference, read 2026-07-17). It still runs _headers and _redirects rules.
+//
+// The %PDF magic-byte check stays as belt-and-braces: ~4 lines, and it turns a
+// silent-garbage failure into a loud one on a path that takes money.
+async function fetchAsset(env, requestUrl, path, filename) {
+  try {
+    if (!env.ASSETS) { console.error('[attach] no ASSETS binding'); return null; }
+    const r = await env.ASSETS.fetch(new URL(path, requestUrl));
+    if (!r.ok) { console.error('[attach] ASSETS', r.status, path); return null; }
+    const buf = await r.arrayBuffer();
+    const h = new Uint8Array(buf.slice(0, 4));
+    // "%PDF" = 0x25 0x50 0x44 0x46
+    if (!(h[0] === 0x25 && h[1] === 0x50 && h[2] === 0x44 && h[3] === 0x46)) {
+      console.error('[attach] NOT a PDF —', buf.byteLength, 'bytes from', path);
+      return null;
+    }
+    let bin = '';
+    const bytes = new Uint8Array(buf);
+    // chunked: String.fromCharCode.apply overflows the stack on a big array
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    }
+    return [{ content: btoa(bin), filename }];
+  } catch (e) {
+    console.error('[attach] error', e);
+    return null;
   }
 }
 
