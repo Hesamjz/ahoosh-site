@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const offers = [
+  {
+    name: 'Single Landing Page',
+    price: '€500–800',
+    time: 'Live in 3–5 business days',
+    blurb:
+      'One page built to do one job: get a visitor to take one action — book, buy, join, write. You get the words, the design, and the working page live on your own domain, with a working form or button, checked on phones, plus a short handover note on how to edit it yourself.',
+    lower: 'Lower band: you supply text and images.',
+    upper: 'Upper band: full copywriting and custom design.',
+    pay: 'Full amount up front at this size.',
+  },
+  {
+    name: 'Business Site (up to 5 pages)',
+    price: '€1,200–2,500',
+    time: 'Typically 2–3 weeks',
+    blurb:
+      'The complete small-business site: home, services, about, contact, plus one page of your choice — written, designed, built, live. Working contact form, mobile-tested, page titles and descriptions written so Google understands each page, domain and hosting set up in your name, a one-page manual, and every password handed over.',
+    lower: 'Lower band: your text and photos, 3–4 pages.',
+    upper: 'Upper band: full copywriting, 5 pages, custom design touches.',
+    pay: 'Half up front, half at handover.',
+  },
+  {
+    name: 'Ecommerce Store — WooCommerce or Shopify',
+    price: '€2,000–5,000',
+    time: 'Typically 3–5 weeks',
+    blurb:
+      'A store that takes real orders and real money: product pages, cart, checkout with card payments connected, shipping and tax configured for your country, order emails set up, up to 30 products loaded, and a test order placed and refunded so we both watch money actually move. Platform recommendation comes with reasons in the quote, not as a default.',
+    lower: 'The founder built and ran the ecommerce stack for a B2B distribution business with 3,000+ clients, including a daily ERP-to-store product sync running in production.',
+    upper: '',
+    pay: 'Half up front, half at handover.',
+  },
+  {
+    name: 'Site Redesign / Rescue',
+    price: '€600–1,500',
+    time: 'Scoped per job',
+    blurb:
+      "Your site exists but it's old, broken, slow, or embarrassing — and rebuilding from zero feels like too much. We take what you have and fix it: design refresh, broken pages repaired, mobile behaviour corrected, speed problems addressed, content restructured. Scope is agreed page by page in the quote, so you pay for what actually needs fixing.",
+    lower: 'Some sites are cheaper to rebuild than rescue — if yours is one, the quote will say so.',
+    upper: '',
+    pay: 'Half up front, half at handover.',
+  },
+];
+---
+
+<BaseLayout
+  title="Web Design & Build — AHoosh"
+  description="Landing pages, business sites, WooCommerce and Shopify stores, and site rescues — fixed written quotes, real delivery dates, and you own everything."
+>
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">Web Design &amp; Build</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(22px,6vw,36px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:10px;">A site that does its job.<br><em style="font-style:normal;color:var(--gold);">Built once, owned by you.</em></h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;max-width:520px;margin:0 auto 28px;">Every project below comes with a fixed written quote inside the band before anything starts, a real delivery date, and everything registered in your name. No retainers, no monthly lock-in — small fixes are free for two weeks after handover, and anything later is a one-off quote you can take or leave.</p>
+    <a href="/contact" class="btn-primary" style="display:inline-block;min-width:220px;">Request a quote</a>
+  </section>
+
+  <!-- Offers -->
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">The Offers</div>
+    <h2 class="section-title">Four ways in — all one-time, all yours</h2>
+
+    {offers.map((o) => (
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:20px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
+          <div style="font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--silver);">{o.name}</div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--gold);white-space:nowrap;">{o.price}</div>
+        </div>
+        <p style="font-size:13px;line-height:1.6;color:var(--silver-dim);margin-bottom:10px;">{o.blurb}</p>
+        {o.lower && <p style="font-size:12px;line-height:1.6;color:var(--silver-dim);margin-bottom:4px;">{o.lower}</p>}
+        {o.upper && <p style="font-size:12px;line-height:1.6;color:var(--silver-dim);margin-bottom:4px;">{o.upper}</p>}
+        <div style="font-size:11px;color:var(--silver-muted);letter-spacing:0.05em;text-transform:uppercase;margin-top:8px;"><strong style="color:var(--gold);">{o.time}</strong> · {o.pay}</div>
+      </div>
+    ))}
+  </section>
+
+  <!-- How it works -->
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">How Ordering Works</div>
+    <h2 class="section-title">Four steps, no surprises</h2>
+    <ol style="font-size:14px;line-height:1.8;color:var(--silver-dim);padding-left:20px;margin:0;">
+      <li><strong style="color:var(--silver);">Write to us</strong> via the <a href="/contact" style="color:var(--gold);">contact page</a>: what you have, what you need, rough timeline. A messy brief is fine.</li>
+      <li><strong style="color:var(--silver);">Get a fixed quote</strong> within 2 business days (3 for stores) — price, scope, delivery date. If it's not a fit, we say so and stop.</li>
+      <li><strong style="color:var(--silver);">Approve and pay the first half.</strong> Build starts; you review at a private link, with agreed revision rounds included.</li>
+      <li><strong style="color:var(--silver);">Handover.</strong> Live on your domain, logins in your hands, walkthrough included on site and store jobs.</li>
+    </ol>
+  </section>
+
+  <!-- Proof -->
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;text-align:center;">
+    <div class="section-eyebrow">Recent Work</div>
+    <h2 class="section-title">See it live, not in screenshots</h2>
+    <p style="font-size:14px;line-height:1.7;color:var(--silver-dim);margin-bottom:20px;">Interactive demos of recent builds — each opens as a full, live site, the same thing your visitors would experience.</p>
+    <a href="/portfolio" class="btn-primary" style="display:inline-block;min-width:220px;">View the portfolio</a>
+  </section>
+
+  <!-- Honest limits -->
+  <section style="padding:40px 24px;max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">Honest Limits</div>
+    <h2 class="section-title">What we don't promise</h2>
+    <p style="font-size:14px;line-height:1.7;color:var(--silver-dim);margin-bottom:12px;">No guarantee of visitors, sales, or rankings — a page cannot bring people to itself, and anyone who promises that is lying to you. Running costs (hosting, domains, payment-provider percentages on stores) are yours, in your name, and every one is listed in the quote before you commit.</p>
+    <p style="font-size:14px;line-height:1.7;color:var(--silver-dim);">We take few projects and say no often — that is deliberate. If you need ongoing monthly management, we're not the right shop and will tell you so.</p>
+  </section>
+</BaseLayout>
