@@ -1,24 +1,33 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const updated = '12 July 2026';
+const updated = '21 July 2026';
 
 const toc = [
   ['what-we-offer', 'What we offer'],
+  ['definitions', 'Definitions'],
+  ['eligibility', 'Eligibility'],
   ['assessments', 'Assessments'],
   ['digital-products', 'Digital products and refunds'],
   ['consulting', 'Consulting'],
+  ['content-research', 'Content, research and market data'],
   ['licences', 'Licences and intellectual property'],
   ['acceptable-use', 'Acceptable use'],
+  ['third-party-services', 'Third-party services'],
   ['liability', 'Liability and outcomes'],
+  ['indemnity', 'Indemnity'],
+  ['force-majeure', 'Force majeure'],
+  ['suspension', 'Suspension and termination'],
+  ['disputes', 'Disputes'],
   ['law', 'Governing law'],
+  ['general', 'General terms'],
   ['changes', 'Changes and questions'],
 ];
 ---
 
 <BaseLayout
   title="Terms of Service"
-  description="The terms for using ahoosh.ai: services, assessments, digital products, refunds, licences and liability."
+  description="The terms for using ahoosh.ai: services, assessments, digital products, refunds, licences, liability and dispute resolution."
 >
   <section class="legal">
     <div class="legal-wrap">
@@ -48,6 +57,22 @@ const toc = [
           The services are the ones described on this site: business news and research, free
           assessments and tools, digital products, and consulting. Each page states what its offer
           actually is. We do not sell anything the site does not describe.
+        </p>
+
+        <h2 id="definitions">Definitions</h2>
+        <p>A handful of words carry a specific meaning throughout these terms.</p>
+        <ul>
+          <li><strong>"AHoosh", "we", "us", "our"</strong> — the AHoosh site and services, operated by H. Jafarzadeh.</li>
+          <li><strong>"You"</strong> — the person using the site, or the business you represent when you do.</li>
+          <li><strong>"Content"</strong> — the articles, research, tools, and materials we publish.</li>
+          <li><strong>"Assessment"</strong> — the personality, leadership, business, or website tools on the site.</li>
+          <li><strong>"Digital Product"</strong> — anything you buy through Lemon Squeezy, our merchant of record.</li>
+        </ul>
+
+        <h2 id="eligibility">Eligibility</h2>
+        <p>
+          You must be at least 18, and either acting for yourself or with the authority to bind a
+          business, to use the site or buy anything from it. If that is not you, please do not use it.
         </p>
 
         <h2 id="assessments">Assessments</h2>
@@ -89,6 +114,15 @@ const toc = [
           and these terms disagree, the agreement wins for that engagement.
         </p>
 
+        <h2 id="content-research">Content, research and market data</h2>
+        <p>
+          The articles, market data, and research on this site are for general information. They are
+          not financial, investment, tax, legal, or professional advice, and nothing here is a
+          recommendation to buy, sell, or avoid anything. Markets and regulations move — verify
+          anything material before acting on it, and get advice specific to your situation where the
+          stakes are real.
+        </p>
+
         <h2 id="licences">Licences and intellectual property</h2>
         <p>
           Buying a digital product grants you a <strong>personal or single-business-use licence</strong>.
@@ -96,11 +130,24 @@ const toc = [
           for using a product on client work, is sold separately. Everything on this site — text,
           design, code and assessments — belongs to us unless marked otherwise.
         </p>
+        <p>
+          If you send us feedback, ideas, or suggestions, you give us the right to use them without
+          owing you anything for it.
+        </p>
 
         <h2 id="acceptable-use">Acceptable use</h2>
         <p>
-          Do not attack the site, scrape it wholesale, use the tools to attack anyone else, or submit
-          another person's data without their permission. We may suspend access if you do.
+          Do not attack the site, scrape it wholesale, reverse-engineer the assessments to rebuild
+          them elsewhere, use the tools to attack anyone else, impersonate another person or business,
+          or submit someone else's data without their permission. We may suspend access if you do.
+        </p>
+
+        <h2 id="third-party-services">Third-party services</h2>
+        <p>
+          Some parts of the site rely on outside providers — payment processing, hosting, AI
+          generation, email delivery. Our <a href="/privacy">Privacy Policy</a> lists exactly who and
+          why. We are not responsible for an outage or failure on their end, though we will tell you
+          if one affects you.
         </p>
 
         <h2 id="liability">Liability and outcomes</h2>
@@ -113,8 +160,49 @@ const toc = [
           limits liability where the law does not permit it to be limited.
         </p>
 
+        <h2 id="indemnity">Indemnity</h2>
+        <p>
+          If your use of the site breaks these terms, the law, or someone else's rights, you agree to
+          cover any claim, loss, or reasonable cost that results for us.
+        </p>
+
+        <h2 id="force-majeure">Force majeure</h2>
+        <p>
+          We are not liable for a delay or failure caused by something reasonably outside our
+          control — an outage at a provider we rely on, internet or power failure, natural disaster,
+          war, or government action. We will restore normal service as soon as we reasonably can.
+        </p>
+
+        <h2 id="suspension">Suspension and termination</h2>
+        <p>
+          We may suspend or end your access if you break these terms, or use the site in a way that
+          risks it, us, or other users. Where we reasonably can, we will tell you why. Sections that
+          by their nature should outlive your access — liability, indemnity, IP, and governing law —
+          continue to apply after it ends.
+        </p>
+
+        <h2 id="disputes">Disputes</h2>
+        <p>
+          If something goes wrong, email us first at
+          <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a> — most things are
+          resolved directly, and quickly. If we cannot resolve it between us within 30 days, either of
+          us may take it to the courts named below.
+        </p>
+
         <h2 id="law">Governing law</h2>
-        <p>These terms are governed by the law of the Republic of Serbia.</p>
+        <p>
+          These terms are governed by the law of the Republic of Serbia, and its courts have
+          jurisdiction over any dispute not resolved under the section above.
+        </p>
+
+        <h2 id="general">General terms</h2>
+        <p>
+          If any part of these terms is found unenforceable, the rest still stands. You may not
+          assign your rights under these terms without our consent; we may assign ours as part of a
+          business transfer, and will tell you if we do. Nothing here creates a partnership,
+          employment, or agency relationship between us. These terms, together with the Privacy
+          Policy and any consulting agreement, are the entire agreement between us on the subject.
+        </p>
 
         <h2 id="changes">Changes and questions</h2>
         <p>
@@ -175,6 +263,15 @@ const toc = [
     font-size: 1.24rem; line-height: 1.25; letter-spacing: .01em;
     color: var(--silver); margin: 58px 0 20px;
     padding-top: 22px; border-top: 1px solid rgba(240,242,245,.08);
+  }
+  .legal-body ul { list-style: none; margin: 0 0 22px; padding: 0; }
+  .legal-body li {
+    position: relative; color: var(--silver-dim); font-size: 1rem;
+    line-height: 1.8; padding-left: 22px; margin-bottom: 10px;
+  }
+  .legal-body li::before {
+    content: ''; position: absolute; left: 0; top: .78em;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: .8;
   }
   .legal-body strong { color: var(--silver); font-weight: 600; }
   .legal-body a.inline, .legal-body a:not(.inline) {

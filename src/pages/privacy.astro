@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const updated = '12 July 2026';
+const updated = '21 July 2026';
 
 const processors = [
   ['Cloudflare', 'Hosting, security and database', 'Page requests, IP address, saved assessment records'],
@@ -17,9 +17,12 @@ const processors = [
 
 const toc = [
   ['what-we-collect', 'What we collect and why'],
+  ['cookies', 'Cookies and similar technologies'],
   ['assessments', 'The assessments'],
   ['who-we-share-with', 'Who we share it with'],
+  ['international-transfers', 'International transfers'],
   ['legal-basis', 'Our legal basis'],
+  ['security', 'Data security'],
   ['retention', 'How long we keep it'],
   ['your-rights', 'Your rights'],
   ['children', 'Children'],
@@ -29,7 +32,7 @@ const toc = [
 
 <BaseLayout
   title="Privacy Policy"
-  description="What ahoosh.ai collects — including assessment answers — where it goes, why, and your rights under the GDPR."
+  description="What ahoosh.ai collects — including assessment answers — where it goes, why, how it is secured, and your rights under the GDPR."
 >
   <section class="legal">
     <div class="legal-wrap">
@@ -90,6 +93,16 @@ const toc = [
           conversation is handled by Tawk.to.
         </p>
 
+        <h2 id="cookies">Cookies and similar technologies</h2>
+        <p>
+          We do not use advertising or tracking cookies, and we run no ad networks on this site. The
+          site sets only what it needs to function: a small number of functional cookies from
+          Cloudflare for security, and — only if you open it — a session cookie from Tawk.to for the
+          chat widget. Google Fonts loads fonts directly from Google's servers, which sees your IP
+          address for that request alone. None of this is used to build a profile of you or to track
+          you across other sites.
+        </p>
+
         <h2 id="assessments">The assessments</h2>
 
         <div class="legal-callout">
@@ -148,12 +161,28 @@ const toc = [
           unless we are legally barred from doing so.
         </p>
 
+        <h2 id="international-transfers">International transfers</h2>
+        <p>
+          Some of the providers above are based outside the EEA, mainly in the United States. Where
+          that is the case, we rely on their Standard Contractual Clauses, or another safeguard
+          recognised under the GDPR, as the legal basis for sending data there. You can ask us for
+          details of the specific safeguard a given provider uses.
+        </p>
+
         <h2 id="legal-basis">Our legal basis</h2>
         <p>
           We rely on <strong>your explicit consent</strong> for assessment answers, results, and any
           email we send you; on <strong>legitimate interest</strong> for security logging and keeping
           the site running; and on <strong>contract</strong> for whatever is needed to deliver
           something you have bought.
+        </p>
+
+        <h2 id="security">Data security</h2>
+        <p>
+          Traffic to and from the site is encrypted in transit. Each provider we use only receives the
+          data it needs to do its job for us, listed plainly in the table above. No system is
+          unbreakable — if a breach affecting your data ever happens, we will tell you and, where the
+          law requires it, the relevant supervisory authority, without unnecessary delay.
         </p>
 
         <h2 id="retention">How long we keep it</h2>
