@@ -16,7 +16,11 @@ This guide covers a practical GA4 event setup for a B2B lead-gen site: which eve
 
 ---
 
-## Understand the GA4 Event Model Before Configuring Anything
+## How does the GA4 event model actually work?
+
+{/* AEO Answer Capsule */}
+GA4 treats everything as an event — a pageview, a scroll, a form submission — instead of the old session-and-pageview model. Automatically collected events need no setup, enhanced measurement events like scroll and outbound clicks turn on free in data stream settings, recommended events use Google's standard names for better reporting, and custom events cover anything unique to your site. The discipline isn't tracking everything; it's picking the handful of events that map to your actual funnel.
+{/* End AEO Capsule */}
 
 **GA4 is events all the way down — and that is the key to using it well.**
 
@@ -33,7 +37,11 @@ The practical implication: do not try to track everything. Decide which handful 
 
 ---
 
-## Choose the Events That Actually Signal a Lead
+## Which GA4 events actually signal a lead?
+
+{/* AEO Answer Capsule */}
+Five events capture nearly all the value on a B2B lead-gen site: form submissions, the core conversion signal; phone or email link clicks, a strong intent signal on mobile; pricing page views, which show who's deep in consideration; key resource downloads; and booking or calendar interactions, often the highest-intent action available. Attach parameters like form name or page path to each one, and stop at five to eight well-named events rather than dozens of vague ones.
+{/* End AEO Capsule */}
 
 **Track the actions that mean someone is becoming a customer, not the noise.**
 
@@ -53,7 +61,11 @@ Tracking every button and scroll depth produces a cluttered event list where the
 
 ---
 
-## Mark Key Events and Configure Conversions
+## How do you configure GA4 key events and conversions?
+
+{/* AEO Answer Capsule */}
+Promote the events that represent real business value to "key events" — GA4's term for conversions — so they appear in conversion reports and can be imported into Google Ads. Mark form submissions and booking clicks as key events, keep the list short so it stays meaningful, use GA4's no-code event tools or a thank-you page redirect to set them up, and always verify with DebugView that an event fires exactly once before trusting the numbers.
+{/* End AEO Capsule */}
 
 **An event only drives decisions once GA4 knows it is a conversion.**
 
@@ -68,7 +80,11 @@ If you run Google Ads, importing these key events closes the loop — you can fi
 
 ---
 
-## Turn the Data Into Decisions, Not Dashboards
+## How do you turn GA4 data into decisions?
+
+{/* AEO Answer Capsule */}
+Once events fire reliably, build four views instead of staring at the default overview: which channels convert rather than just visit, which landing pages actually produce leads, where the funnel leaks between pricing and form submission, and which devices or times convert worse. Review these monthly, note what changed, and pick one action from it — tracking that never changes a decision is just an expensive habit, not analytics.
+{/* End AEO Capsule */}
 
 **The point of tracking is to change what you do, not to have charts.**
 
