@@ -30,6 +30,8 @@ const SITEMAP_STATIC_PAGES = [
   'https://ahoosh.ai/news/',
   'https://ahoosh.ai/contact/',
   'https://ahoosh.ai/assess/',
+  'https://ahoosh.ai/products/',
+  'https://ahoosh.ai/products/aeo-kit/',
 ];
 
 export default defineConfig({

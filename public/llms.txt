@@ -1,0 +1,34 @@
+# AHoosh
+
+> AHoosh helps small and mid-size businesses across Europe get found and quoted by AI assistants such as ChatGPT, Perplexity, and Google's AI answers — through answer engine optimisation (AEO), AI readiness consulting, and self-serve products. Founded and run by Hesam Jafarzadeh, based in Belgrade, serving clients across Europe.
+
+## Products (self-serve, buy directly)
+
+- [The AEO Kit](https://ahoosh.ai/products/aeo-kit/): €49 one-time. A downloadable playbook, 40 fill-in templates, schema snippets, and 25 test prompts that show a business owner how to get mentioned by AI assistants, without hiring an agency.
+- [AI Visibility Snapshot](https://ahoosh.ai/snapshot/): Free. A 12-point self-check, delivered by email, on whether a business is currently likely to be mentioned by AI assistants.
+- [Free Growth Assessment](https://ahoosh.ai/assess/): Free. Self-scored business readiness, website/digital presence audit, and founder personality tests.
+- [All products](https://ahoosh.ai/products/)
+
+## Services (done-for-you)
+
+- [Services overview](https://ahoosh.ai/services/)
+- [AI Ops](https://ahoosh.ai/services/ai-ops/)
+- [Marketing](https://ahoosh.ai/services/marketing/)
+- [Transformation](https://ahoosh.ai/services/transformation/)
+- [Web design](https://ahoosh.ai/services/web-design/)
+- [Pricing](https://ahoosh.ai/pricing/)
+- [Book a call](https://ahoosh.ai/contact/)
+
+## About
+
+- [About Hesam Jafarzadeh](https://ahoosh.ai/about/): Founder, business consultant with 15+ years across B2C, B2B and B2G, PhD candidate in Software Engineering and E-Business at the University of Belgrade (FON).
+- [Portfolio](https://ahoosh.ai/portfolio/)
+
+## Articles
+
+AHoosh publishes practical, dated articles on AI adoption, AEO/SEO, and operations for small B2B businesses and distributors. Full index: [https://ahoosh.ai/articles/](https://ahoosh.ai/articles/)
+
+## Contact
+
+- Email: contact@ahoosh.ai
+- Website: https://ahoosh.ai
