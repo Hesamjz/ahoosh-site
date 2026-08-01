@@ -201,6 +201,7 @@
     "@type": "Brand",
     "name": "AHoosh"
   },
+  "image": "https://ahoosh.ai/lab/Ahoosh_Vectore_Logo.webp",
   "offers": {
     "@type": "Offer",
     "url": "https://ahoosh.lemonsqueezy.com/checkout/buy/0e43fb21-375b-465f-93b5-489ac5392034",
@@ -210,6 +211,41 @@
     "seller": {
       "@type": "Organization",
       "name": "AHoosh"
+    },
+    "shippingDetails": {
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": "0",
+        "currency": "EUR"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": "EU"
+      },
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 0,
+          "unitCode": "DAY"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 0,
+          "unitCode": "DAY"
+        }
+      }
+    },
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": "EU",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 14,
+      "returnFees": "https://schema.org/FreeReturn",
+      "refundType": "https://schema.org/FullRefund"
     }
   }
 }
