@@ -138,24 +138,67 @@ export async function onRequest(context) {
   }
 
   const res = await next();
-  // Mutate headers on the passthrough response directly instead of
-  // reconstructing it via `new Response(res.body, res)`. That reconstruction
-  // was silently breaking Range/Partial-Content support for large static
-  // assets (e.g. the /lab/*.mp4 scroll-video on /services/): confirmed via
-  // fetch() from an authenticated staging session that HEAD requests lost
-  // Content-Length/Accept-Ranges, and a Range GET came back 200 with the
-  // full body instead of 206 + Content-Range. Cloudflare Worker Response
-  // objects returned by next()/ASSETS.fetch() have mutable headers, so no
-  // reconstruction is needed to add a few headers -- this is the same
-  // response object, same body stream, same status (200 or 206), just with
-  // extra headers appended.
-  res.headers.set("Cache-Control", "no-store");
-  res.headers.set("X-Robots-Tag", "noindex, nofollow");
+
+  // ---- Manual Range support -------------------------------------------
+  // next() calls Cloudflare's static-asset fetcher (env.ASSETS.fetch()),
+  // which does NOT honour Range requests -- it always returns the full
+  // file with status 200, ignoring any Range header. On ahoosh.ai this is
+  // invisible because those responses are cacheable and Cloudflare's own
+  // CDN edge cache (a layer in FRONT of this Function) serves Range
+  // requests correctly from its cache on repeat visits. Staging responses
+  // are deliberately Cache-Control: no-store (an auth gate that can be
+  // cached is not a gate -- see below), so that cache layer never gets a
+  // chance to help: every single request, including every Range-seek the
+  // scroll-scrubbed <video> on /services/ makes, goes straight through
+  // next()'s Range-blind path. That is why the video stalls at
+  // readyState 0 on staging.ahoosh.ai and every preview URL, but plays
+  // fine on ahoosh.ai.
+  //
+  // Fix it here: when the client sent a Range header and next() answered
+  // with the full 200 body, slice that body ourselves and answer with a
+  // correct 206 Partial Content.
+  const rangeHeader = request.headers.get("Range");
+  let out = res;
+  if (rangeHeader && res.status === 200 && res.body) {
+    const parsed = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
+    if (parsed) {
+      const buf = await res.arrayBuffer();
+      const total = buf.byteLength;
+      let start = parsed[1] === "" ? undefined : parseInt(parsed[1], 10);
+      let end = parsed[2] === "" ? undefined : parseInt(parsed[2], 10);
+      if (start === undefined && end !== undefined) {
+        // suffix range, e.g. "bytes=-500" -> last 500 bytes
+        start = Math.max(total - end, 0);
+        end = total - 1;
+      } else {
+        if (start === undefined) start = 0;
+        if (end === undefined || end > total - 1) end = total - 1;
+      }
+      if (Number.isFinite(start) && Number.isFinite(end) && start <= end && start < total) {
+        const sliced = buf.slice(start, end + 1);
+        out = new Response(sliced, { status: 206, headers: res.headers });
+        out.headers.set("Content-Range", `bytes ${start}-${end}/${total}`);
+        out.headers.set("Content-Length", String(sliced.byteLength));
+        out.headers.set("Accept-Ranges", "bytes");
+      } else {
+        // Unsatisfiable range.
+        out = new Response(null, { status: 416, headers: res.headers });
+        out.headers.set("Content-Range", `bytes */${total}`);
+      }
+    }
+  } else if (res.status === 200 && !res.headers.get("Accept-Ranges")) {
+    // Not a range request, but tell the browser ranges ARE supported so it
+    // knows it can seek -- next() doesn't set this header itself.
+    out.headers.set("Accept-Ranges", "bytes");
+  }
+
+  out.headers.set("Cache-Control", "no-store");
+  out.headers.set("X-Robots-Tag", "noindex, nofollow");
   if (!seen) {
-    res.headers.append(
+    out.headers.append(
       "Set-Cookie",
       `${SESSION_COOKIE}=1; Path=/; Max-Age=43200; HttpOnly; Secure; SameSite=Lax`
     );
   }
-  return res;
+  return out;
 }
