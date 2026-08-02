@@ -138,15 +138,24 @@ export async function onRequest(context) {
   }
 
   const res = await next();
-  const out = new Response(res.body, res);
-  // Never let an authenticated page be cached by a shared cache.
-  out.headers.set("Cache-Control", "no-store");
-  out.headers.set("X-Robots-Tag", "noindex, nofollow");
+  // Mutate headers on the passthrough response directly instead of
+  // reconstructing it via `new Response(res.body, res)`. That reconstruction
+  // was silently breaking Range/Partial-Content support for large static
+  // assets (e.g. the /lab/*.mp4 scroll-video on /services/): confirmed via
+  // fetch() from an authenticated staging session that HEAD requests lost
+  // Content-Length/Accept-Ranges, and a Range GET came back 200 with the
+  // full body instead of 206 + Content-Range. Cloudflare Worker Response
+  // objects returned by next()/ASSETS.fetch() have mutable headers, so no
+  // reconstruction is needed to add a few headers -- this is the same
+  // response object, same body stream, same status (200 or 206), just with
+  // extra headers appended.
+  res.headers.set("Cache-Control", "no-store");
+  res.headers.set("X-Robots-Tag", "noindex, nofollow");
   if (!seen) {
-    out.headers.append(
+    res.headers.append(
       "Set-Cookie",
       `${SESSION_COOKIE}=1; Path=/; Max-Age=43200; HttpOnly; Secure; SameSite=Lax`
     );
   }
-  return out;
+  return res;
 }
