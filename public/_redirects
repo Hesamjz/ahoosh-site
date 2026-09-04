@@ -1,0 +1,7 @@
+# Real HTTP 301s for legacy /writing/* URLs -> /articles/*
+# (previously these only got a client-side <meta http-equiv="refresh"> from
+# src/pages/writing/[slug].astro, which Astro.redirect(...,301) cannot turn
+# into a real header on a static build with no SSR adapter — live returned
+# 200, not 301. This Cloudflare Pages _redirects rule fixes that at the edge,
+# no rebuild required for the redirect itself.)
+/writing/*  /articles/:splat  301
