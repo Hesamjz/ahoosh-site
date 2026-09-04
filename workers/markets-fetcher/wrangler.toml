@@ -1,14 +1,41 @@
 name = "ahoosh-markets-fetcher"
 main = "src/index.ts"
 compatibility_date = "2026-06-08"
-workers_dev = true
+# workers_dev set to false 2026-09-04 (was true) — a `wrangler deploy` with
+# this still `true` would have silently RE-ENABLED the public *.workers.dev
+# URL on next deploy and undone the dashboard toggle-off done the same day.
+# Both *.workers.dev URLs (Production + Preview) were also disabled live in
+# the Cloudflare dashboard as an immediate stopgap before this file was next
+# deployed. Do not flip back to true without fixing buildLatestPayload() first
+# (see the routes/cron postmortem comment below).
+workers_dev = false
 
-# Pipeline 1 — Markets. Cron every 5 minutes.
+# Pipeline 1 — Markets. Cron DISABLED 2026-09-02, ROUTES KILLED 2026-09-04 (Hesam's call, both times).
+# Root cause of the 2026-09-02 "D1 rows_read limit exceeded" Cloudflare email:
+# markets_snapshots grew unbounded since 2026-06-12 (5-min cron, no retention,
+# ~450k+ rows by today) and buildLatestPayload()'s per-asset correlated
+# subquery in store.ts got slower every day as the table grew. The /markets
+# display page was ALREADY retired to a hard 404 in mid-July, so nobody was
+# even seeing this data — meanwhile the daily pipeline-health-check kept
+# re-probing the now-broken /api/markets/latest endpoint every day since
+# 2026-07-13 (see 08_Workspace_Tools/dispatcher/logs/pipeline-health.log),
+# each probe re-running the same expensive failing query. Cumulative reads
+# from (growing table x daily writes x daily probes) finally crossed
+# Cloudflare's fixed 5,000,000 rows/day ceiling on 2026-09-02.
+# 2026-09-04: killing the cron alone wasn't enough — the READ routes below
+# were still live and public, and buildLatestPayload()'s correlated subquery
+# scales roughly as (total_rows)^2 / assets. At ~500k rows that's ~11.3
+# BILLION row-reads for a SINGLE call (~2,270x the entire daily cap) — the
+# table crossed the point where even one hit could exhaust the whole quota
+# back around 2026-06-14, ~2 days after the cron started. Something (bot/
+# scanner hitting the public URL, robots.txt Disallow: /api/ notwithstanding)
+# hit it again and blew the quota a second time. Routes removed entirely
+# below since the feature has no live consumer. Re-enable only if the
+# /markets feature is revived AND buildLatestPayload() is rewritten off the
+# correlated subquery AND the table has a retention policy.
 # KV removed 2026-06-13 — all data served from D1 (zero KV operations).
-# D1 free tier: 100k row reads/day, far more generous than KV's 1000 writes/day.
-# TGJU refreshes ~5 min, so 5-min cadence loses no real freshness.
-[triggers]
-crons = ["*/5 * * * *"]
+# [triggers]
+# crons = ["*/5 * * * *"]
 
 # D1 — historical snapshots + per-source failure state.
 [[d1_databases]]
@@ -19,15 +46,13 @@ database_id = "a81f8ee0-c741-4873-b1bd-401d10fd9dbb"
 [observability]
 enabled = true
 
-# Exact routes only — deeper paths than the existing /api/markets Pages Function,
-# so that function is NOT shadowed. (Smoke-test passed on workers.dev first.)
-[[routes]]
-pattern = "ahoosh.ai/api/markets/latest"
-zone_name = "ahoosh.ai"
-
-[[routes]]
-pattern = "ahoosh.ai/api/markets/history"
-zone_name = "ahoosh.ai"
+# Routes REMOVED 2026-09-04 — see the postmortem comment above. Were:
+#   ahoosh.ai/api/markets/latest
+#   ahoosh.ai/api/markets/history
+# Both are also being deleted live in the Cloudflare dashboard (Workers &
+# Pages -> ahoosh-markets-fetcher -> Settings -> Domains & Routes) so the
+# public URLs stop resolving to this worker immediately, not just on next
+# deploy. Do not re-add without fixing buildLatestPayload() first.
 
 # TELEGRAM_BOT_TOKEN + TELEGRAM_HESAM_CHAT_ID are set as secrets, not vars:
 #   npx wrangler secret put TELEGRAM_BOT_TOKEN
