@@ -17,7 +17,7 @@
     "@studio-freight/lenis": "^1.0.42",
     "@tailwindcss/vite": "^4.3.0",
     "@types/three": "^0.184.1",
-    "astro": "^6.4.4",
+    "astro": "^7.0.2",
     "gsap": "^3.15.0",
     "tailwindcss": "^4.3.0",
     "three": "^0.184.0",
