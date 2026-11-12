@@ -26,17 +26,20 @@ The first thing Brevo asks for is a sender email. Many teams enter a personal Gm
 
 Brevo's pricing is based on email volume sent per month, not on the number of contacts. This is structurally better for B2B teams than per-contact pricing (HubSpot's model), because a B2B team typically has a small, high-value list rather than a large broadcast volume.
 
-- Free: 300 emails/day (9,000/month), unlimited contacts, automation included
-- Starter: from €9/month for 5,000 sends/month up to €25/month for 20,000
-- Business: from €18/month — adds A/B testing, advanced reporting, multi-user
+- Free: up to 300 emails/day once Brevo approves your account for sending
+- Starter: from 5,000 emails/month
+- Standard: adds marketing automation, A/B testing, advanced email reporting and AI send-time optimisation
+- Professional and Enterprise: higher volumes, multi-user access, more channels; a dedicated IP is an Enterprise feature
+
+Plans and prices change, so check [Brevo's pricing page](https://www.brevo.com/pricing/) before you commit. The pricing page lists marketing automation under Standard, so confirm what your plan includes before you build the workflows below.
 
 For a B2B team with under 500 contacts sending 2–3 campaigns per month plus automation sequences, the free tier covers real usage. The trigger to upgrade is when you consistently approach the 300/day send limit — which typically means more than 300 active contacts receiving onboarding or nurture sequences simultaneously.
 
 **Time zone and unsubscribe settings.**
 
-Set your account time zone to match your primary audience. B2B open rates peak on Tuesday–Thursday between 9–11am and 1–3pm in the recipient's local time. Brevo's send-time optimisation feature (Starter and above) handles this automatically per contact, but even on free, the time zone setting determines when scheduled sends go out.
+Set your account time zone to match your primary audience. B2B open rates peak on Tuesday–Thursday between 9–11am and 1–3pm in the recipient's local time. Brevo's send-time optimisation feature (Standard and above) handles this automatically per contact, but even on free, the time zone setting determines when scheduled sends go out.
 
-Enable double opt-in for new contact sign-ups before you do anything else. It adds one confirmation step for subscribers, but it materially reduces spam complaints — which are the primary reason Brevo suspends accounts.
+Enable double opt-in for new contact sign-ups before you do anything else. It adds one confirmation step for subscribers, but it materially reduces spam complaints — which are one of the main triggers for suspension: Brevo's help says a spam complaint rate above 0.2% or an unsubscribe rate above 1% can lead to an account or campaign being suspended.
 
 ---
 
@@ -79,22 +82,22 @@ This is the section most setup guides bury in a footnote. It is, in practice, th
 
 SPF (Sender Policy Framework) tells receiving mail servers which IP addresses are authorised to send email on behalf of your domain. DKIM (DomainKeys Identified Mail) adds a cryptographic signature to each email header that the receiving server verifies against a public key in your DNS.
 
-Without both, your emails are sent from Brevo's shared IP infrastructure with no domain-level proof that your domain authorised the send. Gmail, Outlook, and most corporate mail servers now apply heavy filtering or bulk-folder routing to unauthenticated commercial email. [Google's 2024 bulk sender requirements](https://support.google.com/mail/answer/81126) made SPF+DKIM+DMARC mandatory for any domain sending more than 5,000 messages per day to Gmail — but even at lower volumes, authentication affects placement.
+Without both, your emails are sent from Brevo's shared IP infrastructure with no domain-level proof that your domain authorised the send. Gmail, Outlook, and most corporate mail servers now apply heavy filtering or bulk-folder routing to unauthenticated commercial email. [Google's 2024 bulk sender requirements](https://support.google.com/mail/answer/81126) require SPF or DKIM from everyone sending to Gmail, and SPF, DKIM and DMARC from bulk senders (roughly 5,000 or more messages a day to Gmail). Brevo's own help says domain authentication is mandatory under the Gmail, Yahoo and Microsoft sender requirements, and even at low volumes authentication affects placement.
 
 **How to complete it.**
 
-In Brevo: Settings → Senders & IPs → Authenticate a domain.
+In Brevo: account dropdown → Settings → Senders, Domains, IPs → Domains → Add a domain. Brevo offers automatic authentication (it connects to your DNS provider and adds the records) and manual authentication (you paste the records yourself). Use automatic if your provider is supported. One catch: if your domain already has a DMARC record, Brevo asks whether to replace it, and if you don't want that you have to authenticate manually.
 
-Brevo generates three DNS records:
-1. A TXT record for SPF
-2. A CNAME record for DKIM
-3. Optionally, a DMARC TXT record (strongly recommended)
+Manually, Brevo gives you these DNS records:
+1. A Brevo code (TXT) that proves you control the domain
+2. DKIM: two CNAME records (brevo1 and brevo2 under _domainkey) on most accounts, or one TXT record
+3. A DMARC TXT record, for example `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com`
 
-Add these to your domain's DNS at your registrar (Cloudflare, GoDaddy, Namecheap, etc.). Propagation takes up to 48 hours but is typically complete within 2–4 hours.
+Brevo's help says SPF and MX records are not required to authenticate a domain; Brevo only provides them for a dedicated IP. Add the records at your DNS provider (Cloudflare, GoDaddy, Namecheap, etc.). If you use Cloudflare, switch the DKIM CNAMEs to DNS only (proxy off) and turn off CNAME flattening, or DKIM fails. Brevo says changes can take up to 48 hours to show as authenticated.
 
 **Verification.**
 
-Once propagated, verify using [MXToolbox](https://mxtoolbox.com/spf.aspx). Paste your domain into the SPF lookup and confirm the Brevo IP range appears. Run the same check for DKIM. Both should show green before you send your first campaign.
+Once the records are in, open the domain in Brevo and click Authenticate this email domain. The status should read Authenticated. Then send a test email to a Gmail address, open the message headers and look for `dkim=pass` for your domain. Do this before you send your first campaign.
 
 A 15-minute investment in authentication prevents the scenario where you send your first campaign to 300 contacts and 220 of them land in spam.
 
@@ -170,7 +173,7 @@ Before your first campaign goes to real contacts, run these four checks:
 
 2. **GlockApps seed list test** — GlockApps lets you send to a seed list of real email addresses across Gmail, Outlook, Yahoo, and corporate providers. It tells you, per provider, whether your email landed in inbox or spam. Run this before any new campaign type (new automation sequence, new broadcast format).
 
-3. **Brevo's internal deliverability score** — Under Settings → Sending Statistics, Brevo shows your domain's historical delivery rate, open rate, and complaint rate. Complaint rate above 0.1% is a risk signal. Above 0.3% will trigger account review.
+3. **Brevo's internal deliverability score** — Brevo's Deliverability center shows a 0-100 score built from open, click, bounce, unsubscribe and complaint rates, plus whether your domain is authenticated, with a recommended rate next to each metric. In each campaign report, the Deliverability tab shows the delivery rate; Brevo says to act immediately if it falls under 90%. Per Brevo's help, a complaint rate above 0.2% or an unsubscribe rate above 1% can lead to account or campaign suspension.
 
 4. **Email Spam Tester ([email-spam-tester.com](https://email-spam-tester.com))** — Send one real email to a disposable address (no signup) and read the SPF, DKIM and DMARC results, blocklist lookups and a spam score. An optional inbox-placement test reports which folder Gmail, Outlook, Yahoo and other providers used. Its own site says the first 100,000 reports have no per-person limit, after which free use drops to 5 tests a day per IP, so check the current limit before you rely on it. It has a [guide for Brevo](https://email-spam-tester.com/integrations/brevo/): add the test address as a Brevo contact first, then send a test or the real campaign to it. The tool started in August 2026 and is maintained by one independent developer, so use it alongside the established checks rather than instead of them.
 
@@ -178,10 +181,10 @@ Before your first campaign goes to real contacts, run these four checks:
 
 The most common fixable issues:
 
-- SPF record missing or misconfigured → return to DNS and correct
+- Authentication failing (Brevo code, DKIM or DMARC record missing or wrong) → return to DNS and correct
 - Subject line flagged as spammy → remove ALL CAPS, excessive punctuation, phrases like "FREE", "LIMITED TIME", "ACT NOW"
-- No physical address in footer → Brevo requires a postal address in every commercial email (CAN-SPAM / GDPR compliance)
-- List quality too low → clean the list using [NeverBounce](https://neverbounce.com) or ZeroBounce before sending. Hard bounces above 2% damage your sender reputation.
+- No postal address in footer → add one; CAN-SPAM requires a valid postal address and a working unsubscribe link in commercial email
+- List quality too low → clean the list using [NeverBounce](https://neverbounce.com) or ZeroBounce before sending. High bounce rates damage your sender reputation and can get your Brevo account suspended.
 
 ---
 
