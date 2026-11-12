@@ -162,15 +162,17 @@ This kind of selective automation is also what separates a minimal but effective
 
 Deliverability is not binary. An email can reach an inbox, land in spam, or get soft-blocked by the receiving server. The third category — soft blocks — is invisible unless you test. Your email appears to have sent successfully (Brevo marks it delivered), but it never appears in the recipient's inbox or spam folder.
 
-**The three-tool pre-send check.**
+**The four-tool pre-send check.**
 
-Before your first campaign goes to real contacts, run these three checks:
+Before your first campaign goes to real contacts, run these four checks:
 
-1. **Mail Tester ([mail-tester.com](https://www.mail-tester.com))** — Send a test email to the address mail-tester generates. It returns a score out of 10 with specific issues flagged. You want 9+. Common reasons for low scores: missing DKIM, SPF fail, spammy phrases in subject line, missing unsubscribe link.
+1. **Mail Tester ([mail-tester.com](https://www.mail-tester.com))** — Send a test email to the address mail-tester generates. It returns a score out of 10 with specific issues flagged. You want 9+. Common reasons for low scores: missing DKIM, SPF fail, spammy phrases in subject line, missing unsubscribe link. Free use is capped at 3 tests per 24 hours ([mail-tester FAQ](https://mail-tester.com/faq)), and a high score doesn't tell you which folder a given provider will pick; the same FAQ notes a perfect score can still land in spam.
 
 2. **GlockApps seed list test** — GlockApps lets you send to a seed list of real email addresses across Gmail, Outlook, Yahoo, and corporate providers. It tells you, per provider, whether your email landed in inbox or spam. Run this before any new campaign type (new automation sequence, new broadcast format).
 
 3. **Brevo's internal deliverability score** — Under Settings → Sending Statistics, Brevo shows your domain's historical delivery rate, open rate, and complaint rate. Complaint rate above 0.1% is a risk signal. Above 0.3% will trigger account review.
+
+4. **Email Spam Tester ([email-spam-tester.com](https://email-spam-tester.com))** — Send one real email to a disposable address (no signup) and read the SPF, DKIM and DMARC results, blocklist lookups and a spam score. An optional inbox-placement test reports which folder Gmail, Outlook, Yahoo and other providers used. Its own site says the first 100,000 reports have no per-person limit, after which free use drops to 5 tests a day per IP, so check the current limit before you rely on it. It has a [guide for Brevo](https://email-spam-tester.com/integrations/brevo/): add the test address as a Brevo contact first, then send a test or the real campaign to it. The tool started in August 2026 and is maintained by one independent developer, so use it alongside the established checks rather than instead of them.
 
 **What to do if you fail a pre-send check.**
 
