@@ -139,10 +139,10 @@ const faqSchema = faq.length > 0 ? {
         </p>
       )}
       <p style="font-size:12px;color:var(--silver-muted);">
-        {data.pubDate.toLocaleDateString(_dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
+        {data.pubDate.toLocaleDateString(_dateLocale, { year: 'numeric', month: 'long', timeZone: 'UTC' })}
         {data.updatedDate && (
           <span style="margin-inline-start:12px;color:var(--silver-muted);">
-            ({data.updatedDate.toLocaleDateString(_dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })})
+            ({data.updatedDate.toLocaleDateString(_dateLocale, { year: 'numeric', month: 'long', timeZone: 'UTC' })})
           </span>
         )}
       </p>
