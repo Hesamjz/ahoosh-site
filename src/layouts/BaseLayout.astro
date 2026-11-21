@@ -57,6 +57,7 @@ const DE_FOOTER = "<footer>\n  <div class=\"container\">\n    <div class=\"foot-
 <!doctype html>
 <html lang={meta.lang} dir={meta.dir}>
   <head>
+    {meta.lang === 'de' && <meta name="google" content="notranslate" />}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
