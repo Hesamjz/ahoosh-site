@@ -1,0 +1,109 @@
+---
+title: "Eine Technische-SEO-Checkliste für Websites kleiner Unternehmen (2026)"
+description: "Eine praktische Technische-SEO-Checkliste für Websites kleiner Unternehmen und B2B-Firmen 2026 — Crawlbarkeit, Core Web Vitals, strukturierte Daten, Indexierung und die Prüfungen, die Rankings tatsächlich bewegen."
+pubDate: 2026-09-01
+tags: ["Strategy", "SEO", "Content"]
+heroImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
+lang: de
+translationOf: "2026-07-26_technical-seo-checklist-small-business-2026"
+---
+
+<img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80" alt="Laptop zeigt Website-Analysen und eine Übersicht der Suchergebnisse auf einem Schreibtisch" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Die meisten Websites kleiner Unternehmen verlieren Suchtraffic nicht, weil ihre Inhalte schlecht sind, sondern weil Suchmaschinen Mühe haben, die Seiten zu crawlen, darzustellen oder ihnen zu vertrauen. Die Inhalte sind da. Die technische Installation darunter ist auf Weisen kaputt, die der Inhaber nie sieht, weil die Seite im Browser gut aussieht.
+
+Technische SEO ist der Teil der Suchmaschinenoptimierung, der nichts mit Keywords oder Blogbeiträgen zu tun hat. Es geht darum, ob Google Ihre Seiten erreichen, schnell laden, verstehen, worum es geht, und entscheiden kann, dass sie ein Ranking verdienen. Für ein europäisches kleines Unternehmen mit zehn bis fünfzig Seiten ist das eine endliche, prüfbare Liste — kein endloses Projekt.
+
+Diese Checkliste ist nach Wirkung geordnet. Die ersten drei Abschnitte beheben Probleme, die Seiten ganz aus dem Index heraushalten können. Der Rest sind Verfeinerungen, die verbessern, wo Sie ranken, sobald Sie drin sind. Arbeiten Sie von oben nach unten und gehen Sie erst weiter, wenn jeder Abschnitt besteht.
+
+---
+
+## Crawlbarkeit und Indexierung — Kann Google Ihre Seiten überhaupt sehen?
+
+**Beginnen Sie mit der Indexzahl.** Öffnen Sie die [Google Search Console](https://search.google.com/search-console/about) und sehen Sie sich den Bericht „Seiten“ an. Er zeigt, wie viele Seiten indexiert sind und, nützlicher, wie viele ausgeschlossen sind und warum. Ein häufiger Befund: Ein Unternehmen hat 40 Seiten, aber nur 12 sind indexiert. Die anderen 28 sind mit „Gecrawlt – zurzeit nicht indexiert“ oder „Gefunden – zurzeit nicht indexiert“ markiert. Diese Seiten bringen keinen Traffic, so gut sie auch sind.
+
+**Prüfen Sie Ihre robots.txt-Datei.** Geben Sie `ihredomain.de/robots.txt` in einen Browser ein. Diese Klartextdatei sagt Crawlern, worauf sie zugreifen dürfen und worauf nicht. Der schädlichste Einzelfehler in der SEO kleiner Unternehmen ist eine übrig gebliebene Zeile `Disallow: /` aus einer Staging- oder Entwicklungsphase, die die ganze Seite blockiert. Wenn Sie diese Zeile auf Ihrer Live-Seite sehen, entfernen Sie sie heute. Das ist das digitale Äquivalent, die Haustür abzuschließen und sich zu wundern, warum niemand vorbeikommt.
+
+**Prüfen Sie Ihre XML-Sitemap.** Eine Sitemap ist eine Liste aller URLs, die indexiert werden sollen. Bestätigen Sie, dass sie unter `ihredomain.de/sitemap.xml` existiert, Ihre echten Seiten enthält (keine Test-URLs) und in der Search Console im Bereich Sitemaps eingereicht ist. Sitemaps erzwingen keine Indexierung, helfen Google aber, Seiten schneller zu finden, besonders bei neueren Websites mit wenigen eingehenden Links.
+
+**Suchen Sie nach versehentlichen noindex-Tags.** Ein `noindex`-Meta-Tag sagt Suchmaschinen, eine Seite aus den Ergebnissen herauszuhalten. Sie sind für Danke-Seiten und interne Suchergebnisse nützlich, geraten aber öfter, als man denkt, versehentlich auf wichtige Seiten — meist weil eine CMS-Einstellung oder ein Plugin-Standard sie seitenweit gesetzt hat. Prüfen Sie im URL-Prüftool der Search Console ein paar Schlüsselseiten und bestätigen Sie, dass dort „Indexierung zulässig: Ja“ steht.
+
+**Bestätigen Sie eine kanonische Version Ihrer Domain.** Ihre Seite sollte unter genau einer Adresse erreichbar sein. Testen Sie, dass `http://`, die Version ohne www und Varianten mit oder ohne abschließenden Schrägstrich alle auf eine einzige kanonische URL weiterleiten (meist `https://www.ihredomain.de`). Mehrere erreichbare Versionen verteilen Ihre Ranking-Signale auf doppelte URLs und verwirren Crawler.
+
+---
+
+## Core Web Vitals und Seitengeschwindigkeit — das messbare Ranking-Signal
+
+Google nutzt die Seitenerfahrung als Ranking-Faktor, und der messbare Kern davon ist eine Reihe von Kennzahlen namens Core Web Vitals. Sie zählen mehr auf dem Handy, wo heute der Großteil der B2B-Recherche stattfindet, auch bei Geschäften, die am Desktop abgeschlossen werden.
+
+**Die drei Kennzahlen, die 2026 zählen:**
+
+- **Largest Contentful Paint (LCP)** — wie lange es dauert, bis der Hauptinhalt sichtbar ist. Ziel: unter 2,5 Sekunden.
+- **Interaction to Next Paint (INP)** — wie schnell die Seite reagiert, wenn jemand klickt oder tippt. Ziel: unter 200 Millisekunden.
+- **Cumulative Layout Shift (CLS)** — wie stark das Layout beim Laden springt. Ziel: unter 0,1.
+
+**Messen Sie mit echten Werkzeugen, nicht mit Vermutungen.** Lassen Sie Ihre Startseite und zwei wichtige Leistungsseiten durch [PageSpeed Insights](https://pagespeed.web.dev/) laufen. Es meldet sowohl Labordaten (ein simulierter Test) als auch Felddaten (echte Besuchermessungen, wenn Sie genug Traffic haben). Vertrauen Sie den Felddaten, wenn sie verfügbar sind — die nutzt Google tatsächlich.
+
+**Die Korrekturen mit dem größten Ertrag für kleine Websites:**
+
+- **Bilder komprimieren und verkleinern.** Das häufigste Geschwindigkeitsproblem ist, ein 4.000 Pixel breites Foto hochzuladen und mit 600 Pixeln darzustellen. Verkleinern Sie Bilder auf ihre Anzeigegröße und liefern Sie sie in modernen Formaten wie WebP aus. Allein das halbiert den LCP oft.
+- **Skripte von Drittanbietern reduzieren.** Jedes Chat-Widget, jeder Analyse-Tag und jede Social-Einbettung erhöht die Ladezeit. Prüfen Sie, was läuft, und entfernen Sie alles, was Sie nicht aktiv nutzen.
+- **Breite und Höhe bei Bildern festlegen.** Wer Bildabmessungen im HTML ausdrücklich angibt, verhindert, dass das Layout beim Laden der Bilder springt, was den CLS direkt behebt.
+
+Wie Geschwindigkeit damit zusammenhängt, dass Besucher tatsächlich ein Formular ausfüllen oder ein Gespräch buchen, lesen Sie in unserem Leitfaden zur [B2B-Website-Conversion](/de/articles/2026-06-10_b2b-website-conversion-2026/), in dem die Ladezeit zu den ersten Dingen gehört, die wir prüfen.
+
+---
+
+## Strukturierte Daten — Suchmaschinen helfen, Ihre Inhalte zu verstehen
+
+Strukturierte Daten sind Code, den Sie Seiten hinzufügen, um in maschinenlesbarer Form zu beschreiben, was sie enthalten. Sie ändern nicht, was Besucher sehen, aber sie helfen Suchmaschinen, reichhaltigere Ergebnisse anzuzeigen — Sternebewertungen, FAQs, Öffnungszeiten — und Ihr Unternehmen genauer zu verstehen.
+
+**Die Schema-Typen, die sich für ein kleines B2B-Unternehmen lohnen:**
+
+- **Organization** — Firmenname, Logo und Kontaktdaten. Einmal seitenweit hinzufügen.
+- **LocalBusiness** — wenn Sie eine bestimmte Region bedienen, enthält dies Adresse, Öffnungszeiten und Einzugsgebiet.
+- **Service** — beschreibt jede Leistung, die Sie anbieten.
+- **FAQPage** — markiert Frage-und-Antwort-Bereiche, damit sie in den Ergebnissen aufgeklappt erscheinen können.
+- **BreadcrumbList** — zeigt Ihre Seitenhierarchie in den Suchlisten.
+
+**So setzen Sie es um.** Das Standardvokabular ist auf [schema.org](https://schema.org/) definiert, und Google empfiehlt das JSON-LD-Format — ein Codeblock, den Sie in den Head-Bereich der Seite einfügen. Die meisten CMS-Plattformen haben Plugins, die das automatisch erzeugen; bei einer individuellen Seite kann ein Entwickler es an einem Nachmittag ergänzen.
+
+**Immer validieren.** Testen Sie nach dem Hinzufügen strukturierter Daten jeden Seitentyp mit dem [Test für Rich-Suchergebnisse](https://search.google.com/test/rich-results). Er bestätigt, dass Ihr Markup gültig ist, und zeigt, für welche Rich-Ergebnis-Typen sich die Seite qualifiziert. Ungültiges Schema bewirkt nichts, diese Prüfung ist also nicht optional.
+
+---
+
+## Mobil, HTTPS und Seitenarchitektur — die Grundlagen
+
+**Mobile-first ist nicht optional.** Google indexiert die mobile Version Ihrer Seite, nicht die Desktop-Version. Wenn Ihre mobile Seite Inhalte versteckt, winzige Tippflächen hat oder auf dem Handy langsam lädt, ist das die Version, die ein Ranking bekommt. Testen Sie Ihre Schlüsselseiten auf einem echten Handy, nicht nur in einem verkleinerten Browserfenster.
+
+**HTTPS überall.** Jede Seite muss über eine sichere Verbindung mit gültigem SSL-Zertifikat laden. Browser kennzeichnen unsichere Seiten, und Google wertet HTTPS als Ranking-Signal. Die meisten Hosting-Anbieter enthalten inzwischen kostenlose Zertifikate über Let's Encrypt, es gibt also keinen Kostengrund, darauf zu verzichten. Bestätigen Sie, dass es keine „Mixed-Content“-Warnungen gibt, bei denen eine sichere Seite ein unsicheres Bild oder Skript lädt.
+
+**Halten Sie die Klicktiefe flach.** Jede wichtige Seite sollte innerhalb von drei Klicks von der Startseite erreichbar sein. Seiten, die fünf oder sechs Klicks tief vergraben sind, werden seltener gecrawlt und ranken schlechter. Eine flache, logische Struktur — Startseite, Kategorie, Seite — hilft Crawlern wie Menschen.
+
+**Defekte interne Links beheben.** Lassen Sie einen Crawl mit einem kostenlosen Werkzeug wie Screaming Frog laufen (kostenlos bis 500 URLs) und suchen Sie nach 404-Fehlern und Weiterleitungsketten. Defekte Links verschwenden Crawl-Budget und frustrieren Besucher. Das hängt direkt damit zusammen, wie eine schlanke Seite von Anfang an gebaut sein sollte — unser Beitrag zum [minimalen Tech-Stack für B2B-Beratung](/de/articles/2026-06-10_minimal-tech-stack-b2b-consulting/) argumentiert, dass weniger bewegliche Teile von vornherein weniger dieser Probleme bedeuten.
+
+---
+
+## Laufende Überwachung — was Sie jeden Monat prüfen sollten
+
+Technische SEO ist keine einmalige Aufräumaktion. Websites driften: Plugins werden aktualisiert, Seiten kommen hinzu, Weiterleitungen häufen sich. Eine monatliche Prüfung von 30 Minuten verhindert, dass aus kleinen Problemen Ranking-Verluste werden.
+
+**Ihre monatliche Checkliste:**
+
+- **Abdeckung in der Search Console** — ist die Zahl indexierter Seiten gesunken? Neue Fehler im Bericht „Seiten“?
+- **Bericht zu Core Web Vitals** — ist eine URL-Gruppe von „Gut“ auf „Verbesserungswürdig“ gefallen?
+- **Manuelle Maßnahmen und Sicherheitsprobleme** — prüfen Sie diese Bereiche in der Search Console. Sie sind selten, aber ernst.
+- **Defekte Links** — ein kurzer Crawl fängt neue 404er ab, bevor sie sich häufen.
+- **Trends der Suchleistung** — sind Impressionen und Klicks stabil, steigend oder fallend? Ein plötzlicher Einbruch signalisiert ein technisches Problem, das sofort untersucht werden sollte.
+
+**Richten Sie Benachrichtigungen ein, wo Sie können.** Die Search Console schickt Ihnen eine E-Mail, wenn sie größere Probleme erkennt; stellen Sie also sicher, dass die Benachrichtigungsadresse an jemanden geht, der sie liest. Für Inhalts- und Keyword-Strategie, die auf dieser technischen Basis aufbaut, behandelt unser Leitfaden zu [SEO für B2B-Dienstleistungen 2026](/de/articles/2026-06-10_seo-b2b-services-2026/) die Schicht, die auf einer technisch soliden Seite liegt.
+
+---
+
+Technische SEO für ein kleines Unternehmen ist nicht die endlose, geheimnisvolle Disziplin, zu der sie manchmal gemacht wird. Für eine Seite mit ein paar Dutzend Seiten ist es eine endliche Checkliste, die Sie an einem konzentrierten Tag abarbeiten und danach in einer halben Stunde im Monat pflegen können. Die Werkzeuge, auf die es ankommt — Search Console, PageSpeed Insights, der Test für Rich-Suchergebnisse — sind kostenlos und stammen von Google selbst.
+
+Der Ertrag ist nicht glamourös, aber real: Seiten, die unsichtbar waren, werden indexiert, Seiten, die langsam luden, werden schneller, und Inhalte, die Sie schon geschrieben haben, bekommen endlich das Ranking, das sie verdienen. Bringen Sie zuerst die Installation in Ordnung, und alles, was Sie darauf aufbauen — Inhalte, Links, Keywords —, arbeitet härter.
+
+---
+
+**Quellen:** [Google Search Console](https://search.google.com/search-console/about) · [Google Search Central Dokumentation](https://developers.google.com/search/docs) · [schema.org](https://schema.org/)

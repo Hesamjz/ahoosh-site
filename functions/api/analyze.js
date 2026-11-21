@@ -50,7 +50,8 @@ export async function onRequestPost(context) {
     `Write a personalized character analysis in second person ("you"). ` +
     `Structure: (1) a two-sentence summary of who they are based on the scores; (2) their core strengths and where these show up at work; (3) blind spots or watch-outs, framed constructively; (4) one concrete suggestion. ` +
     `Interpret the standard dimensions of this instrument correctly (e.g. Big Five O/C/E/A/N, DISC, decision-making styles). ` +
-    `Be specific to the actual scores — no generic horoscope language, no flattery, no filler. 180–240 words. Plain paragraphs, no headings, no markdown.`;
+    `Be specific to the actual scores — no generic horoscope language, no flattery, no filler. 180–240 words. Plain paragraphs, no headings, no markdown.` +
+    (body.lang === 'de' ? ' Write the entire analysis in German (Deutsch).' : '');
 
   const userMsg =
     `Assessment: ${testTitle}\n` +

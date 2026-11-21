@@ -1,0 +1,134 @@
+---
+title: "Schema-Markup für lokale Unternehmen und Dienstleister"
+description: "Ein praktischer Leitfaden zu strukturierten Daten für lokale Unternehmen und Dienstleister — welche Schema-Typen zählen, wie Sie sie korrekt umsetzen und wie Sie Markup vor dem Livegang validieren."
+pubDate: 2026-10-01
+tags: ["Strategy", "SEO", "Content"]
+heroImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80"
+lang: de
+translationOf: "2026-08-20_schema-markup-local-service-business"
+---
+
+<img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80" alt="Analytics-Dashboard auf einem Laptop mit Kennzahlen zur Suchleistung" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Zwei lokale Dienstleister können nahezu identische Websites haben, dieselbe Leistung anbieten und in der Suche sehr unterschiedlich ranken — und ein häufiger Grund ist, dass einer den Suchmaschinen in maschinenlesbarer Form genau sagt, was er ist, und der andere sie raten lässt. Diese maschinenlesbare Ebene ist Schema-Markup: strukturierte Daten, die Ihren Seiten hinzugefügt werden und Firmenname, Standort, Leistungen, Öffnungszeiten und Bewertungen in einem Format ausweisen, das Suchmaschinen direkt auslesen.
+
+Für ein lokales Unternehmen oder einen Dienstleister zählt das mehr als für die meisten. Suchmaschinen beantworten Anfragen zunehmend mit Rich Results — der Firmenkarte in der Seitenleiste, den Sternebewertungen unter einem Eintrag, dem Hinweis „jetzt geöffnet“, dem Aufklappmenü mit häufigen Fragen. Diese erweiterten Ergebnisse stammen überproportional von Seiten mit korrekten strukturierten Daten. Ohne sie konkurrieren Sie um einen schlichten blauen Link, während Wettbewerber die visuelle Fläche bekommen.
+
+Schema-Markup hat den Ruf, technisch zu sein, doch der Kern davon ist für einen Dienstleister unkompliziert und lohnt sich, selbst zu machen. Dieser Leitfaden behandelt, welche Schema-Typen wirklich zählen, wie Sie sie umsetzen, ohne etwas zu zerstören, und wie Sie validieren, bevor Sie sich darauf verlassen.
+
+---
+
+## Was bewirkt Schema-Markup eigentlich?
+
+{/* AEO Answer Capsule */}
+Strukturierte Daten ändern nicht, was Ihre Seite sagt — sie ändern, was Suchmaschinen verstehen. Fakten wie Öffnungszeiten oder eine Sternebewertung in JSON-LD zu kennzeichnen, beseitigt das Raten, das eine Suchmaschine sonst aus Fließtext ableiten muss. Der Nutzen sind Rich Results, genauere Knowledge Panels, stärkere lokale Relevanz für „in der Nähe“-Suchen und bessere Auswertung durch Sprach- und KI-Assistenten. Es verstärkt Sichtbarkeit, die Sie sich bereits verdient haben, und ist selbst kein Rankingfaktor.
+{/* End AEO Capsule */}
+
+**Strukturierte Daten ändern nicht, was Ihre Seite sagt — sie ändern, was Suchmaschinen verstehen.**
+
+Ein Mensch, der Ihre Seite liest, weiß sofort, dass „Geöffnet Mo–Fr 9–17“ Ihre Öffnungszeiten sind und „★★★★☆ (47 Bewertungen)“ eine Bewertung. Eine Suchmaschine muss das aus unstrukturiertem Text ableiten und liegt dabei oft falsch oder ignoriert es. Schema-Markup beseitigt das Raten, indem es jeden Fakt ausdrücklich kennzeichnet, mit einem gemeinsamen Vokabular, das auf [schema.org](https://schema.org) definiert ist.
+
+Der praktische Nutzen für ein lokales Unternehmen oder einen Dienstleister:
+
+- **Rich Results** — Sternebewertungen, Öffnungszeiten, Preisspannen und FAQ-Aufklappmenüs, die Ihren Eintrag größer und klickbarer machen
+- **Genauigkeit des Knowledge Panels** — die Firmeninfobox, die Suchmaschinen zeigen, wird teils aus Ihren strukturierten Daten gespeist
+- **Bessere lokale Relevanz** — klare Standort- und Einzugsgebietsdaten helfen, bei „in meiner Nähe“- und ortsbezogenen Suchen aufzutauchen
+- **Sprach- und KI-Antworten** — Assistenten und KI-Suche greifen zunehmend auf strukturierte Daten zu, weil sie eindeutig sind
+
+Wichtig ist die Einordnung: Schema hebt Rankings nicht direkt an, wie es gute Inhalte oder Links tun. Es macht Ihre bestehenden Seiten für erweiterte Darstellung und klareres Verständnis berechtigt — was die Klickrate auch dann hebt, wenn sich Ihre Position nicht ändert. Es verstärkt die Sichtbarkeit, die Sie sich schon verdient haben, und passt natürlich zu einem soliden [SEO-Ansatz für B2B- und Dienstleistungsunternehmen](/de/articles/2026-06-10_seo-b2b-services-2026/).
+
+---
+
+## Welche Schema-Typen zählen für einen Dienstleister wirklich?
+
+{/* AEO Answer Capsule */}
+Eine Handvoll Typen deckt fast alles ab, was ein lokales Unternehmen oder ein Dienstleister braucht. LocalBusiness trägt Name, Adresse, Telefon und Öffnungszeiten; Service beschreibt jedes Angebot; Organization passt für Unternehmen ohne Ladengeschäft; Review und AggregateRating erzeugen Sternebewertungen; FAQPage ermöglicht ein aufklappbares Suchergebnis. Wählen Sie nur Typen, die Ihr reales Geschäft beschreiben — Dinge auszuzeichnen, die auf der Seite nicht sichtbar sind, ist schlimmer, als sie ganz wegzulassen.
+{/* End AEO Capsule */}
+
+**Eine Handvoll Schema-Typen deckt fast alles ab, was ein Dienstleister braucht — konstruieren Sie nicht über.**
+
+Schema.org definiert Hunderte Typen, von denen die meisten für ein lokales Unternehmen irrelevant sind. Der Fehler ist entweder, keinen zu nutzen, oder zu versuchen, alles auszuzeichnen. Richtig ist, die wenigen Typen umzusetzen, die dem entsprechen, was Sie wirklich sind und tun.
+
+Der Kernsatz für ein lokales Unternehmen oder einen Dienstleister:
+
+- **LocalBusiness** (oder ein spezifischerer Untertyp) — Ihr grundlegendes Markup: Name, Adresse, Telefon, Öffnungszeiten, Geokoordinaten, Preisspanne. Bedienen Sie Kunden an oder von einem physischen Standort aus, ist das unverzichtbar. Nutzen Sie den spezifischsten passenden Untertyp (es gibt viele, von `ProfessionalService` bis zu gewerkespezifischen Typen).
+- **Service** — beschreibt jede angebotene Leistung und lässt Sie ausdrücken, was Sie tun, statt es nur anzudeuten. Nützlich für ein Unternehmen mit unterschiedlichen Leistungslinien.
+- **Organization** — für Unternehmen ohne starken lokalen Ladenbezug trägt es Ihren Namen, Ihr Logo, Kontaktpunkte und Social-Profile.
+- **Review / AggregateRating** — zeichnet echte Kundenbewertungen und Ihre Gesamtbewertung aus. Das erzeugt die Sternebewertungen in den Suchergebnissen, muss aber echte Bewertungen widerspiegeln, die Sie tatsächlich anzeigen.
+- **FAQPage** — zeichnet einen echten Frage-und-Antwort-Bereich aus, der ein aufklappbares FAQ direkt in den Suchergebnissen erzeugen kann.
+- **BreadcrumbList** — zeigt Ihre Seitenhierarchie im Ergebnis, hilfreich für mehrseitige Dienstleistungswebsites.
+
+Wählen Sie die Typen, die Ihr reales Geschäft beschreiben, und lassen Sie den Rest weg. Dinge auszuzeichnen, die nicht zutreffen oder nicht auf der sichtbaren Seite erscheinen, ist schlimmer, als sie wegzulassen — Suchmaschinen strafen strukturierte Daten ab, die die Seite falsch darstellen. Diese Zurückhaltung entspricht dem Prinzip des [minimalen, bewussten Tech-Stacks](/de/articles/2026-06-10_minimal-tech-stack-b2b-consulting/): nutzen Sie, was seinen Platz verdient, und nichts darüber hinaus.
+
+---
+
+## Wie setzen Sie Schema-Markup korrekt um?
+
+{/* AEO Answer Capsule */}
+Nutzen Sie JSON-LD — einen in sich geschlossenen Skriptblock, meist im Seitenkopf, den Google ausdrücklich empfiehlt und der sich weit leichter pflegen lässt als die Alternativen. Setzen Sie pro Seite einen Block, der den tatsächlichen Inhalt dieser Seite beschreibt, stellen Sie sicher, dass jeder ausgezeichnete Fakt auf der Seite sichtbar ist, halten Sie Name, Adresse und Telefon überall identisch und füllen Sie auch empfohlene Eigenschaften wie Öffnungszeiten und Preisspanne, nicht nur die erforderlichen. Von Plugins automatisch erzeugtes Schema sollte immer geprüft, nie blind vertraut werden.
+{/* End AEO Capsule */}
+
+**JSON-LD ist das empfohlene Format — ein Block strukturierter Daten, der in Ihrer Seite sitzt, ohne den sichtbaren Inhalt anzutasten.**
+
+Schema lässt sich auf drei Arten umsetzen, doch für einen Dienstleister ist die Antwort klar: Nutzen Sie JSON-LD. Es ist ein in sich geschlossener Skriptblock, meist im Seitenkopf, der Ihre Daten beschreibt, ohne Markup durch Ihr sichtbares HTML zu weben. Google empfiehlt es ausdrücklich, und es ist weit leichter zu pflegen als die Alternativen.
+
+Die Grundlagen der Umsetzung:
+
+- **Ein JSON-LD-Block pro Seite, der diese Seite beschreibt.** Ihre Startseite oder Kontaktseite trägt die LocalBusiness-Daten; eine Leistungsseite ihre Service-Daten; eine Seite mit echtem FAQ die FAQPage-Daten. Stimmen Sie das Markup auf den tatsächlichen Inhalt der Seite ab.
+- **Jeder ausgezeichnete Fakt muss auf der sichtbaren Seite erscheinen.** Strukturierte Daten müssen beschreiben, was ein Nutzer tatsächlich sieht. Bewertungen auszuzeichnen, die nicht gezeigt werden, Öffnungszeiten, die nicht aufgelistet sind, oder eine versteckte Adresse verstößt gegen die Richtlinien und riskiert eine manuelle Maßnahme.
+- **Verwenden Sie überall konsistente NAP-Daten.** Name, Adresse und Telefon im Markup müssen genau mit dem übereinstimmen, was auf Ihrer Website und in anderen Einträgen steht. Inkonsistenz verwirrt das lokale Suchsignal, das Sie stärken wollen.
+- **Füllen Sie die empfohlenen Eigenschaften, nicht nur die erforderlichen.** Für LocalBusiness nehmen Sie Öffnungszeiten, Preisspanne, Geokoordinaten und einen Link zu Ihrem Logo auf. Vollständigere Daten erzeugen reichere Ergebnisse.
+
+Läuft Ihre Website auf einer gängigen Plattform, können Plugins und eingebaute Funktionen JSON-LD für Sie erzeugen — prüfen Sie aber, was sie ausgeben, statt blind zu vertrauen. Automatisch erzeugtes Schema ist häufig unvollständig oder unterschwellig falsch. Für eine kleine Dienstleistungswebsite ist es durchaus machbar, einen sauberen JSON-LD-Block für Ihre Schlüsselseiten von Hand zu schreiben, und es gibt Ihnen Kontrolle darüber, was genau erklärt wird. Googles eigene [Dokumentation zu strukturierten Daten](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data) ist die maßgebliche Referenz für die erforderlichen und empfohlenen Eigenschaften jedes Typs.
+
+---
+
+## Wie validieren Sie Schema-Markup vor dem Livegang?
+
+{/* AEO Answer Capsule */}
+Defektes Schema scheitert stillschweigend — kein Rich Result, keine Fehlermeldung, wenn Sie es nicht testen. Führen Sie Googles Test für Rich-Suchergebnisse aus, um Gültigkeit und Berechtigung zu prüfen, und den Schema.org-Validator für allgemeine Korrektheit gegenüber dem Vokabular. Behandeln Sie Fehler als blockierend und Warnungen als optionale Verbesserungen, und testen Sie je Typ eine repräsentative Seite — Startseite, Leistungsseite, FAQ-Seite —, denn die Korrektur einer Seite garantiert nicht, dass die anderen stimmen.
+{/* End AEO Capsule */}
+
+**Defektes Schema scheitert stillschweigend — es erzeugt weder Rich Results noch eine Fehlermeldung, wenn Sie nicht testen.**
+
+Das häufigste Ergebnis von Schema in Eigenregie ist keine Strafe, sondern nichts. Ein kleiner Syntaxfehler oder eine fehlende Pflichteigenschaft führt dazu, dass Suchmaschinen das Markup stillschweigend ignorieren und Sie das erhoffte Rich Result nie sehen. Die Validierung ist der Schritt, der das abfängt, und sie dauert Minuten.
+
+Der Validierungsablauf:
+
+- **Führen Sie den Test für Rich-Suchergebnisse aus.** Googles [Test für Rich-Suchergebnisse](https://search.google.com/test/rich-results) prüft, ob Ihr Markup gültig ist und für welche Rich Results es berechtigt ist. Fügen Sie Ihre URL oder den Code ein und lesen Sie den Bericht — er markiert Fehler und Warnungen genau.
+- **Nutzen Sie den Schema Markup Validator für allgemeine Korrektheit.** Der [Schema.org-Validator](https://validator.schema.org) prüft, ob Ihre strukturierten Daten gegenüber dem Vokabular wohlgeformt sind, unabhängig von den Anforderungen einer einzelnen Suchmaschine.
+- **Unterscheiden Sie Fehler von Warnungen.** Fehler bedeuten, dass das Markup nicht funktioniert und behoben werden muss. Warnungen bedeuten, dass empfohlene Eigenschaften fehlen — für reichere Ergebnisse sinnvoll zu ergänzen, aber nicht blockierend.
+- **Testen Sie jeden Seitentyp einmal.** Validieren Sie eine repräsentative Seite je Typ — Startseite, eine Leistungsseite, eine FAQ-Seite —, da jede anderes Markup trägt. Die Korrektur einer garantiert nicht, dass die anderen stimmen.
+
+Beobachten Sie nach dem Deployment die Verbesserungsberichte der Google Search Console. Sie zeigen, welche Typen strukturierter Daten Google auf Ihrer Website erkannt hat, wie viele Seiten gültig sind und welche Fehler in freier Wildbahn gefunden wurden — auch Probleme, die erst auftreten, wenn echte Seiten gecrawlt werden. Das ist die laufende Kontrolle, die Ihr Markup gesund hält, wenn sich die Website verändert. Behandeln Sie Validierung als Teil der Veröffentlichung, nicht als einmalige Einrichtung, denn eine Template-Änderung oder ein Plugin-Update kann Schema zerstören, das Sie für erledigt hielten.
+
+---
+
+## Wie halten Sie Schema-Markup über die Zeit korrekt?
+
+{/* AEO Answer Capsule */}
+Strukturierte Daten, die ein veraltetes Unternehmen beschreiben, sind schlimmer als keine — sie sagen Suchmaschinen falsche Fakten, etwa einen Hinweis „jetzt geöffnet“, während Sie geschlossen haben. Aktualisieren Sie das JSON-LD, sobald sich der zugrunde liegende Fakt ändert, binden Sie AggregateRating an echte aktuelle Bewertungen, führen Sie nach jedem Theme- oder Plugin-Update den Test für Rich-Suchergebnisse erneut aus und prüfen Sie monatlich die Verbesserungsberichte der Search Console, um Abweichungen zu erkennen, bevor sie Sichtbarkeit kosten.
+{/* End AEO Capsule */}
+
+**Strukturierte Daten, die ein veraltetes Unternehmen beschreiben, sind schlimmer als keine — sie sagen Suchmaschinen falsche Fakten.**
+
+Schema ist nichts zum Einrichten und Vergessen. Ihre Öffnungszeiten ändern sich, Sie nehmen eine Leistung auf, Sie ziehen um, Ihre Bewertungszahl wächst. Markup, das von der Realität abdriftet, führt Suchmaschinen aktiv in die Irre und kann falsche Rich Results erzeugen — den Hinweis „jetzt geöffnet“, obwohl Sie geschlossen haben, eine alte Adresse, eine Leistung, die Sie gestrichen haben.
+
+Die Pflegedisziplin:
+
+- **Aktualisieren Sie das Markup, wann immer sich der zugrunde liegende Fakt ändert.** Neue Öffnungszeiten, eine neue Telefonnummer, eine neue Leistungslinie — das JSON-LD wird gleichzeitig mit der sichtbaren Seite aktualisiert. Koppeln Sie beides, damit keines hinterherhinkt.
+- **Halten Sie Bewertungen echt und aktuell.** AggregateRating sollte Ihre echten, aktuell angezeigten Bewertungen widerspiegeln. Blähen Sie weder Anzahl noch Bewertung auf; abgesehen von der Ethik ist das ein Richtlinienverstoß, der die Berechtigung für Rich Results ganz kosten kann.
+- **Validieren Sie nach jeder Änderung der Website erneut.** Ein Theme-Update, ein neues Plugin oder ein Redesign kann bestehendes Schema unbemerkt zerstören. Führen Sie nach wesentlichen Änderungen den Test für Rich-Suchergebnisse auf Ihren Schlüsselseiten erneut aus.
+- **Beobachten Sie die Search Console auf neue Fehler.** Verbesserungsberichte zeigen Probleme, die im Lauf der Zeit auftauchen. Ein monatlicher Blick fängt Probleme ab, bevor sie Sichtbarkeit kosten.
+
+Für ein lokales Unternehmen oder einen Dienstleister sind strukturierte Daten eine der renditestärkeren technischen Investitionen — eine einmalige Einrichtung mit bescheidener laufender Pflege, die Ihre bestehende Suchpräsenz größer und klarer macht. Die Unternehmen mit den erweiterten Einträgen tun nichts, was ein kleiner Betreiber nicht kann. Sie haben Suchmaschinen schlicht genau gesagt, was sie sind, in einem Format, das keinen Raum fürs Raten lässt.
+
+---
+
+Schema-Markup ist die Stelle, an der ein Dienstleister gute Informationen in bessere Sichtbarkeit verwandelt. Für den Kernsatz braucht es weder Entwickler noch Agentur — LocalBusiness, Service, Review und FAQPage decken das meiste ab, umgesetzt als sauberes JSON-LD, vor dem Start validiert und im Einklang mit dem realen Geschäft gehalten.
+
+Der Lohn ist die erweiterte Suchpräsenz, die still Klicks gewinnt: die Sternebewertungen, die Öffnungszeiten, das FAQ-Aufklappmenü, die korrekte Firmenkarte. Machen Sie es einmal, machen Sie es richtig, validieren Sie es und pflegen Sie es — und Sie beanspruchen die Suchfläche, die Wettbewerber mit schlichten Links liegen lassen.
+
+---
+
+**Quellen:** [Schema.org LocalBusiness](https://schema.org/LocalBusiness) · [Google Search Central — Einführung in strukturierte Daten](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data)

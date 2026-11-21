@@ -1,0 +1,153 @@
+---
+title: "KI-Wettbewerbsbeobachtung mit kleinem Budget"
+description: "Ein Wettbewerbsbeobachtungssystem für unter 30 € im Monat aufbauen — die lohnenden Signale, KI-Zusammenfassung des Rauschens und der Wochenüberblick, der Entscheidungen hervorbringt."
+pubDate: 2026-11-01
+tags: ["AI Operations", "Strategy", "B2B"]
+heroImage: "/articles/img/ai-competitor-monitoring-setup.jpg"
+lang: de
+translationOf: "2026-09-12_ai-competitor-monitoring-setup"
+---
+
+<img src="/articles/img/ai-competitor-monitoring-setup.jpg" alt="Dashboard auf einem Monitor mit einer Liste beobachteter Wettbewerber-Updates und Änderungsmeldungen" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Wettbewerbsbeobachtung ist in den meisten kleinen B2B-Unternehmen ein Gründer mit zu vielen Browser-Tabs. Jemand erwähnt in einem Verkaufsgespräch einen Wettbewerber, der Gründer verbringt vierzig Minuten damit, dessen Seite zu lesen, bemerkt, dass die Preisseite geändert wurde, spürt einen Stich Unruhe, sagt es niemandem und hat es bis Donnerstag vergessen. Sechs Monate später geht ein Auftrag an eine Produktfunktion verloren, die im März auf einer Seite angekündigt wurde, die niemand beobachtete.
+
+Die Antwort der Konzerne darauf ist eine Plattform für Wettbewerbsinformation, die vierstellig im Monat kostet. Die Antwort kleiner Unternehmen ist meist: nichts. Dazwischen liegt eine völlig brauchbare Mitte: eine Handvoll kostenloser Überwachungstools, die ein Änderungsprotokoll speisen, ein LLM, das liest und verdichtet, und ein wöchentlicher Fünfzehn-Minuten-Review, der entweder eine Entscheidung hervorbringt oder ausdrücklich nichts.
+
+Die Gesamtkosten liegen bei etwa 20–30 € im Monat, meist für API-Tokens. Die Einrichtung dauert einen Nachmittag. Dass es jetzt funktioniert und vor drei Jahren nicht, hat einen konkreten Grund: Der teure Teil der Wettbewerbsbeobachtung war nie das Sammeln der Signale — RSS und Änderungsdetektoren sind seit jeher kostenlos. Der teure Teil war ein Mensch, der 200 wertarme Updates las, um die zwei wichtigen zu finden. Das ist jetzt eine Maschinenaufgabe.
+
+---
+
+## Entscheiden Sie, wofür Sie beobachten — vor allen Tools
+
+**Beobachten ohne Frage ist ein Hobby.**
+
+Das Fehlerbild ist Vollständigkeit: alles verfolgen, ein Dashboard erzeugen, sich informiert fühlen, nichts ändern. Schreiben Sie vor der Konfiguration eines einzigen Alerts die drei bis fünf Entscheidungen auf, die dieses System informieren soll. Für ein kleines B2B-Unternehmen sind sie meist eine Variante von:
+
+- **Sollen wir unseren Preis ändern?** (Preisbewegungen der Wettbewerber, neue Stufen, Rabattverhalten)
+- **Sollen wir das bauen oder lagern?** (Produkt- und Sortimentsankündigungen)
+- **Verlieren wir gleich ein Segment?** (deren neue Fallstudien, deren Einstellungen, deren Marktbotschaften)
+- **Gibt es eine Lücke?** (deren Kunden, die sich beschweren, deren Rückzug aus einem Segment, deren Schlüsselperson, die geht)
+
+Kann ein Signal plausibel keine dieser Antworten ändern, sammeln Sie es nicht. Der LinkedIn-Beitrag über die Weihnachtsfeier des Wettbewerbers ist keine Information.
+
+**Wählen Sie fünf Wettbewerber. Nicht zwanzig.**
+
+Drei direkte Wettbewerber — die, die tatsächlich in Ihren verlorenen Aufträgen auftauchen. Ein benachbarter Akteur, der in Ihren Bereich eintreten könnte. Ein Unternehmen der „Form der Zukunft“, meist größer oder in einem anderen Markt, dessen Schritte vorwegnehmen, wohin die Kategorie geht.
+
+Zwanzig Wettbewerber ergeben einen Feed, den niemand liest. Fünf ergeben ein Dokument, das ein Gründer am Montag tatsächlich öffnet.
+
+**Woher die Liste kommt.**
+
+Nicht aus einem Brainstorming. Aus Ihren Aufzeichnungen verlorener Aufträge. Hat Ihr CRM kein Feld „verloren an wen“, legen Sie es heute an — es ist ein Dropdown, und ohne es ist jede Wettbewerbsdiskussion in Ihrem Unternehmen Spekulation. Die drei Namen, die am häufigsten auftauchen, sind Ihr Wettbewerbsfeld, und sie sind häufig nicht die, die Sie erraten hätten.
+
+---
+
+## Der Signal-Stack — was man beobachtet und wie, kostenlos
+
+**1. Erkennung von Website-Änderungen.**
+
+Die Quelle mit dem höchsten Signal und dem geringsten Rauschen. Preisseite, Produktseiten und Bedingungen eines Wettbewerbers sind seine Strategie in der Öffentlichkeit, und er aktualisiert sie ohne Ankündigung.
+
+Tools wie Visualping, Distill.io und changedetection.io bieten kostenlose Stufen, die für eine Handvoll Seiten genügen, und changedetection.io ist Open Source, falls Sie es lieber selbst hosten. Beobachten Sie pro Wettbewerber:
+
+- Preisseite — die für Ihre Zwecke wertvollste einzelne URL im Internet
+- Hauptprodukt- bzw. Leistungsseite
+- AGB — stille Änderungen hier signalisieren Verschiebungen bei Garantien, Bedingungen und Risikoappetit
+- Karriereseite — Einstellungen sind die ehrlichste Roadmap, die ein Unternehmen veröffentlicht
+
+Stellen Sie tägliche Prüfungen ein. Lassen Sie, wenn das Tool es unterstützt, kosmetische Änderungen ignorieren, sonst ertrinken Sie in Cookie-Banner-Diffs.
+
+**2. Ihre Karriereseite ist ihre Roadmap.**
+
+Das verdient einen eigenen Punkt, weil es durchgängig unterschätzt wird. Ein Unternehmen, das drei ML-Engineer-Stellen und einen Leiter Datenplattform ausschreibt, sagt Ihnen, was es in neun Monaten ausliefern wird, bevor sein Marketingteam es weiß. Ein Unternehmen, das aufhört, Vertriebsmitarbeiter in einer Region einzustellen, verlässt diese Region. Ein Unternehmen, das einen Head of Partnerships sucht, ändert bald sein Vertriebskanalmodell.
+
+Stellenanzeigen sind auch ungewöhnlich ehrlich, weil sie von Fachvorgesetzten geschrieben werden, um Spezialisten anzuziehen, nicht von Marketern, um ein Unternehmen zu positionieren. Die Anforderungsliste ist eine Spezifikation.
+
+**3. Google Alerts, abgestimmt.**
+
+[Google Alerts](https://www.google.com/alerts) ist kostenlos und erzeugt meist Rauschen, weil die meisten es schlecht konfigurieren. Verbessern Sie es mit zwei Änderungen: Verwenden Sie exakte Namen in Anführungszeichen und schließen Sie die eigene Domain aus — Sie wollen, was *andere* über sie sagen, nicht ihre eigenen Pressemitteilungen. Stellen Sie die Zustellung auf einen wöchentlichen Überblick, nicht „sofort“, und senden Sie ihn an eine eigene Adresse statt in Ihren Posteingang.
+
+**4. RSS, das nicht tot ist.**
+
+Ihr Blog, ihr Changelog, ihr Newsroom bieten mit ziemlicher Sicherheit noch Feeds an. Ein RSS-Reader — Feedly, Inoreader oder ein selbst gehosteter — sammelt diese zuverlässig und ohne die algorithmische Vermittlung einer Social-Plattform. Ein Changelog-Feed ist besonders wertvoll: Er zeigt die Produktentscheidungen eines Wettbewerbers, datiert, in Reihenfolge, ohne Spin.
+
+**5. Search Console als Wettbewerbswerkzeug.**
+
+Das ist die Quelle, die niemand als Wettbewerbsinformation sieht, und die zuverlässigste, die Sie haben, weil sie gemessen statt gefolgert ist. Sinken Ihre Impressionen für eine Reihe von Suchanfragen, während Ihre Position hält, ist jemand über Ihnen eingetreten. Beginnt eine Suchanfrage, die Sie nie angepeilt haben, Impressionen zu erzeugen, verschiebt sich die Sprache des Marktes. Die monatliche Routine in [Google-Search-Console-Diagnose](/de/articles/2026-09-09_google-search-console-diagnostics/) dient zugleich als Wettbewerbs-Frühwarnsystem, und die Daten gehören Ihnen statt der Schätzung eines Anbieters.
+
+**6. Ihre eigenen Verkaufsgespräche.**
+
+Die beste Wettbewerbsinformation Ihres Unternehmens wird bereits laut ausgesprochen, jede Woche, und verworfen. Ein CRM-Feld — „wen bewerten sie sonst noch, und was haben sie über ihn gesagt“ —, konsequent befüllt, schlägt alle Tools dieser Liste zusammen. Es ist kostenlos und das eine, was kleine Unternehmen nie tun.
+
+---
+
+## Die KI-Ebene — hier liegt die eigentliche Ersparnis
+
+**Das Problem ist Triage, nicht Sammlung.**
+
+In Woche zwei haben Sie einen Feed mit 30–60 Einträgen. Vielleicht zwei zählen. Alle sechzig zu lesen, um die zwei zu finden, ist ein Vierzig-Minuten-Job, den Sie zweimal machen und dann aufgeben — genau deshalb sind die letzten drei Versuche gescheitert.
+
+Ein LLM erledigt dieses Lesen in etwa zwanzig Sekunden und für dreißig Cent. Das ist der Teil, der das System den Kontakt mit einer arbeitsreichen Woche überleben lässt.
+
+**Die Pipeline, schlicht.**
+
+1. Jedes Signal landet an einer Stelle — einer Google-Tabelle, einer Airtable-Base, einer Notion-Datenbank. Zapier oder Make können Änderungsmeldungen, RSS-Einträge und Alert-E-Mails dorthin leiten, und beide haben kostenlose Stufen, die dieses Volumen abdecken.
+2. Einmal pro Woche schickt eine Automatisierung die Zeilen der Woche mit einem festen Prompt an ein LLM.
+3. Die Ausgabe landet in einem Dokument, das Sie am Montag lesen.
+
+Können Sie etwas programmieren, ist das ein geplantes Skript und ein API-Aufruf, und das Hosting ist kostenlos. Können Sie es nicht, ist es ein Make-Szenario mit vier Schritten.
+
+**Der Prompt ist das ganze Produkt.**
+
+Ein vager Prompt erzeugt eine vage Zusammenfassung, was schlechter ist als nichts, weil es sich nach Arbeit anfühlt. Seien Sie konkret bei der Ausgabestruktur und — entscheidend — bei der Möglichkeit, nichts zu melden:
+
+> Du bist Wettbewerbsanalyst für einen B2B-Distributor, der Industriekomponenten in der EU verkauft. Unten stehen die in dieser Woche erfassten Änderungen von fünf Wettbewerbern. Klassifiziere jeden Eintrag als: `IGNORE` (kosmetisch, PR, Routine), `NOTE` (real, aber nicht dringend) oder `ACT` (erfordert eine Entscheidung innerhalb von 30 Tagen). Nenne bei jedem `ACT`-Eintrag in einem Satz, was sich geändert hat, in einem Satz, warum es für uns wichtig ist, und schlage eine konkrete Maßnahme vor. Wenn nichts als `ACT` gilt, sage das ausdrücklich und konstruiere keine Bedeutung.
+
+Der letzte Satz ist der wichtige. Ohne ihn erfindet das Modell Dringlichkeit, weil Zusammenfasser darauf trainiert sind, Inhalt zu erzeugen. Mit ihm wird eine wirklich ruhige Woche als ruhige Woche gemeldet — das ist die richtige und häufigste Antwort und das, was Sie davor bewahrt, auf Rauschen zu reagieren.
+
+**Was das Modell gut und schlecht kann.**
+
+Gut darin: einen Diff lesen und sagen, was sich wesentlich geändert hat; erkennen, dass drei unzusammenhängende Signale in dieselbe Richtung zeigen; sechzig Einträge auf fünf verdichten; Sprachverschiebungen über die Zeit bemerken.
+
+Schlecht darin: wissen, was für *Ihr* Geschäft zählt. Es weiß nicht, dass die neue Stufe des Wettbewerbers auf ein Segment zielt, das Sie letztes Jahr verlassen haben, oder dass die Person, die er eingestellt hat, früher für Sie gearbeitet hat. Geben Sie ihm diesen Kontext im Prompt — ein kurzer Standardabsatz über Ihre Positionierung, Ihre Segmente und Ihre aktuellen strategischen Fragen —, und seine Klassifizierung verbessert sich stark. Ohne ihn bekommen Sie eine generische Nachrichtenzusammenfassung.
+
+Ebenfalls schlecht darin: bei der Absicht richtigzuliegen. Behandeln Sie jede „Warum es wichtig ist“-Zeile als Hypothese, die zu prüfen ist, nicht als Befund.
+
+**Halten Sie den Stack klein.**
+
+Jedes Tool in diesem System müssen Sie pflegen, bezahlen und im Kopf behalten. Zwei Sammler, eine Tabelle, eine Automatisierung, ein LLM-Aufruf. Widerstehen Sie dem Drang, eine sechste Quelle hinzuzufügen, nur weil es sie gibt — dieselbe Logik, die einen [minimalen Tech-Stack](/de/articles/2026-06-10_minimal-tech-stack-b2b-consulting/) bestimmt, gilt hier mit Wucht, denn Überwachungstools sind ungewöhnlich gut darin, den Anschein von Erkenntnis zu erzeugen.
+
+---
+
+## Der Wochenreview — fünfzehn Minuten, ein Ergebnis
+
+**Montag, eine Viertelstunde, eine Seite.**
+
+Der Überblick kommt an. Sie lesen fünf Stichpunkte. Bei jedem `ACT`-Eintrag treffen Sie genau eine von drei Entscheidungen:
+
+- **Bewusst nichts tun.** Notieren und weitergehen. Das ist in den meisten Wochen die richtige Antwort und sollte sich nicht wie Versagen anfühlen.
+- **Beobachten.** Setzen Sie einen konkreten Auslöser: „Wenn sie ein zweites Lager eröffnen, neu bewerten.“ Ein Beobachtungspunkt ohne Auslöser ist eine Sorge, kein Plan.
+- **Handeln.** Ein Verantwortlicher, ein Termin, eine Zeile in Ihrem Aufgabensystem.
+
+**Das Protokoll ist das Vermögen, nicht der Überblick.**
+
+Bewahren Sie jeden wöchentlichen Überblick datiert in einem fortlaufenden Dokument auf. Einzelne Wochen sind meist langweilig. Die Zwölf-Monats-Sicht ist es nicht — sie ist der einzige Ort, an dem Sie sehen, dass ein Wettbewerber in vier kleinen Schritten von „Software für Distributoren“ zu „Software für Hersteller“ gewandert ist, von denen keiner für sich berichtenswert war. Diese Bahn ist in Echtzeit unsichtbar und im Rückblick offensichtlich. Niemand führt dieses Protokoll, und genau deshalb lohnt es sich.
+
+**Vierteljährlich herauszoomen.**
+
+Füttern Sie das Modell einmal pro Quartal mit dem gesamten Protokoll des Quartals und einer anderen Frage: In welche Richtung bewegt sich jeder Wettbewerber, was haben sie aufgehört zu tun, und wo ist die Lücke, die keiner von ihnen bedient? Diese letzte Frage ist der Ort, an dem Positionierungsentscheidungen herkommen — und die Antwort ist häufig ein Segment, das alle stillschweigend aufgegeben haben, weil es unglamourös ist.
+
+**Lassen Sie es nicht reaktiv werden.**
+
+Das echte Risiko guter Wettbewerbsbeobachtung ist, dass sie Ihre Roadmap zu einem Spiegel der ihren macht. Jede Woche sehen Sie, was sie ausgeliefert haben, und jede Woche ist der Zug da, es nachzubauen. So endet ein kleines Unternehmen mit einer schlechteren Version des Produkts eines größeren.
+
+Die Schutzmaßnahme ist eine feste Frage im Review: *Ändert das, worum unsere Kunden uns gebeten haben?* Wenn nicht, kommt es ins Protokoll und sonst nirgends hin. Eine Preissenkung eines Wettbewerbers ist Information über ihn. Ob Sie darauf antworten, ist eine Frage Ihrer eigenen Marge, Ihres eigenen Segments und Ihrer eigenen [Rabattpolitik](/de/articles/2026-09-13_b2b-pricing-discount-policy/) — und sollte aus diesen beantwortet werden, nicht aus einer Änderungsmeldung.
+
+---
+
+Das ganze System sind fünf Wettbewerber, sechs Quellen, eine Tabelle, ein wöchentlicher Prompt und fünfzehn Minuten an einem Montag. Es kostet weniger als eine einzige Beraterstunde im Monat und ersetzt das, was die meisten kleinen Unternehmen tatsächlich tun, nämlich nichts, unterbrochen von Panik. Was es hervorbringt, ist kein Dashboard. Es ist ein datiertes Protokoll, das, am Jahresende rückwärts gelesen, die vier Schritte zeigt, die zählten, und die zweihundert, die nicht zählten — und Ihnen, nützlicher noch, an den meisten Montagen ehrlich sagt, dass nichts passiert ist und Sie an die Arbeit zurückgehen sollen.
+
+---
+
+**Quellen:** [Google Alerts](https://www.google.com/alerts) · [Google Search Console](https://search.google.com/search-console/about)

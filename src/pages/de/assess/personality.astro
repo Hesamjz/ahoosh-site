@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AssessBody from '../../../components/AssessBody.astro';
+import AssessHead from '../../../components/AssessHead.astro';
+---
+
+<BaseLayout
+  title="Persönlichkeits- & Führungs-Assessment — AHoosh Assess"
+  description="Machen Sie das Big-Five-Persönlichkeitsassessment (IPIP-50). Verstehen Sie Ihren Entscheidungsstil, Ihre Führungsmuster und wie Ihre Persönlichkeit Ihr Unternehmen prägt."
+  locale="de"
+>
+  <Fragment slot="head">
+    <AssessHead />
+    <style>
+      .assess-nav { margin-top:100px;
+        background: rgba(8,22,50,0.95);
+        border-bottom: 1px solid rgba(215,161,61,0.15);
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+      .assess-nav a { color: #7a8b9e; text-decoration: none; }
+      .assess-nav a:hover { color: #D7A13D; }
+      .assess-nav .track-name { color: #e8eaf0; font-weight: 700; }
+      .track-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(215,161,61,0.15); border: 1px solid rgba(215,161,61,0.3);
+        color: #D7A13D; border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700;
+      }
+    </style>
+  </Fragment>
+
+  <div class="assess-nav no-print">
+    <a href="/de/assess">← Assess-Übersicht</a>
+    <span class="track-name">Persönlichkeit &amp; Führung</span>
+    <span class="track-badge">🧠 Weg 1 von 3</span>
+  </div>
+
+  <AssessBody lang="de" assessMode={true} />
+</BaseLayout>

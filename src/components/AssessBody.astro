@@ -811,7 +811,7 @@ const { banner, lang = 'en', assessMode = false } = Astro.props;
     React.useEffect(function(){
       var cancelled=false;
       fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({test_title:test.title,scale_name:test.scaleName||'',result_type:test.resultType,scores:scores})})
+        body:JSON.stringify({test_title:test.title,scale_name:test.scaleName||'',result_type:test.resultType,scores:scores,lang:LANG})})
         .then(function(r){return r.json();})
         .then(function(d){ if(!cancelled) setState({loading:false,text:(d&&d.ok&&d.analysis)?d.analysis:''}); })
         .catch(function(){ if(!cancelled) setState({loading:false,text:''}); });

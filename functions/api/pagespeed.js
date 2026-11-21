@@ -27,6 +27,7 @@ export async function onRequestGet(context) {
     `&category=ACCESSIBILITY` +
     `&category=SEO` +
     `&category=BEST_PRACTICES` +
+    (searchParams.get("lang") === "de" ? `&locale=de` : "") +
     (key ? `&key=${key}` : "");
 
   try {

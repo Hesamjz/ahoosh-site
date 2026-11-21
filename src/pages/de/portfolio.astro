@@ -1,0 +1,88 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const projects = [
+  {
+    name: 'ABBASSI',
+    kind: 'Feiner Schmuck — Motion-Website',
+    blurb: 'Eine scrollgesteuerte Diamanten-Präsentation. Drehbarer Hero-Ring zum Greifen, jedes Stück Bild für Bild auf Canvas gerendert, Übergänge über die ganze Seite.',
+    tags: ['Web Design', 'Motion', 'Canvas'],
+    cover: '/portfolio/abbassi-cover.webp',
+    href: '/portfolio/abbassi/',
+  },
+  {
+    name: 'ABD',
+    kind: 'JDM-Streetwear — 3D-Konfigurator',
+    blurb: 'Ein Shirt-Drop der Tuner-Kultur mit einem live 3D-Shirt, das Sie drehen, umfärben und mit beliebigen Designs bedrucken können — dazu ein Motor, den man gedrückt halten kann, Auspuffrauch und ein Drop-Countdown.',
+    tags: ['Web Design', 'Three.js', '3D'],
+    cover: '/portfolio/abd-cover.webp',
+    href: '/portfolio/abd/',
+  },
+  {
+    name: 'ProBar',
+    kind: 'Getränke-E-Commerce — WooCommerce',
+    blurb: 'Ein Online-Shop für Bar und Getränke auf WooCommerce — kompletter Shop mit Katalog, Warenkorb und Checkout, dazu täglicher automatischer Abgleich von Lagerbestand und Preisen aus dem ERP.',
+    tags: ['Web Design', 'WooCommerce', 'SEO'],
+    cover: '/portfolio/probar-cover.webp',
+    href: 'https://probar.rs',
+  },
+];
+---
+
+<SiteLayout
+  title="Portfolio — AHoosh"
+  description="Ausgewählte Webdesign- und Motion-Arbeiten von AHoosh — interaktive Live-Demos für Marken."
+>
+  <main id="page" class="page-content">
+    <section class="pf-wrap">
+      <div class="pf-eyebrow">Portfolio</div>
+      <h1 class="pf-h1">Ausgewählte Arbeiten.<br /><em>Gemacht, um live gesehen zu werden.</em></h1>
+      <p class="pf-sub">Interaktive Webdesign- und Motion-Demos. Jede öffnet sich als vollständige Live-Website — genau das, was auch Ihre Besucher erleben würden.</p>
+
+      <div class="pf-grid">
+        {projects.map((p) => (
+          <article class="pf-card">
+            <a href={p.href} target="_blank" rel="noopener" aria-label={`Open ${p.name}`} class="pf-hit"></a>
+            <div class="pf-cover" style={`background-image:url('${p.cover}')`}></div>
+            <div class="pf-body">
+              <div class="pf-kind">{p.kind}</div>
+              <h2 class="pf-name">{p.name}</h2>
+              <p class="pf-blurb">{p.blurb}</p>
+              <div class="pf-tags">{p.tags.map((t) => <span class="pf-tag">{t}</span>)}</div>
+              <a class="pf-btn" href={p.href} target="_blank" rel="noopener">Live-Demo ansehen →</a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="pf-cta">
+        <p>Möchten Sie so etwas für Ihre Marke?</p>
+        <a class="pf-btn pf-btn-c" href="/de/services/web-design">Webdesign &amp; SEO ansehen</a>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .pf-wrap{max-width:1080px;margin:0 auto;padding:128px 24px 48px;position:relative;z-index:1;}
+    .pf-eyebrow{font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold,#D7A13D);text-align:center;margin-bottom:14px;}
+    .pf-h1{font-family:'Montserrat',system-ui,sans-serif;font-weight:800;font-size:clamp(26px,6vw,42px);letter-spacing:-0.01em;color:var(--silver,#F0F2F5);text-align:center;line-height:1.1;margin:0 0 12px;}
+    .pf-h1 em{font-style:normal;color:var(--gold,#D7A13D);}
+    .pf-sub{font-family:'Inter',system-ui,sans-serif;font-size:14px;color:var(--silver-dim,rgba(240,242,245,0.65));line-height:1.6;max-width:520px;margin:0 auto 40px;text-align:center;}
+    .pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+    .pf-card{position:relative;background:rgba(9,17,36,0.66);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(215,161,61,0.18);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 34px rgba(0,0,0,0.35);transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;}
+    .pf-card:hover{transform:translateY(-4px);border-color:rgba(215,161,61,0.45);box-shadow:0 18px 40px rgba(0,0,0,0.35);}
+    .pf-hit{position:absolute;inset:0;z-index:4;}
+    .pf-cover{aspect-ratio:16/10;background-size:cover;background-position:center;background-color:#0a1830;border-bottom:1px solid rgba(215,161,61,0.1);}
+    .pf-body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1;}
+    .pf-kind{font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold,#D7A13D);}
+    .pf-name{font-family:'Montserrat',system-ui,sans-serif;font-weight:700;font-size:20px;color:var(--silver,#F0F2F5);letter-spacing:0.04em;}
+    .pf-blurb{font-family:'Inter',system-ui,sans-serif;font-size:13px;line-height:1.6;color:var(--silver-dim,rgba(240,242,245,0.65));flex:1;}
+    .pf-tags{display:flex;flex-wrap:wrap;gap:6px;}
+    .pf-tag{font-family:'Inter',system-ui,sans-serif;font-size:11px;color:var(--silver-dim,rgba(240,242,245,0.65));border:1px solid rgba(215,161,61,0.18);border-radius:999px;padding:3px 10px;}
+    .pf-btn{position:relative;z-index:5;display:inline-block;align-self:flex-start;margin-top:8px;background:linear-gradient(180deg,#F0C060,#D7A13D);color:#03142E;font-family:'Inter',system-ui,sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;padding:12px 22px;min-height:44px;border-radius:3px;box-sizing:border-box;}
+    .pf-btn:hover{filter:brightness(1.05);}
+    .pf-cta{text-align:center;padding:8px 24px 8px;}
+    .pf-cta p{font-family:'Inter',system-ui,sans-serif;font-size:14px;color:var(--silver-dim,rgba(240,242,245,0.65));margin-bottom:20px;}
+    .pf-btn-c{align-self:center;}
+  </style>
+</SiteLayout>

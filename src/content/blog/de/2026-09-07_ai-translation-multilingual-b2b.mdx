@@ -1,0 +1,153 @@
+---
+title: "KI-Übersetzung für mehrsprachige B2B-Inhalte"
+description: "So betreiben Sie mehrsprachige B2B-Inhalte mit KI-Übersetzung — Wahl der Engine, Glossar-Ebene, Stufen der menschlichen Prüfung und das hreflang-Setup, das Ihr SEO intakt hält."
+pubDate: 2026-10-01
+tags: ["AI Operations", "Content", "Emerging Markets"]
+heroImage: "/articles/img/ai-translation-multilingual-b2b.jpg"
+lang: de
+translationOf: "2026-09-07_ai-translation-multilingual-b2b"
+---
+
+<img src="/articles/img/ai-translation-multilingual-b2b.jpg" alt="Bildschirm mit demselben Absatz Geschäftstext nebeneinander in zwei Sprachen" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Maschinelle Übersetzung hat irgendwann um 2023 eine Schwelle überschritten, die die meisten kleinen B2B-Unternehmen noch nicht eingepreist haben. Ein Jahrzehnt lang lautete der ehrliche Rat: für den groben Sinn nutzen, nie für etwas, das ein Kunde sieht. Dieser Rat ist inzwischen falsch — und zwar auf eine konkrete, nützliche Weise: Bei strukturierter Geschäftsprosa zwischen großen europäischen Sprachpaaren liefern aktuelle Engines Texte, die ein Muttersprachler als kompetent liest, wenn auch gelegentlich als blass. Die verbleibenden Fehler sind nicht grammatisch. Sie sind terminologisch, tonal und rechtlich.
+
+Das ist wirtschaftlich relevant, weil die Alternative immer unerschwinglich war. Ein Distributor in Belgrad, der nach Deutschland, Österreich und in die Schweiz verkauft, braucht Deutsch. Eine Beratung, die die persische Diaspora anspricht, braucht Farsi und Englisch und wahrscheinlich Deutsch. Agenturübersetzung kostet je nach Sprachpaar und Fachgebiet etwa 0,10–0,20 € pro Wort, womit ein Artikel mit 1.500 Wörtern 150–300 € kostet und ein kompletter Website-Relaunch außer Reichweite liegt. Also bleibt die Seite einsprachig, und das Unternehmen konkurriert im zweitbesten Markt in der zweitbesten Sprache.
+
+Die tragfähige Antwort lautet nicht „KI statt Übersetzer“. Sie ist ein gestuftes System: maschinelle Übersetzung als Entwurfsebene, ein kontrolliertes Glossar als Genauigkeitsebene und menschliche Prüfung gezielt dort, wo ein Fehler tatsächlich etwas kostet. So bauen Sie es auf.
+
+---
+
+## Engine-Auswahl — die Wahl ist enger, als der Markt vermuten lässt
+
+**Drei Kategorien, unterschiedliche Fehlerbilder.**
+
+- **Dedizierte MT-Engines (DeepL, Google Translate).** Speziell auf Übersetzung trainiert. Am stärksten bei europäischen Paaren, extrem konsistent, schnell, bei Volumen günstig. Sie übersetzen Sätze treu und improvisieren nicht. Ihre Schwäche: Treue ist nicht immer Richtigkeit — eine treu übersetzte Marketing-Überschrift wirkt oft flach, weil das Idiom der Quelle in der Zielsprache nicht existiert.
+- **Allgemeine LLMs (Claude, GPT, Gemini).** Bei seltenen Paaren schwächer, aber deutlich besser in dem, was bei Marketingtexten wirklich zählt: Man kann ihnen Register, Zielgruppe und Absicht vorgeben, und sie passen an, statt zu übertragen. Bitten Sie ein allgemeines Modell, „diese Überschrift für einen deutschen Industrieeinkäufer zu übersetzen, direkt halten, Anglizismen vermeiden“, und es tut etwas, das eine MT-Engine strukturell nicht kann.
+- **CAT-Tools mit angebundener MT (memoQ, Trados, Phrase).** Die professionelle Ebene. Lohnt sich, sobald Sie regelmäßig übersetzen und ein Translation Memory brauchen — den Speicher freigegebener Segmente, der das zehnte Dokument günstiger macht als das erste.
+
+**Die praktische Aufteilung für ein kleines Team.**
+
+Nutzen Sie eine dedizierte MT-Engine für alles Strukturelle und Wiederkehrende: Produktbeschreibungen, Spezifikationstabellen, Dokumentation, Auftragsbestätigungen, FAQ-Einträge. Die [DeepL-API-Dokumentation](https://developers.deepl.com/) behandelt Glossarunterstützung und Formalitätssteuerung — beides wichtig, siehe unten. Nutzen Sie ein LLM für alles Überzeugende: Überschriften, Landingpages, E-Mail-Betreffzeilen, LinkedIn-Beiträge, überall dort, wo das Ziel eine Reaktion statt Verständnis ist.
+
+**Sprachpaar-Realität.**
+
+Die Qualität ist nicht einheitlich, und Sie sollten nicht so tun. Englisch↔Deutsch, Englisch↔Französisch, Englisch↔Spanisch, Englisch↔Italienisch sind stark genug, dass eine gut konfigurierte Pipeline mit leichter Prüfung veröffentlichungsreifen Text liefert. Englisch↔Serbisch, Englisch↔Farsi, Englisch↔Türkisch sind deutlich schwächer — grammatisch meist in Ordnung, tonal aber unzuverlässig und anfällig für Registerabweichungen, besonders Farsi, wo sich formelles Geschäftsregister und Alltagsregister stark unterscheiden und Engines regelmäßig das falsche wählen. Planen Sie bei diesen Paaren mehr menschliche Zeit ein, nicht weniger.
+
+**Niemals über Englisch pivotieren.**
+
+Brauchen Sie Deutsch→Farsi, übersetzen Sie nicht Deutsch→Englisch→Farsi. Fehler summieren sich über den Umweg, und der zweite Schritt sieht das Original nicht. Übersetzen Sie immer von der Quelle, auch wenn das direkte Paar schwächer ist.
+
+---
+
+## Die Glossar-Ebene — hier steckt der Großteil der Genauigkeit
+
+**Das Artefakt mit dem höchsten Ertrag.**
+
+Wenn Sie vor dem ersten Übersetzen nur eine Sache bauen, bauen Sie das Glossar. Jedes Unternehmen hat fünfzig bis zweihundert Begriffe, die jedes Mal auf eine bestimmte Weise übersetzt werden müssen, und eine unabgestimmte Engine gibt sie in jedem Dokument anders wieder — manchmal im selben Dokument.
+
+Für einen Distributor sieht die Liste so aus:
+
+- Produktkategorien, genau wie der Markt sie nennt (nicht wie das Wörterbuch sie übersetzt)
+- Ihre eigenen Produkt- und Leistungsnamen — meist lautet die richtige Anweisung *nicht übersetzen*
+- Handelsbegriffe: `Incoterms`-Codes bleiben Codes und werden nie übersetzt; Lieferung, Lieferzeit, Nachbestellung, MOQ
+- Rechts- und Finanzbegriffe: netto 30 Tage, Kreditlimit, Eigentumsvorbehalt, VAT versus MwSt versus TVA
+- Ihr Markenvokabular — die Wörter, für die Sie sich entschieden haben, und die, die Sie verbannt haben
+
+**Aufbau aus dem, was Sie bereits haben.**
+
+Ein Glossar schreibt man nicht von null. Man extrahiert es:
+
+1. Nehmen Sie Ihre zehn wichtigsten Quelldokumente.
+2. Lassen Sie ein LLM jeden Fachbegriff mit seiner Häufigkeit auflisten.
+3. Lassen Sie einen muttersprachlichen Kunden, Partner oder Vertriebsmitarbeiter im Zielmarkt die Zielspalte korrigieren. Das ist der einzige Schritt, der einen Menschen braucht, und er dauert etwa zwei Stunden.
+4. Laden Sie das Ergebnis in die Glossarfunktion Ihrer Engine und, separat, in den System-Prompt des LLM, das Sie nutzen.
+
+Dieses zweistündige Gespräch mit einem muttersprachlichen Vertriebsmitarbeiter ist mehr wert als die nächsten 2.000 € Übersetzungsausgaben, weil es Fehler behebt, die sonst in jedem Dokument für immer wiederkehren würden. Beachten Sie die Richtung der Korrektur: Ein professioneller Übersetzer kennt die Sprache; Ihr Vertriebsmitarbeiter weiß, wie Käufer in Hamburg das Teil tatsächlich nennen. Das sind verschiedene Arten von Wissen, und Sie brauchen die zweite.
+
+**Die Formalitätseinstellung ist nicht kosmetisch.**
+
+Deutsch hat Sie und du. Französisch hat vous und tu. Farsi hat ein Formalitätssystem, das feiner abgestuft ist als beide und Fehler nicht verzeiht. B2B ist formell, immer, in allen dreien. DeepL bietet einen Formalitätsparameter; LLMs brauchen die Angabe im Prompt. Setzen Sie ihn einmal global und überlassen Sie ihn nie dem Standard der Engine — ein versehentliches „du“ in einer Erstkontakt-E-Mail an einen deutschen Einkaufsleiter ist ein realer, wenn auch stiller Kostenfaktor.
+
+---
+
+## Stufen der menschlichen Prüfung — Aufwand dort, wo ein Fehler teuer ist
+
+**Nicht alle Inhalte tragen dasselbe Risiko.**
+
+Der Fehler ist binäres Denken: entweder bekommt alles eine professionelle Prüfung (unbezahlbar) oder nichts (irgendwann peinlich). Sortieren Sie Ihre Inhalte in drei Stufen danach, was ein Fehler tatsächlich kostet.
+
+**Stufe 1 — Professionelle menschliche Übersetzung. Kein KI-Erstentwurf.**
+
+- Verträge, AGB, Gewährleistungstexte
+- Alles mit Compliance- oder Sicherheitsfolgen
+- Ihre fünf wichtigsten Seiten: Startseite, Hauptleistungsseite, Preise
+
+Für ein kleines Unternehmen sind das insgesamt vielleicht 3.000–5.000 Wörter. Zu Agenturpreisen ein paar hundert Euro, einmalig. Zahlen Sie sie. Eine falsch übersetzte Haftungsklausel ist kein Content-Problem.
+
+**Stufe 2 — KI-Entwurf, Prüfung durch Muttersprachler.**
+
+- Fallstudien, wichtige Blogartikel, Vertriebs-E-Mails, Landingpages
+- Alles, was ein Interessent liest, während er sich entscheidet
+
+Der Prüfer übersetzt nicht neu. Er liest den Zieltext für sich, ohne die Quelle, und markiert alles, was nach Übersetzung klingt. Diese Arbeit dauert etwa ein Viertel der Zeit einer Neuübersetzung und lässt sich oft von einem muttersprachlichen Kollegen oder einem Freelancer zu einem Bruchteil der Agenturpreise erledigen.
+
+**Stufe 3 — KI, veröffentlicht mit Stichproben.**
+
+- Produktbeschreibungen in großer Zahl, Dokumentation, FAQ, Archivinhalte, Änderungsprotokolle
+
+Prüfen Sie monatlich eine 10-%-Stichprobe. Akzeptieren Sie, dass manche Formulierungen flach sind. Flach und vorhanden schlägt perfekt und abwesend — ein deutscher Käufer, der nach einer Teilenummer sucht, findet lieber eine etwas steife deutsche Produktseite als eine englische.
+
+**Die Prüfanweisung, die echte Fehler findet.**
+
+Fragen Sie einen Prüfer nicht „ist das korrekt übersetzt?“ — er liest die Quelle, sieht eine treue Wiedergabe und genehmigt. Fragen Sie: *„Lesen Sie nur den deutschen Text. Würde ein Einkaufsleiter in einem deutschen Mittelständler glauben, dass ein Deutscher das geschrieben hat? Markieren Sie jeden Satz, bei dem die Antwort nein lautet.“* Diese Frage fördert Registerfehler, falsche Freunde und Lehnübersetzungen zutage. Die erste fördert nichts zutage.
+
+---
+
+## Mehrsprachige Inhalte veröffentlichen, ohne Ihr SEO zu beschädigen
+
+**Eine URL pro Sprache. Immer.**
+
+Der häufigste technische Fehler ist ein JavaScript-Sprachumschalter, der Text tauscht, ohne die URL zu ändern. Suchmaschinen indexieren eine URL mit einer Sprache, Ihre deutschen Inhalte sind also unsichtbar — Sie haben die Arbeit gemacht und bekommen keinen Traffic. Jede Sprache braucht eine eigene, crawlbare URL:
+
+- `example.com/de/leistungen/` — Unterverzeichnis. Der richtige Standard für ein kleines Unternehmen: eine Domain, eine gebündelte Autorität, einfach zu hosten.
+- `de.example.com` — Subdomain. Teilt die Autorität auf. Meiden, außer es gibt einen starken infrastrukturellen Grund.
+- `example.de` — Länderdomain. Stärkstes lokales Signal, aber Sie bauen die Autorität einer zweiten Seite von null auf. Nur sinnvoll, wenn Deutschland Ihr Hauptmarkt ist und nicht einer von mehreren.
+
+**hreflang, minimal und korrekt.**
+
+Jede Sprachversion muss jede andere Sprachversion deklarieren, einschließlich sich selbst, und die Deklarationen müssen wechselseitig sein. Verweist die deutsche Seite auf die englische, die englische aber nicht zurück, wird der gesamte Cluster ignoriert. Googles [Dokumentation zu lokalisierten Versionen](https://developers.google.com/search/docs/specialty/international/localized-versions) ist die Referenz; die Regeln sind knifflig und die Tags leicht schlecht zu erzeugen, also generieren Sie sie programmatisch aus Ihrer Content-Collection statt von Hand.
+
+Zwei Dinge sind gut zu wissen: `x-default` sollte auf Ihre Sprachauswahlseite oder Ihre Hauptsprachversion zeigen, und hreflang ist ein Signal, keine Anweisung — es sagt Google, welche Version einem deutschen Nutzer *angezeigt* werden soll, nicht welche Seiten zu indexieren sind.
+
+**URLs und Metadaten nicht unbedacht maschinell übersetzen.**
+
+Slugs, Title-Tags und Meta-Beschreibungen sind der Ort, an dem Übersetzungsqualität am sichtbarsten und folgenreichsten ist. Ein deutscher Title-Tag ist typischerweise 15–20 % länger als seine englische Quelle und wird in den Ergebnissen abgeschnitten. Schreiben Sie die Metadaten für jede Sprache anhand der tatsächlichen Keyword-Recherche für diesen Markt, statt das Englische zu übersetzen. Das Keyword, das ein deutscher Käufer eintippt, ist häufig keine Übersetzung des Keywords eines englischen Käufers — es ist ein anderes Wort für dieselbe Absicht. Das ist dieselbe Disziplin wie die zugrunde liegende [B2B-SEO-Keyword-Arbeit](/de/articles/2026-06-10_seo-b2b-services-2026/), einmal pro Markt durchgeführt.
+
+**Übersetzen Sie den Conversion-Pfad, nicht nur die Seiten.**
+
+Eine deutsche Landingpage mit englischem Kontaktformular, englischen Validierungsfehlern und englischer Bestätigungs-E-Mail ist keine deutsche Erfahrung — und verliert Conversions genau in dem Moment, in dem der Besucher sich zum Handeln entschieden hat. Übersetzen Sie Formularbeschriftungen, Fehlerzustände, die Dankeseite und die automatische Antwort. Dasselbe gilt für Ihre E-Mail-Sequenzen: Die Sprache sollte ein Kontaktattribut sein, das steuert, welche Version eines Workflows ausgelöst wird; das lässt sich unkompliziert einrichten, wenn die [Segmentarchitektur Ihrer E-Mail-Plattform](/de/articles/2026-07-14_brevo-b2b-marketing-setup-guide-2026/) von Anfang an darauf ausgelegt ist.
+
+---
+
+## Als System betreiben
+
+**Disziplin in der Ausgangssprache.**
+
+Die Übersetzungsqualität ist durch die Qualität der Quelle begrenzt. Lange Sätze mit drei Nebensätzen übersetzen sich in jeder Engine schlecht. Idiome übersetzen sich schlecht. Mehrdeutige Pronomen übersetzen sich schlecht. Schreiben Sie die Quelle im Wissen, dass sie übersetzt wird — kurze Sätze, explizite Subjekte, einheitliche Terminologie, kein Wortspiel —, verbessert sich die Ausgabequalität messbar in allen Zielsprachen zugleich. Es ist die günstigste verfügbare Qualitätsmaßnahme und kostet nichts als Disziplin.
+
+**Versionskontrolle.**
+
+Das Fehlerbild jeder mehrsprachigen Seite: Die englische Seite wird aktualisiert, die deutsche nicht, und achtzehn Monate später beschreiben sie verschiedene Produkte zu verschiedenen Preisen. Verfolgen Sie es. Eine Spalte pro Sprache in einer Content-Tabelle, mit dem letzten Änderungsdatum der Quelle. Jedes Ziel, das älter ist als seine Quelle, ist veraltet und wird neu durchlaufen. Automatisieren Sie die Markierung; der erneute Durchlauf ist günstig, die Abweichung nicht.
+
+**Kosten, ehrlich.**
+
+Für ein Unternehmen mit einer Ausgangssprache und zwei Zielsprachen bei etwa 20.000 Wörtern im Jahr: MT-API-Kosten im niedrigen zweistelligen Euro-Bereich pro Jahr; LLM-Kosten ähnlich; professionelle Übersetzung der Stufe 1 einige hundert Euro einmalig; die muttersprachliche Prüfung der Stufe 2 ist der einzige echte laufende Posten, und bei einem Viertel der Übersetzungszeit ist er beherrschbar. Insgesamt liegt es deutlich unter den Kosten eines einzigen agenturübersetzten Website-Relaunchs — und anders als der Relaunch bleibt es aktuell.
+
+---
+
+Der Grund, das zu tun, ist nicht, dass Übersetzung jetzt billig ist. Es ist, dass sich die Kostenstruktur umgekehrt hat: Teuer war früher, die Wörter zu produzieren; jetzt ist es, zu entscheiden, welche Wörter zählen. Ein kleines europäisches Unternehmen kann plausibel drei Sprachen betreiben mit einem Glossar, einer gestuften Prüfpolitik und einem Nachmittag hreflang-Arbeit. Was es nicht kann, ist drei Sprachen zu betreiben, indem es alles perfekt übersetzt — das war nie bezahlbar und ist es auch jetzt nicht. Sortieren Sie die Inhalte danach, was ein Fehler kostet, investieren Sie die menschlichen Stunden dort und überlassen Sie der Maschine die Spezifikationstabelle, für die Sie nie ein Lob bekommen werden.
+
+---
+
+**Quellen:** [DeepL API Documentation](https://developers.deepl.com/) · [Google Search Central — Localized Versions](https://developers.google.com/search/docs/specialty/international/localized-versions)

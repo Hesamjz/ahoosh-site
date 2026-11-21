@@ -1,0 +1,173 @@
+---
+title: "Website-Relaunch ohne SEO-Verlust"
+description: "Ein Schritt-für-Schritt-Plan für den Website-Relaunch, der Suchrankings schützt — URL-Mapping, Weiterleitungsregeln, QA vor dem Start, Prüfungen am Starttag und die 90-Tage-Erholungskurve."
+pubDate: 2026-11-01
+tags: ["Strategy", "SEO", "Operations"]
+heroImage: "/articles/img/website-migration-without-losing-seo.jpg"
+lang: de
+translationOf: "2026-09-26_website-migration-without-losing-seo"
+---
+
+<img src="/articles/img/website-migration-without-losing-seo.jpg" alt="Ein Laptop mit einer URL-Weiterleitungskarte neben einem Notizbuch mit Migrations-Checklisten" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Website-Relaunches sind der Ort, an dem gutes SEO stirbt. Ein Unternehmen baut zwei Jahre lang organischen Traffic auf, gestaltet die Seite neu, geht an einem Freitag live und sieht in den folgenden drei Wochen 60 % seiner Suchsichtbarkeit verdunsten. Die Agentur sagt, es sei eine vorübergehende Schwankung. Das ist es nicht, und bis sich alle einig sind, dass es das nicht ist, ist die Diagnose viel schwieriger, weil sich zu viel auf einmal geändert hat.
+
+Das Frustrierende daran: Relaunch-Verluste sind fast vollständig vermeidbar. Die Mechanik ist gut verstanden und von Google selbst dokumentiert. Traffic-Einbrüche bei Relaunches haben keine geheimnisvolle algorithmische Ungunst zur Ursache. Sie haben eine bestimmte, auffindbare Liste von Ursachen: URLs, die sich ohne Weiterleitung geändert haben, Weiterleitungen, die vier Hops tief verketten, eine `robots.txt`, die vom Staging mit ausgeliefert wurde, Canonical-Tags, die auf die alte Domain zeigen, und interne Links, die noch auf URLs zeigen, die jetzt per 301 umleiten.
+
+Dieser Leitfaden ist die Abfolge, die das vermeidet. Er geht von einer kleinen B2B-Website aus — einige hundert Seiten, kein eigenes SEO-Team, ein Entwickler oder eine Agentur.
+
+---
+
+## Entscheiden Sie, welche Art von Relaunch Sie tatsächlich machen
+
+**Das Risikoprofil hängt ganz davon ab, was sich ändert.**
+
+„Relaunch“ umfasst fünf recht verschiedene Vorgänge mit wild unterschiedlichem Risiko. Seien Sie präzise, welchen Sie machen, denn es bestimmt, wie viel dieses Leitfadens gilt:
+
+- **Nur Redesign** — gleiche URLs, gleiche Domain, neue Templates und Gestaltung. Geringstes Risiko. Die Gefahr sind Inhaltsverlust und Änderungen an Titeln und Überschriften auf Template-Ebene.
+- **Plattformwechsel** — WordPress zu Astro, Shopify zu etwas anderem. Gleiche Domain, aber die URL-Struktur ändert sich meist, weil die neue Plattform Pfade anders erzeugt. Mittleres Risiko.
+- **Änderung der URL-Struktur** — gleiche Domain und Plattform, neue Informationsarchitektur. Mittleres bis hohes Risiko, ganz abhängig von der Qualität der Weiterleitungen.
+- **Domainwechsel** — neuer Hostname. Hohes Risiko, aber gut dokumentiert und bei sauberer Durchführung umkehrbar.
+- **Konsolidierung** — zwei Websites zu einer zusammenführen. Höchstes Risiko, weil Sie URL-Änderungen, Domainwechsel und Inhaltsentscheidungen alle auf einmal kombinieren.
+
+**Kombinieren Sie Kategorien nie, wenn Sie es vermeiden können.**
+
+Der beste einzelne Rat zum Relaunch ist langweilig: eines nach dem anderen, mit Abstand dazwischen. Ändern Sie das Design, warten Sie drei Wochen, bestätigen Sie die Stabilität, ändern Sie dann die URLs. Ändern Sie Design, URLs, Domain und CMS in einem Release und der Traffic bricht um 40 % ein, haben Sie vier mögliche Ursachen und keine Möglichkeit, sie zu isolieren. Ändern Sie eine Sache, haben Sie eine.
+
+Das Gegenargument sind immer die Kosten — „wir können nicht drei Deployments machen“. Die Kosten eines um drei Wochen gestaffelten Rollouts sind ein zusätzlicher Deploy-Zyklus. Die Kosten eines nicht zuordenbaren 40-%-Traffic-Verlusts sind ein Quartal Pipeline. Staffeln Sie.
+
+---
+
+## Bauen Sie zuerst die URL-Karte
+
+**Das Inventar kommt zuerst, und es kommt aus vier Quellen.**
+
+Sie können URLs nicht weiterleiten, von denen Sie nicht wissen, dass sie existieren. Jedes Relaunch-Versagen, das ich gesehen habe, begann mit einem unvollständigen Inventar. Ziehen Sie aus allen vier und dedupliziert:
+
+1. **Ein vollständiger Crawl der aktuellen Seite** — Screaming Frog (kostenlos unter 500 URLs) oder Sitebulb. Das liefert, was verlinkt ist.
+2. **Die XML-Sitemap** — was Sie *glauben* zu haben.
+3. **Google Search Console** — der Bericht „Seiten“ und der Bericht „Leistung“, exportiert für die letzten 12 Monate. Das liefert, was Google tatsächlich indexiert hat, einschließlich verwaister Seiten, auf die nichts verlinkt.
+4. **Server-Logs oder Analytics** — die URLs der letzten 12 Monate, die einen echten Besuch erhielten. Das fängt Seiten mit Backlinks, die Sie sonst nie fänden.
+
+Die Vereinigung dieser vier ist Ihr echtes Inventar. Es ist immer größer, als jemand erwartet hat — typischerweise 20–40 % größer als der Crawl allein, wegen alter Kampagnenseiten, PDFs und Seiten, die vor Jahren aus der Navigation fielen, aber noch Links halten.
+
+**Priorisieren Sie, denn Sie können nicht alles von Hand zuordnen.**
+
+Ziehen Sie je URL drei Zahlen: organische Klicks (letzte 12 Monate), verweisende Domains und Conversions. Bilden Sie dann Gruppen:
+
+- **Stufe 1 — von Hand zuordnen.** Alles mit nennenswertem Traffic, jede Seite mit externen Backlinks, jede Seite, die konvertiert. Meist 5–10 % der URLs und über 80 % des Werts. Ein Mensch entscheidet jedes Ziel.
+- **Stufe 2 — per Muster zuordnen.** Pauschale Regeln, wo alte und neue Struktur vorhersehbar zueinander passen (`/blog/2024/05/post-name` → `/articles/post-name`). Regex-Regeln, aber an einer Stichprobe geprüft.
+- **Stufe 3 — bewusst entscheiden.** Null Traffic, null Links. Auf die nächste relevante Seite weiterleiten oder mit 410 antworten. Leiten Sie diese nicht pauschal auf die Startseite.
+
+**Das Anti-Muster der Startseiten-Weiterleitung.**
+
+Die häufigste faule Lösung ist, jede nicht zugeordnete alte URL auf die Startseite weiterzuleiten. Google behandelt eine Weiterleitung auf eine irrelevante Seite als Soft-404 — sie gibt keinen Wert weiter und verschwendet Crawl-Budget. Gibt es kein relevantes Ziel, ist die Antwort 410 Gone sauberer und schneller: Sie sagt Google, die URL fallen zu lassen, statt sie wiederholt neu zu prüfen.
+
+Leiten Sie auf die nächste *gleichwertige* Seite weiter oder gar nicht. Es gibt keine Mitte, die hilft.
+
+---
+
+## Weiterleitungsregeln, die sich nicht selbst aufheben
+
+**301, und nur 301.**
+
+Nutzen Sie permanente Weiterleitungen für permanente Umzüge. Eine 302 sagt Google, die alte URL sei weiterhin die kanonische und der Umzug vorübergehend — es hält die alte URL im Index und überträgt Signale womöglich nie vollständig. Das klingt nach Detail und ist der Unterschied zwischen einem sauberen Relaunch und einem, der sechs Monate dauert. Prüfen Sie den tatsächlichen Antwortcode mit `curl -I`; verlassen Sie sich nicht auf die Bezeichnung im Weiterleitungs-Plugin des CMS.
+
+**Beseitigen Sie die Ketten.**
+
+Eine Weiterleitungskette ist `/old` → `/interim` → `/new`. Jeder Hop verwässert und verlangsamt. Das entsteht organisch, wenn eine Seite schon einmal migriert wurde und die neuen Regeln sich auf die alten stapeln. Lassen Sie Ihre Weiterleitungsliste vor dem Start durch einen Checker laufen und glätten Sie jede Kette auf einen Hop: `/old` → `/new` direkt, plus `/interim` → `/new`.
+
+Weiterleitungsschleifen (`/a` → `/b` → `/a`) sind seltener und fatal — die Seite wird gänzlich unerreichbar. Ein Crawl der Staging-Umgebung mit aktiviertem Folgen von Weiterleitungen fängt beides.
+
+**Bewahren Sie Query-Strings und abschließende Schrägstriche bewusst.**
+
+Zwei stille Killer:
+
+- **Inkonsistenter abschließender Schrägstrich.** Lieferte die alte Seite `/services/` und die neue `/services`, ist das eine andere URL, und Sie brauchen eine Regel. Wählen Sie eine Konvention, setzen Sie sie seitenweit durch und leiten Sie die andere Form um.
+- **Query-Parameter.** UTM-getaggte URLs alter Kampagnen, paginierte Archive, gefilterte Kategorieseiten. Stellen Sie sicher, dass Ihre Weiterleitungsregeln Parameter durchreichen, statt sie zu entfernen, sonst bricht Ihre Attribution am Starttag, auch wo das SEO überlebt.
+
+**Behalten Sie die Weiterleitungen mindestens ein Jahr.**
+
+Googles eigene Empfehlung ist, Relaunch-Weiterleitungen mindestens ein Jahr zu pflegen. In der Praxis behalten Sie sie für immer — eine Weiterleitungsregel kostet nichts, und alte Backlinks schicken sehr lange Traffic. Der Versuchung, die Weiterleitungsdatei nach zwölf Monaten „aufzuräumen“, sollte man widerstehen. Es gibt keinen Vorteil.
+
+---
+
+## QA vor dem Start auf dem Staging
+
+**Sperren Sie das Staging für die Indexierung und denken Sie dann daran, die Produktion freizugeben.**
+
+Staging-Umgebungen dürfen nicht indexierbar sein — nutzen Sie HTTP-Authentifizierung statt `robots.txt`, weil ein `robots.txt`-Disallow die Indexierung verlinkter URLs nicht zuverlässig verhindert und vor allem, weil die Staging-`robots.txt` die Datei ist, die am ehesten versehentlich in die Produktion ausgeliefert wird.
+
+Dieses Versehen — `Disallow: /` auf eine Live-Seite auszuliefern — ist der zerstörerischste einzelne Relaunch-Fehler, und er ist tagelang unsichtbar, weil die Seite für Menschen völlig in Ordnung aussieht. Machen Sie „die `robots.txt` der Produktion abrufen und laut vorlesen“ zu einem ausdrücklichen Schritt am Starttag mit benanntem Verantwortlichen.
+
+**Crawlen Sie das Staging und vergleichen Sie es mit der Produktion.**
+
+Das ist die wertvollste Stunde des ganzen Projekts. Crawlen Sie beide Umgebungen und vergleichen Sie Seite für Seite:
+
+- **Title-Tags und Meta-Beschreibungen** — Templates ändern sich, und Titel verlieren still das Keyword oder gewinnen einen Boilerplate-Zusatz.
+- **H1** — neue Designs verwandeln die H1 gern in ein gestaltetes div.
+- **Canonical-Tags** — der klassische Fehler ist, dass jede Staging-Seite auf die Staging-Domain kanonisiert, was dann in die Produktion geht und Google sagt, Ihre ganze Seite sei eine Kopie eines Entwicklungsservers.
+- **Wortanzahl pro Seite** — eine Seite, die beim Template-Neubau 60 % ihres Inhalts verlor, verliert ihre Rankings. Dieser Vergleich fängt Inhalte, die aus einer Seitenleiste oder einem Akkordeon fielen, das niemand neu gebaut hat.
+- **Anzahl interner Links** — Seiten, die ihre internen Links verloren, verloren ihren internen PageRank.
+- **Strukturierte Daten** — Schema-Markup übersteht einen Template-Neubau routinemäßig nicht. Validieren Sie gegen die [schema.org](https://schema.org/)-Definitionen und Googles Test für Rich-Suchergebnisse.
+- **hreflang** — bei Mehrsprachigkeit bricht das bei fast jedem Relaunch.
+
+**Testen Sie die Weiterleitungskarte gegen die echte Liste.**
+
+Nehmen Sie Ihr volles URL-Inventar, lassen Sie jede alte URL gegen das Staging laufen (mit geladenen Weiterleitungsregeln) und halten Sie den endgültigen Statuscode und das Ziel fest. Was Sie wollen: Jede Stufe-1-URL liefert 200 am beabsichtigten Ziel in einem Hop. Was Sie im ersten Durchgang finden: grob 10–15 % falsch. Das ist normal. Beheben Sie es und laufen Sie neu, bis es sauber ist.
+
+**Prüfen Sie die Performance, denn sie ist jetzt ein Ranking-Faktor.**
+
+Lassen Sie die Core Web Vitals auf den neuen Templates vor dem Start laufen, nicht danach. Ein Redesign, das die Ästhetik verbessert und die LCP von 1,2 s auf 3,5 s verschlechtert, wird Sie kosten. Der Zusammenhang zwischen Geschwindigkeit und B2B-Conversion ist ohnehin gut belegt — dieselben Überlegungen, die [B2B-Website-Conversion](/de/articles/2026-06-10_b2b-website-conversion-2026/) treiben, gelten hier, und ein Relaunch ist der günstigste Moment, sie zu beheben.
+
+---
+
+## Starttag und die 90 Tage danach
+
+**Starten Sie an einem Dienstagvormittag. Nicht am Freitag.**
+
+Das ist kein Aberglaube. Sie wollen, dass die Leute, die es gebaut haben, wach und verfügbar sind und nicht an einem Wochenende, wenn die ersten Probleme auftauchen. Relaunch-Fehler zeigen sich in den ersten 6–24 Stunden. Dienstag live, Mittwoch beobachten, Donnerstag beheben.
+
+**Die Checkliste der ersten Stunde, in Reihenfolge:**
+
+1. Rufen Sie `https://yourdomain.com/robots.txt` ab und lesen Sie sie. Bestätigen Sie, dass sie nichts sperrt.
+2. Prüfen Sie stichprobenhaft zehn Stufe-1-URLs mit `curl -I`. Bestätigen Sie eine 301 mit einem Hop auf eine 200.
+3. Sehen Sie den Quelltext von fünf Schlüsselseiten an. Bestätigen Sie, dass Canonical-Tags auf die Produktions-Domain zeigen.
+4. Reichen Sie die neue XML-Sitemap in der Search Console ein. Lassen Sie die *alte* Sitemap noch einige Wochen eingereicht — das beschleunigt die Entdeckung der Weiterleitungen.
+5. Hat sich die Domain geändert, reichen Sie die Adressänderung in der Search Console ein. Das ist ein eigenes Tool und es beschleunigt den Übergang spürbar.
+6. Bestätigen Sie, dass Analytics auf den neuen Templates feuert. Bestätigen Sie, dass Ziel- und Conversion-Tracking überlebt haben.
+7. Bestätigen Sie, dass die neue Property in der Search Console *vor* dem Start verifiziert ist, nicht danach.
+
+**Aktualisieren Sie interne Links ordentlich.**
+
+Weiterleitungen behandeln externe Links. Interne Links sollten direkt auf die neue URL zeigen — ein interner Link, der per 301 umleitet, funktioniert, ist aber langsam, verbrennt Crawl-Budget und signalisiert im großen Maßstab Schlamperei. Lassen Sie eine Woche nach dem Start einen Crawl laufen und beheben Sie jeden internen Link, der auf eine Weiterleitung trifft. Dazu gehören Links in alten Blogbeiträgen, die Menge, die jeder vergisst.
+
+**Die erwartete Kurve, damit Sie nicht in Panik geraten.**
+
+Ein gut ausgeführter Relaunch einer kleinen Seite sieht typischerweise so aus:
+
+- **Woche 1** — sichtbarer Einbruch, 10–25 %. Google crawlt und verarbeitet neu. Das ist normal und kein Zeichen für Scheitern.
+- **Wochen 2–4** — teilweise Erholung. Rankings schwanken, während Seiten unter ihren neuen URLs neu indexiert werden.
+- **Wochen 4–8** — Annäherung an die Basis. Die meisten Seiten erreichen hier über 90 % des früheren Traffics.
+- **Wochen 8–12** — stabil, oft über der Basis, wenn die neue Seite schneller und besser strukturiert ist.
+
+Was *nicht* normal ist: ein Einbruch, der sich nach Woche 3 vertieft, oder eine Erholung, die unter 70 % stagniert. Beides heißt, dass strukturell etwas nicht stimmt — gehen Sie zuerst zur Weiterleitungskarte und den Canonical-Tags zurück. In neunzig Prozent der Fälle ist es eines von beiden.
+
+**Beobachten Sie diese vier Dinge 90 Tage lang wöchentlich:**
+
+- Search-Console-Bericht „Seiten“ — achten Sie auf die Gründe für „nicht indexiert“, besonders „Seite mit Weiterleitung“ und „Durch robots.txt ausgeschlossen“
+- Crawling-Statistiken — ein Einbruch der Crawl-Rate heißt, Google tut sich schwer
+- 404-Protokoll auf dem Produktionsserver — echte 404 von echten Referrern sind nicht zugeordnete URLs, die Sie übersehen haben
+- Organische Klicks je Seite, verglichen mit der Basis vor dem Relaunch, die Sie exportiert haben
+
+Bewahren Sie den Export der Basis vor dem Relaunch auf. Ohne ihn können Sie nicht belegen, was passiert ist, und „der Traffic fühlt sich niedriger an“ ist keine Diagnose. Die breitere Disziplin hier hängt damit zusammen, wie Sie allgemein [SEO für B2B-Dienstleistungen angehen](/de/articles/2026-06-10_seo-b2b-services-2026/) — erst messen, dann ändern.
+
+---
+
+Ein Relaunch ist kein SEO-Projekt mit einer Entwicklungskomponente. Er ist ein Entwicklungsprojekt, dessen Abnahmekriterien zufällig SEO sind. Diese Neurahmung sorgt dafür, dass die URL-Karte in Woche eins gebaut wird statt in der Woche vor dem Start, und dass das Testen der Weiterleitungen in den QA-Plan kommt statt in ein hektisches Nachspiel.
+
+Die Arbeit ist unglamourös: ein Inventar, eine Zuordnungstabelle, eine Weiterleitungsdatei, ein Vergleich und eine Checkliste. Sie dauert bei einer kleinen Seite einige Tage. Sie zu überspringen, spart diese Tage nicht — sie werden in das folgende Quartal verschoben, zu einem viel schlechteren Kurs, während die Pipeline trocken ist.
+
+---
+
+**Quellen:** [Google Search Central — Website-Umzug mit URL-Änderungen](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) · [Google Search Central — Weiterleitungen und die Google Suche](https://developers.google.com/search/docs/crawling-indexing/301-redirects) · [Schema.org](https://schema.org/)

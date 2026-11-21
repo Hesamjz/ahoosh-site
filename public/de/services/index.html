@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leistungen — AHoosh</title>
+<link rel="canonical" href="https://ahoosh.ai/de/services/" />
+<meta name="description" content="AHoosh hilft kleinen europäischen Unternehmen, online sichtbar zu werden, mehr zu verkaufen und smarter zu arbeiten. Erst beraten, dann bauen — Beratung plus Websites, Marketing und KI aus einer Hand.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leistungen — AHoosh">
+<meta property="og:description" content="AHoosh hilft kleinen europäischen Unternehmen, online sichtbar zu werden, mehr zu verkaufen und smarter zu arbeiten. Erst beraten, dann bauen — Beratung plus Websites, Marketing und KI aus einer Hand.">
+<meta property="og:image" content="https://ahoosh.ai/assets/og_services.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://ahoosh.ai/de/services/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ahoosh.ai/assets/og_services.jpg">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#03060f; --navy2:#03142E; --gold:#e0a93f; --gold-lt:#f4d98b;
+  --silver:#cdd6e6; --dim:#828ca2;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font-display:'Montserrat',sans-serif; --font-body:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{background:var(--navy);color:#fff;font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ---------- Loader ---------- */
+#loader{position:fixed;inset:0;z-index:100;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .8s var(--ease)}
+#loader.hide{opacity:0;pointer-events:none}
+.loader-logo{height:54px;width:auto;display:block}
+.loader-track{width:200px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+#loader-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-lt))}
+#loader-percent{font-size:12px;letter-spacing:.2em;color:var(--dim)}
+
+/* ---------- Header (hidden on hero, fades in after) ---------- */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:60;padding:18px 0;background:linear-gradient(180deg,rgba(3,6,15,.88),rgba(3,6,15,0))}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between}
+.brand img{height:66px;width:auto;display:block}
+.nav{display:flex;align-items:center;gap:38px}
+.nav a{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:.72rem;letter-spacing:.16em;color:var(--silver);transition:color .25s;position:relative}
+.nav a:not(.btn-gold)::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:1.5px;background:var(--gold);transition:width .35s var(--ease)}
+.nav a:not(.btn-gold):hover::after{width:100%}
+.nav a:hover,.nav a.active{color:#fff}
+.nav .btn-gold{background:linear-gradient(180deg,var(--gold-lt),var(--gold));color:#1a1205;padding:11px 22px;border-radius:40px;letter-spacing:.1em}
+.nav .btn-gold:hover{color:#1a1205;filter:brightness(1.06)}
+.nav-dd{position:relative;display:inline-flex;align-items:center}
+.nav-dd::after{content:"";position:absolute;left:-12px;right:-12px;top:100%;height:18px}
+.nav-dd-car{font-style:normal;font-size:.6em;opacity:.65;margin-left:5px}
+.nav-dd-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);min-width:172px;display:flex;flex-direction:column;background:rgba(8,16,34,.97);border:1px solid rgba(224,169,63,.22);border-radius:14px;padding:8px;opacity:0;visibility:hidden;transition:opacity .25s,transform .25s;box-shadow:0 24px 60px rgba(0,0,0,.55);z-index:130}
+.nav-dd:hover .nav-dd-menu,.nav-dd:focus-within .nav-dd-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(6px)}
+.nav-dd-menu a{padding:11px 14px;border-radius:10px;font-size:.68rem;white-space:nowrap;color:var(--silver)}
+.nav-dd-menu a::after{display:none}
+.nav-dd-menu a:hover{background:rgba(224,169,63,.12);color:#fff}
+@media(max-width:860px){.nav a:not(.btn-gold),.nav-dd{display:none}}
+
+/* ---------- Canvas ---------- */
+#canvas-wrap{position:fixed;inset:0;z-index:1}
+#scrubvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}#canvas{position:absolute;inset:0;width:100%;height:100%;display:block;background:#05080f}
+/* full-screen dark-blue glass layer (between video and text/cards) */
+#scrim{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(8,14,30,.42),rgba(8,14,30,.42)), radial-gradient(125% 95% at 50% 38%,rgba(3,6,15,0) 46%,rgba(3,6,15,.42) 100%)}
+#scroll{position:relative;z-index:0;height:760vh}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,90px);
+  background:linear-gradient(180deg,#03050f 0%,#03050f 26%,rgba(3,6,15,.55) 50%,rgba(3,6,15,0) 70%);
+  pointer-events:none}
+.hero.hide{opacity:0}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.32em;color:var(--gold);margin-bottom:26px}
+.hero h1{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,8vw,108px);line-height:.96;letter-spacing:-.01em;max-width:14ch}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .ln span{display:inline-block}
+.hero p{margin-top:30px;max-width:46ch;font-size:clamp(15px,1.5vw,19px);line-height:1.65;color:var(--silver)}
+
+/* ---------- Fire scroll CTA (over the opening spark) ---------- */
+.fire-wrap{transition:opacity .55s var(--ease)}
+.fire-wrap.hide{opacity:0;pointer-events:none}
+.fire-zone{position:fixed;left:50%;top:67%;transform:translate(-50%,-50%);width:110px;height:110px;z-index:6}
+.fire-glow{position:absolute;top:50%;left:50%;width:42px;height:42px;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,160,70,.85) 0%,rgba(255,100,30,.42) 34%,rgba(255,70,15,0) 64%);
+  opacity:0;pointer-events:none;mix-blend-mode:screen;
+  transition:opacity .3s var(--ease),width .3s var(--ease),height .3s var(--ease),filter .3s var(--ease)}
+.fire-hot{position:absolute;inset:0;border-radius:50%;cursor:pointer;pointer-events:auto}
+.fire-zone:hover .fire-glow{opacity:1;width:68px;height:68px;filter:brightness(1.7) saturate(1.35)}
+.fire-cue2{position:fixed;left:50%;top:75%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;color:#ffb070;font-size:11px;letter-spacing:.34em;text-shadow:0 0 12px rgba(255,120,40,.6);opacity:0;transition:opacity .3s var(--ease)}
+.fire-zone:hover ~ .fire-cue2{opacity:1}
+.fire-cue2 .chev{width:12px;height:12px;border-right:2px solid #ff9a40;border-bottom:2px solid #ff9a40;transform:rotate(45deg);animation:chevbob 1.8s var(--ease) infinite}
+@keyframes chevbob{0%,100%{transform:rotate(45deg) translate(-2px,-2px)}50%{transform:rotate(45deg) translate(2px,2px)}}
+
+/* ---------- Beats (fixed; shown one at a time by the pager) ---------- */
+.sec{position:fixed;inset:0;z-index:6;display:flex;align-items:center;
+  padding:0 clamp(24px,6vw,96px);opacity:0;pointer-events:none;
+  transition:opacity .5s var(--ease)}
+.sec.on{opacity:1}
+.sec .inner{max-width:440px;position:relative;
+  transform:translateY(34px);transition:transform .7s var(--ease);pointer-events:none}
+.sec.on .inner{transform:translateY(0)}
+.sec.left{justify-content:flex-start}
+.sec.right{justify-content:flex-end}
+.sec.right .inner{text-align:right}
+.sec .num{font-family:var(--font-display);font-weight:800;font-size:13px;letter-spacing:.3em;color:var(--gold)}
+.sec h2{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.2vw,56px);line-height:1.03;margin:16px 0 18px;letter-spacing:-.01em}
+.sec p{font-size:clamp(14px,1.35vw,17px);line-height:1.6;color:#e7ecf5;margin-bottom:22px}
+.price-row{display:flex;flex-wrap:wrap;gap:10px 12px;margin-bottom:8px}
+.sec.right .price-row{justify-content:flex-end}
+.chip{display:inline-flex;align-items:baseline;gap:7px;border:1px solid rgba(224,169,63,.45);background:rgba(6,11,28,.62);backdrop-filter:blur(6px);padding:8px 14px;border-radius:30px;font-size:13px;pointer-events:auto}
+.chip b{font-family:var(--font-display);font-weight:800;color:var(--gold-lt);font-size:15px}
+.chip span{color:var(--silver);font-size:11.5px;letter-spacing:.04em}
+.reveal-line{font-size:12.5px;color:var(--silver);line-height:1.5;margin-top:14px}
+.reveal-line em{color:var(--gold-lt);font-style:normal}
+.sec .inner::before{content:"";position:absolute;inset:-40px -60px;z-index:-1;border-radius:26px;
+  background:radial-gradient(110% 120% at 22% 45%,rgba(3,6,15,.9),rgba(3,6,15,.5) 45%,rgba(3,6,15,0) 78%)}
+.sec.right .inner::before{background:radial-gradient(110% 120% at 78% 45%,rgba(3,6,15,.9),rgba(3,6,15,.5) 45%,rgba(3,6,15,0) 78%)}
+
+/* CTA — content sits low so the building + AHOOSH logo stay visible above it */
+.sec.cta{justify-content:center;align-items:flex-end}
+.sec.cta .inner{max-width:660px;text-align:center;margin-bottom:6vh}
+.sec.cta .inner::before{background:radial-gradient(95% 120% at 50% 100%,rgba(3,6,15,.94),rgba(3,6,15,.55) 58%,rgba(3,6,15,0) 92%)}
+.btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:26px;pointer-events:auto}
+.btn{padding:15px 30px;border-radius:40px;font-weight:600;font-size:14px;letter-spacing:.06em;transition:transform .25s var(--ease),filter .25s}
+.btn:hover{transform:translateY(-2px)}
+.btn-gold{background:linear-gradient(180deg,var(--gold-lt),var(--gold));color:#1a1205}
+.btn-ghost{border:1px solid rgba(205,214,230,.4);color:#fff}
+.cta-foot{margin-top:30px;color:var(--dim);font-size:11.5px;line-height:1.5}
+
+/* ---------- Section dots ---------- */
+.dots{position:fixed;right:clamp(14px,2vw,30px);top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:13px;opacity:0;transition:opacity .5s var(--ease);pointer-events:none}
+.dots.show{opacity:1;pointer-events:auto}
+.dots button{width:9px;height:9px;border-radius:50%;border:1px solid rgba(205,214,230,.5);background:transparent;cursor:pointer;padding:0;transition:transform .3s var(--ease),background .3s,border-color .3s}
+.dots button.active{background:var(--gold);border-color:var(--gold);transform:scale(1.3)}
+
+/* ---------- Mobile (<=640px): one left-aligned column + flat readable panel ---------- */
+@media(max-width:640px){
+  .sec{padding:13vh 20px 0;align-items:flex-start}
+  .sec.left,.sec.right{justify-content:flex-start}
+  .sec .inner{max-width:100%}
+  .sec.right .inner{text-align:left}
+  .sec.right .price-row{justify-content:flex-start}
+  .sec .num{font-size:12px;letter-spacing:.16em}
+  .sec h2{font-size:clamp(24px,6.6vw,34px);margin:12px 0 14px}
+  .sec p{font-size:15px;line-height:1.55;margin-bottom:18px}
+  /* flat dark panel behind text so white copy stays legible over bright frames */
+  .sec .inner::before,.sec.right .inner::before{
+    inset:-22px -20px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(3,6,15,.82),rgba(3,6,15,.62))}
+  /* CTA centered vertically so headline/buttons/disclaimer don't crowd the bottom */
+  .sec.cta{align-items:center}
+  .sec.cta .inner{max-width:100%;margin-bottom:0}
+  .sec.cta .inner::before{inset:-22px -18px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(3,6,15,.84),rgba(3,6,15,.6))}
+  .cta-foot{margin-top:20px;font-size:11px}
+  .dots{display:none}
+}
+</style>
+<link rel="alternate" hreflang="en" href="https://ahoosh.ai/services/" />
+<link rel="alternate" hreflang="de" href="https://ahoosh.ai/de/services/" />
+<link rel="alternate" hreflang="x-default" href="https://ahoosh.ai/services/" />
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  <img class="loader-logo" src="/assets/logo.webp" alt="AHoosh">
+  <div class="loader-track"><div id="loader-bar"></div></div>
+  <div id="loader-percent">0%</div>
+</div>
+
+<!-- Header (logo left; fades in after the hero) -->
+<header class="site-header" id="header">
+  <div class="nav-inner">
+    <a class="brand" href="/de/" aria-label="AHoosh Startseite"><img src="/lab/Ahoosh_Vectore_Logo.webp" alt="AHoosh"></a>
+    <nav class="nav">
+      <a href="/de/">START</a>
+      <span class="nav-dd"><a href="/de/services" class="nav-dd-top active">LEISTUNGEN<i class="nav-dd-car">▾</i></a><span class="nav-dd-menu"><a href="/de/services">Leistungen</a><a href="/de/products">Produkte</a><a href="/de/assess">Growth Assessment</a><a href="/de/portfolio">Portfolio</a></span></span>
+      <span class="nav-dd"><a href="/news" class="nav-dd-top">EINBLICKE<i class="nav-dd-car">▾</i></a><span class="nav-dd-menu"><a href="/news">News (EN)</a><a href="/de/articles">Artikel</a></span></span>
+      <a href="/de/about">ÜBER MICH</a>
+      <a href="/de/contact" class="btn-gold">GESPRÄCH BUCHEN</a>
+    <span class="lang-sw" aria-label="Language" style="display:inline-flex;align-items:center;gap:2px;margin-left:14px;font-family:Montserrat,sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.12em"><a href="/services" hreflang="en" lang="en" data-cursor style="opacity:.65;padding:0 4px">EN</a><span style="opacity:.4">|</span><a href="/de/services" hreflang="de" lang="de" data-cursor style="color:var(--gold-lt,#f4d98b);padding:0 4px">DE</a></span></nav>
+  </div>
+</header>
+
+<!-- Canvas journey -->
+<div id="canvas-wrap"><video id="scrubvid" muted playsinline webkit-playsinline preload="auto" src="/lab/services_A.mp4"></video><canvas id="canvas"></canvas></div>
+<div id="scrim"></div>
+
+<!-- Hero (stop 0) -->
+<section class="hero" id="hero">
+  <h1><span class="ln"><span>Zünden wir</span></span><span class="ln"><span>den Funken.</span></span></h1>
+  <p>Jedes Unternehmen beginnt mit einem Funken. Wir helfen kleinen Unternehmen und Startups, online sichtbar zu werden, mehr zu verkaufen und smarter zu arbeiten — wir diagnostizieren, was zu tun ist, und beraten oder bauen es dann. Scrollen Sie und sehen Sie zu, wie eines entsteht.</p>
+</section>
+
+<!-- Fire CTA over the opening spark (stop 0) -->
+<div class="fire-wrap" id="firewrap">
+  <div class="fire-zone"><div class="fire-glow"></div><div class="fire-hot"></div></div>
+  <div class="fire-cue2"><span>SCROLLEN</span><span class="chev"></span></div>
+</div>
+
+<!-- Beats -->
+<section class="sec left" id="secA" data-enter="1" data-leave="12">
+  <div class="inner">
+    <div class="num">01 · HIER BEGINNEN</div>
+    <h2>Beginnen Sie mit einer ehrlichen Diagnose</h2>
+    <p>Bevor irgendetwas gebaut wird, finden wir heraus, wo Ihr Unternehmen Wachstum verliert — und was zuerst zu beheben ist. Drei kurze Diagnosen, ein priorisierter Bericht.</p>
+    <a href="/de/assess" class="btn btn-gold" style="display:inline-block;margin-top:8px;pointer-events:auto;">Kostenloses Assessment starten</a>
+  </div>
+</section>
+
+<section class="sec right" id="secB" data-enter="12" data-leave="41">
+  <div class="inner">
+    <div class="num">02 · BERATUNG &amp; BEGLEITUNG</div>
+    <h2>Dann ein Plan auf Basis der Growth Map</h2>
+    <p>Diagnose → Plan → Aufbau → Betrieb. Ein klarer Plan für Auftritt, Vertrieb, Abläufe und KI — vom kurzen Strategiegespräch bis zur laufenden Begleitung durch einen Fractional Consultant.</p>
+    <a href="/de/services/transformation/" class="btn btn-gold" style="display:inline-block;margin-top:8px;pointer-events:auto;">Beratungsoptionen ansehen</a>
+  </div>
+</section>
+
+<section class="sec left" id="secC" data-enter="41" data-leave="67">
+  <div class="inner">
+    <div class="num">03 · WEBSITES &amp; ONLINE-SHOPS</div>
+    <h2>Online gehen und verkaufen</h2>
+    <p>Eine Website, die professionell aussieht und Anfragen bringt — oder ein echter Online-Shop, den Sie betreiben können: Katalog, Checkout und Zahlungen, die einfach funktionieren. Gebaut von einem Berater, der selbst einen betrieben hat.</p>
+    <a href="/de/services/web-design/" class="btn btn-gold" style="display:inline-block;margin-top:8px;pointer-events:auto;">Preise für Webdesign ansehen</a>
+  </div>
+</section>
+
+<section class="sec right" id="secD" data-enter="67" data-leave="78">
+  <div class="inner">
+    <div class="num">04 · SEO, MARKETING &amp; CONTENT</div>
+    <h2>Gefunden werden. Kunden gewinnen.</h2>
+    <p>Dort auftauchen, wo Kaufinteressenten suchen — und dort bleiben: SEO, Social Media und bezahlte Anzeigen, dazu Inhalte, die die richtigen Leute anziehen und erklären, warum Sie die richtige Wahl sind.</p>
+    <a href="/de/services/marketing/" class="btn btn-gold" style="display:inline-block;margin-top:8px;pointer-events:auto;">Marketing-Leistungen ansehen</a>
+  </div>
+</section>
+
+<section class="sec left" id="secE" data-enter="78" data-leave="92">
+  <div class="inner">
+    <div class="num">05 · KI &amp; AUTOMATISIERUNG</div>
+    <h2>Mit KI smarter arbeiten</h2>
+    <p>KI übernimmt die sich wiederholenden Aufgaben — Chat, Abläufe und Nachfassen — eingebunden in die Werkzeuge, die Sie schon nutzen. Dieselbe Technik wie bei den Großen, zu einem Preis, der zu Ihnen passt.</p>
+    <a href="/de/services/ai-ops/" class="btn btn-gold" style="display:inline-block;margin-top:8px;pointer-events:auto;">KI-Automatisierung ansehen</a>
+  </div>
+</section>
+
+<section class="sec cta" id="secF" data-enter="92" data-leave="100" data-persist="true">
+  <div class="inner">
+    <div class="num">GEBAUT FÜR WACHSTUM</div>
+    <h2>Bereit für den nächsten Schritt?</h2>
+    <p>Beginnen Sie mit dem kostenlosen Growth Assessment — es zeigt uns beiden, wo wir ansetzen. Kein Gespräch nötig, keine Verpflichtung.</p>
+    <div class="btns">
+      <a href="/de/assess" class="btn btn-gold">Assessment starten</a>
+      <a href="/de/contact" class="btn btn-gold">Gespräch buchen</a><a href="/de/portfolio/" class="btn btn-gold">Portfolio ansehen</a>
+    </div>
+    <div class="cta-foot">Alle angezeigten Preise sind Einführungspreise — sie gelten für unsere ersten Kunden je Leistungsbereich und werden danach erhöht. Werbebudgets gehen, wo relevant, immer zulasten des Kunden und werden separat abgerechnet.</div>
+  </div>
+</section>
+
+<!-- scroll length for the smooth scrub -->
+<div id="scroll"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script>
+const IMAGE_SCALE = 1.0;
+const video = document.getElementById('scrubvid');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', {alpha:false});
+let dur = 20, vidReady = false, targetT = 0, dispT = 0, dpr = Math.min(window.devicePixelRatio||1, 2);
+
+const SPARK_FX = 960, SPARK_FY = 665;
+const fireZoneEl = document.querySelector('.fire-zone'), fireCueEl = document.querySelector('.fire-cue2');
+function positionFire(){
+  const iw=1920, ih=1080;
+  const s=Math.max(innerWidth/iw, innerHeight/ih)*IMAGE_SCALE;
+  const dx=(innerWidth-iw*s)/2, dy=(innerHeight-ih*s)/2;
+  const sx=dx+SPARK_FX*s, sy=dy+SPARK_FY*s;
+  if(fireZoneEl){ fireZoneEl.style.left=sx+'px'; fireZoneEl.style.top=sy+'px'; }
+  if(fireCueEl){ fireCueEl.style.left=sx+'px'; fireCueEl.style.top=(sy+72)+'px'; }
+}
+function resize(){
+  dpr=Math.min(window.devicePixelRatio||1, 2);
+  canvas.width=Math.floor(innerWidth*dpr); canvas.height=Math.floor(innerHeight*dpr);
+  canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px';
+  positionFire(); draw();
+}
+function draw(){
+  const cw=canvas.width, ch=canvas.height, iw=video.videoWidth||1920, ih=video.videoHeight||1080;
+  if(!iw || !ih) return;
+  const s=Math.max(cw/iw, ch/ih)*IMAGE_SCALE;
+  const dw=iw*s, dh=ih*s, dx=(cw-dw)/2, dy=(ch-dh)/2;
+  ctx.fillStyle='#05080f'; ctx.fillRect(0,0,cw,ch);
+  try{ ctx.drawImage(video, dx, dy, dw, dh); }catch(e){}
+}
+window.addEventListener('resize', resize);
+
+const secs=[...document.querySelectorAll('.sec')].map(function(sec){return {
+  el:sec, enter:parseFloat(sec.dataset.enter)/100, leave:parseFloat(sec.dataset.leave)/100,
+  persist:sec.dataset.persist==='true', shown:false };});
+function update(p){
+  targetT = Math.min(Math.max(p,0),1)*dur;
+  var _d=document.getElementById("dbg"); if(_d) _d.textContent="scroll "+Math.round(p*100)+"%";
+  secs.forEach(function(s){
+    const active = s.persist ? p>=s.enter : (p>=s.enter && p<=s.leave);
+    if(active!==s.shown){ s.shown=active; s.el.classList.toggle('on',active); }
+  });
+}
+function renderLoop(){
+  if(vidReady){
+    dispT += (targetT - dispT)*0.16;
+    if(Math.abs(targetT-dispT) < 0.004) dispT = targetT;
+    const t = Math.min(Math.max(dispT,0), Math.max(dur-0.05,0));
+    if(Math.abs((video.currentTime||0) - t) > 0.012){ try{ video.currentTime = t; }catch(e){} }
+    draw();
+  }
+  requestAnimationFrame(renderLoop);
+}
+function startScroll(){
+  gsap.registerPlugin(ScrollTrigger);
+  // Native scroll — Lenis smooth-scroll removed for performance (was the main "heavy scroll" cause). ScrollTrigger drives the same animations on native scroll.
+  gsap.ticker.lagSmoothing(0);
+  ScrollTrigger.create({ trigger:'#scroll', start:'top top', end:'bottom bottom', scrub:true, onUpdate:function(self){ update(self.progress); } });
+  gsap.to('.hero',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'8% top', end:'46% top', scrub:true}});
+  gsap.to('.fire-wrap',{opacity:0, ease:'none', scrollTrigger:{trigger:'.hero', start:'15% top', end:'70% top', scrub:true}});
+  ScrollTrigger.refresh();
+}
+const loader=document.getElementById('loader'), bar=document.getElementById('loader-bar'), pct=document.getElementById('loader-percent');
+function reveal(){
+  if(vidReady) return;
+  vidReady = true; dur = video.duration || 20;
+  resize();
+  try{ video.pause(); video.currentTime = 0; }catch(e){}
+  draw();
+  if(loader) loader.classList.add('hide');
+  startScroll();
+  if('requestVideoFrameCallback' in HTMLVideoElement.prototype){
+    var rvfc=function(){ draw(); try{ video.requestVideoFrameCallback(rvfc); }catch(e){} };
+    try{ video.requestVideoFrameCallback(rvfc); }catch(e){}
+  }
+  requestAnimationFrame(renderLoop);
+}
+video.addEventListener('seeked', draw);
+video.addEventListener('progress', function(){
+  try{ if(video.buffered.length){ const p=Math.round(video.buffered.end(0)/(video.duration||20)*100); if(bar) bar.style.width=p+'%'; if(pct) pct.textContent=p+'%'; } }catch(e){}
+});
+video.addEventListener('loadeddata', reveal);
+video.addEventListener('canplay', reveal);
+(function(){ var _small = window.matchMedia("(max-width:760px)").matches || ("ontouchstart" in window); if(_small){ try{ var _s=video.getAttribute("src"); if(_s && _s.indexOf("_mobile")<0){ video.setAttribute("src", _s.replace(".mp4","_mobile.mp4")); video.load(); } }catch(e){} } })();
+video.muted = true; video.playsInline = true;
+const pp = video.play(); if(pp && pp.then){ pp.then(function(){ try{ video.pause(); }catch(e){} }).catch(function(){}); }
+setTimeout(function(){ if(!vidReady && video.readyState>=2) reveal(); }, 4000);
+setTimeout(function(){ if(!vidReady) reveal(); }, 9000);
+
+</script>
+    <!-- Tawk.to Live Chat (injected for static pages) -->
+    <script type="text/javascript">
+      var Tawk_API = Tawk_API || {};
+      var Tawk_LoadStart = new Date();
+      Tawk_API.onLoad = function () { Tawk_API.showWidget(); };
+      Tawk_API.customStyle = {
+        visibility: {
+          desktop: { position: 'br', xOffset: 20, yOffset: 20 },
+          mobile:  { position: 'br', xOffset: 10, yOffset: 56 }
+        }
+      };
+      (function () {
+        var s1 = document.createElement("script");
+        var s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/6a2db79d6b50091d3f043170/1jr19agc2';
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+      })();
+    </script>
+    <!-- End Tawk.to -->
+</body>
+</html>

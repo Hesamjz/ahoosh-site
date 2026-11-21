@@ -1,0 +1,466 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Business-Diagnose — AHoosh Assess"
+  description="Erfassen Sie Stärken, Schwächen, Wertversprechen und idealen Kunden Ihres Unternehmens. Dauert 8 Minuten. Die Ergebnisse fließen in Ihren KI-Beratungsbericht ein."
+  locale="de"
+>
+<style>
+  :root { --gold:#D7A13D; --navy:#010A18; --card:rgba(8,22,50,0.92); }
+  body  { background:#010A18; color:#c8d4e0; }
+  .wrap { max-width:720px; margin:0 auto; padding:0 20px 80px; }
+
+  .assess-nav { margin-top:100px;
+    background: rgba(8,22,50,0.95); border-bottom: 1px solid rgba(215,161,61,0.15);
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; font-size: 13px;
+  }
+  .assess-nav a { color: #7a8b9e; text-decoration: none; }
+  .assess-nav a:hover { color: var(--gold); }
+  .assess-nav .track-name { color: #e8eaf0; font-weight: 700; }
+  .track-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(8,145,178,0.15); border: 1px solid rgba(8,145,178,0.3);
+    color: #38bdf8; border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700;
+  }
+
+  .page-header { padding: 40px 0 32px; }
+  .page-header h1 { font-size: clamp(22px,4vw,30px); font-weight: 800; color: #e8eaf0; margin: 0 0 8px; }
+  .page-header p  { font-size: 14px; color: #7a8b9e; margin: 0; }
+
+  /* Progress bar */
+  .progress-row { display:flex; align-items:center; gap:12px; margin-bottom:36px; }
+  .progress-bar { flex:1; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; }
+  .progress-fill { height:100%; background:var(--gold); border-radius:2px; transition:width .4s ease; }
+  .progress-label { font-size:12px; color:#4a5a6e; white-space:nowrap; }
+
+  /* Steps */
+  .step { display:none; }
+  .step.active { display:block; }
+  .step-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin-bottom:20px; }
+
+  /* Form fields */
+  .field { margin-bottom:20px; }
+  .field label { display:block; font-size:13px; font-weight:600; color:#c8d4e0; margin-bottom:8px; }
+  .field .hint  { font-size:12px; color:#4a5a6e; margin-bottom:8px; }
+  .field input, .field select, .field textarea {
+    width:100%; padding:12px 14px; background:rgba(255,255,255,0.05);
+    border:1px solid rgba(215,161,61,0.2); border-radius:10px;
+    color:#e8eaf0; font-size:14px; font-family:inherit; box-sizing:border-box;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline:none; border-color:var(--gold); background:rgba(255,255,255,0.08);
+  }
+  .field select option { background:#0B1A32; }
+  .field textarea { resize:vertical; min-height:100px; line-height:1.6; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:500px){ .field-row { grid-template-columns:1fr; } }
+
+  /* SWOT grid */
+  .swot-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:500px){ .swot-grid { grid-template-columns:1fr; } }
+  .swot-q { background:var(--card); border:1px solid rgba(215,161,61,0.12); border-radius:12px; padding:16px; }
+  .swot-q label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; display:block; }
+  .swot-q.s label { color:#34d399; }
+  .swot-q.w label { color:#f87171; }
+  .swot-q.o label { color:#60a5fa; }
+  .swot-q.t label { color:#fbbf24; }
+  .swot-q textarea { border-color:rgba(255,255,255,0.08); min-height:150px; }
+  .swot-q textarea:focus { border-color:var(--gold); }
+
+  /* Nav buttons */
+  .btn-row { display:flex; justify-content:space-between; align-items:center; margin-top:32px; }
+  .btn { padding:12px 28px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; border:none; transition:opacity .15s; }
+  .btn-back { background:rgba(255,255,255,0.06); color:#7a8b9e; }
+  .btn-back:hover { background:rgba(255,255,255,0.1); }
+  .btn-next { background:var(--gold); color:#010A18; }
+  .btn-next:hover { opacity:0.88; }
+  .btn-next:disabled { opacity:0.35; cursor:not-allowed; }
+
+  /* Completion screen */
+  .complete { text-align:center; padding:60px 20px; display:none; }
+  .complete.visible { display:block; }
+  .complete-icon { font-size:48px; margin-bottom:20px; }
+  .complete h2 { font-size:24px; font-weight:800; color:#e8eaf0; margin:0 0 12px; }
+  .complete p  { font-size:15px; color:#7a8b9e; margin:0 0 32px; line-height:1.6; }
+  .complete a  { display:inline-block; padding:14px 40px; background:var(--gold); color:#010A18; font-weight:700; border-radius:10px; text-decoration:none; font-size:15px; }
+  .complete a:hover { opacity:0.88; }
+  .complete .back-link { margin-top:16px; display:block; font-size:13px; color:#4a5a6e; text-decoration:none; }
+  .complete .back-link:hover { color:#7a8b9e; }
+</style>
+
+<div class="assess-nav no-print">
+  <a href="/de/assess">← Assess-Übersicht</a>
+  <span style="color:#e8eaf0;font-weight:700;">Business-Diagnose</span>
+  <span class="track-badge">📊 Weg 2 von 3</span>
+</div>
+
+<div class="wrap">
+  <div class="page-header">
+    <h1>Business-Diagnose</h1>
+    <p>Erfassen Sie Ihr Unternehmen in 8 Minuten. Ehrliche Antworten ergeben einen nützlicheren Bericht.</p>
+  </div>
+
+  <div class="progress-row">
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:25%"></div></div>
+    <div class="progress-label" id="prog-label">Schritt 1 von 4</div>
+  </div>
+
+  <!-- Step 1: Basics -->
+  <div class="step active" id="step-1">
+    <div class="step-title">Über Ihr Unternehmen</div>
+    <div class="field">
+      <label>Was macht Ihr Unternehmen? <span style="color:#f87171">*</span></label>
+      <div class="hint">Ein Satz — was Sie verkaufen und wer es kauft.</div>
+      <textarea id="s1-description" rows="3" placeholder="z. B. Wir beliefern über 400 B2B-Kunden in Serbien und auf dem Balkan mit Premium-Getränken."></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Branche</label>
+        <select id="s1-industry">
+          <option value="">Branche auswählen</option>
+          <option>B2B-Vertrieb</option>
+          <option>SaaS / Software</option>
+          <option>Dienstleistungen</option>
+          <option>E-Commerce / Einzelhandel</option>
+          <option>Fertigung</option>
+          <option>Bau / Immobilien</option>
+          <option>Gesundheitswesen</option>
+          <option>Bildung / Training</option>
+          <option>Marketing / Kreativagentur</option>
+          <option>Lebensmittel &amp; Getränke</option>
+          <option>Logistik / Lieferkette</option>
+          <option>Finanzen / FinTech</option>
+          <option>Sonstiges</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Unternehmensphase</label>
+        <select id="s1-stage">
+          <option value="">Phase auswählen</option>
+          <option>Vor dem Umsatz (Idee / Prototyp)</option>
+          <option>Frühphase (0–1 Jahr, erste Kunden)</option>
+          <option>Wachstum (1–3 Jahre, Skalierung)</option>
+          <option>Etabliert (3+ Jahre, stabil)</option>
+          <option>Reif (profitabel, will expandieren)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Teamgröße</label>
+        <select id="s1-team">
+          <option value="">Größe auswählen</option>
+          <option>Allein (nur ich)</option>
+          <option>2–5 Personen</option>
+          <option>6–15 Personen</option>
+          <option>16–50 Personen</option>
+          <option>Über 50 Personen</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Monatsumsatz (ungefähr)</label>
+        <select id="s1-revenue">
+          <option value="">Bereich auswählen</option>
+          <option>Noch kein Umsatz</option>
+          <option>Unter 1.000 €</option>
+          <option>€1,000 – €5,000</option>
+          <option>€5,000 – €20,000</option>
+          <option>€20,000 – €100,000</option>
+          <option>Über 100.000 €</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Größte Herausforderung im Moment</label>
+      <div class="hint">Seien Sie konkret — das prägt Ihren Bericht mehr als alles andere.</div>
+      <textarea id="s1-challenge" rows="3" placeholder="z. B. Wir verlieren Aufträge über den Preis an Wettbewerber, obwohl unsere Produktqualität deutlich besser ist. Wir wissen nicht, wie wir den Wert vermitteln sollen."></textarea>
+    </div>
+    <div class="btn-row">
+      <span></span>
+      <button class="btn btn-next" onclick="goStep(2)">Weiter →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: SWOT -->
+  <div class="step" id="step-2">
+    <div class="step-title">SWOT-Analyse</div>
+    <p style="font-size:13px;color:#7a8b9e;margin:0 0 20px;">Seien Sie ehrlich — besonders bei den Schwächen. Die KI nutzt das, um Ihnen eine echte Diagnose zu geben, keine Schmeichelei.</p>
+    <div class="swot-grid">
+      <div class="swot-q s">
+        <label>💪 Stärken</label>
+        <textarea id="s2-strengths" placeholder="Was machen Sie besser als Wettbewerber? Was loben Kunden immer wieder?"></textarea>
+      </div>
+      <div class="swot-q w">
+        <label>⚠️ Schwächen</label>
+        <textarea id="s2-weaknesses" placeholder="Was können Sie nicht gut? Womit vermeiden Sie es, sich zu befassen? Wo verlieren Sie Aufträge?"></textarea>
+      </div>
+      <div class="swot-q o">
+        <label>🎯 Chancen</label>
+        <textarea id="s2-opportunities" placeholder="Welche Markttrends oder Lücken könnten Sie nutzen? Was übersehen Wettbewerber?"></textarea>
+      </div>
+      <div class="swot-q t">
+        <label>🔥 Risiken</label>
+        <textarea id="s2-threats" placeholder="Was könnte dieses Unternehmen in 12 Monaten ruinieren? Neue Wettbewerber, Regulierung, wirtschaftliche Veränderungen?"></textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(1)">← Zurück</button>
+      <button class="btn btn-next" onclick="goStep(3)">Weiter →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Value Proposition -->
+  <div class="step" id="step-3">
+    <div class="step-title">Wertversprechen</div>
+    <div class="field">
+      <label>Wer ist Ihr Kunde? <span style="color:#f87171">*</span></label>
+      <div class="hint">Beschreiben Sie die konkrete Person, die bei Ihnen kauft — Rolle, Unternehmensart, Kontext.</div>
+      <textarea id="s3-customer" rows="2" placeholder="z. B. Betriebsleiter bei mittelgroßen serbischen Importeuren (10–50 Beschäftigte), die Spezialgetränke für Gastronomiekunden einkaufen."></textarea>
+    </div>
+    <div class="field">
+      <label>Welches Problem lösen Sie? <span style="color:#f87171">*</span></label>
+      <div class="hint">Der echte Schmerzpunkt — nicht, was Sie verkaufen, sondern was ohne Sie schiefgeht.</div>
+      <textarea id="s3-problem" rows="2" placeholder="z. B. Sie verbringen über 3 Stunden pro Woche mit manueller Nachbestellung und haben ihre 20 wichtigsten Artikel häufig nicht auf Lager."></textarea>
+    </div>
+    <div class="field">
+      <label>Was ist Ihre Lösung?</label>
+      <textarea id="s3-solution" rows="2" placeholder="z. B. Automatische Nachbestellung mit 24-Stunden-Lieferfenster und einem festen Ansprechpartner."></textarea>
+    </div>
+    <div class="field">
+      <label>Warum sind Sie besser als die Alternativen?</label>
+      <div class="hint">Was verliert ein Kunde, wenn er zu einem Wettbewerber geht oder nichts tut?</div>
+      <textarea id="s3-differentiation" rows="2" placeholder="z. B. Wettbewerber liefern in 48–72 Stunden. Wir liefern am nächsten Tag. Wir sind außerdem der einzige Distributor mit einem Self-Service-Portal und Echtzeit-Bestandsübersicht."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(2)">← Zurück</button>
+      <button class="btn btn-next" onclick="goStep(4)">Weiter →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: ICP -->
+  <div class="step" id="step-4">
+    <div class="step-title">Profil des idealen Kunden</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Position der entscheidenden Person</label>
+        <input type="text" id="s4-title" placeholder="z. B. Betriebsleiter, Geschäftsführer" />
+      </div>
+      <div class="field">
+        <label>Unternehmensgröße des Kunden</label>
+        <select id="s4-size">
+          <option value="">Größe auswählen</option>
+          <option>Einzelunternehmer / Freiberufler</option>
+          <option>2–10 Beschäftigte</option>
+          <option>11–50 Beschäftigte</option>
+          <option>51–200 Beschäftigte</option>
+          <option>Über 200 Beschäftigte</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Ihr Hauptproblem (in ihren Worten)</label>
+      <div class="hint">Wie beschreiben sie dieses Problem — nicht, wie Sie es beschreiben würden.</div>
+      <textarea id="s4-pain" rows="2" placeholder="z. B. „Ich weiß nie, was nächste Woche auf Lager ist, und laufe ständig den Lieferanten hinterher.“"></textarea>
+    </div>
+    <div class="field">
+      <label>Wie lösen sie das aktuell?</label>
+      <textarea id="s4-current" rows="2" placeholder="z. B. Manuelle Tabellen und WhatsApp-Nachrichten an den Lieferanten. Oder der langsamere Service eines Wettbewerbers."></textarea>
+    </div>
+    <div class="field">
+      <label>Wo finden Sie sie?</label>
+      <textarea id="s4-channel" rows="2" placeholder="z. B. LinkedIn, Branchenmessen, Empfehlungen bestehender Kunden."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(3)">← Zurück</button>
+      <button class="btn btn-next" onclick="saveBusiness()">Meinen Bericht erhalten →</button>
+    </div>
+  </div>
+
+  <!-- Completion -->
+  <div class="complete" id="complete">
+    <div class="complete-icon">✅</div>
+    <h2>Business-Diagnose abgeschlossen</h2>
+    <div id="biz-band" style="display:none; max-width:480px; margin:0 auto 28px; text-align:left;
+         background:var(--card); border:1px solid rgba(215,161,61,0.25); border-radius:12px; padding:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <span style="font-size:14px; font-weight:700; color:#e8eaf0;">
+          Business-Wert: <span id="biz-band-label"></span>
+        </span>
+        <span style="font-size:16px; font-weight:700; color:var(--gold);" id="biz-band-score"></span>
+      </div>
+      <p style="font-size:13px; color:#8a9bb0; line-height:1.6; margin:0;" id="biz-band-text"></p>
+    </div>
+    <p>Ihre Antworten sind gespeichert. Der KI-Bericht hat nun Ihren Geschäftskontext, Ihre Stärken, Schwächen und Ihr Kundenprofil als Grundlage.</p>
+    <a href="/de/assess/report">Meinen Bericht ansehen →</a>
+    <a href="/de/assess" class="back-link">← Zurück zur Assess-Übersicht</a>
+  </div>
+</div>
+
+<script is:inline>
+var currentStep = 1;
+var totalSteps = 4;
+
+function goStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  var pct = (currentStep / totalSteps * 100) + '%';
+  document.getElementById('prog').style.width = pct;
+  document.getElementById('prog-label').textContent = 'Step ' + currentStep + ' of ' + totalSteps;
+  window.scrollTo(0, 0);
+}
+
+function val(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+/* ── Scoring bands (shared scale with the Website track) ── */
+var BIZ_BANDS = [
+  { min: 0,  max: 25,  label: 'Am Anfang' },
+  { min: 26, max: 50,  label: 'Developing' },
+  { min: 51, max: 75,  label: 'Established' },
+  { min: 76, max: 100, label: 'Advanced' },
+];
+var BIZ_INTERPRETATIONS = {
+  'Am Anfang':
+    'Sie haben uns eine erste Skizze des Unternehmens gegeben, aber das meiste Bild ist noch leer. ' +
+    'Ergänzen Sie die Grundlagen — Kunden, Umsatz, was Sie abhebt — und die Diagnose wird deutlich schärfer.',
+  'Developing':
+    'Die Umrisse Ihres Unternehmens sind klar, aber mehrere Antworten sind dünn. ' +
+    'Mehr Details dazu, wie Sie Kunden gewinnen und was Sie unterscheidet, würden aus dieser Skizze einen Plan machen.',
+  'Established':
+    'Sie kennen Ihr Unternehmen gut, und das zeigt sich in Ihren Antworten. ' +
+    'Die verbleibenden Lücken sind konkret, das heißt, sie lassen sich beheben.',
+  'Advanced':
+    'Ihre Antworten sind vollständig und konkret — das Merkmal eines Inhabers, der Zahlen und Kunden kennt. ' +
+    'Die Frage ist jetzt die Umsetzungsgeschwindigkeit, nicht die Klarheit.',
+};
+
+/* Deterministic score: 60% completeness (all 15 fields) + 40% depth
+   (free-text answers with enough detail to diagnose from, >= 40 chars). */
+function scoreBusinessForm() {
+  var allFields = [
+    's1-description','s1-industry','s1-stage','s1-team','s1-revenue','s1-challenge',
+    's2-strengths','s2-weaknesses','s2-opportunities','s2-threats',
+    's3-customer','s3-problem','s3-solution','s3-differentiation',
+    's4-title','s4-size','s4-pain','s4-current','s4-channel'
+  ];
+  var textFields = [
+    's1-description','s1-challenge',
+    's2-strengths','s2-weaknesses','s2-opportunities','s2-threats',
+    's3-customer','s3-problem','s3-solution','s3-differentiation',
+    's4-pain','s4-current','s4-channel'
+  ];
+  var answered = 0, detailed = 0;
+  allFields.forEach(function(id){ if (val(id).length > 0) answered++; });
+  textFields.forEach(function(id){ if (val(id).length >= 40) detailed++; });
+  var score = Math.round((answered / allFields.length) * 60 + (detailed / textFields.length) * 40);
+  score = Math.max(0, Math.min(100, score));
+  var band = BIZ_BANDS[0];
+  for (var i = 0; i < BIZ_BANDS.length; i++) {
+    if (score >= BIZ_BANDS[i].min && score <= BIZ_BANDS[i].max) { band = BIZ_BANDS[i]; break; }
+  }
+  return { score: score, band: band.label, interpretation: BIZ_INTERPRETATIONS[band.label] };
+}
+
+function saveBusiness() {
+  var scoring = scoreBusinessForm();
+  var data = {
+    completed_at: new Date().toISOString(),
+    score: scoring.score,
+    band: scoring.band,
+    basics: {
+      description:  val('s1-description'),
+      industry:     val('s1-industry'),
+      stage:        val('s1-stage'),
+      team:         val('s1-team'),
+      revenue:      val('s1-revenue'),
+      challenge:    val('s1-challenge'),
+    },
+    swot: {
+      strengths:    val('s2-strengths'),
+      weaknesses:   val('s2-weaknesses'),
+      opportunities:val('s2-opportunities'),
+      threats:      val('s2-threats'),
+    },
+    value_proposition: {
+      customer:        val('s3-customer'),
+      problem:         val('s3-problem'),
+      solution:        val('s3-solution'),
+      differentiation: val('s3-differentiation'),
+    },
+    icp: {
+      title:   val('s4-title'),
+      size:    val('s4-size'),
+      pain:    val('s4-pain'),
+      current: val('s4-current'),
+      channel: val('s4-channel'),
+    }
+  };
+
+  try {
+    localStorage.setItem('ahoosh_assess_business', JSON.stringify(data));
+  } catch(e) {}
+
+  // Hide all steps, show completion
+  for (var i = 1; i <= totalSteps; i++) {
+    var s = document.getElementById('step-' + i);
+    if (s) s.classList.remove('active');
+  }
+  document.getElementById('complete').classList.add('visible');
+
+  // Show the score band + plain-language interpretation
+  var bandBox = document.getElementById('biz-band');
+  if (bandBox) {
+    document.getElementById('biz-band-label').textContent = scoring.band;
+    document.getElementById('biz-band-score').textContent = scoring.score + ' / 100';
+    document.getElementById('biz-band-text').textContent = scoring.interpretation;
+    bandBox.style.display = 'block';
+  }
+
+  document.getElementById('prog').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Complete!';
+  window.scrollTo(0, 0);
+}
+
+// Restore from localStorage if already filled
+(function(){
+  try {
+    var saved = localStorage.getItem('ahoosh_assess_business');
+    if (!saved) return;
+    var d = JSON.parse(saved);
+    function set(id, v){ var el=document.getElementById(id); if(el && v) el.value=v; }
+    if(d.basics){
+      set('s1-description', d.basics.description);
+      set('s1-industry',    d.basics.industry);
+      set('s1-stage',       d.basics.stage);
+      set('s1-team',        d.basics.team);
+      set('s1-revenue',     d.basics.revenue);
+      set('s1-challenge',   d.basics.challenge);
+    }
+    if(d.swot){
+      set('s2-strengths',    d.swot.strengths);
+      set('s2-weaknesses',   d.swot.weaknesses);
+      set('s2-opportunities',d.swot.opportunities);
+      set('s2-threats',      d.swot.threats);
+    }
+    if(d.value_proposition){
+      set('s3-customer',       d.value_proposition.customer);
+      set('s3-problem',        d.value_proposition.problem);
+      set('s3-solution',       d.value_proposition.solution);
+      set('s3-differentiation',d.value_proposition.differentiation);
+    }
+    if(d.icp){
+      set('s4-title',   d.icp.title);
+      set('s4-size',    d.icp.size);
+      set('s4-pain',    d.icp.pain);
+      set('s4-current', d.icp.current);
+      set('s4-channel', d.icp.channel);
+    }
+  } catch(e) {}
+})();
+</script>
+</BaseLayout>

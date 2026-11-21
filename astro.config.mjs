@@ -17,6 +17,8 @@ const SITEMAP_EXCLUDE = [
   /^\/reply-templates\/?$/,  // internal-only
   /^\/contact\/thanks\/?$/,  // post-submit page
   /^\/assess\/report\/?$/,   // per-user result page
+  /^\/de\/contact\/thanks\/?$/,
+  /^\/de\/assess\/report\/?$/,
 ];
 
 // The homepage and the main money pages are hand-built static files in public/,
@@ -32,13 +34,23 @@ const SITEMAP_STATIC_PAGES = [
   'https://ahoosh.ai/assess/',
   'https://ahoosh.ai/products/',
   'https://ahoosh.ai/products/aeo-kit/',
+  'https://ahoosh.ai/de/',
+  'https://ahoosh.ai/de/about/',
+  'https://ahoosh.ai/de/services/',
+  'https://ahoosh.ai/de/consulting/',
+  'https://ahoosh.ai/de/contact/',
+  'https://ahoosh.ai/de/assess/',
+  'https://ahoosh.ai/de/faq/',
+  'https://ahoosh.ai/de/snapshot/',
+  'https://ahoosh.ai/de/products/',
+  'https://ahoosh.ai/de/products/aeo-kit/',
 ];
 
 export default defineConfig({
   site: 'https://ahoosh.ai',
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'de'],
     routing: { prefixDefaultLocale: false },
   },
   integrations: [

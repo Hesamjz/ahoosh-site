@@ -1,0 +1,157 @@
+---
+title: "CRM-Datenhygiene für B2B-Teams"
+description: "Wie B2B-Teams ihre CRM-Daten sauber halten — Deduplizierung, Verfallsraten, Disziplin bei Pflichtfeldern, DSGVO-Aufbewahrung und die monatliche Routine, die ein CRM vor dem Verrotten bewahrt."
+pubDate: 2026-10-01
+tags: ["B2B", "Operations", "Strategy"]
+heroImage: "/articles/img/crm-data-hygiene-b2b.jpg"
+lang: de
+translationOf: "2026-09-01_crm-data-hygiene-b2b"
+---
+
+<img src="/articles/img/crm-data-hygiene-b2b.jpg" alt="Laptop mit einer CRM-Kontaktliste, in der doppelte Datensätze hervorgehoben sind" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Jedes CRM beginnt sauber. Jemand importiert eine Kontaktliste, richtet die Pipeline-Phasen ein, und etwa vier Monate lang spiegeln die Daten die Realität. Dann liefert eine Messe 60 Visitenkarten, die drei verschiedene Personen eintippen. Ein Vertriebsmitarbeiter geht, und seine Konten werden per Massenbearbeitung neu zugewiesen. Jemand importiert eine gekaufte Liste „nur zum Testen“. Zwei Jahre später gibt es 4.100 Kontakte, etwa 2.600 davon sind echt, niemand vertraut den Auswertungen, und das Team hat die tatsächlichen Kontoinformationen still in eine Tabelle auf dem Laptop von irgendwem verlagert.
+
+Dieser letzte Teil sind die echten Kosten. Schlechte CRM-Daten kündigen sich nicht als schlechte Daten an. Sie zeigen sich als ein Team, das das CRM nicht mehr nutzt — und sobald es aufgehört hat, läuft alles Nachgelagerte, das Sie darauf gebaut haben (Segmentierung, Automatisierung, Prognose), auf einer Fiktion.
+
+Datenhygiene ist kein Aufräumprojekt, das man einmal macht, wenn es schlimm genug wird. Sie ist eine kleine wiederkehrende Routine plus eine Handvoll struktureller Entscheidungen, die verhindern, dass das Chaos entsteht. Dieser Text behandelt beides.
+
+---
+
+## Warum B2B-Daten schneller verfallen, als Sie denken
+
+**Die Verfallsrate ist strukturell, kein Zeichen von Vernachlässigung.**
+
+B2B-Kontaktdaten veralten von selbst, weil sich die Welt bewegt:
+
+- Menschen wechseln den Job. In einer typischen B2B-Datenbank wechselt ein erheblicher Anteil der Kontakte jedes Jahr den Arbeitgeber — genug, dass eine zwei Jahre unberührte Kontaktliste eine große Minderheit toter Adressen enthält.
+- Unternehmen benennen sich um, fusionieren, werden übernommen, wechseln die Domain.
+- Berufsbezeichnungen ändern sich, ohne dass die Person wechselt.
+- E-Mail-Formate ändern sich, wenn ein Unternehmen den Anbieter wechselt.
+- Unternehmen schließen.
+
+Summiert man das, ist eine drei Jahre sich selbst überlassene Datenbank nahezu zur Hälfte falsch. Nicht weil jemand etwas falsch gemacht hätte — sondern weil das die Halbwertszeit der zugrunde liegenden Fakten ist.
+
+Das rahmt das Problem nützlich um. Sie räumen nicht hinter Fehlern auf. Sie betreiben Wartung gegen eine bekannte Verfallsrate, wie Sie ein Fahrzeug warten würden. Ein CRM ohne Wartungsroutine hat kein Pech; es ist ungewartet.
+
+**Was schlechte Daten tatsächlich kosten:**
+
+- E-Mails an tote Adressen treiben die Bounce-Raten, was die Absenderreputation schädigt, was die Zustellung an Ihre *guten* Adressen beeinträchtigt. Das ist der heimtückischste Kostenpunkt — die toten Kontakte schaden den lebendigen.
+- Doppelte Datensätze heißen, dass dieselbe Person dieselbe Kampagne zweimal erhält, das sichtbarste einzelne Signal eines Amateurbetriebs.
+- Auswertungen werden zur Fiktion. Der Pipeline-Wert zählt Dubletten. Konversionsraten nutzen einen Nenner aus Kontakten, von denen ein Drittel nicht existiert.
+- Vertriebsmitarbeiter verschwenden Zeit mit Datensätzen, die ins Leere führen, lernen, dass das CRM ihre Zeit verschwendet, und hören auf, ihm zu trauen.
+- Segmentierung bricht. Jedes Verhaltensmodell — auch die [RFM-Segmentierung](/de/articles/2026-08-26_b2b-customer-segmentation-rfm/) — ist Arithmetik auf Ihren Datensätzen. Duplizieren Sie ein Konto auf zwei Datensätze, wird es als zwei mittelmäßige Kunden gewertet statt als ein guter.
+
+---
+
+## Strukturelle Entscheidungen, die das Chaos verhindern
+
+**Entscheiden Sie, was ein „Kontakt“ ist, bevor Sie 4.000 davon haben.**
+
+Der häufigste strukturelle Fehler in einem kleinen B2B-CRM ist keine klare Regel, was einen Datensatz verdient. Wird jeder, der Ihnen je gemailt hat, jede Visitenkarte, jede Zeile einer gekauften Liste und jede Newsletter-Anmeldung zum Kontakt, ist die Datenbank binnen achtzehn Monaten eine Müllhalde.
+
+Schreiben Sie die Regel nieder. Eine vertretbare Version: Ein Kontaktdatensatz existiert für eine Person, die entweder (a) eine beidseitige Interaktion mit Ihrem Unternehmen hatte oder (b) eingewilligt hat, von Ihnen zu hören. Alles andere lebt woanders — in einer Akquiseliste, einem separaten Werkzeug, einer Tabelle. Nicht im CRM.
+
+Diese eine Entscheidung tut mehr für die Datenqualität als jedes Deduplizierungswerkzeug.
+
+**Nutzen Sie das Unternehmen als primäres Objekt, nicht die Person.**
+
+B2B-Einkauf machen Organisationen. Strukturieren Sie entsprechend: Das Unternehmen ist das dauerhafte Objekt, Kontakte hängen daran, Geschäfte hängen am Unternehmen. Geht eine Person, verlieren Sie einen Kontakt, behalten aber die Kontohistorie — und die ist es, die tatsächlich Wert hat.
+
+Kleine Teams machen das routinemäßig verkehrt herum und führen eine kontaktzentrierte Datenbank, weil so persönliche Adressbücher funktionieren. Dann zieht ein Einkäufer weiter, und acht Jahre Beziehungskontext gehen mit ihm. Das [minimal funktionsfähige CRM für einen B2B-Distributor](/de/articles/2026-07-02_minimum-viable-crm-b2b-distributor-2026/) behandelt die Objektstruktur, von der man ausgehen sollte.
+
+**Gleichen Sie über einen stabilen Schlüssel ab.**
+
+Firmennamen sind instabil und mehrdeutig. „Müller GmbH“, „Mueller GmbH“ und „Müller Gmbh“ sind drei Datensätze für ein Unternehmen, und kein Fuzzy-Matcher fängt zuverlässig alle drei.
+
+Wählen Sie eine stabile Kennung und pflegen Sie sie unbeirrt:
+
+- **USt-IdNr.** — der beste verfügbare Schlüssel für EU-B2B. Eindeutig, über das VIES-System der Kommission prüfbar und übersteht Umbenennungen.
+- **Firmendomain** — ein starker zweiter Schlüssel. `acme.de` ist eindeutig, wo „Acme“ es nicht ist.
+- **Registernummer** aus dem nationalen Handelsregister.
+
+Machen Sie USt-IdNr. oder Domain bei der Anlage eines Unternehmens zum Pflichtfeld. Deduplizierung wird trivial, wenn es einen Schlüssel zum Abgleich gibt, und nahezu unmöglich, wenn nicht.
+
+**Pflichtfelder: so wenige wie möglich, absolut durchgesetzt.**
+
+Hier gibt es einen Zielkonflikt, und die meisten Teams machen ihn in dieselbe Richtung falsch. Machen Sie 14 Felder zu Pflichtfeldern, tragen Vertriebsmitarbeiter Unsinn ein, um am Formular vorbeizukommen — „k. A.“, „test“, „asdf“, ihre eigene Telefonnummer. Dann haben Sie eine volle Datenbank fiktiver Daten, was schlimmer ist als eine leere, denn leer ist ehrlich.
+
+Verlangen Sie das Minimum, das den Datensatz nutzbar macht:
+
+- Unternehmen: Name, Domain oder USt-IdNr., Land
+- Kontakt: Vorname, Nachname, E-Mail, Verknüpfung zum Unternehmen
+- Geschäft: Verknüpfung zum Unternehmen, Wert, erwartetes Abschlussdatum, Phase
+
+Alles andere optional. Füllen Sie es, wenn es zählt. Ein Feld, das zu 40 % mit Wahrheit gefüllt ist, schlägt eines, das zu 100 % mit 60 % Rauschen gefüllt ist.
+
+---
+
+## Die Bereinigung — einmal, ordentlich
+
+Haben Sie eine schlechte Datenbank geerbt, tun Sie das, bevor Sie eine Routine beginnen. Ein halber Tag für ein typisches CRM eines kleinen Unternehmens.
+
+**1. Zuerst sichern.** Exportieren Sie alles als CSV, bevor Sie etwas anfassen. Deduplizierungs-Zusammenführungen sind häufig unumkehrbar.
+
+**2. Deduplizieren.** Die Reihenfolge zählt:
+
+- Erst Unternehmen, dann Kontakte. Kontakte vor Unternehmen zusammenzuführen, erzeugt Waisen.
+- Gleichen Sie Unternehmen über USt-IdNr. ab, dann Domain, dann normalisierten Namen (Kleinschreibung, Rechtsformzusätze wie GmbH, Ltd, d.o.o., SRL entfernen, Satzzeichen entfernen).
+- Gleichen Sie Kontakte exakt über die E-Mail ab. E-Mail ist per Definition eindeutig; teilen sich zwei Datensätze eine, sind es dieselbe Person.
+- Bei Kontakten ohne E-Mail gleichen Sie über Name plus Unternehmen ab.
+- Zusammenführen, nicht löschen. Zusammenführen bewahrt die Interaktionshistorie beider Datensätze. Löschen wirft den Grund weg, warum Sie den Datensatz hatten.
+
+**3. E-Mails validieren.** Schicken Sie die Liste durch einen Verifizierungsdienst — NeverBounce, ZeroBounce und ähnliche Werkzeuge kosten grob 0,003–0,01 € pro Adresse, eine Datenbank mit 4.000 Kontakten also 12–40 €. Sie liefern gültig, ungültig, Catch-all oder unbekannt.
+
+- Unterdrücken Sie die ungültigen sofort. Löschen Sie sie nicht — markieren Sie sie, damit Sie nächstes Jahr nicht dieselbe tote Adresse aus derselben alten CSV erneut importieren.
+- Catch-all-Domains sind wirklich unbekannt. Behandeln Sie sie als gültig, aber beobachten Sie die Bounces.
+- Kommen mehr als 15 % Ihrer Liste als ungültig zurück, haben Sie ein Akquiseproblem, kein Hygieneproblem. Finden Sie heraus, woher diese Adressen kamen.
+
+**4. Finden Sie die Geisterdatensätze.** Kontakte ohne E-Mail und ohne Telefon. Unternehmen ohne Kontakte. Geschäfte ohne Abschlussdatum, die seit 400 Tagen offen sind. Durch einen Import entstandene Datensätze, die seitdem niemand angefasst hat. Archivieren Sie sie alle — versetzen Sie sie in einen „ruhenden“ Zustand statt sie zu löschen, damit die Entscheidung umkehrbar und die Auswertung sauber ist.
+
+**5. Vereinheitlichen Sie die Felder, nach denen Sie filtern.** Land als ISO-Codes, nicht „Germany“ / „DE“ / „Deutschland“ / „germany“. Branche aus einer festen Auswahlliste, nicht als Freitext. Jedes Feld, nach dem Sie segmentieren wollen, muss eine Auswahlliste sein, sonst endet es mit 60 verschiedenen Werten für acht echte Kategorien.
+
+---
+
+## Die DSGVO ist nicht optional und nicht kompliziert
+
+**Die Teile, die das CRM unmittelbar berühren.**
+
+Nach der DSGVO sind B2B-Kontaktdaten weiterhin personenbezogene Daten — eine namentlich genannte Person in einem Unternehmen ist eine Person. Was gilt:
+
+- **Rechtsgrundlage.** Für B2B-Ansprache steht meist das berechtigte Interesse zur Verfügung, wenn der Kontakt für seine berufliche Rolle relevant ist, aber es verlangt, dass Sie die Abwägung tatsächlich bedacht und festgehalten haben. Dokumentieren Sie es einmal, in einem Absatz. Die Einwilligung ist in vielen Mitgliedstaaten die Grundlage für Marketing-E-Mails nach den ePrivacy-Regeln, die strenger sind als die DSGVO selbst und je nach Land variieren.
+- **Halten Sie fest, woher die Daten kamen.** Ein Feld `SOURCE` bei jedem Kontakt: Messe, Website-Formular, Empfehlung, eingehende E-Mail. Das ist der Sache nach eine DSGVO-Anforderung und zugleich das nützlichste Datenqualitätsfeld, das Sie je hinzufügen werden, weil es zeigt, welche Quellen Kontakte liefern, die konvertieren, und welche Müll.
+- **Aufbewahrungsgrenzen.** Sie dürfen personenbezogene Daten nicht unbegrenzt „für alle Fälle“ behalten. Legen Sie eine Aufbewahrungsregel fest — eine übliche vertretbare Richtlinie ist Löschung nach 24–36 Monaten ohne Interaktion, es sei denn, es gibt einen vertraglichen oder buchhalterischen Grund zur Aufbewahrung. Schreiben Sie die Richtlinie nieder und automatisieren Sie die Markierung.
+- **Löschanfragen.** Sie müssen jeden Datensatz zu einer Person finden und löschen können. Sind Ihre Daten über ein CRM, drei Tabellen und eine E-Mail-Plattform verstreut, können Sie das nicht erfüllen. Das ist ein Compliance-Problem und ein betriebliches mit derselben Lösung: ein führendes System.
+- **Weitergabe von Abmeldungen.** Eine Abmeldung in Ihrem E-Mail-Tool muss Ihr CRM erreichen. Tut sie das nicht, wird irgendwann jemand ein Segment exportieren und eine Person anschreiben, die widersprochen hat.
+
+Die [Datenschutz-Seiten](https://commission.europa.eu/law/law-topic/data-protection_en) der Kommission sind der maßgebliche Ausgangspunkt, und [gdpr.eu](https://gdpr.eu/) ist eine gut lesbare Referenz für den Artikeltext. Keines ersetzt Beratung für Ihre konkrete Situation, aber eine kleine B2B-Beratung mit dokumentierter Grundlage, einem Quellfeld, einer Aufbewahrungsregel und funktionierenden Abmeldungen erfüllt die Substanz davon.
+
+---
+
+## Die Monatsroutine
+
+Zwanzig Minuten. Tragen Sie sie in einen Kalender mit benanntem Verantwortlichen ein.
+
+- **Führen Sie die Dublettenprüfung durch.** Die meisten CRMs haben eine eingebaut. Neue Dubletten entstehen jeden Monat, meist aus Formularen und Importen.
+- **Prüfen Sie neue Datensätze der letzten 30 Tage.** Schauen Sie, was hereinkam und woher. Hier fangen Sie den Vertriebsmitarbeiter ab, der eine gekaufte Liste einkopiert, oder das Formular, das für jede Newsletter-Anmeldung einen Datensatz anlegt.
+- **Prüfen Sie Bounce-Berichte** und unterdrücken Sie die Hard Bounces. Tun Sie das vor Ihrer nächsten Kampagne, nicht danach.
+- **Fegen Sie veraltete Geschäfte aus.** Alles, was mehr als 60 Tage über sein Abschlussdatum hinaus offen ist, ist entweder falsch eingestuft oder tot. Beides braucht Handlung.
+- **Prüfen Sie zehn Datensätze stichprobenartig.** Öffnen Sie sie, wie es ein Vertriebsmitarbeiter täte. Sind die Daten nutzbar? Wüssten Sie, was Sie in einem Anruf sagen sollen? Das ist die einzige Qualitätsprüfung, die das misst, was zählt, und sie dauert vier Minuten.
+
+**Vierteljährlich ergänzen:**
+
+- E-Mail-Verifizierung bei Kontakten, die seit 6+ Monaten nicht angeschrieben wurden
+- Durchgang der Aufbewahrungsrichtlinie — alles über der Schwelle markieren und archivieren
+- Aufschlüsselung des Quellfelds prüfen und die Quellen streichen, die Müll liefern
+
+**Die Automatisierungs-Hygiene-Schleife.** Alles, was Sie aus CRM-Daten automatisieren, verstärkt, was darin ist. Eine Nachbestell-Erinnerungssequenz auf einer Datenbank mit 20 % Dubletten schickt 20 % ihrer Empfänger eine zweite Kopie. Saubere Daten sind eine Voraussetzung für Automatisierung, kein Nice-to-have daneben — die in [E-Mail-Automatisierung für B2B-Distributoren](/de/articles/2026-07-01_email-automation-b2b-distributors-results/) beschriebenen Sequenzen erzielen ihre Zahlen nur auf einer Datenbank, die die Realität spiegelt.
+
+---
+
+Der Grund, warum CRM-Hygiene vernachlässigt wird, ist, dass sie keinen sichtbaren Erfolg erzeugt. Niemand gratuliert der Person, die 140 Dubletten zusammengeführt hat. Der Ertrag kommt als Abwesenheit — die peinliche E-Mail, die nicht rausging, die Prognose, die nicht falsch war, der Vertriebsmitarbeiter, der nicht still begonnen hat, seine eigene Tabelle zu führen.
+
+Das Letzte ist das eigentliche Maß. Pflegt Ihr Team eine Schattenliste, ist Ihr CRM schon gescheitert, und keine Funktion behebt das. Bauen Sie Vertrauen mit einer echten Bereinigung wieder auf, schützen Sie es mit zwei oder drei strukturellen Regeln und verteidigen Sie es mit zwanzig Minuten im Monat. Es ist die uninteressanteste Arbeit in einem B2B-Betrieb und nahe am wirksamsten Hebel.
+
+---
+
+**Quellen:** [Europäische Kommission — Datenschutz](https://commission.europa.eu/law/law-topic/data-protection_en) · [GDPR.eu-Referenz](https://gdpr.eu/)
