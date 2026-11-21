@@ -1,0 +1,119 @@
+---
+title: "KI-gestützte Produktbeschreibungen im großen Maßstab"
+description: "Wie B2B-Distributoren mit KI konsistente, korrekte Produktbeschreibungen für Tausende SKUs erzeugen — Vorlagen, Quelldaten, Leitplanken und ein Prüfablauf, der mitwächst."
+pubDate: 2026-09-01
+tags: ["AI Operations", "B2B", "Distribution"]
+heroImage: "/articles/img/ai-product-description-generation-scale.jpg"
+lang: de
+translationOf: "2026-08-16_ai-product-description-generation-scale"
+---
+
+<img src="/articles/img/ai-product-description-generation-scale.jpg" alt="Lagerregale mit katalogisierten Produkten, die sich in die Ferne erstrecken" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Ein B2B-Distributor mit 8.000 SKUs hat 8.000 Produktbeschreibungen zu schreiben, und die meisten davon existieren nicht oder wurden vor einem Jahrzehnt wortgleich aus einem Lieferanten-PDF kopiert. Der Katalog ist das Schaufenster — für die Suche, für das Vertriebsteam, für den Kunden, der zwischen zwei ähnlichen Teilen entscheidet — und meist das am schlechtesten gepflegte Gut im Unternehmen. Niemand hat Zeit, achttausend Beschreibungen von Hand zu schreiben, also schreibt sie niemand.
+
+Genau das ist die Art von umfangreicher, musterlastiger Arbeit, die KI gut kann. Nicht weil ein Sprachmodell schöner schreibt als ein Mensch, sondern weil es dieselbe Struktur, denselben Ton und dieselbe Vollständigkeit auf Tausende Artikel in einem Tempo anwenden kann, das kein Team erreicht — sofern Sie ihm gute Quelldaten und einen echten Prüfprozess geben.
+
+Der Fehlermodus ist ebenso klar: Richten Sie eine KI auf eine Tabelle, bitten Sie sie, „Beschreibungen zu schreiben“, und Sie bekommen 8.000 flüssige, plausible und gelegentlich falsche Absätze, die stillschweigend Spezifikationen erfinden. Dieser Leitfaden zeigt, wie Sie im großen Maßstab erzeugen, ohne im großen Maßstab Fehler zu erzeugen.
+
+---
+
+## Mit strukturierten Quelldaten beginnen, nicht mit Fließtext
+
+**Die Qualität des Ergebnisses ist durch die Qualität der Eingabe begrenzt.**
+
+Eine KI-Beschreibung ist nur so korrekt wie die Fakten, die Sie ihr geben. Besteht Ihre Quelldatenlage aus halb gefüllten Feldern und uneinheitlichen Einheiten, füllt das Modell Lücken durch Raten — und eine selbstbewusste Vermutung zu einem Drehmoment oder einer Spannung ist schlimmer als ein leeres Feld.
+
+Bringen Sie vor jeder Erzeugung die strukturierten Attribute in Ordnung:
+
+- **Kernkennungen** — SKU, Herstellerteilenummer, Marke, Kategorie
+- **Physische Attribute** — Maße, Gewicht, Material, Farbe, mit einheitlichen Einheiten
+- **Technische Daten** — die Zahlen, die für die Kategorie zählen (Spannung, Kapazität, Gewindegröße, Toleranz)
+- **Kompatibilität und Einsatz** — wozu es passt, wofür es gedacht ist, welche Normen es erfüllt
+- **Kaufmännisches** — Packungsgröße, Mindestbestellmenge, Lieferzeit
+
+Die Regel, die die meisten Fehler verhindert: Die KI schreibt Prosa aus Fakten, die Sie liefern, und erfindet nie Fakten, die Sie nicht geliefert haben. Eine Beschreibung soll eine lesbare Umordnung bekannter Attribute plus Kategoriekontext sein — keine Quelle neuer Spezifikationen. Ist ein Feld leer, lässt die Beschreibung es weg, statt es zu füllen.
+
+Quelldaten vor der Erzeugung zu bereinigen, fühlt sich wie der langweilige Teil an, aber hier wird Genauigkeit gewonnen. Es ist dieselbe Disziplin, die jede [KI-Produktkatalog-Automatisierung](/de/articles/ai-product-catalog-automation-b2b-distributors/) trägt — das Modell ist eine Umschreib-Maschine auf einer sauberen Datenbank, kein Ersatz für eine.
+
+---
+
+## Eine Vorlage und eine Tonspezifikation erstellen
+
+**Konsistenz über Tausende Artikel entsteht aus einer festen Struktur, nicht daraus, jedes Mal freundlich zu bitten.**
+
+Sich selbst überlassen, schreibt eine KI jede Beschreibung etwas anders — andere Länge, andere Reihenfolge, andere Betonung. Über einen Katalog hinweg liest sich das wie Chaos. Die Lösung ist eine Vorlage, die das Modell jedes Mal gleich füllt.
+
+Eine brauchbare B2B-Beschreibungsvorlage hat drei Teile:
+
+- **Eröffnungszeile** — was das Produkt ist und sein Hauptverwendungszweck, in einem Satz, den ein Käufer beim Überfliegen der Suchergebnisse erfasst
+- **Spezifikationsteil** — die wichtigsten Attribute in gleichbleibender Reihenfolge, als kurzer Absatz oder saubere Aufzählung
+- **Hinweis zu Anwendung oder Passform** — wo es eingesetzt wird, womit es kompatibel ist oder welche Norm es erfüllt
+
+Schreiben Sie neben der Vorlage eine kurze Tonspezifikation, der das Modell bei jedem Artikel folgt:
+
+- Sachlich und schlicht — beschreiben Sie das Produkt, verkaufen Sie es nicht. B2B-Käufer wollen Daten, keine Adjektive.
+- Keine Superlative oder Füllwörter — verbannen Sie „hochwertig“, „erstklassig“, „vielseitig“ und den Rest. Sie machen länger und bringen null Information.
+- Einheitliche Einheiten und Formatierung — Millimeter oder Zoll, aber wählen Sie eines pro Katalog und setzen Sie es durch
+- Ein festes Längenband — grob 40–90 Wörter, damit Suchausschnitte und Kategorieseiten einheitlich bleiben
+
+Geben Sie Vorlage und Tonspezifikation in jeden Erzeugungsaufruf. Das Ergebnis sieht dann nicht mehr aus wie von achttausend verschiedenen Autoren, sondern wie ein Katalog mit einer Stimme.
+
+---
+
+## In Chargen mit kategoriespezifischen Prompts erzeugen
+
+**Ein universeller Prompt für den ganzen Katalog liefert überall mittelmäßige Ergebnisse.**
+
+Ein Lager, ein Sicherheitshandschuh und ein Industriekleber brauchen unterschiedliche Schwerpunkte. Statt eines einzigen Prompts für alle 8.000 SKUs gruppieren Sie nach Kategorie und schreiben pro Kategorie einen Prompt, der dem Modell sagt, was für diesen Produkttyp zählt.
+
+Der praktische Ablauf:
+
+- **Segmentieren Sie den Katalog nach Kategorie.** Jede Kategorie erhält einen Prompt, der festlegt, welche Attribute vorn stehen, welche Kompatibilitätsinformationen wichtig sind und welche Normen genannt werden sollten.
+- **Arbeiten Sie in Chargen von einigen Hundert.** Chargen halten den Lauf prüfbar und lassen Sie ein systematisches Problem — ein falsch zugeordnetes Feld, einen Einheitenfehler — nach 200 statt nach 8.000 Artikeln entdecken.
+- **Nehmen Sie pro Kategorie zwei oder drei ausgearbeitete Beispiele auf.** Dem Modell eine gute Beschreibung für ein ähnliches Produkt zu zeigen, verankert das Ergebnis weit besser als Anweisungen allein. Das ist der wirksamste Hebel für die Qualität.
+- **Übergeben Sie die strukturierten Attribute als Daten, nicht als Fließtext.** Geben Sie dem Modell die Felder als saubere Liste und lassen Sie die Vorlage formen.
+
+Chargen entsprechen auch dem, wie die Arbeit tatsächlich geprüft wird. Ein Mensch kann eine Kategorie mit 200 ähnlichen Artikeln in einer Sitzung sinnvoll prüfen; niemand kann 8.000 gemischte Produkte in einem Durchgang prüfen. Auch die Sicht des [minimalen Tech-Stacks](/de/articles/minimal-tech-stack-b2b-consulting/) gilt hier — Sie brauchen keine spezialisierte Enterprise-Plattform dafür. Eine Tabelle mit Attributen, eine Skriptebene und ein KI-API-Endpunkt reichen den meisten Distributoren für den Anfang.
+
+---
+
+## Leitplanken zwischen Erzeugung und Veröffentlichung setzen
+
+**Die Gefahr des Maßstabs ist, dass ein Fehler im Prompt zum Fehler in jedem Datensatz wird.**
+
+Weil KI-Erzeugung schnell und billig ist, ist die Versuchung groß, direkt aus dem Modell zu veröffentlichen. Tun Sie es nicht. In der Lücke zwischen „erzeugt“ und „veröffentlicht“ fangen Sie die Fehler ab, die der Maßstab sonst vervielfachen würde.
+
+Praktische Leitplanken, nach Wichtigkeit geordnet:
+
+- **Prüfen Sie gegen die Quelle, nicht nach Gefühl.** Verifizieren Sie bei einer Stichprobe jeder Charge, dass jede Zahl der Beschreibung in den Quelldaten vorkommt. Hat das Modell „24 V“ geschrieben und die Quelle sagt „12 V“, haben Sie ein systematisches Prompt-Problem, das Sie vor der Veröffentlichung der Charge beheben müssen.
+- **Markieren Sie halluzinationsanfällige Felder.** Kompatibilitätsaussagen, Zertifizierungen und Sicherheitsangaben sind die Stellen, an denen erfundene Fakten echten Schaden anrichten. Leiten Sie jede Beschreibung, die eines davon behauptet, zur menschlichen Prüfung, auch wenn der Rest automatisch erscheint.
+- **Achten Sie auf das Leerfeld-Indiz.** Liest sich eine Beschreibung glatt, doch der Quelle fehlten drei Attribute, hat das Modell sie wahrscheinlich gefüllt. Prüfen Sie Artikel mit dünnen Quelldaten am gründlichsten.
+- **Fahren Sie einen Durchlauf mit Verbotswörtern.** Ein einfacher Filter fängt Superlative und Füllwörter, die Ihre Tonspezifikation untersagt, und markiert jede Beschreibung, die von der Vorlage abgewichen ist.
+
+Ein realistisches Verhältnis für einen Distributor: 70–80 % der Beschreibungen werden nach bestandenen automatischen Prüfungen automatisch veröffentlicht, die übrigen 20–30 % — alles, was Sicherheit, Kompatibilität oder dünne Daten berührt — werden von einem Menschen gelesen. Das hält den Durchsatz hoch, wo es sicher ist, und menschlich, wo es zählt. Automatisierung soll hier nicht Menschen entfernen; sie soll deren Aufmerksamkeit auf den kleinen Teil bündeln, in dem ein falsches Wort Folgen hat.
+
+---
+
+## Beschreibungen aktuell halten, wenn sich der Katalog ändert
+
+**Ein Katalog ist kein Einmalprojekt — neue SKUs kommen hinzu, Spezifikationen ändern sich.**
+
+Die größte Verschwendung in der Katalogarbeit ist, sie als heroische jährliche Aufräumaktion zu behandeln. Neue Produkte kommen wöchentlich; Lieferanten überarbeiten Spezifikationen; ausgelaufene Linien bleiben liegen. Das System, das die ersten 8.000 Beschreibungen erzeugt hat, sollte den Strom der Änderungen leise mit bewältigen.
+
+- **Binden Sie die Erzeugung in den Aufnahmeprozess ein.** Wird eine neue SKU mit ihren Attributen angelegt, läuft sie automatisch durch denselben Kategorie-Prompt und dieselbe Vorlage und kommt dann in die Prüfwarteschlange. Neue Produkte bekommen am ersten Tag eine ordentliche Beschreibung statt sechs Monate lang ein leeres Feld.
+- **Erzeugen Sie bei Quelländerung neu.** Aktualisiert ein Lieferant eine Spezifikation, wird die betroffene Beschreibung aus den neuen Daten neu erzeugt, statt von Hand bearbeitet. Die Beschreibung bleibt eine Funktion der aktuellen Fakten.
+- **Versionieren Sie Vorlage und Tonspezifikation.** Verbessern Sie die Vorlage, können Sie eine Kategorie neu durchlaufen lassen, um ältere Beschreibungen auf den neuen Standard zu heben — ein kontrollierter Batch-Lauf, kein manuelles Umschreiben.
+- **Verfolgen Sie die Abdeckung als Kennzahl.** „Anteil aktiver SKUs mit einer aktuellen, geprüften Beschreibung“ ist eine Zahl, die man beobachten sollte. Sie zeigt, ob der Katalog zurück in die Vernachlässigung driftet.
+
+Dieser kontinuierliche Ansatz macht aus einem Katalog von einer Last ein Gut. Suchmaschinen indexieren vollständige, strukturierte Produktseiten; Vertriebsteams vertrauen den Beschreibungen, statt Lieferanten-PDFs zu ziehen; und Kunden, die zwei Teile vergleichen, bekommen jedes Mal dieselbe klare Information.
+
+---
+
+Produktbeschreibungen mit KI im großen Maßstab zu erzeugen funktioniert, wenn Sie das Modell als schnellen, konsistenten Autor auf sauberen Daten behandeln — und scheitert, wenn Sie es als Faktenquelle behandeln. Bringen Sie die Quellattribute in Ordnung, legen Sie Vorlage und Ton einmal fest, erzeugen Sie nach Kategorie in prüfbaren Chargen und halten Sie einen Menschen dort im Prozess, wo eine falsche Zahl einen Kunden kosten würde.
+
+So kann ein Distributor einen Katalog in Wochen statt nie von weitgehend leer zu vollständig beschrieben bringen und ihn mit einem Bruchteil des laufenden Aufwands aktuell halten. Der Wettbewerbsvorteil ist nicht die KI selbst — jeder Wettbewerber hat Zugang zu denselben Modellen. Es ist die Disziplin darum, die rohe Erzeugung in einen Katalog verwandelt, auf den sich Käufer verlassen können.
+
+---
+
+**Quellen:** [Schema.org Product-Typ](https://schema.org/Product) · [Google Merchant: Richtlinien für Produktdaten](https://support.google.com/merchants/answer/7052112)

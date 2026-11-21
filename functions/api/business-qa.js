@@ -104,7 +104,7 @@ Return ONLY valid JSON — no markdown, no explanation outside the JSON:
   "ahooshFit": "How AHoosh.ai's services (branding, SEO, digital marketing, website, AI setup, social media) could concretely help THIS business — one specific sentence"
 }
 
-Rules: Base everything on actual answers. No generic startup advice. No motivational language. If answers suggest a problem, name it.`;
+Rules: Base everything on actual answers. No generic startup advice. No motivational language. If answers suggest a problem, name it.${body && body.lang === 'de' ? '\n\nRespond entirely in German (Deutsch). Keep every JSON key exactly as specified in English; only the string VALUES are German.' : ''}`;
 
   try {
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {

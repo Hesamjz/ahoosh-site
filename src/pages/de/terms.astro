@@ -1,0 +1,256 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const updated = '21. Juli 2026';
+
+const toc = [
+  ['what-we-offer', 'Was wir anbieten'],
+  ['definitions', 'Begriffe'],
+  ['eligibility', 'Voraussetzungen'],
+  ['assessments', 'Assessments'],
+  ['digital-products', 'Digitale Produkte und Rückerstattungen'],
+  ['consulting', 'Beratung'],
+  ['content-research', 'Inhalte, Recherchen und Marktdaten'],
+  ['licences', 'Lizenzen und geistiges Eigentum'],
+  ['acceptable-use', 'Zulässige Nutzung'],
+  ['third-party-services', 'Dienste Dritter'],
+  ['liability', 'Haftung und Ergebnisse'],
+  ['indemnity', 'Freistellung'],
+  ['force-majeure', 'Höhere Gewalt'],
+  ['suspension', 'Sperrung und Beendigung'],
+  ['disputes', 'Streitigkeiten'],
+  ['law', 'Anwendbares Recht'],
+  ['general', 'Allgemeines'],
+  ['changes', 'Änderungen und Fragen'],
+];
+---
+
+<BaseLayout
+  title="Nutzungsbedingungen"
+  description="Die Bedingungen für die Nutzung von ahoosh.ai: Leistungen, Assessments, digitale Produkte, Rückerstattungen, Lizenzen, Haftung und Streitbeilegung."
+>
+  <section class="legal">
+    <div class="legal-wrap">
+
+      <header class="legal-head">
+        <h1>Nutzungsbedingungen</h1>
+        <p class="legal-updated">Zuletzt aktualisiert: {updated}</p>
+      </header>
+
+      <p class="legal-lede">
+        Diese Bedingungen regeln Ihre Nutzung von ahoosh.ai. Mit der Nutzung der Website akzeptieren Sie sie. Sie sind zum Lesen geschrieben, nicht zum Überstehen. Fragen, bevor Sie irgendetwas zustimmen: <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>.
+        </p><p class="legal-lede" style="font-weight:600">Hinweis: Dies ist eine deutsche Übersetzung zur besseren Lesbarkeit. Maßgeblich ist die <a class="inline" href="/terms">englische Fassung</a>.
+      </p>
+
+      <nav class="legal-toc" aria-label="Auf dieser Seite">
+        <span class="legal-toc-title">Auf dieser Seite</span>
+        <ol>
+          {toc.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}
+        </ol>
+      </nav>
+
+      <article class="legal-body">
+
+        <h2 id="what-we-offer">Was wir anbieten</h2>
+        <p>
+          Die Leistungen sind die, die auf dieser Website beschrieben sind: Wirtschaftsnachrichten und Recherchen, kostenlose Assessments und Werkzeuge, digitale Produkte und Beratung. Jede Seite sagt, was ihr Angebot tatsächlich ist. Wir verkaufen nichts, was die Website nicht beschreibt.
+        </p>
+
+        <h2 id="definitions">Begriffe</h2>
+        <p>Einige Wörter haben in diesen Bedingungen eine bestimmte Bedeutung.</p>
+        <ul>
+          <li><strong>„AHoosh“, „wir“, „uns“, „unser“</strong> — die Website und die Leistungen von AHoosh, betrieben von H. Jafarzadeh.</li>
+          <li><strong>„Sie“</strong> — die Person, die die Website nutzt, oder das Unternehmen, das sie dabei vertritt.</li>
+          <li><strong>„Inhalte“</strong> — die Artikel, Recherchen, Werkzeuge und Materialien, die wir veröffentlichen.</li>
+          <li><strong>„Assessment“</strong> — die Persönlichkeits-, Führungs-, Business- oder Website-Werkzeuge auf der Website.</li>
+          <li><strong>„Digitales Produkt“</strong> — alles, was Sie über Lemon Squeezy, unseren Händler (Merchant of Record), kaufen.</li>
+        </ul>
+
+        <h2 id="eligibility">Voraussetzungen</h2>
+        <p>
+          Sie müssen mindestens 18 Jahre alt sein und entweder für sich selbst handeln oder befugt sein, ein Unternehmen zu binden, um die Website zu nutzen oder etwas darüber zu kaufen. Falls das nicht auf Sie zutrifft, nutzen Sie sie bitte nicht.
+        </p>
+
+        <h2 id="assessments">Assessments</h2>
+
+        <div class="legal-callout">
+          <p>
+            <strong>Die Assessments dienen der Information.</strong> Die Persönlichkeits- und Führungsassessments sind kein klinisches oder diagnostisches Instrument. Sie sind keine medizinische oder psychiatrische Beratung, sie erkennen keine Erkrankung, und niemand sollte auf ihrer Grundlage eingestellt, entlassen, vorsortiert oder beurteilt werden — auch nicht von uns. Wenn Sie sich um Ihre psychische Gesundheit sorgen, sprechen Sie mit einer qualifizierten Fachperson.
+          </p>
+        </div>
+
+        <p>
+          Auch die Business- und Website-Assessments sind keine fachliche, rechtliche oder finanzielle Beratung. Die Ergebnisse hängen davon ab, was Sie eingeben: Ehrliche Angaben ergeben eine brauchbare Einschätzung, dünne Angaben eine dünne. Entscheidungen, die Sie daraus ableiten, sind Ihre eigenen.
+        </p>
+        <p>
+          Indem Sie Ihre E-Mail-Adresse zum Erhalt der Ergebnisse angeben, akzeptieren Sie diese Bedingungen und unsere <a href="/de/privacy">Datenschutzerklärung</a>, die genau darlegt, wie Ihre Antworten behandelt werden.
+        </p>
+
+        <h2 id="digital-products">Digitale Produkte und Rückerstattungen</h2>
+        <p>
+          Digitale Produkte werden unmittelbar nach dem Kauf geliefert. Zahlungen werden von Lemon Squeezy, unserem Händler (Merchant of Record), abgewickelt, der auch Zahlungsstreitigkeiten bearbeitet.
+        </p>
+        <p>
+          <strong>Wenn ein Produkt nicht wie beschrieben funktioniert, haben Sie 14 Tage Zeit, Ihr Geld zurückzubekommen.</strong> Schreiben Sie uns zuerst an <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a> — die meisten Probleme sind am selben Tag behoben.
+        </p>
+
+        <h2 id="consulting">Beratung</h2>
+        <p>
+          Für Beratungsaufträge gelten eigene individuelle Vereinbarungen. Wenn eine Vereinbarung und diese Bedingungen sich widersprechen, gilt für diesen Auftrag die Vereinbarung.
+        </p>
+
+        <h2 id="content-research">Inhalte, Recherchen und Marktdaten</h2>
+        <p>
+          Die Artikel, Marktdaten und Recherchen auf dieser Website dienen der allgemeinen Information. Sie sind keine Finanz-, Anlage-, Steuer-, Rechts- oder sonstige Fachberatung, und nichts hier ist eine Empfehlung, etwas zu kaufen, zu verkaufen oder zu meiden. Märkte und Vorschriften ändern sich — prüfen Sie Wesentliches, bevor Sie danach handeln, und holen Sie sich auf Ihre Situation zugeschnittenen Rat, wenn viel auf dem Spiel steht.
+        </p>
+
+        <h2 id="licences">Lizenzen und geistiges Eigentum</h2>
+        <p>
+          Mit dem Kauf eines digitalen Produkts erhalten Sie eine <strong>Lizenz zur persönlichen Nutzung oder zur Nutzung in einem einzelnen Unternehmen</strong>. Sie umfasst nicht den Weiterverkauf, die Weitergabe oder die Neuverpackung. Eine <strong>Agenturlizenz</strong> zur Nutzung eines Produkts für Kundenprojekte wird separat verkauft. Alles auf dieser Website — Text, Design, Code und Assessments — gehört uns, sofern nicht anders gekennzeichnet.
+        </p>
+        <p>
+          Wenn Sie uns Feedback, Ideen oder Vorschläge senden, räumen Sie uns das Recht ein, sie zu nutzen, ohne Ihnen dafür etwas zu schulden.
+        </p>
+
+        <h2 id="acceptable-use">Zulässige Nutzung</h2>
+        <p>
+          Greifen Sie die Website nicht an, kopieren Sie sie nicht massenhaft, zerlegen Sie die Assessments nicht per Reverse Engineering, um sie anderswo nachzubauen, nutzen Sie die Werkzeuge nicht, um andere anzugreifen, geben Sie sich nicht als andere Person oder anderes Unternehmen aus und geben Sie keine Daten anderer ohne deren Erlaubnis ein. Wenn Sie das tun, können wir den Zugang sperren.
+        </p>
+
+        <h2 id="third-party-services">Dienste Dritter</h2>
+        <p>
+          Einige Teile der Website stützen sich auf externe Anbieter — Zahlungsabwicklung, Hosting, KI-Erzeugung, E-Mail-Versand. Unsere <a href="/de/privacy">Datenschutzerklärung</a> listet genau auf, wer und warum. Für einen Ausfall oder Fehler auf deren Seite sind wir nicht verantwortlich, wir informieren Sie aber, wenn er Sie betrifft.
+        </p>
+
+        <h2 id="liability">Haftung und Ergebnisse</h2>
+        <p>
+          Wir versprechen keine bestimmten Geschäftsergebnisse — das kann ehrlicherweise niemand. Was wir versprechen, ist einfacher: Wir sagen, was wir tun werden, und wir tun es.
+        </p>
+        <p>
+          Unsere Haftung Ihnen gegenüber ist auf den Betrag begrenzt, den Sie uns tatsächlich gezahlt haben. Nichts in diesen Bedingungen begrenzt eine Haftung, soweit das Gesetz eine Begrenzung nicht zulässt.
+        </p>
+
+        <h2 id="indemnity">Freistellung</h2>
+        <p>
+          Wenn Ihre Nutzung der Website gegen diese Bedingungen, das Gesetz oder Rechte anderer verstößt, erklären Sie sich einverstanden, uns jeden daraus entstehenden Anspruch, Verlust und angemessenen Aufwand zu ersetzen.
+        </p>
+
+        <h2 id="force-majeure">Höhere Gewalt</h2>
+        <p>
+          Wir haften nicht für Verzögerungen oder Ausfälle, die durch etwas verursacht werden, das vernünftigerweise außerhalb unserer Kontrolle liegt — ein Ausfall bei einem Anbieter, auf den wir uns stützen, Internet- oder Stromausfall, Naturkatastrophe, Krieg oder staatliches Handeln. Wir stellen den Normalbetrieb wieder her, sobald wir es vernünftigerweise können.
+        </p>
+
+        <h2 id="suspension">Sperrung und Beendigung</h2>
+        <p>
+          Wir können Ihren Zugang sperren oder beenden, wenn Sie gegen diese Bedingungen verstoßen oder die Website so nutzen, dass sie, wir oder andere Nutzer gefährdet werden. Wo es uns vernünftigerweise möglich ist, sagen wir Ihnen, warum. Abschnitte, die ihrer Natur nach über Ihren Zugang hinaus fortbestehen sollen — Haftung, Freistellung, geistiges Eigentum und anwendbares Recht —, gelten nach dessen Ende weiter.
+        </p>
+
+        <h2 id="disputes">Streitigkeiten</h2>
+        <p>
+          Wenn etwas schiefgeht, schreiben Sie uns zuerst an <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a> — die meisten Dinge klären sich direkt und schnell. Wenn wir es innerhalb von 30 Tagen nicht untereinander lösen können, kann jeder von uns die unten genannten Gerichte anrufen.
+        </p>
+
+        <h2 id="law">Anwendbares Recht</h2>
+        <p>
+          Diese Bedingungen unterliegen dem Recht der Republik Serbien, und deren Gerichte sind für jede Streitigkeit zuständig, die nicht nach dem obigen Abschnitt gelöst wird.
+        </p>
+
+        <h2 id="general">Allgemeines</h2>
+        <p>
+          Sollte ein Teil dieser Bedingungen undurchsetzbar sein, bleibt der Rest bestehen. Sie dürfen Ihre Rechte aus diesen Bedingungen nicht ohne unsere Zustimmung abtreten; wir dürfen unsere im Rahmen einer Unternehmensübertragung abtreten und sagen Ihnen Bescheid, wenn wir das tun. Nichts hier begründet eine Partnerschaft, ein Arbeits- oder Vertretungsverhältnis zwischen uns. Diese Bedingungen bilden zusammen mit der Datenschutzerklärung und jeder Beratungsvereinbarung die gesamte Vereinbarung zwischen uns zu diesem Gegenstand.
+        </p>
+
+        <h2 id="changes">Änderungen und Fragen</h2>
+        <p>
+          Wenn sich diese Bedingungen ändern, aktualisieren wir diese Seite und ändern das Datum oben, damit Sie immer sehen, welche Fassung gilt. Bei Unklarheiten: <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>.
+        </p>
+
+        <p class="legal-controller">
+          AHoosh, betrieben von H. Jafarzadeh, Belgrad, Serbien ·
+          <a class="inline" href="mailto:contact@ahoosh.ai">contact@ahoosh.ai</a>
+        </p>
+
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal { padding: 150px 0 120px; position: relative; z-index: 2; }
+  .legal-wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  .legal-head { border-bottom: 1px solid rgba(240,242,245,.1); padding-bottom: 26px; margin-bottom: 34px; }
+  .legal-head h1 {
+    font-family: var(--font-head); font-weight: 800;
+    font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.1;
+    letter-spacing: -.01em; color: var(--silver); margin: 0;
+  }
+  .legal-updated { margin: 12px 0 0; font-size: .8rem; letter-spacing: .02em; color: var(--dim, #828ca2); }
+
+  .legal-lede { font-size: 1.06rem; line-height: 1.8; color: var(--silver); margin: 0 0 36px; }
+
+  .legal-toc {
+    border: 1px solid rgba(240,242,245,.1); border-radius: 12px;
+    background: rgba(7,22,40,.45); padding: 22px 26px; margin: 0 0 52px;
+  }
+  .legal-toc-title {
+    display: block; font-family: var(--font-head); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .18em; font-size: .62rem;
+    color: var(--gold); margin-bottom: 14px;
+  }
+  .legal-toc ol { margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+  .legal-toc li { counter-increment: toc; margin: 0 0 9px; }
+  .legal-toc li:last-child { margin-bottom: 0; }
+  .legal-toc li::before {
+    content: counter(toc) '.'; color: var(--gold); opacity: .55;
+    font-size: .82rem; margin-right: 10px;
+  }
+  .legal-toc a {
+    color: var(--silver-dim, #cdd6e6); font-size: .92rem;
+    border-bottom: 1px solid transparent; transition: color .25s, border-color .25s;
+  }
+  .legal-toc a:hover { color: var(--gold-light, #f4d98b); border-color: rgba(215,161,61,.4); }
+
+  .legal-body p { color: var(--silver-dim); font-size: 1rem; line-height: 1.85; margin: 0 0 20px; }
+  .legal-body h2 {
+    font-family: var(--font-head); font-weight: 800;
+    font-size: 1.24rem; line-height: 1.25; letter-spacing: .01em;
+    color: var(--silver); margin: 58px 0 20px;
+    padding-top: 22px; border-top: 1px solid rgba(240,242,245,.08);
+  }
+  .legal-body ul { list-style: none; margin: 0 0 22px; padding: 0; }
+  .legal-body li {
+    position: relative; color: var(--silver-dim); font-size: 1rem;
+    line-height: 1.8; padding-left: 22px; margin-bottom: 10px;
+  }
+  .legal-body li::before {
+    content: ''; position: absolute; left: 0; top: .78em;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: .8;
+  }
+  .legal-body strong { color: var(--silver); font-weight: 600; }
+  .legal-body a.inline, .legal-body a:not(.inline) {
+    color: var(--gold-light, #f4d98b); border-bottom: 1px solid rgba(215,161,61,.35);
+    transition: color .25s, border-color .25s;
+  }
+  .legal-body a:hover { color: var(--silver); border-color: var(--silver); }
+
+  .legal-callout {
+    border-left: 2px solid var(--gold);
+    background: rgba(215,161,61,.05);
+    padding: 20px 24px; margin: 26px 0 28px; border-radius: 0 10px 10px 0;
+  }
+  .legal-callout p { margin: 0; font-size: .98rem; }
+
+  .legal-controller {
+    margin-top: 50px; padding-top: 24px;
+    border-top: 1px solid rgba(240,242,245,.1);
+    font-size: .84rem !important; color: var(--dim, #828ca2) !important;
+  }
+
+  @media (max-width: 820px) {
+    .legal { padding: 120px 0 80px; }
+    .legal-wrap { padding: 0 20px; }
+    .legal-toc { padding: 18px 20px; margin-bottom: 40px; }
+    .legal-body h2 { margin-top: 44px; }
+  }
+</style>

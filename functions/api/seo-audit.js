@@ -14,7 +14,7 @@ export async function onRequest(context) {
   if (!/^https?:\/\//.test(targetUrl)) targetUrl = 'https://' + targetUrl;
 
   try {
-    const psiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(targetUrl)}&strategy=mobile&category=performance&category=seo&category=accessibility&category=best-practices`;
+    const psiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(targetUrl)}&strategy=mobile&category=performance&category=seo&category=accessibility&category=best-practices${url.searchParams.get('lang') === 'de' ? '&locale=de' : ''}`;
     const psiRes = await fetch(psiUrl, { headers: { 'User-Agent': 'AHoosh-SEO-Tool/1.0' } });
     const psi = await psiRes.json();
 

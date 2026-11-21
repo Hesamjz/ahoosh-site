@@ -1,0 +1,144 @@
+---
+title: "B2B-Kundensegmentierung mit RFM-Analyse"
+description: "Wie Sie eine RFM-Segmentierung auf einen B2B-Kundenstamm anwenden — Recency, Frequency und Monetary Value bewerten und was Sie mit jedem Segment konkret tun."
+pubDate: 2026-10-01
+tags: ["Strategy", "B2B", "Operations"]
+heroImage: "/articles/img/b2b-customer-segmentation-rfm.jpg"
+lang: de
+translationOf: "2026-08-26_b2b-customer-segmentation-rfm"
+---
+
+<img src="/articles/img/b2b-customer-segmentation-rfm.jpg" alt="Tabelle mit Kundenkonten und hervorgehobenen Segmenten auf einem Schreibtisch neben einem Notizbuch" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Die meisten kleinen B2B-Unternehmen segmentieren ihre Kunden nach Bauchgefühl. Es gibt eine mentale Liste der großen Konten, ein vageres Gefühl, wer zuletzt still war, und irgendwo eine nach Umsatz sortierte Tabelle. Das funktioniert, bis der Kundenstamm grob 80 Konten übersteigt; dann werden die stillen unsichtbar, und eine Abwanderung bemerkt man erst, wenn eine Nachbestellung, die früher jedes Quartal kam, schlicht ausbleibt.
+
+Die RFM-Analyse behebt das mit drei Zahlen, die Sie schon haben. Recency: wie lange der Kunde zuletzt gekauft hat. Frequency: wie oft er kauft. Monetary: wie viel er ausgibt. Bewerten Sie jeden Kunden in jeder Dimension, kombinieren Sie, und der Kundenstamm sortiert sich selbst in Gruppen, die sich unterschiedlich verhalten und unterschiedliche Behandlung verdienen.
+
+Es ist eine Technik aus dem Direktmarketing der 1990er, und genau deshalb ist sie hier nützlich. Sie braucht kein Data-Science-Team, kein Machine Learning und keine neue Software. Haben Sie Bestelldaten und Bestellwerte in irgendeinem System — einem ERP, einem Buchhaltungspaket, einem CSV-Export —, können Sie sie noch heute Nachmittag durchführen. Dieser Leitfaden zeigt, wie, und vor allem, was Sie mit dem Ergebnis tun, denn dort sterben die meisten RFM-Projekte still.
+
+---
+
+## Warum RFM besser zu B2B passt als die meisten Segmentierungsmodelle
+
+**Es nutzt Verhalten, nicht Merkmale.**
+
+Die übliche Alternative ist die firmografische Segmentierung: Branche, Unternehmensgröße, Region. Sie sagt Ihnen, was ein Kunde *ist*. Sie sagt Ihnen nicht, was er *tut*. Ein Fertigungskonto mit 200.000 €/Jahr, das seit 140 Tagen nicht bestellt hat, und ein Fertigungskonto mit 200.000 €/Jahr, das letzten Dienstag bestellt hat, sind firmografisch identisch und kommerziell völlig verschieden. Das eine braucht heute einen Anruf. Das andere sollte in Ruhe gelassen werden.
+
+RFM erfasst, was Firmografie nicht kann: die Bewegungsrichtung.
+
+**Die B2B-Anpassungen, die zählen.**
+
+Klassisches RFM wurde für den Endkundenhandel entworfen, wo Käufe häufig und Zyklen kurz sind. Drei Anpassungen machen es für B2B tauglich:
+
+- **Recency muss am eigenen Zyklus des Kontos gemessen werden, nicht an einem festen Fenster.** Ein Kunde, der alle 90 Tage bestellt und zuletzt vor 100 Tagen bestellt hat, ist spät. Ein Kunde, der jährlich bestellt und zuletzt vor 100 Tagen bestellt hat, ist früh. Nutzen Sie ein Verhältnis — Tage seit der letzten Bestellung geteilt durch den Median-Abstand zwischen den Bestellungen dieses Kontos — statt roher Tage. Das ist die eine Änderung, die B2B-RFM brauchbar macht, und die meisten Anleitungen überspringen sie.
+- **Frequency sollte über ein Fenster gemessen werden, das mehrere Zyklen umfasst.** Für den Vertrieb 24 Monate. Für projektbasierte Beratung mit Jahreszyklen 36 Monate. Bei zu kurzem Fenster sieht jeder Jahreskunde wie ein Einmalkäufer aus.
+- **Monetary sollte der Rohertrag sein, nicht der Umsatz,** wenn Sie Kostendaten haben. Ein umsatzstarkes, margenschwaches Konto, das als „Champion“ gewertet wird, führt zu teurer Aufmerksamkeit für einen Kunden, der sie kaum bezahlt. Haben Sie keine Marge je Position, ist der Umsatz ein vertretbarer Ersatz — aber wissen Sie, was Sie dafür aufgeben.
+
+**Was es nicht leistet.**
+
+RFM ist beschreibend, nicht vorhersagend. Es sagt Ihnen den heutigen Zustand eines Kontos anhand dessen, was schon geschah. Es sagt Ihnen nicht, dass ein Kunde abwandern wird, weil sein eigener Endmarkt einbricht, oder dass ein kleines Konto sich verdreifachen wird, weil es gerade einen Auftrag gewonnen hat. Dafür braucht es einen Menschen, der mit Kunden spricht. Aufgabe von RFM ist, sicherzustellen, dass der Mensch mit den richtigen spricht.
+
+---
+
+## Die Scores bauen — die Quintil-Methode
+
+**Beginnen Sie mit einer Zeile pro Kunde.**
+
+Sie brauchen pro Kunde: Datum der letzten Bestellung, Anzahl der Bestellungen im Analysefenster, Gesamtwert im Analysefenster und idealerweise den Median-Abstand zwischen Bestellungen. Jedes ERP- und Buchhaltungssystem kann das erzeugen. Kann Ihres es nicht, bringt ein Export aller Bestellpositionen in eine Tabelle und eine Pivot-Tabelle Sie in einer Stunde dorthin.
+
+**Bewerten Sie jede Dimension von 1 bis 5 mit Quintilen.**
+
+Ordnen Sie alle Kunden in jeder Dimension und teilen Sie sie in Fünftel. Das oberste Fünftel erhält 5, das unterste 1. Bei Recency kehrt sich die Rangfolge um — das jüngste erhält 5.
+
+Quintile schlagen feste Schwellen, weil sie sich selbst kalibrieren. „Innerhalb von 30 Tagen bestellt = 5“ ist eine Regel, die Sie umschreiben müssen, wenn sich Ihr Geschäft ändert. „Oberste 20 % bei Recency = 5“ bleibt für immer richtig.
+
+In SQL ist das eine einzige Fensterfunktion:
+
+```sql
+SELECT
+  customer_id,
+  NTILE(5) OVER (ORDER BY days_since_last_order DESC) AS r_score,
+  NTILE(5) OVER (ORDER BY order_count ASC)            AS f_score,
+  NTILE(5) OVER (ORDER BY total_margin ASC)           AS m_score
+FROM customer_summary;
+```
+
+NTILE ist Standard in PostgreSQL, MySQL 8+, SQL Server und BigQuery — die [PostgreSQL-Dokumentation zu Fensterfunktionen](https://www.postgresql.org/docs/current/functions-window.html) erklärt die Semantik, falls Sie es anpassen müssen. In Excel erledigt `PERCENTRANK` plus eine Nachschlagetabelle dieselbe Aufgabe in zwei Spalten. In Google Sheets verhält sich `PERCENTRANK.INC` identisch.
+
+**Ein Vorbehalt bei kleinen Kundenstämmen.**
+
+Unter etwa 50 Kunden erzeugen Quintile Gruppen von neun oder zehn, und die Segmentierung sagt mehr über Arithmetik als über Verhalten. Bei unter 50 Konten nutzen Sie Terzile (1–3) oder überspringen die Bewertung und sortieren einfach nach dem Recency-Verhältnis. Der Wert von RFM wächst mit der Größe des Stamms — es dient dazu, die Konten zu finden, die Sie nicht mehr im Kopf behalten können.
+
+**Ein Hinweis zum Clustering.**
+
+Sie finden reichlich Material, das statt Quintilen k-Means-Clustering empfiehlt. Es ist eine legitime Technik, und die [scikit-learn-Dokumentation zum Clustering](https://scikit-learn.org/stable/modules/clustering.html) behandelt die Umsetzung. Für ein Unternehmen mit weniger als einigen tausend Kunden erzeugt es Cluster-Grenzen, die einem Vertriebsteam schwerer zu erklären und nicht besser darin sind, Handeln auszulösen. Quintile sind erklärbar. Erklärbar gewinnt, denn eine Segmentierung, der niemand traut, ist eine, die niemand nutzt.
+
+---
+
+## Die Segmente, die zählen, und was jedes bedeutet
+
+Sie haben nun pro Kunden einen dreistelligen Code von 111 bis 555. Das sind 125 Kombinationen, also 114 zu viele. Fassen Sie sie zu benannten Segmenten zusammen. Diese verdienen im B2B ihren Platz:
+
+- **Champions (R 4–5, F 4–5, M 4–5)** — jüngst, häufig, hoher Wert. Typischerweise 5–8 % der Konten und 30–40 % der Marge.
+- **Loyal (R 3–5, F 4–5, M 3–5)** — verlässlich, kaufen oft, mittlerer bis hoher Wert.
+- **Big Spenders At Risk (R 1–2, F 3–5, M 4–5)** — das wichtigste Segment dieser Liste. Hoher Wert, kauften früher oft, sind still geworden. Hier leckt das Geld.
+- **Recent High Potential (R 5, F 1–2, M 3–5)** — kürzlich gekauft, groß gekauft, noch kein Muster etabliert. Neue Konten, die Champions werden oder verschwinden können.
+- **Steady Small (R 3–5, F 3–5, M 1–2)** — bestellen verlässlich, geben wenig aus. Das Automatisierungssegment.
+- **About To Sleep (R 2–3, F 2–3, M 2–3)** — in jeder Dimension abdriftend.
+- **Hibernating (R 1–2, F 1–2, M 1–3)** — lange weg, niedriger Wert. Meist nicht reaktivierenswert.
+- **One-Time Big (R 1–2, F 1, M 4–5)** — eine große Bestellung, nie wiedergekommen. Einen Anruf wert, um zu erfahren, warum.
+
+**Wohin der Aufwand geht.**
+
+Der Instinkt ist, Aufwand auf Champions zu verwenden. Champions sind bereits zufrieden und kaufen bereits; ein vierteljährlicher Check-in und bevorzugter Service genügen meist. Der Ertrag liegt bei **Big Spenders At Risk** und **Recent High Potential** — Konten, bei denen ein konkretes menschliches Eingreifen in diesem Monat das Ergebnis ändert und bei denen der Wert, der auf dem Spiel steht, die Eingriffskosten rechtfertigt.
+
+Rechnen Sie mit Ihren eigenen Zahlen, bevor Sie entscheiden. Machen Big Spenders At Risk 6 % der Konten aus, die 180.000 € annualisierte Marge halten, und ein Anruf holt ein Drittel davon zurück, ist das die ertragreichste Stunde, die irgendjemand in Ihrem Unternehmen dieses Quartal verbringt.
+
+---
+
+## Segmente in Handlungen verwandeln
+
+Eine Segmentierung, die in einer Tabelle lebt, ist ein Hobby. Operativ wird sie, wenn jedes Segment einen benannten Verantwortlichen, eine definierte Handlung und einen Auslöser hat, der feuert, ohne dass sich jemand erinnern muss.
+
+**Schreiben Sie das Segment in Ihr CRM zurück.**
+
+Fügen Sie am Firmen- oder Kontodatensatz ein Feld `RFM_SEGMENT` hinzu und befüllen Sie es monatlich. Jede nachgelagerte Handlung liest aus diesem Feld. Haben Sie keinen Ort, an dem es leben kann, ist das das eigentliche erste Problem — das [minimal funktionsfähige CRM für einen B2B-Distributor](/de/articles/minimum-viable-crm-b2b-distributor-2026/) behandelt die kleinste Struktur, die das trägt.
+
+**Die Handlungskarte:**
+
+| Segment | Verantwortlich | Handlung | Takt |
+|---|---|---|---|
+| Champions | Account Manager | Beziehungs-Check-in, früher Zugang zu neuen Linien | Vierteljährlich |
+| Loyal | Account Manager | Cross-Selling anhand von Kategorielücken | Alle 2 Monate |
+| Big Spenders At Risk | Vertriebsleiter | Direkter Anruf, benannte Person, innerhalb von 5 Werktagen | Bei Eintritt |
+| Recent High Potential | Vertrieb | Onboarding-Sequenz + Anruf an Tag 30 | Bei Eintritt |
+| Steady Small | Automatisiert | Nachbestellerinnerung, Self-Service-Tools | Automatisiert |
+| About To Sleep | Automatisiert | Eine Reaktivierungs-E-Mail, dann neu bewerten | Bei Eintritt |
+| Hibernating | Keiner | Aus aktiven Kampagnen ausnehmen, in der Akte behalten | — |
+| One-Time Big | Vertriebsleiter | Ein Diagnose-Anruf: was ging schief | Einmal |
+
+**Automatisieren Sie die Segmente, die Automatisierung verdienen.**
+
+Steady Small und About To Sleep sind Volumensegmente mit niedrigem Wert je Konto. Sie von Hand zu bearbeiten, ist eine schlechte Nutzung eines Vertrieblers. Speisen Sie das RFM-Feld als Synchronisationsbedingung in Ihre E-Mail-Plattform ein und lassen Sie Nachbestellerinnerungen und Reaktivierungs-E-Mails von selbst laufen — die Umsatzmechanik genau dessen ist in [E-Mail-Automatisierung für B2B-Distributoren](/de/articles/email-automation-b2b-distributors-results/) aufgeschlüsselt.
+
+**Monatlich aktualisieren, vierteljährlich prüfen.**
+
+Berechnen Sie die Scores monatlich neu. Konten wandern zwischen Segmenten, und die Bewegung ist selbst das Signal — ein Champion, der zu Loyal absinkt, verdient Beachtung, und ein Loyal, das zu At Risk absinkt, einen Anruf. Richten Sie die Neuberechnung als geplante Abfrage oder wiederkehrende 20-Minuten-Aufgabe ein. Hängt sie davon ab, dass sich jemand erinnert, läuft sie zweimal und hört dann auf.
+
+Prüfen Sie die Segmentdefinitionen vierteljährlich. Enthält Big Spenders At Risk 40 % Ihrer Konten, sind Ihre Recency-Schwellen falsch für Ihre Zykluslänge, nicht Ihr Geschäft.
+
+**Achten Sie auf die zwei klassischen Fallen.**
+
+Die erste: das RFM-Ergebnis als Wahrheit über einen Kunden zu behandeln statt als Anlass hinzusehen. Ein Konto kann in Hibernating sitzen, weil sein Einkäufer in Elternzeit ging. RFM markiert es; ein Mensch löst es auf.
+
+Die zweite: nach dem Segment zu handeln, ohne die Ursache zu prüfen. Ein Cluster von Big Spenders At Risk in einer Region bedeutet meist, dass etwas passiert ist — ein Wettbewerber, eine Preisänderung, ein gegangener Vertriebsmitarbeiter —, und das Cluster ist aufschlussreicher als jedes einzelne Konto darin. Bewegen sich mehrere Konten gleichzeitig gleich, ist das Muster der Befund. Aus demselben Grund [speisen Nachfragesignale die Bestandsprognose](/de/articles/ai-inventory-forecasting-b2b-distributors/): Die aggregierte Bewegung trägt Information, die die einzelnen Zeilen nicht tragen.
+
+---
+
+Der erste RFM-Durchlauf auf einem B2B-Kundenstamm erzeugt meist einen unbequemen Moment. Es ist der Punkt, an dem Sie in Big Spenders At Risk einen Namen sehen, den Sie für ein gesundes Konto hätten schwören können, weil jemand im März auf einer Messe herzlich mit ihnen gesprochen hat und niemand prüfte, ob sie seither bestellt haben.
+
+Das ist der Wert. Nicht das Modell, das Arithmetik ist, die jeder machen könnte. Der Wert ist, dass die Arithmetik von niemandem einen günstigen Eindruck hat, nicht vergisst und sich nicht von den Konten ablenken lässt, die am lautesten rufen. Führen Sie sie monatlich durch, legen Sie das Ergebnis dorthin, wo Ihr Team schon arbeitet, und geben Sie jedem Segment einen Verantwortlichen. Die Technik ist 30 Jahre alt und schlägt Intuition immer noch bei jedem Kundenstamm, der zu groß ist, um in einen Kopf zu passen.
+
+---
+
+**Quellen:** [PostgreSQL-Dokumentation zu Fensterfunktionen](https://www.postgresql.org/docs/current/functions-window.html) · [scikit-learn-Dokumentation zum Clustering](https://scikit-learn.org/stable/modules/clustering.html)

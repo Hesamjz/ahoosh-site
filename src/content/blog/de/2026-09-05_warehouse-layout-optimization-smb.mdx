@@ -1,0 +1,135 @@
+---
+title: "Lagerlayout-Optimierung für kleine Distributoren"
+description: "Eine praktische Methode, ein kleines Lager ohne neue Regale umzugestalten — Umschlagshäufigkeits-Slotting, Wegeanalyse und die Änderungen, die sich in Wochen auszahlen."
+pubDate: 2026-10-01
+tags: ["Operations", "B2B", "Distribution"]
+heroImage: "/articles/img/warehouse-layout-optimization-smb.jpg"
+lang: de
+translationOf: "2026-09-05_warehouse-layout-optimization-smb"
+---
+
+<img src="/articles/img/warehouse-layout-optimization-smb.jpg" alt="Gang eines kleinen Lagers mit Palettenregalen und gestapelten Kartons auf den Böden" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Fast jedes Lagerlayout eines kleinen Distributors ist ein Zufall. Keine schlechte Entscheidung — ein Zufall. Die ersten Regale kamen dorthin, wo die Tür war. Die zweite Charge Ware kam in den freien Platz daneben. Fünf Jahre später steht der am schnellsten drehende Artikel des Katalogs hinten in Gang sechs im obersten Fach, weil dort 2021 Platz war, und niemand hat ihn seither bewegt, weil das Bewegen ein Samstag ist und es nie einen Samstag gibt.
+
+Die Kosten dieses Zufalls sind in keinem Bericht sichtbar. Sie zeigen sich als laufende Kommissionierer, als Aufträge, die vier statt zwei Stunden brauchen, als Lager, das „mehr Platz braucht“, obwohl es denselben Platz anders angeordnet braucht. Für einen Distributor mit 800 SKUs und drei Leuten im Lager beträgt der Unterschied zwischen zufälligem und bewusstem Layout routinemäßig 20–30 % der Kommissionierzeit — also grob ein volles Gehalt.
+
+So beheben Sie es, ohne ein WMS zu kaufen, ohne neue Regale und ohne einen Berater, der mit einem Klemmbrett herumläuft. Es braucht einen Nachmittag Analyse und zwei Wochenenden Umräumen.
+
+---
+
+## Mit den Daten beginnen, die Sie schon haben — Umschlagsanalyse
+
+**Der einzige Export, den Sie brauchen.**
+
+Ziehen Sie einen Bericht aus dem System, das Sie nutzen — ERP, Buchhaltungspaket, selbst die Bestelltabelle: jede Auftragsposition der letzten zwölf Monate, mit SKU, Menge und Datum. Das war's. Keine Kostendaten, keine Marge, kein Lieferant. Nur, was kommissioniert wurde und wie oft. Ist Ihre Auftragshistorie über E-Mails und Tabellen zersplittert statt in einem System, beheben Sie das zuerst; dieselbe Auftragstabelle, die ein [minimal funktionsfähiges CRM](/de/articles/minimum-viable-crm-b2b-distributor-2026/) funktionieren lässt, ist die, auf der diese Analyse läuft.
+
+Berechnen Sie dann eine Zahl je SKU: die **Zugriffshäufigkeit** — auf wie vielen einzelnen Auftragspositionen diese SKU erschien. Beachten Sie, dass das bewusst nicht die verkauften Einheiten sind. Eine SKU, von der in vier Aufträgen 10.000 Einheiten verkauft wurden, ist aus Kommissioniersicht ein Langsamdreher. Eine SKU, von der 400 Einheiten in 380 Aufträgen verkauft wurden, ist Ihr geschäftigster Artikel im Gebäude. Bei der Layoutoptimierung geht es um Wege, nicht um Menge.
+
+**Die Verteilung, die Sie finden werden.**
+
+Sortieren Sie absteigend nach Zugriffshäufigkeit, und Sie sehen mit ziemlicher Sicherheit die Standardform:
+
+- Die obersten 10–15 % der SKUs machen etwa die Hälfte aller Pickzeilen aus
+- Die nächsten 25 % machen weitere 30 % aus
+- Die unteren 50–60 % der SKUs machen unter 10 % der Zugriffe aus — manche wurden in einem Jahr nicht einmal gepickt
+
+Geben Sie ihnen Namen: **A** (oberste ~15 %), **B** (nächste ~25 %), **C** (der lange Schwanz). Fügen Sie dann eine Spalte hinzu, die fast niemand hinzufügt: das **Datum des letzten Zugriffs**. Jede SKU, deren letzter Zugriff mehr als zwölf Monate zurückliegt, ist kein Langsamdreher. Sie ist toter Bestand, der erstklassigen Platz belegt, und das Erste, was bewegt werden sollte.
+
+**Der Realitätscheck, bevor Sie etwas bewegen.**
+
+Gehen Sie mit der ausgedruckten A-Liste durchs Gebäude und markieren Sie auf einer groben Bodenskizze, wo jeder A-Artikel derzeit liegt. In einem zufälligen Layout werden Sie die A-Artikel über die gesamte Grundfläche verstreut finden, weil sie nie platziert wurden — sie haben sich angesammelt. Diese Skizze ist Ihr Business Case. Sie brauchen keine Studie; Sie brauchen die Skizze.
+
+---
+
+## Die Greifzone — vertikale Platzierung vor horizontaler
+
+**Der billigste Gewinn im Gebäude.**
+
+Bevor Sie einen einzigen Artikel in einen anderen Gang verschieben, beheben Sie die Höhe. Die **Greifzone** ist das Band zwischen etwa Knie- und Schulterhöhe — sagen wir 75 cm bis 150 cm. Ein Artikel, der aus der Greifzone gepickt wird, braucht einen Bruchteil der Zeit eines Artikels, der von Bodenhöhe oder oberhalb der Schulterhöhe gepickt wird, und das ohne Bücken, ohne Trittleiter und ohne das Verletzungsrisiko, das beides mit sich bringt.
+
+Die Regel ist einfach und kostet nur Arbeitszeit:
+
+- **A-Artikel → Greifzone**, immer, ohne Ausnahme
+- **B-Artikel → das Band unmittelbar darüber und darunter**
+- **C-Artikel → Bodenhöhe und oberste Fächer**, wo die zusätzlichen Sekunden pro Zugriff mit fast nichts multipliziert werden
+
+Die meisten kleinen Lager haben ihre A-Artikel in den obersten Fächern und ihren toten Bestand auf Hüfthöhe, weil der tote Bestand zuerst kam. Das Gang für Gang umzukehren, ist meist die ertragreichste einzelne verfügbare Änderung und braucht null Kapital.
+
+**Die Sicherheitsdimension ist nicht optional.**
+
+Wiederholtes Bücken und Heben über Kopf ist die Hauptquelle von Lagerverletzungen in kleinen Betrieben, und in der EU ist es eine geregelte Angelegenheit, keine Vorliebe — die manuelle Handhabung von Lasten fällt unter die [Richtlinie 90/269/EWG](https://eur-lex.europa.eu/eli/dir/1990/269/oj), und die allgemeine Arbeitgeberpflicht, Risiken zu beurteilen und zu verringern, steht in der Rahmenrichtlinie darüber. [EU-OSHA](https://osha.europa.eu/en) veröffentlicht die praktischen Hinweise. Umschlags-Slotting ist praktischerweise auch die Ergonomie-Lösung: Die Artikel, die Ihr Team vierzigmal am Tag anfasst, sind die, die auf Hüfthöhe landen.
+
+---
+
+## Wegeanalyse — wohin die Stunden tatsächlich gehen
+
+**Kommissionierzeit ist überwiegend Gehen.**
+
+In einem manuellen Kommissionierbetrieb sieht die Aufteilung durchgehend etwa so aus: Gehen 50–60 %, Suchen 10–15 %, eigentliches Kommissionieren 15–20 %, Papierkram und Bereitstellung der Rest. Das heißt, die Layoutfrage ist eigentlich eine Gehfrage. Die physische Handhabungszeit um 10 % zu senken, ist nahezu unsichtbar. Das Gehen um 30 % zu senken, ist ein anderes Geschäft.
+
+**Die Messung, grob gemacht.**
+
+Sie brauchen kein Simulationspaket. Nehmen Sie Ihre zwanzig jüngsten mehrzeiligen Aufträge. Zeichnen Sie für jeden den Weg auf Ihrer Bodenskizze in der Reihenfolge nach, in der der Kommissionierer ihn tatsächlich geht. Messen Sie die Gesamtstrecke grob, in Schritten. Zwei Dinge springen sofort ins Auge:
+
+- **Rückwege** — der Weg kreuzt sich selbst, weil Artikel 3 der Pickliste in Gang 2 liegt und Artikel 4 in Gang 7 und Artikel 5 wieder in Gang 2.
+- **Der tote Schenkel** — ein langer Weg in eine ferne Ecke für einen einzigen selten benötigten Artikel, der trotzdem auf vielen Aufträgen auftaucht (Packband, ein gängiger Adapter, ein Verbrauchsmaterial).
+
+Beides lässt sich beheben, ohne Regale zu bewegen.
+
+**Drei Korrekturen, nach Amortisation geordnet.**
+
+1. **Sortieren Sie die Pickliste passend zum physischen Layout.** Das ist eine Sortieränderung in Ihrem Auftragsausdruck, keine Lageränderung. Druckt Ihre Pickliste nach SKU-Code sortiert, läuft Ihr Kommissionierer eine zufällige Route. Drucken Sie sie nach Lagerplatz. Allein das beseitigt häufig ein Drittel der Gehstrecke und kostet einen Nachmittag Konfiguration.
+2. **Verdoppeln Sie die Verbrauchsmaterialien.** Taucht Packband auf der Route ins Nichts auf, kaufen Sie eine zweite Rolle und legen Sie sie an einen zweiten Ort. Die Kosten eines doppelten Artikels von geringem Wert sind trivial geringer als die Kosten, 600-mal im Jahr dorthin zu laufen.
+3. **Führen Sie einen U-förmigen Fluss ein.** Wareneingang auf einer Seite der Tür, die schnell drehende A-Zone direkt vor dem Packtisch, B dahinter, C am fernen Ende, Versand zurück an der Tür. Wareneingang und Warenausgang teilen sich den Türbereich; die Kommissionierung strahlt nach Umschlag nach außen. Bei kleiner Grundfläche schlägt das einen Durchlauffluss fast immer, weil es den durchschnittlichen Rundweg verkürzt.
+
+---
+
+## Zonengestaltung und der Zwei-Behälter-Platz
+
+**Feste Plätze, keine chaotische Lagerung.**
+
+Große Betreiber nutzen chaotische (zufällige) Lagerung, weil ihr WMS weiß, wo alles ist. Sie haben kein WMS, also ist das Gedächtnis Ihres Teams Ihr WMS — und Gedächtnis braucht feste Plätze. Jede SKU bekommt ein Zuhause. Beschriften Sie es: Gang-Feld-Ebene, z. B. `A-04-2`. Drucken Sie den Lagerplatz auf die Pickliste. Neue Mitarbeiter werden in Tagen statt Wochen produktiv, und „Suchen“ schrumpft von 15 % des Tages auf nahezu null.
+
+**Die Zwei-Behälter-Technik für A-Artikel.**
+
+Führen Sie für Ihre obersten etwa dreißig SKUs zwei Lagerplätze: einen kleinen Pickbehälter in der Greifzone und einen Vorratsplatz im obersten Fach oder in der C-Zone. Kommissionierer fassen nur den Pickbehälter an. Wird er leer, füllt eine Nachschubaufgabe ihn aus dem Vorrat. Das tut zweierlei zugleich — es hält Ihre am häufigsten gezogenen Artikel unabhängig von der Gebindegröße dauerhaft auf optimaler Höhe, und es macht Fehlbestände physisch sichtbar statt nur im System.
+
+**Reservieren Sie eine Zone „neu und unbekannt“.**
+
+Jedes Lager braucht einen definierten Raum für Ware, deren Umschlag Sie noch nicht kennen — neue Linien, Musterbestand, ein Lieferanten-Test. Ohne definierte Zone landet neue Ware, wo Platz ist, und so erneuert sich das zufällige Layout selbst. Geben Sie ihr ein Feld, prüfen Sie es vierteljährlich und ordnen Sie die Artikel richtig ein, sobald sie eine Pickhistorie haben.
+
+**Führen Sie das Layout in die Prognose zurück.**
+
+Die Umschlagsklassifikation, die Sie gerade gebaut haben, ist dieselbe, die Ihre Nachschublogik nutzen sollte. A-Artikel bekommen enge Bestellpunkte und häufige Prüfung; C-Artikel großzügige Bestellpunkte und vierteljährliche Prüfung. Nutzen Sie bereits Nachfragedaten für Bestandsentscheidungen — der Ansatz aus [KI-Bestandsprognose für B2B-Distributoren](/de/articles/ai-inventory-forecasting-b2b-distributors/) —, sind Slotting-Daten und Prognosedaten derselbe Datensatz aus zwei Blickwinkeln. Einmal bauen, zweimal nutzen.
+
+---
+
+## Die Änderung verankern
+
+**In Wellen, nicht an einem Wochenende.**
+
+Das Umräumen auf einmal scheitert verlässlich. Ihr Team verliert über Nacht sein räumliches Gedächtnis, die Kommissioniergenauigkeit bricht zwei Wochen lang ein, und jemand erklärt das Projekt zum Fehler. Stattdessen:
+
+- **Welle 1 (ein Wochenende):** Toten Bestand aus der Greifzone herausnehmen. Sonst nichts. Sofortige Verbesserung, nahezu keine Störung, weil diesen Bestand ohnehin niemand pickte.
+- **Welle 2 (ein Wochenende):** Die obersten 30 A-Artikel in den freigewordenen Greifzonenplatz nahe dem Packen verschieben. Hier landet der größte Teil des Gewinns.
+- **Welle 3 (über einen Monat verteilt, eine Stunde am Tag):** B-Artikel neu einordnen, alle Lagerplätze beschriften, die Druckreihenfolge der Pickliste aktualisieren.
+
+**Messen Sie zwei Zahlen, vorher und nachher.**
+
+- **Durchschnittlich kommissionierte Positionen pro Stunde**, je Person. Das ist Ihre Produktivitätszahl, und sie sollte sich binnen einer Welle bewegen.
+- **Auftragsdurchlaufzeit** — Auftragseingang bis Auftrag bereitgestellt. Das ist die Zahl, die Ihre Kunden erleben.
+
+Nehmen Sie beide für eine normale Woche auf, bevor Sie etwas anfassen. Ohne Ausgangswert streiten Sie das nächste Jahr darüber, ob es funktioniert hat.
+
+**Ordnen Sie vierteljährlich neu ein, nicht nie.**
+
+Der Umschlag driftet. Ein saisonaler Artikel, der im November ein A war, ist im März ein C. Führen Sie einmal im Quartal den Export der Zugriffshäufigkeit erneut durch, vergleichen Sie die neue A-Liste mit dem aktuellen Inhalt der Greifzone und bewegen Sie die Differenz. Es sind meist zwanzig SKUs und zwei Stunden. Das zwei Jahre auszulassen, ist, wie das zufällige Layout zurückkommt.
+
+---
+
+Der Grund, warum diese Arbeit aufgeschoben wird, ist, dass keine Rechnung daran hängt. Niemand verkauft Ihnen ein Lagerlayout, also ruft niemand deswegen an, also kommt es nie in die Warteschlange. Es ist aber eine der wenigen betrieblichen Änderungen, die einem kleinen Distributor offenstehen, mit einer in Wochen gemessenen Rendite und Kapitalkosten von grob null — ein Datenexport, eine Bodenskizze, eine Pickliste-Sortierreihenfolge und zwei Wochenenden Kartons schieben. Das Gebäude, das Sie schon haben, ist mit ziemlicher Sicherheit groß genug. Es ist nur in der Reihenfolge organisiert, in der die Ware ankam, statt in der, in der sie geht.
+
+---
+
+**Quellen:** [EU-OSHA](https://osha.europa.eu/en) · [Richtlinie 90/269/EWG zur manuellen Handhabung von Lasten](https://eur-lex.europa.eu/eli/dir/1990/269/oj)

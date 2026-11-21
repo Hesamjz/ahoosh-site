@@ -1,0 +1,166 @@
+---
+title: "Produktdatenqualität in B2B-Katalogen"
+description: "Warum B2B-Katalogdaten brechen und wie man sie repariert — die wichtige Feldtaxonomie, messbare Qualitätsregeln, Deduplizierung und Governance, die ein arbeitsreiches Quartal übersteht."
+pubDate: 2026-11-01
+tags: ["AI Operations", "B2B", "Distribution"]
+heroImage: "/articles/img/product-data-quality-b2b-catalog.jpg"
+lang: de
+translationOf: "2026-09-30_product-data-quality-b2b-catalog"
+---
+
+<img src="/articles/img/product-data-quality-b2b-catalog.jpg" alt="Ein Bildschirm in einem Lagerbüro mit einer Produktkatalog-Tabelle mit uneinheitlichen Einträgen" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Fragen Sie einen Distributor, wie viele Produkte er führt, bekommen Sie eine selbstsichere Zahl. Fragen Sie, wie viele davon einen vollständigen, korrekten, aktuellen Datensatz haben, verschwindet die Selbstsicherheit. Die ehrliche Antwort liegt bei den meisten kleinen und mittelgroßen B2B-Distributoren irgendwo zwischen 30 % und 60 % — und niemand weiß, welche 30–60 %, was das eigentliche Problem ist.
+
+Schlechte Katalogdaten kündigen sich nicht an. Sie zeigen sich als Kundenservice-Anruf wegen einer falschen Abmessung, als Retoure, weil die Spezifikation nicht stimmte, als Suche auf Ihrer eigenen Seite, die für ein Produkt, das Sie sicher führen, nichts ergibt, und als Angebot, das vierzig Minuten dauerte, weil jemand beim Lieferanten anrufen musste, um eine Gewindesteigung zu prüfen. Jedes davon sieht aus wie ein eigenes betriebliches Ärgernis. Es ist ein Problem in verschiedenen Kostümen.
+
+Der Grund, warum es kaputt bleibt: Produktdaten zu reparieren, ist niemandes Aufgabe, bringt keinen sichtbaren Erfolg und konkurriert jedes Quartal mit Umsatzarbeit. Dieser Leitfaden handelt davon, es so klein und so messbar zu machen, dass es tatsächlich erledigt wird.
+
+---
+
+## Wo B2B-Katalogdaten tatsächlich brechen
+
+**Die vier Quellen des Verfalls.**
+
+Katalogdaten beginnen nicht schlecht. Sie verfallen, durch vier Mechanismen, die alle gleichzeitig wirken:
+
+- **Drift der Lieferantenfeeds.** Ihr Lieferant ändert die Spaltenreihenfolge seiner Tabelle, benennt ein Feld um oder schickt „Blue“, wo er früher „BLU“ schickte. Ihr Import läuft, meldet keinen Fehler und schreibt still Müll in 400 Datensätze.
+- **Manuelle Erfassung unter Zeitdruck.** Ein neues Produkt kommt, der Vertrieb braucht es heute live, jemand legt einen Datensatz mit Name und Preis an und dem Versprechen, den Rest nachzutragen. Der Rest passiert nie. Daher stammen die meisten unvollständigen Datensätze.
+- **Stille Ablösung.** Der Lieferant stellt ein Teil ein und ersetzt es durch ein beinahe identisches unter neuem Code. Ihr Datensatz beschreibt weiter das alte. Niemand hat es Ihnen gesagt, weil niemand beim Lieferanten es als Ihr Problem betrachtet.
+- **Divergenz über mehrere Systeme.** ERP, Webshop und die Preisliste des Vertriebsteams halten je eine Version der Wahrheit. Beim Go-live waren sie identisch. Binnen eines Monats sind sie auseinandergelaufen, und jedes System hat jetzt eine Anhängerschaft, die ihm traut.
+
+**Die Kosten, an den Stellen, an denen Sie sie bereits zahlen.**
+
+Der Grund, warum Datenqualität nie finanziert wird, ist, dass ihre Kosten auf Budgets verteilt sind, die sie jeweils unsichtbar absorbieren:
+
+- **Retouren** wegen Spezifikationsabweichung. Ziehen Sie Ihre letzten 100 Retouren und codieren Sie sie nach Grund — der datenbedingte Anteil überrascht Menschen.
+- **Angebotszykluszeit.** Jedes Feld, das ein Verkäufer manuell prüfen muss, sind Minuten bei einem Angebot, das ein Wettbewerber in einer Stunde beantwortet hat.
+- **Fehlschläge der Suche auf der Seite.** Produkte, die für die Begriffe, die Käufer tatsächlich nutzen, nicht auftauchen, sind kaufmännisch Produkte, die Sie nicht führen.
+- **Supportvolumen.** „Wie hoch ist der Durchfluss bei diesem hier“ ist eine Frage, die Ihr Katalog hätte beantworten sollen.
+- **Ablehnungen auf Marktplätzen**, wenn Sie über irgendeinen Kanal mit Datenanforderungen verkaufen.
+- **Prognosequalität.** Alles Nachgelagerte, das von sauberer Kategorisierung abhängt — einschließlich [KI-Bestandsprognose](/de/articles/ai-inventory-forecasting-b2b-distributors/) —, erbt die Fehlerquote Ihrer Daten. Ein Modell, das auf einem Katalog trainiert wurde, in dem dasselbe Produkt unter drei Artikelnummern steht, prognostiziert drei Produkte.
+
+Der letzte Punkt ist der, den man vor jedem KI-Projekt verinnerlichen sollte. Jede Automatisierung, die Sie auf Ihrem Katalog aufbauen, vervielfacht Ihre Datenqualität, statt sie zu beheben.
+
+---
+
+## Die Feldtaxonomie, die zählt
+
+**Nicht alle Felder sind gleich. Stufen Sie sie.**
+
+Der Instinkt ist, jedes Feld bei jedem Produkt vervollständigen zu wollen, weshalb Datenqualitätsprojekte stocken — es ist eine unendliche Aufgabe ohne sichtbaren Meilenstein. Stufen Sie die Felder stattdessen:
+
+- **Stufe 1 — Identität.** Ohne diese kann dem Datensatz überhaupt nicht getraut werden: interne Artikelnummer, Herstellerteilenummer, Herstellername, GTIN/EAN, wo anwendbar, Mengeneinheit. Ziel: 100 %. Keine Ausnahmen, kein „die MPN tragen wir später nach“.
+- **Stufe 2 — Kaufmännisch.** Zum Verkaufen nötig: Beschreibung, Preis, Packungsmenge, Lieferzeit, Status (aktiv/eingestellt/abgelöst), Kategorie. Ziel: 100 % bei aktiven Produkten.
+- **Stufe 3 — Technisch.** Zum *Spezifizieren* nötig: Abmessungen, Gewicht, Material, Kapazität, Konformitätszertifizierungen, die Attribute, nach denen Käufer filtern. Ziel: 100 % bei Ihren umsatzstärksten 20 %, darunter nach bestem Bemühen.
+- **Stufe 4 — Anreicherung.** Bilder, Datenblätter, Anwendungshinweise, verwandte Produkte. Ziel: umsatzgetrieben. Ihre Top-100-Artikel, ordentlich.
+
+Diese Stufung macht die Arbeit endlich. „Stufe 1 bei aktiven Produkten auf 100 % bringen“ ist ein Projekt mit einem Ende. „Unsere Daten verbessern“ ist keines.
+
+**Die Mengeneinheit ist das Feld, das still alles zerstört.**
+
+Von allen Feldern verursacht die Mengeneinheit Schaden, der in keinem Verhältnis zu ihrer scheinbaren Trivialität steht. Ein Produkt, das in Kartons zu 50 verkauft, in Einzelstücken gelagert und pro Meter bepreist wird, sind drei Zahlen, die stimmen müssen. Tun sie es nicht, bekommen Sie Bestellungen über das 50-Fache dessen, was der Kunde wollte, Bestandszahlen, die nie aufgehen, und Margenberechnungen, die in eine Richtung falsch sind, die erst zum Jahresende jemand bemerkt.
+
+Definieren Sie für jedes Produkt: Verkaufseinheit, Lagereinheit, Preiseinheit und die Umrechnungsfaktoren dazwischen. Ausdrücklich. In Feldern, nicht im Gedächtnis eines Verkäufers.
+
+**Attribute brauchen ein kontrolliertes Vokabular, sonst sind sie Freitext mit Zusatzschritten.**
+
+Enthält Ihr Materialfeld „Edelstahl“, „edelstahl“, „VA“, „V2A“, „Inox“ und „AISI 316“, haben Sie kein Attribut — Sie haben sechs. Nichts filtert, nichts gruppiert, nichts aggregiert.
+
+Definieren Sie für jedes Stufe-3-Attribut die zulässigen Werte als Liste. Erzwingen Sie sie bei der Erfassung. Bilden Sie Lieferantenvarianten beim Import auf Ihren kanonischen Wert ab. Das ist unglamourös und der Unterschied zwischen einem Katalog, den man abfragen kann, und einem Haufen Text.
+
+Wo es einen Standard gibt, übernehmen Sie ihn, statt einen zu erfinden. [GS1-Standards](https://www.gs1.org/) decken Produktidentifikation und Klassifizierung ab, und ETIM deckt technische Attribute in mehreren Industriebranchen ab. Eine bestehende Taxonomie zu übernehmen, kostet eine Woche und erspart Ihnen den dauernden Streit darüber, wie man Dinge nennt.
+
+---
+
+## Messbare Qualitätsregeln
+
+**Sie können nicht steuern, was Sie nicht als Regel definiert haben.**
+
+„Gute Daten“ ist kein Ziel. Eine Regel, die eine Zahl liefert, ist eines. Schreiben Sie Regeln, die ein Skript auswerten kann:
+
+- **Vollständigkeit** — Stufe-1-Felder bei allen aktiven Artikeln befüllt. Liefert einen Prozentsatz.
+- **Gültigkeit** — der Wert hat den richtigen Typ und liegt im richtigen Bereich. Das Gewicht ist eine positive Zahl. Der Preis ist größer als null. Die GTIN besteht ihre Prüfziffer. Der Status ist einer von vier zulässigen Werten.
+- **Konsistenz** — feldübergreifende Logik hält. Verkaufseinheitspreis geteilt durch Packungsmenge liegt innerhalb der Toleranz um den Stückpreis. Eingestellte Produkte haben ein Ablösungsziel. Produkte mit Lagerbestand haben einen aktiven Status.
+- **Eindeutigkeit** — keine doppelte MPN innerhalb eines Herstellers. Keine doppelte GTIN irgendwo.
+- **Aktualität** — Datum der letzten Verifizierung innerhalb von 12 Monaten bei Stufe-2-Feldern. Das ist die Regel, die Verfall statt Fehler fängt.
+
+**Lassen Sie sie planmäßig laufen und setzen Sie die Zahl an einen sichtbaren Ort.**
+
+Ein wöchentliches Skript, das jede Regel auswertet und die Ergebnisse in ein Dashboard schreibt, ist ein Tag Arbeit und ändert die Dynamik völlig. Sobald „Vollständigkeit Stufe 1: 94,2 %“ eine Zahl auf einem Bildschirm ist, die jemandem gehört, bewegt sie sich. Davor ist sie ein Gefühl.
+
+Die Regeln geben Ihnen auch ein Eingangstor. Neue Produkte, die die Validierung nicht bestehen, gehen nicht live, bis sie sie bestehen — was hinderlich klingt und der einzige Mechanismus ist, der die eingehende Flut stoppt, während Sie den Rückstau beheben.
+
+**Deduplizierung ist ein Projekt, keine Regel.**
+
+Duplikate sind die schwierigste Klasse, weil sie Urteilsvermögen verlangen. Dasselbe physische Produkt kommt als `SKU-4471`, als `4471-A` von einem zweiten Lieferanten und als `BSP-4471` aus einer Übernahme vor zehn Jahren. Drei Datensätze, ein Produkt, drei Lagerbestände, drei Preise und ein Kunde, der alle drei gekauft hat.
+
+Der gangbare Ansatz:
+
+1. **Zuerst nach starken Identifikatoren abgleichen.** Identische GTIN oder identische Hersteller+MPN ist ein sicheres Duplikat. Das findet die einfache Hälfte automatisch.
+2. **Unscharf abgleichen auf Beschreibung plus Schlüsselattribute** für den Rest. Das erzeugt Kandidaten, keine Schlüsse.
+3. **Menschliche Prüfung der Kandidaten**, priorisiert nach kombiniertem Transaktionsvolumen. Duplikate bei Produkten zu prüfen, die niemand kauft, ist Verschwendung.
+4. **Zusammenführen mit einer vorab festgelegten Überlebensregel**: welcher Datensatz bleibt, was mit der Historie geschieht und wie die stillgelegte Artikelnummer weiterleitet.
+
+Versuchen Sie nicht, den ganzen Katalog auf einmal zu deduplizieren. Nehmen Sie die Top 500 nach Umsatz, bereinigen Sie diese, und lassen Sie den langen Schwanz warten. Die Umsatzkonzentration in B2B-Katalogen ist stark genug, dass das den Großteil des Schmerzes abdeckt.
+
+---
+
+## Wo KI hilft und wo sie selbstsicheren Unsinn hinzufügt
+
+**Sie ist gut in der Transformation, nicht in der Wahrheit.**
+
+Sprachmodelle sind bei Katalogdaten in einem engen Band wirklich nützlich. Sie sind gut in:
+
+- **Freitext auf ein kontrolliertes Vokabular normalisieren.** „VA“, „Inox“ und „Edelstahl“ auf Ihren kanonischen Wert abbilden. Hohes Volumen, überprüfbar, geringe Fehlerkosten.
+- **Attribute aus unstrukturiertem Lieferantentext extrahieren.** Eine Lieferantenbeschreibung mit 200 Wörtern enthält Gewindegröße und Druckstufe in Prosa; sie in Felder zu ziehen, ist genau die richtige Aufgabe.
+- **Beschreibungen aus strukturierten Attributen entwerfen.** Felder hinein, Prosa heraus. Diese Richtung ist sicher, weil die Fakten aus Ihren Daten stammen.
+- **Auffälligkeiten markieren.** „Das Gewicht dieses Produkts ist das 400-Fache des Kategorienmedians“ ist etwas Nützliches, das man sichtbar machen kann.
+- **Duplikatkandidaten vorschlagen** zur menschlichen Bestätigung.
+
+**Sie ist schlecht darin, die Fakten zu erfinden, die Sie nicht haben.**
+
+Das Fehlerbild ist, ein Modell zu bitten, eine Lücke zu füllen, statt einen Wert zu transformieren. Hat Ihr Datensatz keine Druckstufe und Sie fragen ein Modell, wie hoch die Druckstufe ist, wird es es Ihnen sagen. Selbstsicher. Manchmal richtig, was schlimmer ist als immer falsch, weil es Ihre Fähigkeit zerstört, das Muster zu erkennen.
+
+Die Grenze ist einfach und sollte im Tooling durchgesetzt werden: Das Modell darf Informationen umstrukturieren, extrahieren oder normalisieren, die in einer von Ihnen gelieferten Quelle vorhanden sind. Es darf keine Informationen aus eigenem Wissen liefern. Enthält die Quelle die Druckstufe nicht, ist die richtige Ausgabe „nicht gefunden“, und der richtige nächste Schritt ist, dass ein Mensch den Lieferanten anmailt.
+
+Die breitere Mechanik, das im großen Maßstab zu tun — einschließlich Pipeline und Prüfstruktur —, behandelt [KI-Produktkatalog-Automatisierung für B2B-Distributoren](/de/articles/ai-product-catalog-automation-b2b-distributors/). Der Governance-Punkt gilt unabhängig vom Tooling: KI beschleunigt, was Ihr Prozess ohnehin tut, auch die Fehler.
+
+**Bewahren Sie immer die Herkunft.**
+
+Jedes Feld sollte tragen, woher es kam und wann: Lieferantenfeed, manuelle Erfassung, KI-Extraktion aus Datenblatt, verifiziert von einer benannten Person. Stimmt drei Monate später etwas nicht — und es wird etwas nicht stimmen —, ist die Herkunft der Unterschied zwischen der Korrektur eines Feldes und dem erneuten Audit einer Kategorie. Sie ist auch der einzige Weg zu wissen, ob Ihre KI-Extraktion tatsächlich funktioniert, weil Sie KI-gewonnene Felder mit verifizierten vergleichen können.
+
+---
+
+## Governance, die ein arbeitsreiches Quartal übersteht
+
+**Ein Verantwortlicher, namentlich, mit zugeteilter Zeit.**
+
+Datenqualität ohne Verantwortlichen fällt binnen zwei Quartalen verlässlich in ihren früheren Zustand zurück. Der Verantwortliche muss nicht in Vollzeit sein — für einen kleinen Distributor genügt ein Tag pro Woche. Er muss benannt sein, und der Tag muss im Kalender stehen, denn die Arbeit hat keine eigene Frist und verliert jede Kollision mit Arbeit, die eine hat.
+
+**Schrauben Sie die Pflege an Ereignisse, die ohnehin stattfinden.**
+
+Eigenständige Datenaufgaben werden nicht erledigt. Angehängte schon:
+
+- **Onboarding neuer Produkte** — das Validierungstor. Nichts geht unvollständig live. Das ist die wirksamste einzelne Kontrolle, weil sie das Problem an der Quelle stoppt.
+- **Lieferantenpreisaktualisierung** — der Moment, in dem die Datei ohnehin in Ihrer Hand ist. Validieren Sie dabei das gesamte Sortiment dieses Lieferanten neu.
+- **Retoure bearbeitet** — den Grund codieren. Ist er datenbedingt, korrigieren Sie den Datensatz, bevor Sie die Retoure schließen. Das schafft eine Rückkopplung vom Symptom zur Ursache, den einzigen selbstkorrigierenden Mechanismus im ganzen System.
+- **Vierteljährlich** — die Top-100-Artikel bekommen eine Aktualitätsprüfung gegen das aktuelle Datenblatt des Lieferanten.
+
+**Reparieren Sie den Feed, nicht den Datensatz.**
+
+Schreibt der Import eines Lieferanten schlechte Daten, ist der Instinkt, die betroffenen Datensätze zu korrigieren. Das ist ein Laufband — der Import des nächsten Monats überschreibt Ihre Korrektur. Beheben Sie das Mapping, die Transformation oder die Datei des Lieferanten. Hinter einem kaputten Rohr zu korrigieren, ist die häufigste Art, wie Datenqualitätsaufwand verbrannt wird, ohne etwas vorzuweisen.
+
+**Berichten Sie es in Geld.**
+
+Die Dashboard-Zahl, die Aufmerksamkeit bekommt, ist nicht „94,2 % Vollständigkeit“. Es ist „12 der 47 Retouren des letzten Monats wurden durch falsche Katalogdaten verursacht, bei 3.100 € Fracht und Handling.“ Codieren Sie Ihre Retouren ein Quartal lang nach Ursache, und Sie haben den Business Case, den Sie seit Jahren nicht aufstellen konnten. Das ist die Zahl, die Ihnen den Tag pro Woche verschafft.
+
+---
+
+Produktdatenqualität ist eine Pflegedisziplin, die wiederholt als Projekt falsch verkauft wurde. Es gibt keinen Endzustand, in dem der Katalog sauber ist und es bleibt, weil Lieferanten immer wieder Dinge ändern und Produkte immer wieder unter Zeitdruck ankommen. Was es gibt, ist ein Satz Regeln, der jede Woche läuft, ein Tor, das schlechte Datensätze am Eintreten hindert, ein Verantwortlicher mit einem Tag und eine Rückkopplung von Retouren zu Datensätzen.
+
+Bauen Sie diese Maschinerie auf, und der Katalog tendiert zur Korrektheit. Fahren Sie eine heroische sechsmonatige Bereinigung ohne sie, sind Sie im folgenden Sommer wieder dort, wo Sie angefangen haben, haben das Geld ausgegeben und nichts Dauerhaftes gelernt.
+
+---
+
+**Quellen:** [GS1 — globale Standards zur Produktidentifikation](https://www.gs1.org/) · [GS1 GDSN — Global Data Synchronisation Network](https://www.gs1.org/services/gdsn) · [Schema.org Product](https://schema.org/Product)

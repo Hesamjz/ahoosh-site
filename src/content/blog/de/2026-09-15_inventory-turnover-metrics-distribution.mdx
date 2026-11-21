@@ -1,0 +1,161 @@
+---
+title: "Lagerumschlagskennzahlen für Distributoren"
+description: "Die Lagerumschlagskennzahlen, die Liquiditätsprobleme bei Distributoren vorhersagen — GMROI, Reichweite in Tagen, Ladenhüteranteil, Lieferbereitschaft — und wie man jede berechnet."
+pubDate: 2026-11-01
+tags: ["Operations", "B2B", "Distribution"]
+heroImage: "/articles/img/inventory-turnover-metrics-distribution.jpg"
+lang: de
+translationOf: "2026-09-15_inventory-turnover-metrics-distribution"
+---
+
+<img src="/articles/img/inventory-turnover-metrics-distribution.jpg" alt="Lagerregale mit gestapelten Kartons und einem Klemmbrett mit Bestandszahlen" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Die meisten Distributoren verfolgen eine einzige Bestandskennzahl: die Umschlagshäufigkeit. Wareneinsatz geteilt durch durchschnittlichen Lagerbestand. Sie steht im Jahresabschluss, jemand vergleicht sie mit dem Vorjahr, und alle nicken.
+
+Diese Zahl ist für sich genommen nahezu nutzlos. Ein Unternehmen mit einer Umschlagshäufigkeit von 6 kann gesund sein oder im Sterben liegen, und die Kennzahl sagt nicht, welches von beidem. Sie fasst ein schnell drehendes Kernsortiment und ein Lager voller Ladenhüter zu einem einzigen Durchschnitt zusammen, der keines von beiden beschreibt. Währenddessen sind die Fragen, die tatsächlich entscheiden, ob Ihnen im März das Geld ausgeht — welche Artikel Ihr Betriebskapital auffressen, welche Sie nicht mehr einkaufen sollten, ob Ihr Servicegrad zu einem unvernünftigen Preis erkauft wird —, auf dieser Ebene unsichtbar.
+
+Dieser Artikel behandelt die Bestandskennzahlen, die ein Distributor mit unter 10 Mio. € Umsatz tatsächlich führen sollte, wie man jede so berechnet, dass die Zahl etwas bedeutet, und was zu tun ist, wenn sie schlecht ausfällt. Alle lassen sich aus Daten berechnen, die Sie schon in Ihrem ERP haben oder, ehrlich gesagt, in einem Tabellenexport.
+
+---
+
+## Umschlagshäufigkeit — so berechnet, dass die Zahl etwas bedeutet
+
+**Die Formel und die zwei Arten, sie falsch zu machen.**
+
+Umschlagshäufigkeit = Wareneinsatz ÷ durchschnittlicher Lagerbestand zu Einstandspreisen.
+
+Zwei Fehler lassen diese Zahl lügen:
+
+- **Umsatz statt Wareneinsatz verwenden.** Der Umsatz enthält Ihre Marge; der Bestand ist zu Einstandspreisen bewertet. Das eine durch das andere zu teilen, bläht die Umschlagshäufigkeit genau um Ihren Aufschlag auf. Ein Unternehmen mit 40 % Rohmarge, das den Umsatz nutzt, meldet eine etwa 1,7-mal höhere Umschlagshäufigkeit als die Realität. Nehmen Sie immer den Wareneinsatz.
+- **Jahresendbestand statt Durchschnittsbestand verwenden.** Der Jahresultimo ist für die meisten Distributoren der am wenigsten repräsentative Tag des Jahres, weil man den Bestand vor einer Inventur gezielt herunterfährt. Mitteln Sie mindestens die vier Quartalsenden; monatlich ist besser.
+
+**Rechnen Sie sie in Tage um, denn in Tagen denken Sie.**
+
+Reichweite in Tagen = 365 ÷ Umschlagshäufigkeit. Eine Umschlagshäufigkeit von 6 sind 61 Tage Bestand. Das ist ein Satz, auf den ein Mensch reagieren kann: „Wir halten zwei Monate Ware.“ Eine Umschlagshäufigkeit von 6 ist eine Zahl, die man mit einem Richtwert vergleicht. Die Reichweite in Tagen ist eine Zahl, die man mit der Lieferzeit des Lieferanten vergleicht — und das ist der Vergleich, der zählt.
+
+Der nützliche Test lautet nicht „ist die Umschlagshäufigkeit gut?“ Er lautet: **Reichweite in Tagen gegenüber Wiederbeschaffungszeit plus Prüfzyklus.** Braucht Ihr Lieferant 45 Tage und prüfen Sie Bestellungen wöchentlich, brauchen Sie etwa 52 Tage plus Sicherheitsbestand. 61 zu halten, ist vernünftig. 140 zu halten, ist eine Finanzierungsentscheidung, die niemand bewusst getroffen hat.
+
+**Segmentieren Sie sie, sonst ist sie bedeutungslos.**
+
+Berechnen Sie die Umschlagshäufigkeit getrennt mindestens für:
+
+- Jede Produktkategorie
+- Jeden Lieferanten
+- Jede ABC-Klasse (siehe unten)
+
+Die gemischte Zahl verbirgt das Problem. Fast jeder Distributor, den wir uns angesehen haben, hat ein oberes Quartil mit Umschlag über 12 und ein unteres Quartil mit Umschlag unter 1 — und meldet einen Durchschnitt von 5, der kein einziges verkauftes Produkt beschreibt.
+
+---
+
+## GMROI — die Kennzahl, die den Umschlag in Ihrem Reporting ersetzen sollte
+
+**Der Umschlag sagt Ihnen die Geschwindigkeit. Er sagt nicht, ob die Geschwindigkeit etwas wert ist.**
+
+Der Gross Margin Return on Inventory Investment (Rohertrag je investiertem Bestandseuro) ist die Zahl, die Bestand mit Gewinn verbindet:
+
+GMROI = Rohertrag (€) ÷ durchschnittlicher Lagerbestand zu Einstandspreisen (€)
+
+Ein GMROI von 3,0 bedeutet, dass jeder in diesem Bestand gebundene Euro drei Euro Rohertrag pro Jahr bringt. So gelesen ist er über Ihr gesamtes Sortiment direkt vergleichbar — und gegenüber alternativen Verwendungen desselben Euro.
+
+**Warum er Entscheidungen ändert.**
+
+Betrachten Sie zwei Artikel:
+
+- Artikel A: dreht 12-mal im Jahr, 8 % Rohmarge. GMROI ≈ 0,96
+- Artikel B: dreht 3-mal im Jahr, 45 % Rohmarge. GMROI ≈ 1,35
+
+Die Umschlagshäufigkeit sagt, A sei viermal besser. Der GMROI sagt, B verdient mehr je Euro Regalinvestition. Distributoren, die auf Umschlag optimieren, investieren systematisch zu viel in schnelle, dünne Massenartikel und zu wenig in langsamere Spezialartikel, die das Geschäft finanzieren.
+
+**Wo die Latte liegt.**
+
+Eine Arbeitsregel für einen Distributor: Ein GMROI unter 1,0 heißt, der Artikel verdient das Kapital nicht, das er verbraucht, bevor ein einziger Lagerkostenposten gezählt wurde. Unter 1,0 ist ein Gespräch über das Auslisten, kein Gespräch über eine Überprüfung. Zwischen 1,0 und 2,0 ist der Bereich, in dem Lagerhaltungskosten, Handling und Platz tatsächlich entscheiden. Über 3,0 lautet die Frage, warum Sie nicht mehr einkaufen.
+
+Legen Sie Ihre eigene Schwelle aus Ihrer eigenen Kostenstruktur fest, statt einen Richtwert zu importieren. Können Sie Ihre Lagerhaltungskosten nicht berechnen, nehmen Sie als Startschätzung 20–25 % des Lagerwerts pro Jahr — Kapitalkosten, Lager, Versicherung, Schwund und Veralterung — und verfeinern Sie später.
+
+---
+
+## ABC-Klassifizierung und die 80/20-Regel, die eigentlich 90/5 ist
+
+**Ordnen Sie Ihre Artikel nach jährlichem Wareneinsatz und sehen Sie sich die Form an.**
+
+Sortieren Sie jeden Artikel nach jährlichem Wareneinsatz absteigend und bilden Sie dann die kumulierte Summe:
+
+- **A-Artikel:** die Artikel, die die ersten 70–80 % des Wareneinsatzes ausmachen
+- **B-Artikel:** die nächsten 15–20 %
+- **C-Artikel:** der Schwanz
+
+In den meisten Distributionsunternehmen ist die A-Gruppe weit kleiner, als Menschen erwarten. Es ist üblich, dass 5–8 % der Artikel 80 % der Kosten treiben, nicht die ordentlichen 20 %, die das Pareto-Klischee verspricht. Das ist wichtig, denn es heißt, dass Ihre Prognoseaufmerksamkeit ein sehr kleines Ziel hat.
+
+**Was pro Klasse anders zu tun ist.**
+
+- **A-Artikel:** einzeln prognostizieren, wöchentlich prüfen, hart über Preis und Lieferzeit verhandeln, echten Sicherheitsbestand halten. Diese verdienen menschliche Aufmerksamkeit, und hier zahlt sich [KI-Bestandsprognose](/de/articles/ai-inventory-forecasting-b2b-distributors/) am schnellsten aus, weil das Volumen den Aufbau rechtfertigt.
+- **B-Artikel:** regelbasierte Nachbestellung, monatliche Prüfung, Standardformel für den Sicherheitsbestand.
+- **C-Artikel:** minimale Aufmerksamkeit. Meldebestandsregeln oder Fertigung auf Bestellung. Viele C-Artikel sollten gar nicht gelagert werden — nennen Sie eine Lieferzeit, statt Stücke zu halten.
+
+**Die C-Artikel-Falle.** C-Artikel sind einzeln trivial und zusammen enorm — sie verbrauchen typischerweise den größten Teil Ihrer Artikelzahl, den größten Teil Ihrer Kommissionierarbeit und einen überproportionalen Teil Ihrer Lagerfläche. Der Distributor, der sagt „es kostet nur ein paar hundert Euro, es zu halten“, hat pro Artikel recht und bei 2.000 davon unrecht.
+
+---
+
+## Ladenhüter, Überbestand und der Unterschied zwischen beiden
+
+**Das sind zwei verschiedene Probleme mit zwei verschiedenen Lösungen.**
+
+- **Ladenhüter:** keine Bewegung in den letzten 12 Monaten. Er ist nicht langsam, er steht still. Die Frage ist Verwertung, nicht Nachschub.
+- **Überbestand:** bewegt sich, aber Sie halten mehr, als der künftige Bedarf rechtfertigt. Die Frage ist: aufhören einzukaufen, nicht liquidieren.
+
+Berechnen Sie beides monatlich:
+
+- **Ladenhüteranteil** = Wert der Artikel ohne Bewegung in 12 Monaten ÷ gesamter Lagerwert
+- **Überbestand** = je Artikel `Stück am Lager` minus `(Bedarfsprognose über die Lieferzeit + Sicherheitsbestand)`, zu Einstandspreisen bewertet, nur über die positiven Werte summiert
+
+**Wie gut aussieht.** Ein Ladenhüteranteil über 10 % des Lagerwerts ist ein strukturelles Problem, kein schlechtes Quartal. Er bedeutet meist eines von drei Dingen: Einkaufsanreize, die Mengenrabatte statt Abverkauf belohnen, ein Sortiment, das durch Hinzufügen gewachsen ist und nie durch Streichen, oder eine Mindestbestellmenge des Lieferanten, die nicht zu Ihrem Bedarf passt.
+
+**Die Abschreibungsrechnung, die niemand machen will.** Ein Ladenhüter wird nicht weniger tot. Jeden Monat, den Sie ihn halten, zahlen Sie Lagerhaltungskosten auf ein Gut ohne Ertrag, und der erzielbare Wert sinkt. Die emotionale Blockade ist, dass die Abschreibung die GuV dieses Jahres schlechter aussehen lässt. Das tut sie. Sie stoppt aber auch den Aderlass und setzt Platz und Geld frei. Die richtige Frage ist nicht „wie viel haben wir dafür bezahlt“ — dieses Geld ist so oder so weg —, sondern „was ist der beste Preis, den wir heute bekommen können, und ist das Geld mehr wert als die Hoffnung?“
+
+Fahren Sie einen vierteljährlichen Verwertungszyklus: zuerst mit Rabatt Bestandskunden anbieten, dann einem Liquidator, dann verschrotten. Legen Sie für jeden Schritt ein Datum fest, damit die Entscheidung nicht jedes Mal eine neue Besprechung braucht.
+
+---
+
+## Lieferbereitschaft und die Kosten des Servicegrads, den niemand bepreist hat
+
+**Lieferbereitschaft = beim ersten Versuch vollständig versendete Auftragspositionen ÷ alle Auftragspositionen.**
+
+Messen Sie nach Positionen, nicht nach Aufträgen. Die Lieferbereitschaft auf Auftragsebene fällt auf eine Zahl zusammen, die von Ihren größten Aufträgen getrieben wird, und verbirgt den einen fehlenden Artikel, der einen Kunden zum Anruf bewogen hat.
+
+**Das Verhältnis, das Sie verinnerlichen müssen:** Der Sicherheitsbestand steigt etwa geometrisch, wenn sich die Ziel-Lieferbereitschaft 100 % nähert. Von 95 % auf 98 % zu gehen, kostet spürbar mehr Bestand als von 90 % auf 95 %, und bei 99,5 % zerstören Distributoren leise ihr eigenes Betriebskapital.
+
+Der richtige Schritt ist nicht ein einziges Lieferbereitschaftsziel. Es ist ein Ziel je Kundenstufe und je ABC-Klasse:
+
+- A-Artikel für Schlüsselkunden: 98 %+
+- A-Artikel allgemein: 95–97 %
+- B-Artikel: 90–95 %
+- C-Artikel: was die Nachbestellregel hervorbringt; nennen Sie stattdessen eine Lieferzeit
+
+**Die Messung, die die Wahrheit offenbart: Fehlmengenkosten.** Protokollieren Sie bei jeder Fehlmenge, was geschah — der Kunde wartete, der Kunde kaufte einen Ersatz, der Kunde kaufte einmal anderswo, der Kunde ging. Die meisten Distributoren haben das nie gezählt und nehmen an, jede Fehlmenge sei eine Katastrophe. Meist ist sie es nicht, und die, die es sind, konzentrieren sich auf wenige Konten und Artikel. Dieses Protokoll macht aus „wir dürfen nie ausverkauft sein“ von einem Glauben eine bepreiste Entscheidung.
+
+---
+
+## Das monatliche Dashboard aufbauen
+
+**Sechs Zahlen, eine Seite, jeden Monat am selben Tag.**
+
+1. Reichweite in Tagen, gemischt und nach ABC-Klasse
+2. GMROI nach Kategorie, mit einer markierten Liste jedes Artikels unter 1,0
+3. Ladenhüter als Prozentsatz des Lagerwerts, mit dem Eurobetrag
+4. Überbestand in Euro, die Top-20-Artikel aufgelistet
+5. Lieferbereitschaft nach Positionen, aufgeteilt nach ABC-Klasse
+6. Lagerwert gegenüber demselben Monat des Vorjahres, neben dem Umsatz gegenüber dem Vorjahr
+
+Dieser letzte Vergleich ist die Plausibilitätsprüfung, die schleichende Abweichung auffängt. Ist der Bestand um 18 % gestiegen und der Umsatz um 4 %, haben Sie ein Betriebskapitalproblem, das sich über ein Jahr aufgebaut hat und das kein einzelner Monatsbericht gezeigt hätte.
+
+Jede dieser Zahlen stammt aus einem Export der Verkaufshistorie und einem Export der Lagerbestände. Sie brauchen kein neues System. Ein Distributor, der das in einer Tabelle mit einer Stunde monatlicher Disziplin macht, liegt vor den meisten Wettbewerbern, die teure Software betreiben, die niemand liest. Wenn Sie Werkzeuge auswählen: Unser Beitrag zum [minimal funktionsfähigen CRM für einen B2B-Distributor](/de/articles/minimum-viable-crm-b2b-distributor-2026/) macht dasselbe Argument für die Vertriebsseite: Die Beschränkung ist selten die Software.
+
+---
+
+Der Bestand ist der größte Posten in der Bilanz der meisten Distributoren und der am wenigsten untersuchte. Der Grund ist keine Faulheit — es ist, dass die Standardkennzahl, die Umschlagshäufigkeit, ein Durchschnitt ist, der alles Wissenswerte verbirgt, und das einmal im Jahr.
+
+Ersetzen Sie sie durch drei Gewohnheiten: Messen Sie die Reichweite in Tagen gegen echte Lieferzeiten, ordnen Sie alles nach GMROI und handeln Sie am unteren Ende, und trennen Sie Ladenhüter von Überbestand, damit jedes seine eigene Lösung bekommt. Im ersten Monat, in dem Sie das tun, erwarten Sie, zwischen 8 % und 20 % Ihres Lagerwerts in Artikeln zu finden, die ihr Kapital nie wieder verdienen werden. Das ist kein Versagen. Es ist das Geld, das nächstes Jahr finanziert, und es liegt die ganze Zeit in Ihren Regalen.
+
+---
+
+**Quellen:** [Europäische Kommission — Binnenmarkt, Industrie, Unternehmertum und KMU](https://single-market-economy.ec.europa.eu/index_en) · [ICC — Internationale Handelskammer](https://iccwbo.org/)

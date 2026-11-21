@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const offers = [
+  {
+    name: 'Einzelne Landingpage',
+    price: '800–1.500 €',
+    time: 'Live in 3–5 Werktagen',
+    blurb:
+      'Eine Seite, gebaut für eine Aufgabe: Besucher zu einer Handlung bringen — buchen, kaufen, beitreten, schreiben. Sie erhalten Text, Design und die funktionierende Seite live auf Ihrer eigenen Domain, mit funktionierendem Formular oder Button, auf Smartphones geprüft, dazu eine kurze Übergabenotiz, wie Sie sie selbst bearbeiten.',
+    lower: 'Untere Spanne: Sie liefern Text und Bilder.',
+    upper: 'Obere Spanne: vollständiges Texten und individuelles Design.',
+    pay: 'Bei dieser Größe der volle Betrag im Voraus.',
+  },
+  {
+    name: 'Unternehmenswebsite (bis zu 5 Seiten)',
+    price: '2.000–3.800 €',
+    time: 'In der Regel 2–3 Wochen',
+    blurb:
+      'Die komplette Website für kleine Unternehmen: Start, Leistungen, Über uns, Kontakt plus eine Seite Ihrer Wahl — getextet, gestaltet, gebaut, live. Funktionierendes Kontaktformular, mobil getestet, Seitentitel und Beschreibungen so geschrieben, dass Google jede Seite versteht, Domain und Hosting auf Ihren Namen eingerichtet, ein einseitiges Handbuch und alle Passwörter übergeben.',
+    lower: 'Untere Spanne: Ihre Texte und Fotos, 3–4 Seiten.',
+    upper: 'Obere Spanne: vollständiges Texten, 5 Seiten, individuelle Designakzente.',
+    pay: 'Hälfte im Voraus, Hälfte bei Übergabe.',
+  },
+  {
+    name: 'E-Commerce-Shop — WooCommerce oder Shopify',
+    price: '3.500–7.500 €',
+    time: 'In der Regel 3–5 Wochen',
+    blurb:
+      'Ein Shop, der echte Bestellungen und echtes Geld annimmt: Produktseiten, Warenkorb, Checkout mit angebundener Kartenzahlung, Versand und Steuern für Ihr Land konfiguriert, Bestell-E-Mails eingerichtet, bis zu 30 Produkte angelegt und eine Testbestellung aufgegeben und erstattet, damit wir beide sehen, wie das Geld tatsächlich fließt. Die Plattform-Empfehlung kommt mit Begründung im Angebot, nicht als Standard.',
+    lower: 'Der Gründer hat den E-Commerce-Stack für ein B2B-Vertriebsunternehmen mit über 3.000 Kunden aufgebaut und betrieben, einschließlich eines täglichen Produktabgleichs zwischen ERP und Shop im Produktivbetrieb.',
+    upper: '',
+    pay: 'Hälfte im Voraus, Hälfte bei Übergabe.',
+  },
+  {
+    name: 'Website-Relaunch / Rettung',
+    price: '1.000–2.200 €',
+    time: 'Umfang je Auftrag',
+    blurb:
+      "Ihre Website gibt es, aber sie ist alt, kaputt, langsam oder peinlich — und von Grund auf neu zu bauen, fühlt sich zu viel an. Wir nehmen, was Sie haben, und bringen es in Ordnung: Design aufgefrischt, kaputte Seiten repariert, mobiles Verhalten korrigiert, Geschwindigkeitsprobleme behoben, Inhalte neu gegliedert. Der Umfang wird im Angebot Seite für Seite vereinbart, sodass Sie nur bezahlen, was wirklich repariert werden muss.",
+    lower: 'Manche Websites sind günstiger neu zu bauen als zu retten — falls Ihre dazugehört, steht das im Angebot.',
+    upper: '',
+    pay: 'Hälfte im Voraus, Hälfte bei Übergabe.',
+  },
+];
+---
+
+<BaseLayout
+  title="Webdesign & Umsetzung — AHoosh"
+  description="Landingpages, Unternehmenswebsites, WooCommerce- und Shopify-Shops sowie Website-Rettung — schriftliche Festpreise, echte Liefertermine, und alles gehört Ihnen."
+>
+  <!-- Hero -->
+  <section style="background:linear-gradient(160deg,#03142E 0%,#010A18 100%);padding:130px 24px 40px;text-align:center;border-bottom:1px solid rgba(215,161,61,0.1);">
+    <div class="section-eyebrow">Webdesign &amp; Umsetzung</div>
+    <h1 style="font-family:var(--font-head);font-weight:700;font-size:clamp(22px,6vw,36px);letter-spacing:-0.01em;color:var(--silver);margin-bottom:10px;">Eine Website, die ihren Job macht.<br><em style="font-style:normal;color:var(--gold);">Einmal gebaut, ganz Ihr Eigentum.</em></h1>
+    <p style="font-size:14px;color:var(--silver-dim);line-height:1.6;max-width:520px;margin:0 auto 28px;">Jedes der folgenden Projekte kommt mit einem schriftlichen Festpreis innerhalb der Spanne, bevor irgendetwas beginnt, einem echten Liefertermin und allem auf Ihren Namen registriert. Keine Retainer, keine monatliche Bindung — kleine Korrekturen sind zwei Wochen nach der Übergabe kostenlos, alles Spätere ist ein einmaliges Angebot, das Sie annehmen oder ablehnen können.</p>
+    <a href="/de/contact" class="btn-primary" style="display:inline-block;min-width:220px;">Angebot anfragen</a>
+  </section>
+
+  <!-- Offers -->
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">Die Angebote</div>
+    <h2 class="section-title">Vier Einstiege — alle einmalig, alle Ihr Eigentum</h2>
+
+    {offers.map((o) => (
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(215,161,61,0.12);border-radius:6px;padding:20px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
+          <div style="font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--silver);">{o.name}</div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--gold);white-space:nowrap;">{o.price}</div>
+        </div>
+        <p style="font-size:13px;line-height:1.6;color:var(--silver-dim);margin-bottom:10px;">{o.blurb}</p>
+        {o.lower && <p style="font-size:12px;line-height:1.6;color:var(--silver-dim);margin-bottom:4px;">{o.lower}</p>}
+        {o.upper && <p style="font-size:12px;line-height:1.6;color:var(--silver-dim);margin-bottom:4px;">{o.upper}</p>}
+        <div style="font-size:11px;color:var(--silver-muted);letter-spacing:0.05em;text-transform:uppercase;margin-top:8px;"><strong style="color:var(--gold);">{o.time}</strong> · {o.pay}</div>
+      </div>
+    ))}
+  </section>
+
+  <!-- How it works -->
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">So läuft die Bestellung</div>
+    <h2 class="section-title">Vier Schritte, keine Überraschungen</h2>
+    <ol style="font-size:14px;line-height:1.8;color:var(--silver-dim);padding-left:20px;margin:0;">
+      <li><strong style="color:var(--silver);">Schreiben Sie uns</strong> über die <a href="/de/contact" style="color:var(--gold);">Kontaktseite</a>: was Sie haben, was Sie brauchen, grober Zeitrahmen. Ein unsortiertes Briefing ist in Ordnung.</li>
+      <li><strong style="color:var(--silver);">Erhalten Sie einen Festpreis</strong> innerhalb von 2 Werktagen (3 bei Shops) — Preis, Umfang, Liefertermin. Wenn es nicht passt, sagen wir das und hören auf.</li>
+      <li><strong style="color:var(--silver);">Freigeben und die erste Hälfte zahlen.</strong> Der Aufbau beginnt; Sie prüfen über einen privaten Link, vereinbarte Korrekturschleifen sind inklusive.</li>
+      <li><strong style="color:var(--silver);">Übergabe.</strong> Live auf Ihrer Domain, Zugangsdaten in Ihrer Hand, Einweisung bei Website- und Shop-Projekten inklusive.</li>
+    </ol>
+  </section>
+
+  <!-- Proof -->
+  <section style="padding:40px 24px;border-bottom:1px solid rgba(215,161,61,0.08);max-width:680px;margin:0 auto;text-align:center;">
+    <div class="section-eyebrow">Aktuelle Arbeiten</div>
+    <h2 class="section-title">Live ansehen statt Screenshots</h2>
+    <p style="font-size:14px;line-height:1.7;color:var(--silver-dim);margin-bottom:20px;">Interaktive Demos aktueller Projekte — jede öffnet sich als vollständige Live-Website, genau das, was auch Ihre Besucher erleben würden.</p>
+    <a href="/de/portfolio" class="btn-primary" style="display:inline-block;min-width:220px;">Portfolio ansehen</a>
+  </section>
+
+  <!-- Honest limits -->
+  <section style="padding:40px 24px;max-width:680px;margin:0 auto;">
+    <div class="section-eyebrow">Ehrliche Grenzen</div>
+    <h2 class="section-title">Was wir nicht versprechen</h2>
+    <p style="font-size:14px;line-height:1.7;color:var(--silver-dim);margin-bottom:12px;">Keine Garantie für Besucher, Verkäufe oder Rankings — eine Seite kann keine Menschen zu sich bringen, und wer das verspricht, lügt Sie an. Laufende Kosten (Hosting, Domains, Prozentsätze der Zahlungsanbieter bei Shops) tragen Sie auf Ihren Namen, und jede einzelne steht im Angebot, bevor Sie sich festlegen.</p>
+    <p style="font-size:14px;line-height:1.7;color:var(--silver-dim);">Wir nehmen wenige Projekte an und sagen oft Nein — das ist Absicht. Wenn Sie eine laufende monatliche Betreuung brauchen, sind wir nicht der richtige Partner und sagen Ihnen das.</p>
+  </section>
+</BaseLayout>

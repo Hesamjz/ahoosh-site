@@ -1,0 +1,415 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Kostenlose Business-Diagnose — AHoosh.ai"
+  description="Beantworten Sie 10 Fragen zu Ihrem Unternehmen und erhalten Sie sofort eine KI-gestützte Strategieanalyse: Stärken, Herausforderungen, schnelle Erfolge und Ihre 90-Tage-Priorität."
+  locale="de"
+>
+  <section class="tool-page">
+    <div class="tool-header">
+      <span class="tool-badge">KI-gestützt · Kostenlos</span>
+      <h1>Business-Diagnose</h1>
+      <p class="tool-subtitle">Beantworten Sie 10 Fragen. Erhalten Sie sofort eine ehrliche Strategieanalyse — Stärken, echte Herausforderungen, schnelle Erfolge und Ihre 90-Tage-Priorität.</p>
+    </div>
+
+    <!-- Questions form -->
+    <div id="qa-form-section">
+      <form id="qa-form">
+        <div class="questions-list" id="questions-list"></div>
+        <div class="form-footer">
+          <p class="form-note">Beantworten Sie mindestens 5 Fragen. Alle Antworten sind privat — nicht gespeichert.</p>
+          <button type="submit" class="btn-gold btn-lg">Mein Unternehmen analysieren →</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Loading -->
+    <div id="qa-loading" class="hidden">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Ihr Unternehmen wird analysiert… meist 10–15 Sekunden</p>
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- Error -->
+    <div id="qa-error" class="hidden error-box"></div>
+
+    <!-- Results -->
+    <div id="qa-results" class="hidden">
+      <div class="results-header">
+        <span class="archetype-badge" id="res-archetype">–</span>
+        <h2 class="results-title">Ihre Business-Analyse</h2>
+      </div>
+
+      <div class="result-card summary-card">
+        <h3>Lagebeurteilung</h3>
+        <p id="res-summary"></p>
+      </div>
+
+      <div class="two-col">
+        <div class="result-card">
+          <h3>✓ Stärken</h3>
+          <ul id="res-strengths"></ul>
+        </div>
+        <div class="result-card">
+          <h3>⚠ Herausforderungen</h3>
+          <ul id="res-challenges"></ul>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h3>Schnelle Erfolge — diese Woche starten</h3>
+        <div id="res-quickwins"></div>
+      </div>
+
+      <div class="result-card priority-card">
+        <h3>90-Tage-Priorität</h3>
+        <p id="res-priority" class="priority-text"></p>
+      </div>
+
+      <div class="result-card ahoosh-card">
+        <h3>Wie AHoosh.ai helfen kann</h3>
+        <p id="res-ahoosh"></p>
+        <a href="/de/contact" class="btn-gold" style="margin-top:1rem;display:inline-block">Strategiegespräch anfragen →</a>
+      </div>
+
+      <button id="restart-btn" class="btn-outline">← Weitere Analyse durchführen</button>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+const QUESTIONS = [
+  { id: 1, label: 'In welcher Branche oder welchem Geschäftsfeld sind Sie tätig?', placeholder: 'z. B. E-Commerce, SaaS, Beratung, Gastronomie…' },
+  { id: 2, label: 'Wer sind Ihre Zielkunden?', placeholder: 'z. B. mittelständische B2B-Unternehmen in Deutschland oder lokale Verbraucher zwischen 25 und 45' },
+  { id: 3, label: 'Was ist Ihr Hauptprodukt oder Ihre Hauptleistung?', placeholder: 'Seien Sie konkret — was genau verkaufen oder tun Sie?' },
+  { id: 4, label: 'Was ist Ihre größte unternehmerische Herausforderung im Moment?', placeholder: 'Das, was Sie nachts wachhält' },
+  { id: 5, label: 'Wie gewinnen Sie derzeit neue Kunden?', placeholder: 'z. B. Empfehlungen, Werbung, Kaltakquise, SEO, Social Media…' },
+  { id: 6, label: 'Wie hoch ist Ihr ungefährer Monatsumsatz?', placeholder: 'z. B. unter 1.000 €, 1.000–5.000 €, 5.000–20.000 €, über 20.000 €' },
+  { id: 7, label: 'Wie viele Personen hat Ihr Team?', placeholder: 'z. B. allein, 2–5, 5–20, über 20' },
+  { id: 8, label: 'Was unterscheidet Sie von Wettbewerbern?', placeholder: 'Was ist Ihr tatsächliches Unterscheidungsmerkmal — keine Marketingsprache' },
+  { id: 9, label: 'Was sind Ihre wichtigsten Ziele für die nächsten 12 Monate?', placeholder: 'Umsatzziele, Expansion, neues Produkt, Exit…' },
+  { id: 10, label: 'Was ist das Wichtigste, das Sie in Ihrem Unternehmen gern beheben würden?', placeholder: 'Seien Sie ehrlich — das prägt die gesamte Analyse' },
+];
+
+// Build form
+const list = document.getElementById('questions-list');
+list.innerHTML = QUESTIONS.map(q => `
+  <div class="question-block">
+    <label class="question-label" for="q${q.id}">
+      <span class="q-num">${q.id}</span>
+      ${q.label}
+    </label>
+    <textarea
+      id="q${q.id}"
+      name="q${q.id}"
+      placeholder="${q.placeholder}"
+      rows="2"
+      class="q-input"
+    ></textarea>
+  </div>
+`).join('');
+
+document.getElementById('qa-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const answers = {};
+  let filled = 0;
+  QUESTIONS.forEach(q => {
+    const val = document.getElementById('q' + q.id)?.value?.trim() || '';
+    answers[q.id] = val;
+    if (val.length > 2) filled++;
+  });
+
+  if (filled < 5) {
+    const errBox = document.getElementById('qa-error');
+    errBox.textContent = 'Bitte beantworten Sie vor dem Absenden mindestens 5 Fragen.';
+    errBox.classList.remove('hidden');
+    errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  document.getElementById('qa-error').classList.add('hidden');
+  document.getElementById('qa-form-section').classList.add('hidden');
+  document.getElementById('qa-loading').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  try {
+    const res = await fetch('/api/business-qa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers, lang: 'de' }),
+    });
+    const data = await res.json();
+
+    document.getElementById('qa-loading').classList.add('hidden');
+
+    if (data.error) {
+      const errBox = document.getElementById('qa-error');
+      errBox.textContent = data.error;
+      errBox.classList.remove('hidden');
+      document.getElementById('qa-form-section').classList.remove('hidden');
+      return;
+    }
+
+    const a = data.analysis;
+
+    document.getElementById('res-archetype').textContent = a.archetype || 'Business-Analyse';
+    document.getElementById('res-summary').textContent = a.summary || '';
+
+    const ul = (items) => (items || []).map(i => `<li>${i}</li>`).join('');
+    document.getElementById('res-strengths').innerHTML = ul(a.strengths);
+    document.getElementById('res-challenges').innerHTML = ul(a.challenges);
+
+    document.getElementById('res-quickwins').innerHTML = (a.quickWins || []).map((w, i) => `
+      <div class="quickwin-item">
+        <div class="qw-num">${i + 1}</div>
+        <div class="qw-content">
+          <div class="qw-action">${w.action}</div>
+          <div class="qw-meta">
+            <span class="qw-impact">${w.impact}</span>
+            <span class="qw-time">${w.timeframe}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('res-priority').textContent = a.priority90days || '';
+    document.getElementById('res-ahoosh').textContent = a.ahooshFit || '';
+
+    document.getElementById('qa-results').classList.remove('hidden');
+    document.getElementById('qa-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    document.getElementById('qa-loading').classList.add('hidden');
+    const errBox = document.getElementById('qa-error');
+    errBox.textContent = 'Netzwerkfehler. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.';
+    errBox.classList.remove('hidden');
+    document.getElementById('qa-form-section').classList.remove('hidden');
+  }
+});
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  document.getElementById('qa-results').classList.add('hidden');
+  document.getElementById('qa-form-section').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+<style>
+.tool-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 8.5rem 1.5rem 5rem;
+}
+.tool-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.tool-badge {
+  display: inline-block;
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  border: 1px solid rgba(215,161,61,0.3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+.tool-header h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  color: var(--color-text);
+  margin: 0 0 0.75rem;
+}
+.tool-subtitle { color: var(--color-text-muted); font-size: 1rem; }
+/* Questions */
+.question-block { margin-bottom: 1.5rem; }
+.question-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+.q-num {
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  font-weight: 800;
+  font-size: 0.78rem;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.q-input {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.q-input:focus { border-color: #D7A13D; }
+.q-input::placeholder { color: var(--color-text-muted); }
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.form-note { font-size: 0.82rem; color: var(--color-text-muted); margin: 0; }
+.btn-gold {
+  background: #D7A13D;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-gold:hover { background: #e5b040; }
+.btn-lg { padding: 0.9rem 2rem; font-size: 1rem; }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 8px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: #D7A13D; color: #D7A13D; }
+.hidden { display: none !important; }
+.loading-spinner {
+  width: 52px; height: 52px;
+  border: 3px solid rgba(215,161,61,0.2);
+  border-top-color: #D7A13D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 3rem auto 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { text-align: center; color: var(--color-text-muted); }
+.loading-dots { display: flex; justify-content: center; gap: 0.4rem; margin-top: 1rem; }
+.loading-dots span {
+  width: 8px; height: 8px;
+  background: #D7A13D;
+  border-radius: 50%;
+  animation: dots 1.4s infinite ease-in-out both;
+}
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes dots { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+.error-box {
+  background: rgba(255,78,66,0.1);
+  border: 1px solid rgba(255,78,66,0.3);
+  color: #ff6b5a;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+/* Results */
+.results-header { text-align: center; margin-bottom: 2rem; }
+.archetype-badge {
+  display: inline-block;
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  border: 1px solid rgba(215,161,61,0.4);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  margin-bottom: 0.75rem;
+}
+.results-title { font-size: 1.5rem; color: var(--color-text); margin: 0; }
+.result-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.result-card h3 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+}
+.result-card p { color: var(--color-text); line-height: 1.7; margin: 0; }
+.result-card ul { list-style: none; padding: 0; margin: 0; }
+.result-card ul li {
+  color: var(--color-text);
+  padding: 0.35rem 0;
+  padding-left: 1.2rem;
+  position: relative;
+  font-size: 0.95rem;
+}
+.result-card ul li::before { content: '→'; position: absolute; left: 0; color: #D7A13D; }
+.summary-card { border-left: 3px solid #D7A13D; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+/* Quick wins */
+.quickwin-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.quickwin-item:last-child { border-bottom: none; padding-bottom: 0; }
+.qw-num {
+  background: rgba(215,161,61,0.15);
+  color: #D7A13D;
+  font-weight: 800;
+  font-size: 0.82rem;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.qw-action { font-weight: 600; font-size: 0.95rem; color: var(--color-text); margin-bottom: 0.3rem; }
+.qw-meta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.qw-impact { font-size: 0.82rem; color: var(--color-text-muted); }
+.qw-time {
+  font-size: 0.78rem;
+  background: rgba(12,206,107,0.12);
+  color: #0cce6b;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.priority-card { border-left: 3px solid #0cce6b; }
+.priority-text { font-size: 1.05rem; font-weight: 600; color: var(--color-text); line-height: 1.6; }
+.ahoosh-card { border-left: 3px solid #D7A13D; }
+</style>

@@ -5,7 +5,7 @@
 
 export type Locale = 'en' | 'fa' | 'de' | 'sr';
 
-export const LOCALES: Locale[] = ['en'];
+export const LOCALES: Locale[] = ['en', 'de'];
 
 export const LOCALE_META: Record<
   Locale,
@@ -21,12 +21,31 @@ export const LOCALE_META: Record<
 export const LOCALIZED_ROUTES = [
   '',
   '/about',
+  '/services',
   '/consulting',
   '/contact',
-  '/news',
-  '/articles',
   '/assess',
-  '/markets',
+  '/faq',
+  '/snapshot',
+  '/thank-you',
+  '/products',
+  '/products/aeo-kit',
+  '/services/ai-ops',
+  '/services/marketing',
+  '/services/transformation',
+  '/services/web-design',
+  '/pricing',
+  '/privacy',
+  '/terms',
+  '/portfolio',
+  '/articles',
+  '/contact/thanks',
+  '/assess/business',
+  '/assess/personality',
+  '/assess/website',
+  '/assess/report',
+  '/tools/business-qa',
+  '/tools/seo-audit',
 ];
 
 export const CHROME: Record<

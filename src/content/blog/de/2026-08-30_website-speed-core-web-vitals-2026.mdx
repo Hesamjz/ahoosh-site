@@ -1,0 +1,136 @@
+---
+title: "Core Web Vitals für Websites kleiner Unternehmen"
+description: "Core Web Vitals für Websites kleiner Unternehmen — was LCP, INP und CLS messen, welche Korrekturen sie wirklich bewegen und wie viel davon für SEO zählt."
+pubDate: 2026-10-01
+tags: ["Strategy", "SEO", "Operations"]
+heroImage: "/articles/img/website-speed-core-web-vitals-2026.jpg"
+lang: de
+translationOf: "2026-08-30_website-speed-core-web-vitals-2026"
+---
+
+<img src="/articles/img/website-speed-core-web-vitals-2026.jpg" alt="Laptop mit einem Website-Performance-Bericht und Geschwindigkeitskennzahlen auf dem Bildschirm" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Jemand schickt Ihre Website durch PageSpeed Insights, und es liefert ein rotes 34 von 100 mit einer Liste von elf Problemen in einer Sprache, die wie ein Vorwurf klingt. Render-blockierende Ressourcen. Cumulative Layout Shift. Ungenutztes JavaScript. Die natürlichen Reaktionen sind entweder, es ganz zu ignorieren, oder einem Entwickler 2.000 € zu zahlen, damit er einem grünen Wert nachjagt, der am Geschäft nichts ändert.
+
+Beide Reaktionen sind falsch, in entgegengesetzte Richtungen. Core Web Vitals zählen, aber nicht aus dem Grund, den die meisten genannt bekommen, und die Arbeit, die sie bewegt, sind meist drei konkrete Korrekturen statt elf.
+
+Dieser Leitfaden zeigt, was die Kennzahlen tatsächlich messen, welche Korrekturen auf einer Website eines kleinen Unternehmens echte Bewegung bringen und eine ehrliche Einschätzung, wie viel SEO-Nutzen auf dem Tisch liegt — denn die Rahmung „Geschwindigkeit ist ein Rankingfaktor“ hat mehr verschwendetes Budget verursacht als fast jede andere überlieferte Weisheit in der Webarbeit kleiner Unternehmen.
+
+---
+
+## Die drei Kennzahlen in schlichten Worten
+
+Core Web Vitals sind drei Messungen dessen, was ein echter Besucher erlebt. Google definiert sie, veröffentlicht Schwellen und misst sie an echten Chrome-Nutzern statt im Labor.
+
+**LCP — Largest Contentful Paint.** Wie lange es dauert, bis das größte sichtbare Element auf dem Bildschirm geladen ist. Meist Ihr Hero-Bild oder Ihre Überschrift. Es ist „wie lange, bis die Seite wie eine Seite aussieht“.
+
+- Gut: 2,5 Sekunden oder weniger
+- Verbesserungsbedürftig: bis 4 Sekunden
+- Schlecht: über 4 Sekunden
+
+**INP — Interaction to Next Paint.** Wie lange zwischen dem Klick eines Besuchers auf etwas und der sichtbaren Reaktion der Seite. Das hat im März 2024 First Input Delay abgelöst und ist ein strengeres Maß — FID zählte nur die erste Interaktion und maß nur die Verzögerung, bevor die Verarbeitung begann. INP misst jede Interaktion, von Anfang bis Ende.
+
+- Gut: 200 Millisekunden oder weniger
+- Verbesserungsbedürftig: bis 500 ms
+- Schlecht: über 500 ms
+
+**CLS — Cumulative Layout Shift.** Wie stark die Seite beim Laden herumspringt. Die Zahl ist einheitenlos. Sie haben es erlebt: Sie wollen auf einen Link klicken, oben lädt eine Anzeige oder ein Bild, alles rutscht nach unten, und Sie klicken auf das Falsche.
+
+- Gut: 0,1 oder weniger
+- Verbesserungsbedürftig: bis 0,25
+- Schlecht: über 0,25
+
+Die Bestehensbedingung ist das **75. Perzentil echter Nutzer bei jeder Kennzahl**. Nicht der Durchschnitt. Diese Unterscheidung zählt enorm — sie heißt, dass Ihre Seite für drei von vier Besuchern schnell sein muss, auch für die auf einem vier Jahre alten Android-Handy mit Mobilfunk auf dem Land. Die Definitionen und aktuellen Schwellen werden auf [web.devs Vitals-Seite](https://web.dev/articles/vitals) gepflegt.
+
+---
+
+## Felddaten gegen Labordaten — die Unterscheidung, die die Verwirrung erklärt
+
+**Zwei verschiedene Messungen, ständig miteinander verwechselt.**
+
+Hier verlieren sich die meisten Inhaber kleiner Unternehmen, und es lohnt fünf Minuten.
+
+- **Labordaten (Lighthouse)** — ein simulierter Ladevorgang, auf Abruf, auf einem simulierten Gerät mit simuliertem Netz. Das erzeugt den 0–100-Performance-Wert, auf den alle starren. Es ist ein Diagnosewerkzeug. Es ist nicht das, was Google fürs Ranking nutzt.
+- **Felddaten (CrUX — der Chrome User Experience Report)** — tatsächliche Messungen von tatsächlichen Chrome-Nutzern, die der Berichterstattung zugestimmt haben, über die letzten 28 Tage aggregiert. Das ist es, was Google nutzt.
+
+Also: Ihr Lighthouse-Wert ist kein Rankingfaktor. Ihre Felddaten sind es. Sie widersprechen sich häufig, und wenn, zählen die Felddaten.
+
+Folgen, die sich unmittelbar ergeben:
+
+- **Korrekturen brauchen bis zu 28 Tage, um in den Felddaten zu erscheinen,** weil das Fenster rollt. Eine Korrektur auszuliefern und am selben Nachmittag PageSpeed erneut zu starten, zeigt nichts über Ihren tatsächlichen Stand.
+- **Seiten mit wenig Verkehr haben womöglich gar keine Felddaten.** Unter einer Verkehrsschwelle hat CrUX keine Stichprobe, und PageSpeed Insights zeigt nur Labordaten. Hat Ihre Seite 200 Besuche im Monat, haben Sie keine Felddaten, Google hat kein Core-Web-Vitals-Signal für Sie, und Sie optimieren eine Zahl, die nur in einer Simulation existiert.
+- **Der 0–100-Wert ist stark gewichtet und schwankt.** Derselbe Test dreimal auf derselben Seite liefert drei Werte. Ihm genau nachzujagen, ist Rauschen nachzujagen.
+
+**Wo Sie tatsächlich hinschauen sollten:** [PageSpeed Insights](https://pagespeed.web.dev/) zeigt für eine einzelne URL sowohl Feld- als auch Labordaten — lesen Sie den Felddaten-Abschnitt oben und behandeln Sie den Laborabschnitt darunter als Diagnose. Für eine seitenweite Sicht hat die Google Search Console einen Core-Web-Vitals-Bericht, der Seiten nach Template gruppiert, was weit nützlicher ist, als URLs einzeln zu testen.
+
+---
+
+## Die Korrekturen, die die Zahlen tatsächlich bewegen
+
+Auf einer Website eines kleinen Unternehmens — typischerweise WordPress, eine statische Seite oder ein Page Builder — sind die Ursachen bemerkenswert einheitlich. Das ist zu tun, nach Ertrag geordnet.
+
+**Bilder. Fast immer Bilder.**
+
+Auf einer typischen Website eines kleinen Unternehmens machen Bilder 60–80 % des Seitengewichts aus und sind die direkte Ursache für ein schlechtes LCP. Drei Korrekturen, der Reihe nach:
+
+1. **Vor dem Hochladen verkleinern.** Der häufigste einzelne Fehler auf Seiten kleiner Unternehmen ist ein 4.000 Pixel breites Foto vom Handy oder aus einer Stock-Bibliothek, das in einem 800 Pixel breiten Platz angezeigt wird. Der Browser lädt alles herunter. Verkleinern Sie auf etwa die doppelte Anzeigebreite für Retina und nicht mehr.
+2. **In WebP oder AVIF umwandeln.** WebP senkt die Dateigröße gegenüber JPEG bei gleicher Qualität typischerweise um 25–35 %, AVIF mehr. Die Browserunterstützung ist in jedem Browser, der zählt, universell. [Squoosh](https://squoosh.app/) erledigt das in einem Browser-Tab ohne Installation, oder jedes ordentliche WordPress-Bild-Plugin beim Hochladen.
+3. **Alles unterhalb des sichtbaren Bereichs lazy laden — und nichts oberhalb.** Das Attribut `loading="lazy"` ist in jedem modernen Browser nativ und braucht kein Plugin. Der kritische Fehler, den Plugins ständig machen, ist, das Hero-Bild lazy zu laden. Das verzögert direkt das LCP, die Kennzahl, die Sie beheben wollen. Ihr Hero-Bild sollte sofort laden und idealerweise vorgeladen sein. MDNs [Lazy-Loading-Leitfaden](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading) behandelt die Mechanik.
+
+Diese drei Dinge auf einer typischen WordPress-Seite zu tun, bewegt das LCP mehr als alle anderen Punkte der Lighthouse-Liste zusammen.
+
+**Setzen Sie bei allem Dimensionen. Das ist die ganze CLS-Korrektur.**
+
+CLS entsteht, wenn Inhalte laden und anderen Inhalt verschieben. Die Korrektur ist, dem Browser zu sagen, wie viel Platz er reservieren soll, bevor der Inhalt eintrifft:
+
+- Breiten- und Höhenattribute an jedem Bild- und Videoelement. Nicht CSS-Breite — die HTML-Attribute, damit der Browser das Seitenverhältnis berechnen kann, bevor die Datei eintrifft.
+- Reservieren Sie Platz für Anzeigen, Einbettungen und Iframes mit einem Container fester Höhe.
+- Nutzen Sie `font-display: swap` und laden Sie Ihre Hauptschrift vor. Spät ladende Schriften lassen Text umfließen, was eine Verschiebung ist.
+- Fügen Sie nie nach dem Laden ein Cookie-Banner, eine Aktionsleiste oder eine Benachrichtigung über bestehenden Inhalt ein. Muss es sein, legen Sie es darüber oder reservieren Sie seinen Platz im anfänglichen Layout.
+
+CLS ist die billigste der drei zu beheben und die, die echte Menschen am meisten ärgert. Die meisten kleinen Seiten können an einem Nachmittag von schlecht auf gut kommen.
+
+**JavaScript. Das ist Ihr INP-Problem.**
+
+INP ist fast ganz ein JavaScript-Problem, und auf einer Website eines kleinen Unternehmens besteht das JavaScript fast ganz aus Dingen, die Sie hinzugefügt und vergessen haben:
+
+- **Prüfen Sie Ihre Plugins und Tags.** Eine typische WordPress-Seite sammelt 25–40 Plugins an, jedes lädt Skripte auf jeder Seite, auch auf denen, die es nicht nutzen. Ein Slider-Plugin, das einmal auf der Startseite genutzt wird und auf jedem Blogbeitrag lädt, ist normal und absurd.
+- **Zählen Sie Ihre Tracking-Skripte.** Google Analytics, ein Chat-Widget, ein Heatmap-Tool, ein Retargeting-Pixel, ein Cookie-Consent-Manager und eine Formulareinbettung sind sechs Drittanbieter-Skripte auf einer Broschürenseite. Jedes blockiert den Hauptthread. Chat-Widgets sind der übliche schlimmste Übeltäter — sie sind schwer, laden früh und erzeugen auf einer B2B-Seite einen Bruchteil des Kontaktvolumens einer schlichten E-Mail-Adresse.
+- **Verzögern Sie, was für das erste Rendern nicht nötig ist.** Fügen Sie `defer` zu Skript-Tags hinzu, die nicht vor dem Zeichnen laufen müssen. Das sind die meisten.
+- **Entfernen, nicht optimieren.** Das schnellste Skript ist eines, das nicht da ist. Fragen Sie, bevor Sie das Ladeverhalten eines Tools optimieren, wann zuletzt jemand seine Daten angesehen hat.
+
+Weniger bewegliche Teile sind hier die verlässliche Antwort, und es ist dasselbe Prinzip, das den Rest der Systeme eines kleinen Unternehmens bestimmt — siehe den [minimalen Tech-Stack für B2B-Beratung](/de/articles/minimal-tech-stack-b2b-consulting/).
+
+**Hosting, falls das Obige es nicht getan hat.**
+
+Die Time to First Byte fließt direkt ins LCP ein. Braucht Ihr Server 900 ms zum Antworten, bringt keine Front-End-Arbeit Sie zu einem guten LCP. Budget-Hosting für 3 €/Monat auf einem Shared Server mit 400 anderen Seiten ist eine harte Decke. Zu ordentlichem Managed Hosting zu wechseln oder ein CDN davorzusetzen, ist ein Ein-Tages-Job mit dauerhafter Wirkung und oft billiger als die Entwicklerstunden, die man damit verbringt, darum herum zu optimieren.
+
+---
+
+## Wie viel zählt das für SEO tatsächlich?
+
+**Weniger, als man Ihnen gesagt hat, und mehr als nichts.**
+
+Google hat durchgehend und öffentlich gesagt, dass Page-Experience-Signale, einschließlich Core Web Vitals, ein echter, aber vergleichsweise kleiner Rankingeinfluss sind und dass inhaltliche Relevanz dominiert. Die [Core-Web-Vitals-Dokumentation in der Search Central](https://developers.google.com/search/docs/appearance/core-web-vitals) beschreibt die Rolle klar.
+
+Die praktische Lesart, die dem entspricht, was tatsächlich passiert:
+
+- **Vitals wirken als Tiebreaker, nicht als Hebel.** Zwischen zwei Seiten etwa gleicher Relevanz hat die schnellere einen Vorteil. Eine schnelle Seite zum falschen Thema überholt nie eine langsame Seite zum richtigen. Niemals.
+- **Der Gewinn ist asymmetrisch.** Von schlecht auf gut zu kommen, ist etwas wert. Von gut auf *sehr* gut zu kommen, ist gar nichts wert — die Schwellen sind Bestanden/Nicht bestanden, und es gibt keinen Bonus für ein LCP von 1,2 Sekunden gegenüber 2,4 Sekunden.
+- **Keine Felddaten heißt kein Signal.** Seiten mit wenig Verkehr optimieren auf eine Messung, die Google nicht hat.
+
+Die ehrliche Empfehlung also: Kommen Sie bei allen dreien aus dem Roten, dann hören Sie auf. Die übrigen Stunden sind besser in Inhalte investiert und in das, was nach dem Laden der Seite passiert. Ist Ihre Seite langsam *und* dünn, beheben Sie zuerst den Inhalt — das ist das Problem von [SEO für B2B-Dienstleistungen](/de/articles/seo-b2b-services-2026/), und es ist das mit echtem Potenzial.
+
+**Das Konversionsargument ist ohnehin das stärkere.**
+
+Lassen Sie die SEO-Frage beiseite. Eine Seite, die sechs Sekunden braucht und beim Laden herumspringt, verliert Besucher, bevor sie etwas lesen, und B2B-Käufer auf dem Handy sind ungeduldig auf eine Weise, die nichts mit Algorithmen zu tun hat. Der Grund, Core Web Vitals zu beheben, ist, dass Menschen langsame Seiten verlassen — was das zu einem Konversionsprojekt im SEO-Kostüm macht. So gerahmt, konkurriert es um Budget mit den richtigen Dingen, und [B2B-Website-Konversion](/de/articles/b2b-website-conversion-2026/) behandelt, wohin der Rest dieses Budgets gehen sollte.
+
+---
+
+Das realistische Programm für die Website eines kleinen Unternehmens: Bilder verkleinern und umwandeln, überall Breiten- und Höhenattribute ergänzen, die vier Skripte entfernen, die niemand ansieht, das Hero-Bild und die Hauptschrift vorladen und die Antwortzeit Ihres Hosts prüfen. Das ist der größte Teil eines Tages, es ist meist keine Entwicklerarbeit, und es bringt fast jede kleine Seite bei allen drei Kennzahlen von Rot auf Grün.
+
+Lassen Sie es dann 28 Tage in Ruhe, schauen Sie sich die Felddaten in der Search Console an und gehen Sie zurück dazu, Dinge zu schreiben, die Ihre Käufer lesen wollen. Der Wert war nie der Punkt. Der Besucher, der nicht gegangen ist, ist es.
+
+---
+
+**Quellen:** [Google Search Central — Core Web Vitals](https://developers.google.com/search/docs/appearance/core-web-vitals) · [web.dev — Web Vitals](https://web.dev/articles/vitals) · [PageSpeed Insights](https://pagespeed.web.dev/)

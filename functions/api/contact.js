@@ -31,9 +31,11 @@ function escapeHtml(s) {
 }
 
 export async function onRequestPost({ request, env }) {
+  let P = '';
+  try { const _r = request.headers.get('Referer'); if (_r && /^\/de(\/|$)/.test(new URL(_r).pathname)) P = '/de'; } catch {}
   // Block cross-site form posts (CSRF / spam relay).
   if (!isSameOrigin(request)) {
-    return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+    return Response.redirect(`https://ahoosh.ai${P}/contact?error=1`, 302);
   }
 
   try {
@@ -48,11 +50,11 @@ export async function onRequestPost({ request, env }) {
     // Honeypot: real users never fill the hidden "_honey" field. Bots do.
     // Pretend success so the bot moves on, but send nothing.
     if (honeypot) {
-      return Response.redirect('https://ahoosh.ai/thank-you', 302);
+      return Response.redirect(`https://ahoosh.ai${P}/thank-you`, 302);
     }
 
     if (!name || !message || !isValidEmail(email)) {
-      return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+      return Response.redirect(`https://ahoosh.ai${P}/contact?error=1`, 302);
     }
 
     // ── Cloudflare Turnstile verification (enforced when TURNSTILE_SECRET is set) ──
@@ -61,7 +63,7 @@ export async function onRequestPost({ request, env }) {
       const token = (formData.get('cf-turnstile-response') || '').toString();
       if (!token) {
         console.error('Contact: missing Turnstile token');
-        return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+        return Response.redirect(`https://ahoosh.ai${P}/contact?error=1`, 302);
       }
       const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
         method: 'POST',
@@ -75,7 +77,7 @@ export async function onRequestPost({ request, env }) {
       const outcome = await verify.json().catch(() => ({ success: false }));
       if (!outcome.success) {
         console.error('Contact: Turnstile failed', JSON.stringify(outcome['error-codes'] || []));
-        return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+        return Response.redirect(`https://ahoosh.ai${P}/contact?error=1`, 302);
       }
     }
 
@@ -87,7 +89,7 @@ export async function onRequestPost({ request, env }) {
     const resendKey = env.RESEND_API_KEY;
     if (!resendKey) {
       console.error('Contact: RESEND_API_KEY missing');
-      return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+      return Response.redirect(`https://ahoosh.ai${P}/contact?error=1`, 302);
     }
     const labelMap = {
       consulting:      'Consulting',
@@ -116,11 +118,11 @@ export async function onRequestPost({ request, env }) {
       html:    thankYouHtml(safeName),
     });
 
-    return Response.redirect('https://ahoosh.ai/thank-you', 302);
+    return Response.redirect(`https://ahoosh.ai${P}/thank-you`, 302);
 
   } catch (err) {
     console.error('Contact function error:', err);
-    return Response.redirect('https://ahoosh.ai/contact?error=1', 302);
+    return Response.redirect(`https://ahoosh.ai${P}/contact?error=1`, 302);
   }
 }
 

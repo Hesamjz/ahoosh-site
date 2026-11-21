@@ -418,6 +418,9 @@ const cardsHtml = posts.map(card).join('\n');
 </style>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate" hreflang="en" href="https://ahoosh.ai/articles/" />
+<link rel="alternate" hreflang="de" href="https://ahoosh.ai/de/articles/" />
+<link rel="alternate" hreflang="x-default" href="https://ahoosh.ai/articles/" />
 </head>
 
 <body>
@@ -448,7 +451,7 @@ const cardsHtml = posts.map(card).join('\n');
       <span class="nav-dd"><a href="/news" class="nav-dd-top" data-cursor>Insights<i class="nav-dd-car">▾</i></a><span class="nav-dd-menu"><a href="/news" data-cursor>News</a><a href="/articles" data-cursor>Articles</a></span></span>
       <a href="/about" data-cursor>About</a>
       <a href="/contact" class="pill" data-cursor>Book a call</a>
-    </nav>
+    <span class="lang-sw" aria-label="Language" style="display:inline-flex;align-items:center;gap:2px;margin-left:14px;font-family:Montserrat,sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.12em"><a href="/articles" hreflang="en" lang="en" data-cursor style="color:var(--gold-lt,#f4d98b);padding:0 4px">EN</a><span style="opacity:.4">|</span><a href="/de/articles" hreflang="de" lang="de" data-cursor style="opacity:.65;padding:0 4px">DE</a></span></nav>
   </div>
 </header>
 

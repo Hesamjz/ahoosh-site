@@ -85,7 +85,7 @@ export async function onRequestPost(context) {
         body: JSON.stringify({
           model: "claude-haiku-4-5-20251001",
           max_tokens: 1024,
-          system: SYSTEM_PROMPT,
+          system: SYSTEM_PROMPT + (body && body.lang === 'de' ? '\n\nRespond entirely in German (Deutsch). Keep every JSON key exactly as specified in English; only the string VALUES are German.' : ''),
           messages: [
             {
               role: "user",

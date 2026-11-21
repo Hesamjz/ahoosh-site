@@ -1,0 +1,154 @@
+---
+title: "Google-Search-Console-Diagnose für kleine Websites"
+description: "Ein praktischer Google-Search-Console-Ablauf für Websites kleiner Unternehmen — die wichtigen Berichte lesen, Indexierungsprobleme diagnostizieren und Seiten finden, die eine Korrektur lohnen."
+pubDate: 2026-10-01
+tags: ["Strategy", "SEO", "Content"]
+heroImage: "/articles/img/google-search-console-diagnostics.jpg"
+lang: de
+translationOf: "2026-09-09_google-search-console-diagnostics"
+---
+
+<img src="/articles/img/google-search-console-diagnostics.jpg" alt="Laptop-Bildschirm mit einem Diagramm der Suchleistung, das Impressionen und Klicks im Zeitverlauf zeigt" style="width:100%;border-radius:6px;margin-bottom:28px;" />
+
+Die Google Search Console ist kostenlos, sie ist das einzige Werkzeug, das berichtet, was Google selbst über Ihre Website denkt, und ungefähr niemand nutzt sie richtig. Das typische Muster kleiner Unternehmen: Die Property wird beim Website-Bau verifiziert, acht Monate später kommt eine alarmierende E-Mail über Abdeckungsfehler, man loggt sich ein, betrachtet ein Diagramm, das mal steigt und mal fällt, fühlt sich vage beunruhigt und schließt den Tab.
+
+Das ist schade, denn die Search Console beantwortet Fragen, die kein bezahltes SEO-Tool beantworten kann. Ahrefs und Semrush modellieren Ihre Rankings aus Crawls von Drittanbietern. Die Search Console meldet Ihre tatsächlichen Impressionen, Ihre tatsächlichen Klicks, Ihre tatsächliche durchschnittliche Position und — einzigartig — ob Google entschieden hat, dass Ihre Seiten überhaupt einer Indexierung wert sind. Diese letzte Frage ist die wichtigste und wird am seltensten gestellt.
+
+Dies ist eine praxistaugliche Diagnoseroutine für eine Website mit zwischen zwanzig und dreihundert Seiten: was zu prüfen ist, in welcher Reihenfolge, was die Berichte tatsächlich bedeuten und wie man die Daten in eine Liste von Dingen verwandelt, die an einem Montagmorgen zu tun sich lohnt. Planen Sie nach der Einrichtung zwanzig Minuten pro Monat ein.
+
+---
+
+## Einrichtung — den Property-Typ richtig wählen, sonst ist alles andere falsch
+
+**Domain-Property, nicht URL-Präfix.**
+
+Beim Hinzufügen einer Website bietet die Search Console zwei Optionen an, und die Voreinstellung ist meist die falsche.
+
+- **URL-Präfix** verifiziert genau ein Protokoll samt Subdomain — `https://www.example.com/`. Sie berichtet nichts über `http://`, nichts über die nackte Domain, nichts über `de.example.com`.
+- **Domain-Property** deckt jede Subdomain und jedes Protokoll unter `example.com` ab. Sie erfordert eine DNS-Verifizierung, also einen TXT-Eintrag bei Ihrem Registrar.
+
+Nutzen Sie die Domain-Property. Die fünf Minuten DNS-Arbeit verschaffen Ihnen ein vollständiges Bild statt eines Ausschnitts. Die häufigste Folge dieses Fehlers ist ein Inhaber, der nur einen Bruchteil seines echten Traffics sieht und schließt, SEO funktioniere nicht, obwohl die Hälfte seiner Seiten auf einer Subdomain liegt, die die Property nie abgedeckt hat. Die [Einführungs- und Einrichtungsdokumentation der Search Console](https://search.google.com/search-console/about) führt durch beide Verifizierungswege.
+
+**Reichen Sie einmal eine Sitemap ein.**
+
+Reichen Sie `example.com/sitemap.xml` unter „Sitemaps“ ein. Das bringt Google nicht dazu, etwas zu indexieren — das ist der hartnäckige Mythos —, liefert aber eine Diagnose, die man anders nicht bekommt: Der Bericht „Seiten“ lässt sich dann nach Sitemap filtern, sodass Sie *Seiten, von denen Sie sagen, dass sie existieren* mit *Seiten, die Google indexiert hat* vergleichen können. Diese Differenz ist die nützlichste Einzelzahl im ganzen Tool. Googles [Sitemap-Dokumentation](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap) behandelt das Format; die meisten Website-Generatoren erzeugen eine automatisch.
+
+**Erwartungen zur Verzögerung.**
+
+Die Daten der Search Console sind zwei bis drei Tage verzögert, und manche Berichte werden deutlich seltener aktualisiert. Veröffentlichen Sie keine Seite und prüfen am nächsten Morgen. Diagnostizieren Sie nichts aus einem Dreitagesfenster.
+
+---
+
+## Der Bericht „Seiten“ — ist Google überhaupt bereit, Sie zu indexieren?
+
+**Beginnen Sie hier, nicht mit „Leistung“.**
+
+Alle öffnen zuerst „Leistung“, weil es dort ein Diagramm gibt. Öffnen Sie zuerst „Seiten“. Hat Google eine Seite nicht indexiert, ist ihre Leistung null, und keine Keyword-Arbeit ändert das. Die Indexierung ist das Tor; alles andere liegt dahinter.
+
+Der Bericht teilt in indexiert und nicht indexiert, mit einem Grund pro URL. Bei einer kleinen Website erscheinen tatsächlich diese Gründe:
+
+**„Gecrawlt – zurzeit nicht indexiert.“**
+
+Google hat die Seite abgerufen, gelesen und sich gegen die Indexierung entschieden. Es gibt keinen Fehler. Google sagt damit, dass die Seite keinen Platz wert ist. Bei Websites kleiner Unternehmen ist das der häufigste und am meisten missverstandene Status — man sucht nach einem technischen Fehler, den es nicht gibt.
+
+Meist bedeutet es eines von:
+- Der Inhalt ist dünn oder ein Beinahe-Duplikat einer anderen Seite von Ihnen
+- Es ist eine Seite ohne eigenständigen Zweck — ein Tag-Archiv, eine paginierte Liste, eine leere Kategorie
+- Die Website insgesamt hat geringe Autorität, und Google rationiert
+
+Die Lösung ist redaktionell, nicht technisch. Führen Sie dünne Seiten zu einer substanziellen Seite zusammen, oder akzeptieren Sie, dass ein Tag-Archiv keine Indexierung braucht, und setzen Sie `noindex`, damit es den Bericht nicht mehr verschmutzt.
+
+**„Gefunden – zurzeit nicht indexiert.“**
+
+Google weiß, dass die URL existiert, und hat sie nicht abgerufen. Ein anderes Problem: Das ist ein Signal zum Crawl-Budget oder zur Qualitätsprognose. Stehen viele Seiten hier, ist Google von der Website wenig begeistert. Der praktische Hebel ist interne Verlinkung von Seiten, die *indexiert* sind — eine verwaiste Seite mit einem Link aus der Sitemap ist ein schwacher Kandidat.
+
+**„Duplikat – Google hat eine andere kanonische Seite als der Nutzer gewählt.“**
+
+Sie haben eine kanonische URL angegeben, und Google hat Sie überstimmt. Das lohnt eine Untersuchung, weil es meist heißt, dass sich zwei Ihrer Seiten tatsächlich überschneiden und Sie es nicht bemerkt haben. Zwei Leistungsseiten, die dieselbe Suchabsicht mit anderen Worten bedienen, sind der klassische Fall.
+
+**„Seite mit Weiterleitung“ / „Nicht gefunden (404)“ / „Durch robots.txt blockiert.“**
+
+Diese sind informativ und meist in Ordnung — vorausgesetzt, Sie erkennen jede URL der Liste. Der Alarmfall ist eine Seite, die Ihnen wichtig ist und unter 404 oder blockiert erscheint. Prüfen Sie die `robots.txt` anhand von Googles [robots-Dokumentation](https://developers.google.com/search/docs/crawling-indexing/robots/intro), wenn die Liste der blockierten Seiten überrascht.
+
+**Die eine Zahl, die monatlich festzuhalten ist.**
+
+Indexierte Seiten ÷ in der Sitemap eingereichte Seiten. Bei einer gesunden kleinen Website liegt sie über 80 %. Unter 50 % haben Sie ein Qualitäts- oder Architekturproblem, das kein neuer Inhalt überholen kann — Sie fügen einem System Seiten hinzu, das bereits das meiste von dem ablehnt, was Sie ihm geben.
+
+---
+
+## Der Bericht „Leistung“ — lesen, ohne sich selbst zu täuschen
+
+**Vier Kennzahlen, nur zwei davon diagnostisch.**
+
+- **Impressionen** — Ihre Seite erschien in den Ergebnissen. Sagt nichts darüber, ob sie gesehen wurde.
+- **Klicks** — jemand hat geklickt.
+- **CTR** — Klicks ÷ Impressionen.
+- **Durchschnittliche Position** — ein Durchschnitt aus Durchschnitten und die irreführendste Zahl im Tool. Eine Seite, die für eine Suchanfrage auf Platz 3 und für vierzig andere auf Platz 80 rankt, zeigt einen Durchschnitt um 75. Die Zahl ist nicht falsch; sie ist aggregiert bedeutungslos.
+
+**Filtern Sie, bevor Sie hinsehen. Immer.**
+
+Die Standardansicht — alle Suchanfragen, alle Länder, alle Geräte, letzte drei Monate, Websuche — ist Rauschen. Sie enthält Ihren Markennamen, der hoch konvertiert und nichts aussagt, und fünfzig Märkte, in denen Sie nichts verkaufen. Drei Filter machen sie sofort nützlich:
+
+1. **Schließen Sie Ihren Markennamen** aus den Suchanfragen aus. Was bleibt, ist Ihre tatsächliche Auffindbarkeit bei Menschen, die Sie nicht schon kannten.
+2. **Filtern Sie auf Ihr Zielland.**
+3. **Vergleichen Sie die letzten 28 Tage mit den vorherigen 28**, nicht mit einem gleitenden Dreimonatsfenster. Saisonalität innerhalb eines Dreimonatsfensters erfindet Trends, die es nicht gibt.
+
+**Die vier Muster, auf die zu reagieren sich lohnt.**
+
+Sortieren Sie den Tab „Suchanfragen“ und suchen Sie diese Formen. Jede führt zu einer konkreten Maßnahme.
+
+- **Hohe Impressionen, niedrige CTR, Position 1–10.** Sie ranken, und niemand klickt. Das ist ein Problem von Title-Tag und Meta-Beschreibung, kein Ranking-Problem. Es ist zugleich die günstigste Korrektur im SEO — einen Titel umzuschreiben dauert zwanzig Minuten, und die Seite rankt bereits.
+- **Hohe Impressionen, Position 11–20.** Seite zwei. Sie sind nah dran und unsichtbar; Traffic von Seite zwei ist praktisch null. Diese Seiten sind Ihre ertragreichste Arbeit: Einer Seite auf Position 14 Tiefe, interne Links und Spezifik hinzuzufügen, schlägt das Schreiben einer neuen Seite von null um Längen.
+- **Ordentliche Klicks, Position 1–3, niedrige Conversion.** Gar kein SEO-Problem. Der Traffic kommt und geht. Das ist ein Seitenproblem — Diagnose und Lösungen stehen in [B2B-Website-Conversion](/de/articles/b2b-website-conversion-2026/).
+- **Suchanfragen, für die Sie ranken, die Sie nie angepeilt haben.** Das wertvollste und am meisten ignorierte Muster im Bericht. Google sagt Ihnen, wie der Markt Ihre Sache tatsächlich nennt. Verkaufen Sie „Industriearmaturen“ und die Search Console zeigt Impressionen für eine Wendung, die Sie nie verwendet haben, ist das echte Nachfrage, in die Sie hineingestolpert sind. Bauen Sie dafür gezielt eine Seite. Das ist Keyword-Recherche mit Ihren eigenen Daten statt der Schätzung eines Anbieters — ein weit besserer Ausgangspunkt als der Prozess in den meisten Leitfäden, einschließlich der Auswahl von Suchanfragen in [SEO für B2B-Dienstleistungen](/de/articles/seo-b2b-services-2026/).
+
+**Erst seitenweise, dann suchanfragenweise.**
+
+Nutzen Sie den Tab „Seiten“, um Ihre Top-Seiten zu finden, klicken Sie dann eine Seite an und wechseln Sie zu „Suchanfragen“, um zu sehen, wofür genau diese Seite rankt. Hier entdecken Sie, dass Ihre sorgfältig ausgerichtete Leistungsseite für nichts von dem rankt, was Sie wollten, und alle Impressionen aus einem beiläufigen Satz bezieht. Das ist häufig, und es ist umsetzbar — entweder Sie setzen auf das zufällige Thema oder Sie reparieren das beabsichtigte.
+
+---
+
+## URL-Prüfung — das Werkzeug für eine konkrete Frage
+
+**Nutzen Sie sie, wenn Sie eine URL und eine Frage haben.**
+
+Das Tool „URL-Prüfung“ am oberen Rand der Search Console beantwortet für eine einzelne URL: Ist sie indexiert, wann wurde sie zuletzt gecrawlt, welche kanonische Seite hat Google gewählt, ist sie mobil nutzbar, und was hat der Googlebot tatsächlich gesehen.
+
+Die wertvollste Funktion ist **„Gecrawlte Seite ansehen“ → HTML**. Sie zeigt das gerenderte HTML, das der Googlebot erhalten hat. Ist Ihre Seite mit clientseitigem JavaScript gebaut und zeigt das gecrawlte HTML einen leeren Container, wo Ihr Inhalt sein sollte, haben Sie den Grund gefunden, warum nichts rankt. Das ist die Diagnose, die Monate sinnloser Content-Arbeit spart, und sie dauert neunzig Sekunden.
+
+**„Indexierung beantragen“ — was es tut und was nicht.**
+
+Es stellt die URL in eine priorisierte Crawl-Warteschlange. Es garantiert keine Indexierung. Es hilft einer Seite nicht, gegen die Google sich bereits entschieden hat — zeigt eine Seite „Gecrawlt – zurzeit nicht indexiert“, ist wiederholtes Beantragen eine Art, sich produktiv zu fühlen und nichts zu ändern. Reparieren Sie die Seite, dann beantragen Sie.
+
+Nutzen Sie es für: eine wirklich neue, wichtige Seite, eine Seite, deren Inhalt Sie wesentlich geändert haben, eine Seite, bei der Sie gerade einen echten Fehler behoben haben. Nutzen Sie es nicht als monatliches Ritual.
+
+---
+
+## Die monatliche Zwanzig-Minuten-Routine
+
+**Tun Sie diese fünf Dinge, in dieser Reihenfolge, und hören Sie auf.**
+
+1. **Bericht „Seiten“.** Notieren Sie indexiert ÷ eingereicht. Überfliegen Sie die Gründe für „nicht indexiert“ nach Neuem oder nach etwas, das Ihnen wichtig ist. Zwei Minuten.
+2. **Leistung, ohne Marke, 28 gegen 28.** Steigen oder fallen die Nicht-Marken-Impressionen? Das ist Ihre eine Gesundheitskennzahl. Zwei Minuten.
+3. **Liste Position 11–20.** Exportieren Sie sie. Das ist die Arbeit Ihrer nächsten drei Artikel — keine neuen Themen, sondern bestehende Seiten, die Tiefe brauchen. Fünf Minuten.
+4. **Liste niedrige CTR, Top 10.** Exportieren Sie sie. Schreiben Sie die Titel um. Das ist der schnellste verfügbare Gewinn, und er wiederholt sich jeden Monat. Fünf Minuten.
+5. **Prüfen Sie die Abschnitte „Verbesserungen“ und „Manuelle Maßnahmen“ auf Neues.** Manuelle Maßnahmen sind selten und ernst; alles andere ist meist Rauschen. Zwei Minuten.
+
+**Was Sie nicht tun sollten.**
+
+- Prüfen Sie nicht täglich. Die Daten hinken, das Rauschen dominiert, und Sie jagen Phantomen nach.
+- Reagieren Sie nicht auf die Bewegung einer einzelnen Woche. Suchergebnisse schwanken ständig; ein Rang, der von 8 auf 12 und zurück springt, ist kein Signal.
+- Jagen Sie nicht jeder Warnung nach. Die Search Console meldet, was sie bemerkt hat, nicht, was zählt. Eine Handvoll 404er von alten Links ist normal und kostet Sie nichts.
+- Verwechseln Sie Impressionswachstum nicht mit Geschäftswachstum. Impressionen für Suchanfragen, die Sie nicht bedienen können, sind kein Vermögenswert.
+
+**Das eine, was zu bauen sich lohnt.**
+
+Exportieren Sie die Suchanfragen-Daten monatlich in eine Tabelle — die Search Console speichert nur sechzehn Monate, und an dem Tag, an dem Sie eine Dreijahresansicht wollen, erfahren Sie es. Ein monatliches CSV, fortlaufend angehängt, kostet nichts und wird zur einzigen langfristigen Aufzeichnung Ihrer eigenen Suchhistorie, die irgendwo existiert.
+
+---
+
+Die Search Console belohnt eine schmale, langweilige Routine mehr als Aufmerksamkeit. Zwanzig Minuten im Monat, fünf Prüfungen, zwei Exporte. Zurück bekommen Sie eine Liste konkreter Seiten mit konkreten Problemen — ein Titel, der eine bereits auf Platz drei rankende Seite unter Wert verkauft, ein auf Position 13 gestrandeter Artikel, der vier weitere Absätze braucht, eine Suchanfrage, die der Markt benutzt und an die Sie nie gedacht haben. Diese Liste ist erheblich mehr wert als eine weitere Runde Keyword-Recherche, weil sie beschreibt, was auf Ihrer Website bereits geschieht, statt was ein Tool schätzt, dass geschehen könnte. Sie ist außerdem der einzige Ort, an dem Google Ihnen klar sagt, dass es Ihre Seite gelesen und beschlossen hat, sich nicht zu bemühen.
+
+---
+
+**Quellen:** [Google Search Console](https://search.google.com/search-console/about) · [Google Search Central — SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)
