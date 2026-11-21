@@ -46,7 +46,7 @@ Drei spezifische Teile des Retourenprozesses sind mit aktuellen KI-Tools zu Kost
 
 **Intelligente Dispositionssteuerung** wendet regelbasierte Logik und Zustandsbewertung an, um zurückgesendete Artikel ohne menschliche Entscheidung an der Rampe dem richtigen Ergebnispfad zuzuweisen. Die KI bewertet: Artikel-SKU und Zustandskategorie (wie vom Wareneingang erfasst), Retourengrundkode, Alter der ursprünglichen Lieferung, Wiedereinlagerungspolitik des Lieferanten und aktuelle Lagerbestände für diese SKU. Auf Basis dieser Eingaben weist sie eine Disposition zu — Wiedereinlagerung, Aufarbeitungswarteschlange, Liquidationskanal oder Abschreibung — und erzeugt die entsprechenden Unterlagen.
 
-Das Schlüsselwort ist „regelbasiert". Das ist kein maschinelles Lernen, das neuartige Urteile fällt. Es ist ein gut strukturierter Entscheidungsbaum, der schneller und konsistenter als ein Mensch läuft. Der Wert liegt in Konsistenz und Geschwindigkeit: Jeder Artikel wird nach denselben Kriterien bewertet, die Entscheidung wird protokolliert, und die Bearbeitungszeit sinkt, weil nicht auf einen Rückruf des Vorgesetzten gewartet werden muss. [KI-Auftragserfassungssysteme](/de/articles/ai-order-entry-2026/) arbeiten nach ähnlichen Prinzipien — strukturierte Regeln mit Geschwindigkeit angewendet — und dieselbe Implementierungslogik gilt hier.
+Das Schlüsselwort ist „regelbasiert". Das ist kein maschinelles Lernen, das neuartige Urteile fällt. Es ist ein gut strukturierter Entscheidungsbaum, der schneller und konsistenter als ein Mensch läuft. Der Wert liegt in Konsistenz und Geschwindigkeit: Jeder Artikel wird nach denselben Kriterien bewertet, die Entscheidung wird protokolliert, und die Bearbeitungszeit sinkt, weil nicht auf einen Rückruf des Vorgesetzten gewartet werden muss. [KI-Auftragserfassungssysteme](/de/articles/2026-06-10_ai-order-entry-2026/) arbeiten nach ähnlichen Prinzipien — strukturierte Regeln mit Geschwindigkeit angewendet — und dieselbe Implementierungslogik gilt hier.
 
 **Retourenbetrugs- und -missbrauchserkennung** nutzt Musteranalyse historischer Retourendaten zur Kennzeichnung von Anomalien. Für B2B sind die relevanten Muster: Retourenquote deutlich über dem historischen Baseline des Kontos, Retouren gehäuft um Rechnungszahlungstermine, Zustandscodes, die nicht zum Retourengrund passen, und Artikelbeschreibungen, die nicht zur SKU der ursprünglichen Bestellung passen. Diese Kennzeichnungen lösen keine automatischen Ablehnungen aus — sie leiten den Fall zur menschlichen Überprüfung weiter. Der Wert liegt darin, Muster aufzudecken, die sonst einen Analysten zur manuellen Erkennung erfordern würden.
 
@@ -72,7 +72,7 @@ Das spezifische Versagensmuster: KI-Systeme, die auf historischen Bewertungsdate
 
 Die Schwelle für „hohen Wert" hängt von Ihrem Betrieb ab. Eine vernünftige Anfangsregel: Alles, was in Ihrem aktuellen Prozess eine Managergenehmigung auslöst, bleibt beim Menschen. Unterhalb dieser Schwelle kann der automatisierte Prozess es handhaben.
 
-Dies entspricht dem Muster in [KI vs. ERP — was kommt zuerst](/de/articles/ai-vs-erp-which-first/): KI-Tools funktionieren gut bei volumenstarken, regelanwendbaren Prozessen. Sie versagen, wenn der Prozess kontextuelles Urteilsvermögen erfordert, das nicht kodifiziert wurde. Der Fehler liegt darin, KI für Letzteres einzusetzen, weil sie Ersteres gut handhabt.
+Dies entspricht dem Muster in [KI vs. ERP — was kommt zuerst](/de/articles/2026-06-10_ai-vs-erp-which-first/): KI-Tools funktionieren gut bei volumenstarken, regelanwendbaren Prozessen. Sie versagen, wenn der Prozess kontextuelles Urteilsvermögen erfordert, das nicht kodifiziert wurde. Der Fehler liegt darin, KI für Letzteres einzusetzen, weil sie Ersteres gut handhabt.
 
 ---
 
@@ -90,7 +90,7 @@ Die Automatisierung funktioniert nur, wenn die zugrunde liegenden Daten struktur
 
 **Historische Retourendaten müssen zugänglich sein.** Betrugserkennung benötigt mindestens sechs bis zwölf Monate Retourenhistorie pro Konto, um aussagekräftige Baselines zu erstellen. Wenn Ihre Retourendaten in E-Mail-Threads, Tabellenprotokollen oder einem ERP-Modul gespeichert sind, das nicht konsistent gepflegt wurde, fügt die Betrugserkennungsschicht bis zur Rekonstruktion oder Akkumulation dieser Historie nur begrenzten Wert hinzu.
 
-**ERP-Integration muss sauber sein.** Die automatische Gutschriftserstellung und Bestandsanpassungen erfordern, dass das KI-Retourensystem Daten zurück ins ERP schreibt. Wenn Ihre ERP-Integration nicht gut gepflegt ist — unvollständige Daten, doppelte SKUs, nicht übereinstimmende Codes — erzeugt die Automatisierung an der ERP-Grenze Fehler, die mehr manuelle Arbeit schaffen als die Automatisierung einspart. Dies ist dieselbe Infrastrukturabhängigkeit, die im [KI-Messrahmen](/de/articles/ai-measurement-framework/) besprochen wird — Messung und Automatisierung erfordern beide saubere Basisdaten.
+**ERP-Integration muss sauber sein.** Die automatische Gutschriftserstellung und Bestandsanpassungen erfordern, dass das KI-Retourensystem Daten zurück ins ERP schreibt. Wenn Ihre ERP-Integration nicht gut gepflegt ist — unvollständige Daten, doppelte SKUs, nicht übereinstimmende Codes — erzeugt die Automatisierung an der ERP-Grenze Fehler, die mehr manuelle Arbeit schaffen als die Automatisierung einspart. Dies ist dieselbe Infrastrukturabhängigkeit, die im [KI-Messrahmen](/de/articles/2026-06-10_ai-measurement-framework/) besprochen wird — Messung und Automatisierung erfordern beide saubere Basisdaten.
 
 ---
 
@@ -112,7 +112,7 @@ Erstellen Sie diese vier Baselines, bevor KI-Retouren-Tools live gehen. Ohne sie
 
 Laut 2026 veröffentlichter Logistikmanagement-Forschung identifizieren Betriebe, die diese Kennzahlen verfolgen und 90-Tage-Überprüfungszyklen durchführen, im ersten Quartal konsistent zwei bis drei Regelanpassungen, die die Automatisierungsgenauigkeit auf ein stabiles Betriebsniveau bringen. Betriebe, die ohne Messung einsetzen, erreichen diesen stabilen Zustand selten — sie enden mit einem System, das technisch läuft, aber nicht auf ihre spezifischen Retourenmuster abgestimmt wurde.
 
-Der [KI-Messrahmen](/de/articles/ai-measurement-framework/) deckt das Baseline-Erfassungsprotokoll vollständig ab — derselbe vierstufige Prozess gilt hier.
+Der [KI-Messrahmen](/de/articles/2026-06-10_ai-measurement-framework/) deckt das Baseline-Erfassungsprotokoll vollständig ab — derselbe vierstufige Prozess gilt hier.
 
 ---
 
